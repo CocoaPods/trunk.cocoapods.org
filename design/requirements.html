@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>Requirements  &middot; push.cocoapods.org</title>
+<title>Requirements push.cocoapods.org</title>
 <link rel="stylesheet" type="text/css" media="all" href="requirements_template/requirements.css" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style type="text/css">
@@ -24,10 +24,115 @@
 
 <p id="logo"><img src="http://cocoapods.org/images/logo.png" alt="CocoaPods - spec push app" /> </p>
 
-<h1>Requirements <br /></h1>
+<h1>Requirements <br />push.cocoapods.org</h1>
 
+<p class="author">Eloy Durán, <a href="mailto:eloy.de.enige@gmail.com">eloy.de.enige@gmail.com</a></p>
 
+<p>The ‘push’ app is a web-service that accepts pod specifications that are to be added to the master spec repo. It’s respondibility is to add a ACL layer on who gets to push specs for a certain library, validates the specs, and merges them into the spec repo.</p>
 
+<h2>User stories</h2>
+<h3>Push-workflow</h3>
+<table class="review">
+<tr>
+  <th></th>
+  <th title="id">#</th>
+  <th title="Estimate">e</th>
+  <th title="Iteration">i</th>
+  <th title="Status">s</th>
+</tr>
+<tr class="" id="story1">
+  <td class="story">As a user I would like to push a specification and a serialized version so I can publish a new library to the master spec repo.</td>
+  <td class="meta id">1</td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+<tr class="" id="story2">
+  <td class="story">As an owner I would like to push a specification and a serialized version so I can publish an updated library to the master spec repo.</td>
+  <td class="meta id">2</td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+<tr class="" id="story3">
+  <td class="story">As a maintainer I want to have a GitHub pull-request for each push so I can discuss issues with the submitter and/or merge manually.</td>
+  <td class="meta id">3</td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+<tr class="">
+  <td class="notes" colspan="5">Manual merging is only necessary in case of issues with the push-workflow, e.g. Travis not finishing because of network outage.</td>
+</tr>
+<tr class="" id="story4">
+  <td class="story">As a maintainer I want Travis to verify the validity of a pod specification so I can know if the specification is OK to be merged in to the master spec repo.</td>
+  <td class="meta id">4</td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+<tr class="">
+  <td class="notes" colspan="5">This is normally done automatically by GitHub by calling the Travis webhook for each pull-request.</td>
+</tr>
+<tr class="" id="story5">
+  <td class="story">As a maintainer I want the push-app to automatically merge the pull-request so I can sit back and enjoy the finer things in life.</td>
+  <td class="meta id">5</td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+<tr class="">
+  <td class="notes" colspan="5">Use Travis’ ability to call webhooks after running a build for this.</td>
+</tr>
+</table>
+<h3>Access-Control-List</h3>
+<table class="review">
+<tr>
+  <th></th>
+  <th title="id">#</th>
+  <th title="Estimate">e</th>
+  <th title="Iteration">i</th>
+  <th title="Status">s</th>
+</tr>
+<tr class="" id="story6">
+  <td class="story">As a user I should be the ‘owner’ of a library when I publish the first version of a library so I can ensure nobody else is allowed to update that library.</td>
+  <td class="meta id">6</td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+<tr class="" id="story7">
+  <td class="story">As an owner I should be able to mark another user as ‘owner’ so I can delegate control and maintenance over a library to others.</td>
+  <td class="meta id">7</td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+</table>
 
+<h2>Roles</h2>
+<dl>
+<dt>User</dt>
+<dd>Someone who interacts with the push-app, but is not yet an ‘owner’.</dd>
+<dt>Owner</dt>
+<dd>Someone who has elevated access for a library and is allowed to push updates for known libraries.</dd>
+<dt>Submitter</dt>
+<dd>Any person who interacts with the push-app, regardless of ‘user’ or ‘owner’ status.</dd>
+<dt>Maintainer</dt>
+<dd>Someone who maintains the master spec repo. (Has git push access.)</dd>
+</dl>
+<h2>Definitions</h2>
+<dl>
+<dt>Push</dt>
+<dd>The action of submitting a pod specification to the push-app.</dd>
+<dt>Push-app</dt>
+<dd>This web-service application.</dd>
+<dt>Push-workflow</dt>
+<dd>All the actions that need to be performed when pushing a specification.</dd>
+<dt>Master spec repo</dt>
+<dd>A <a href="https://github.com/CocoaPods/Specs">git repository</a> that contains the default pod specifications that CP uses.</dd>
+<dt>Travis</dt>
+<dd>A continuous-integration <a href="https://travis-ci.org/CocoaPods/Specs">web-service</a>.</dd>
+</dl>
 </body>
 </html>

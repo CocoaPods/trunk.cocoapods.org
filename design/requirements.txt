@@ -1,0 +1,38 @@
+Requirements push.cocoapods.org
+
+- Eloy Durán, eloy.de.enige@gmail.com
+
+The ‘push’ app is a web-service that accepts pod specifications that are to be added to the master spec repo. It’s respondibility is to add a ACL layer on who gets to push specs for a certain library, validates the specs, and merges them into the spec repo.
+
+USER STORIES
+
+Push-workflow
+
+As a user I would like to push a specification and a serialized version so I can publish a new library to the master spec repo. - #1
+As an owner I would like to push a specification and a serialized version so I can publish an updated library to the master spec repo. - #2
+As a maintainer I want to have a GitHub pull-request for each push so I can discuss issues with the submitter and/or merge manually. - #3
+  Manual merging is only necessary in case of issues with the push-workflow, e.g. Travis not finishing because of network outage.
+As a maintainer I want Travis to verify the validity of a pod specification so I can know if the specification is OK to be merged in to the master spec repo. - #4
+  This is normally done automatically by GitHub by calling the Travis webhook for each pull-request.
+As a maintainer I want the push-app to automatically merge the pull-request so I can sit back and enjoy the finer things in life. - #5
+  Use Travis’ ability to call webhooks after running a build for this.
+
+Access-Control-List
+
+As a user I should be the ‘owner’ of a library when I publish the first version of a library so I can ensure nobody else is allowed to update that library. - #6
+As an owner I should be able to mark another user as ‘owner’ so I can delegate control and maintenance over a library to others. - #7
+
+ROLES
+
+User: Someone who interacts with the push-app, but is not yet an ‘owner’.
+Owner: Someone who has elevated access for a library and is allowed to push updates for known libraries.
+Submitter: Any person who interacts with the push-app, regardless of ‘user’ or ‘owner’ status.
+Maintainer: Someone who maintains the master spec repo. (Has git push access.)
+
+DEFINITIONS
+
+Push: The action of submitting a pod specification to the push-app.
+Push-app: This web-service application.
+Push-workflow: All the actions that need to be performed when pushing a specification.
+Master spec repo: A <a href="https://github.com/CocoaPods/Specs">git repository</a> that contains the default pod specifications that CP uses.
+Travis: A continuous-integration <a href="https://travis-ci.org/CocoaPods/Specs">web-service</a>.
