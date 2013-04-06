@@ -28,7 +28,7 @@
 
 <p class="author">Eloy Durán, <a href="mailto:eloy.de.enige@gmail.com">eloy.de.enige@gmail.com</a></p>
 
-<p>The ‘push’ app is a web-service that accepts pod specifications that are to be added to the master spec repo. It’s respondibility is to add a ACL layer on who gets to push specs for a certain library, validates the specs, and merges them into the spec repo.</p>
+<p>The ‘push’ app is a web-service that accepts pod specifications that are to be added to the master spec repo. Its respondibility is to add a ACL layer on who gets to push specs for a certain library, validates the specs, and merges them into the spec repo.</p>
 
 <h2>User stories</h2>
 <h3>Push-workflow</h3>
@@ -41,18 +41,24 @@
   <th title="Status">s</th>
 </tr>
 <tr class="" id="story1">
-  <td class="story">As a user I would like to push a specification and a serialized version so I can publish a new library to the master spec repo.</td>
+  <td class="story">As a user I would like to push a specification so I can publish a new library to the master spec repo.</td>
   <td class="meta id">1</td>
   <td class="meta estimate"></td>
   <td class="meta iteration"></td>
   <td class="meta status"></td>
 </tr>
+<tr class="">
+  <td class="notes" colspan="5">The client should include a serialized version of the specification, because we don’t want to evaluate user-supplied Ruby on the service.</td>
+</tr>
 <tr class="" id="story2">
-  <td class="story">As an owner I would like to push a specification and a serialized version so I can publish an updated library to the master spec repo.</td>
+  <td class="story">As an owner I would like to push a specification so I can publish an updated library to the master spec repo.</td>
   <td class="meta id">2</td>
   <td class="meta estimate"></td>
   <td class="meta iteration"></td>
   <td class="meta status"></td>
+</tr>
+<tr class="">
+  <td class="notes" colspan="5">The client should include a serialized version of the specification, because we don’t want to evaluate user-supplied Ruby on the service.</td>
 </tr>
 <tr class="" id="story3">
   <td class="story">As a maintainer I want to have a GitHub pull-request for each push so I can discuss issues with the submitter and/or merge manually.</td>
@@ -109,6 +115,26 @@
   <td class="meta status"></td>
 </tr>
 </table>
+<h3>Non-functional</h3>
+<table class="review">
+<tr>
+  <th></th>
+  <th title="id">#</th>
+  <th title="Estimate">e</th>
+  <th title="Iteration">i</th>
+  <th title="Status">s</th>
+</tr>
+<tr class="" id="story">
+  <td class="story">As a developer I should be able to access a database containing information of all available libaries so I can write other useful related web-services.</td>
+  <td class="meta id"></td>
+  <td class="meta estimate"></td>
+  <td class="meta iteration"></td>
+  <td class="meta status"></td>
+</tr>
+<tr class="">
+  <td class="notes" colspan="5">Specifically, the download-count app, which needs to know if pods being reported to it are actually being tracked by us, or are private/3rd party/</td>
+</tr>
+</table>
 
 <h2>Roles</h2>
 <dl>
@@ -120,6 +146,8 @@
 <dd>Any person who interacts with the push-app, regardless of ‘user’ or ‘owner’ status.</dd>
 <dt>Maintainer</dt>
 <dd>Someone who maintains the master spec repo. (Has git push access.)</dd>
+<dt>Developer</dt>
+<dd>A computer-whisperer.</dd>
 </dl>
 <h2>Definitions</h2>
 <dl>
