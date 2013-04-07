@@ -1,3 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'saga'
+gem 'nap'
+
+group :development do
+  gem 'saga'
+end
