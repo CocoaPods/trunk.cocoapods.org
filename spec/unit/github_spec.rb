@@ -25,8 +25,8 @@ module Pod::PushApp
       @github.sha_base_tree.should == 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc'
     end
 
-    it "creates a new tree entry, which represents the contents, and returns its SHA" do
-      expected_body = {
+    before do
+      body = {
         :base_tree => 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc',
         :tree => [{
           :encoding => 'utf-8',
@@ -35,8 +35,24 @@ module Pod::PushApp
           :content  => fixture_read('AFNetworking.podspec')
         }]
       }.to_json
-      REST.expects(:post).with(@github.url_for('git/trees'), expected_body, GitHub::HEADERS, GitHub::BASIC_AUTH).returns(fixture_response('create_new_tree'))
+      REST.stubs(:post).with(@github.url_for('git/trees'), body, GitHub::HEADERS, GitHub::BASIC_AUTH).returns(fixture_response('create_new_tree'))
+    end
+
+    it "creates a new tree object, which represents the contents, and returns its SHA" do
       @github.create_new_tree.should == '18f8a32cdf45f0f627749e2be25229f5026f93ac'
+    end
+
+    before do
+      body = {
+        :parents => ['632671a3f28771a3631119354731dba03963a276'],
+        :tree    => '18f8a32cdf45f0f627749e2be25229f5026f93ac',
+        :message => '[Add] AFNetworking 1.2.0'
+      }.to_json
+      REST.stubs(:post).with(@github.url_for('git/commits'), body, GitHub::HEADERS, GitHub::BASIC_AUTH).returns(fixture_response('create_new_commit'))
+    end
+
+    it "creates a new commit object for the new tree object" do
+      @github.create_new_commit('[Add] AFNetworking 1.2.0').should == '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
     end
   end
 end

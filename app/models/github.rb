@@ -41,6 +41,16 @@ module Pod
         response = REST.post(url_for('git/trees'), body, HEADERS, BASIC_AUTH)
         JSON.parse(response.body)['sha']
       end
+
+      def create_new_commit(message)
+        body = {
+          :parents => [sha_latest_commit],
+          :tree    => create_new_tree,
+          :message => message
+        }.to_json
+        response = REST.post(url_for('git/commits'), body, HEADERS, BASIC_AUTH)
+        JSON.parse(response.body)['sha']
+      end
     end
   end
 end
