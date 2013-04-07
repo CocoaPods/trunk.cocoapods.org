@@ -16,33 +16,37 @@ module Pod
       end
 
       def create_new_commit(message)
-        body = {
-          :parents => [sha_latest_commit],
-          :tree    => create_new_tree,
-          :message => message
-        }.to_json
-        response = REST.post(url_for('git/commits'), body, HEADERS, BASIC_AUTH)
-        JSON.parse(response.body)['sha']
+        rest(:post, 'git/commits', :parents => [sha_latest_commit], :tree => create_new_tree, :message => message)['sha']
       end
 
       def create_new_branch(name, commit_sha)
-        body = {
-          :ref => branch_ref(name),
-          :sha => commit_sha
-        }.to_json
-        response = REST.post(url_for('git/refs'), body, HEADERS, BASIC_AUTH)
-        JSON.parse(response.body)['ref']
+        rest(:post, 'git/refs', :ref => branch_ref(name), :sha => commit_sha)['ref']
       end
 
       def create_pull_request(title, body, branch_name)
-        body = {
-          :title => title,
-          :body  => body,
-          :head  => branch_ref(branch_name),
-          :base  => branch_ref(BASE_BRANCH)
-        }.to_json
-        response = REST.post(url_for('pulls'), body, HEADERS, BASIC_AUTH)
-        JSON.parse(response.body)['number']
+        rest(:post, 'pulls', :title => title, :body => body, :head => branch_ref(branch_name), :base => branch_ref(BASE_BRANCH))['number']
+      end
+
+      protected
+
+      def sha_latest_commit
+        @sha_latest_commit ||= rest(:get, "git/#{branch_ref(BASE_BRANCH)}")['object']['sha']
+      end
+
+      def sha_base_tree
+        @sha_base_tree ||= rest(:get, "git/commits/#{sha_latest_commit}")['tree']['sha']
+      end
+
+      def create_new_tree
+        rest(:post, 'git/trees', {
+          :base_tree => sha_base_tree,
+          :tree => [{
+            :encoding => 'utf-8',
+            :mode     => '100644',
+            :path     => @destination_path,
+            :content  => @content
+          }]
+        })['sha']
       end
 
       private
@@ -55,32 +59,11 @@ module Pod
         File.join(BASE_URL, path)
       end
 
-      def sha_latest_commit
-        @sha_latest_commit ||= begin
-          response = REST.get(url_for("git/#{branch_ref(BASE_BRANCH)}"), HEADERS, BASIC_AUTH)
-          JSON.parse(response.body)['object']['sha']
-        end
-      end
-
-      def sha_base_tree
-        @sha_base_tree ||= begin
-          response = REST.get(url_for("git/commits/#{sha_latest_commit}"), HEADERS, BASIC_AUTH)
-          JSON.parse(response.body)['tree']['sha']
-        end
-      end
-
-      def create_new_tree
-        body = {
-          :base_tree => sha_base_tree,
-          :tree => [{
-            :encoding => 'utf-8',
-            :mode     => '100644',
-            :path     => @destination_path,
-            :content  => @content
-          }]
-        }.to_json
-        response = REST.post(url_for('git/trees'), body, HEADERS, BASIC_AUTH)
-        JSON.parse(response.body)['sha']
+      # TODO handle failures
+      def rest(method, path, body = nil)
+        args = [method, url_for(path), (body.to_json if body), HEADERS, BASIC_AUTH].compact
+        response = REST.send(*args)
+        JSON.parse(response.body)
       end
     end
   end
