@@ -8,10 +8,10 @@ module Pod
       BASIC_AUTH = { :username => ENV['GH_USERNAME'], :password => ENV['GH_PASSWORD'] }.freeze
       HEADERS    = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
 
-      attr_reader :path, :contents
+      attr_reader :destination_path, :content
 
-      def initialize(path, contents)
-        @path, @contents = path, contents
+      def initialize(destination_path, content)
+        @destination_path, @content = destination_path, content
       end
 
       def url_for(path)
@@ -26,6 +26,20 @@ module Pod
       def sha_base_tree
         response = REST.get(url_for("git/commits/#{sha_latest_commit}"), HEADERS, BASIC_AUTH)
         JSON.parse(response.body)['tree']['sha']
+      end
+
+      def create_new_tree
+        body = {
+          :base_tree => sha_base_tree,
+          :tree => [{
+            :encoding => 'utf-8',
+            :mode     => '100644',
+            :path     => @destination_path,
+            :content  => @content
+          }]
+        }.to_json
+        response = REST.post(url_for('git/trees'), body, HEADERS, BASIC_AUTH)
+        JSON.parse(response.body)['sha']
       end
     end
   end

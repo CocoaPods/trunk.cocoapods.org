@@ -24,5 +24,19 @@ module Pod::PushApp
     it "returns the SHA of the tree of the latest commit" do
       @github.sha_base_tree.should == 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc'
     end
+
+    it "creates a new tree entry, which represents the contents, and returns its SHA" do
+      expected_body = {
+        :base_tree => 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc',
+        :tree => [{
+          :encoding => 'utf-8',
+          :mode     => '100644',
+          :path     => 'AFNetworking/1.2.0/AFNetworking.podspec',
+          :content  => fixture_read('AFNetworking.podspec')
+        }]
+      }.to_json
+      REST.expects(:post).with(@github.url_for('git/trees'), expected_body, GitHub::HEADERS, GitHub::BASIC_AUTH).returns(fixture_response('create_new_tree'))
+      @github.create_new_tree.should == '18f8a32cdf45f0f627749e2be25229f5026f93ac'
+    end
   end
 end
