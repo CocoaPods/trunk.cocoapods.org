@@ -9,6 +9,13 @@ module Pod
       BASIC_AUTH  = { :username => ENV['GH_USERNAME'], :password => ENV['GH_PASSWORD'] }.freeze
       HEADERS     = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
 
+      def self.create_pull_request(title, body, branch_name, destination_path, content)
+        github = new(destination_path, content)
+        sha_new_commit = github.create_new_commit(title)
+        ref_new_branch = github.create_new_branch(branch_name, sha_new_commit)
+        github.create_pull_request(title, body, ref_new_branch)
+      end
+
       attr_reader :destination_path, :content
 
       def initialize(destination_path, content)
@@ -23,8 +30,8 @@ module Pod
         rest(:post, 'git/refs', :ref => branch_ref(name), :sha => commit_sha)['ref']
       end
 
-      def create_pull_request(title, body, branch_name)
-        rest(:post, 'pulls', :title => title, :body => body, :head => branch_ref(branch_name), :base => branch_ref(BASE_BRANCH))['number']
+      def create_pull_request(title, body, from_branch_ref)
+        rest(:post, 'pulls', :title => title, :body => body, :head => from_branch_ref, :base => branch_ref(BASE_BRANCH))['number']
       end
 
       protected

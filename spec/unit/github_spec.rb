@@ -83,7 +83,12 @@ module Pod::PushApp
     end
 
     it "creates a new pull-request for a branch and returns the pull/issue number" do
-      @github.create_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', 'AFNetworking-1.2.0').should == 3
+      @github.create_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', 'refs/heads/AFNetworking-1.2.0').should == 3
+    end
+
+    it "creates a commit, branch, and pull-request in one go" do
+      GitHub.expects(:new).with(@github.destination_path, @github.content).returns(@github)
+      GitHub.create_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', 'AFNetworking-1.2.0', @github.destination_path, @github.content).should == 3
     end
   end
 end
