@@ -1,10 +1,14 @@
 require 'bacon'
 require 'mocha-on-bacon'
+require 'rack/test'
 
-ENV['GH_REPO']     = 'CocoaPods/Specs'
-ENV['GH_USERNAME'] = 'alloy'
-ENV['GH_PASSWORD'] = 'secret'
+require 'cocoapods-core'
 
+ENV['GH_REPO']      = 'CocoaPods/Specs'
+ENV['GH_USERNAME']  = 'alloy'
+ENV['GH_PASSWORD']  = 'secret'
+
+ENV['RACK_ENV']     = 'test'
 ENV['DATABASE_URL'] = 'postgres://localhost/push_cocoapods_org_test'
 
 ROOT = File.expand_path('../../', __FILE__)
@@ -18,6 +22,10 @@ class Bacon::Context
 
   def fixture_read(filename)
     File.read(fixture(filename))
+  end
+
+  def fixture_specification(filename)
+    Pod::Specification.from_file(fixture(filename))
   end
 
   alias_method :run_requirement_before_sequel, :run_requirement

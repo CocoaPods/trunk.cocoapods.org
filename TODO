@@ -1,2 +1,4 @@
 * API error handling
 * Can we set the author of the commit to the user's email?
+
+* The user can now send a serialized yaml version that does not contain the same content as the podspec. Need to overthink the implications, currently I see none, because it's the actual spec that will be validated on Travis, but it could mess up our DB.
