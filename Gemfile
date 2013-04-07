@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'nap'
+gem 'sequel'
+gem 'pg'
 
 group :development do
   gem 'bacon'

@@ -14,9 +14,11 @@ GEM
       mocha (>= 0.13.0)
     multi_json (1.7.2)
     nap (0.5.1)
+    pg (0.15.0)
     saga (0.10.0)
       activesupport (>= 2.3)
       erubis (>= 2.6)
+    sequel (3.46.0)
 
 PLATFORMS
   ruby
@@ -25,4 +27,6 @@ DEPENDENCIES
   bacon
   mocha-on-bacon
   nap
+  pg
   saga
+  sequel
