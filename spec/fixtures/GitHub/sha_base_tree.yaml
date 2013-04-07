@@ -1,0 +1,62 @@
+--- !ruby/object:REST::Response
+status_code: 200
+headers:
+  !binary "c2VydmVy":
+  - !binary |-
+    R2l0SHViLmNvbQ==
+  !binary "ZGF0ZQ==":
+  - !binary |-
+    U3VuLCAwNyBBcHIgMjAxMyAxMjoxMzowMSBHTVQ=
+  !binary "Y29udGVudC10eXBl":
+  - !binary |-
+    YXBwbGljYXRpb24vanNvbjsgY2hhcnNldD11dGYtOA==
+  !binary "Y29ubmVjdGlvbg==":
+  - !binary |-
+    a2VlcC1hbGl2ZQ==
+  !binary "c3RhdHVz":
+  - !binary |-
+    MjAwIE9L
+  !binary "eC1yYXRlbGltaXQtbGltaXQ=":
+  - !binary |-
+    NTAwMA==
+  !binary "eC1yYXRlbGltaXQtcmVtYWluaW5n":
+  - !binary |-
+    NDk5OA==
+  !binary "dmFyeQ==":
+  - !binary |-
+    QWNjZXB0LCBBdXRob3JpemF0aW9uLCBDb29raWU=
+  !binary "Y2FjaGUtY29udHJvbA==":
+  - !binary |-
+    cHJpdmF0ZSwgbWF4LWFnZT02MCwgcy1tYXhhZ2U9NjA=
+  !binary "bGFzdC1tb2RpZmllZA==":
+  - !binary |-
+    U3VuLCAwNyBBcHIgMjAxMyAxMDo0Nzo1NyBHTVQ=
+  !binary "ZXRhZw==":
+  - !binary |-
+    ImQzMWYyYjNkNWIwMTAyZTczNTA0ODVkYjQwNTdhN2Y4Ig==
+  !binary "eC1naXRodWItbWVkaWEtdHlwZQ==":
+  - !binary |-
+    Z2l0aHViLmJldGE=
+  !binary "eC1jb250ZW50LXR5cGUtb3B0aW9ucw==":
+  - !binary |-
+    bm9zbmlmZg==
+  !binary "Y29udGVudC1sZW5ndGg=":
+  - !binary |-
+    Njkw
+body: !binary |-
+  eyJzaGEiOiI2MzI2NzFhM2YyODc3MWEzNjMxMTE5MzU0NzMxZGJhMDM5NjNh
+  Mjc2IiwidXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbGxv
+  eS9wdXNoLmNvY29hcG9kcy5vcmctdGVzdC9naXQvY29tbWl0cy82MzI2NzFh
+  M2YyODc3MWEzNjMxMTE5MzU0NzMxZGJhMDM5NjNhMjc2IiwiaHRtbF91cmwi
+  OiJodHRwczovL2dpdGh1Yi5jb20vYWxsb3kvcHVzaC5jb2NvYXBvZHMub3Jn
+  LXRlc3QvY29tbWl0cy82MzI2NzFhM2YyODc3MWEzNjMxMTE5MzU0NzMxZGJh
+  MDM5NjNhMjc2IiwiYXV0aG9yIjp7Im5hbWUiOiJFbG95IER1csOhbiIsImVt
+  YWlsIjoiZWxveS5kZS5lbmlnZUBnbWFpbC5jb20iLCJkYXRlIjoiMjAxMy0w
+  NC0wN1QxMDo0Nzo1N1oifSwiY29tbWl0dGVyIjp7Im5hbWUiOiJFbG95IER1
+  csOhbiIsImVtYWlsIjoiZWxveS5kZS5lbmlnZUBnbWFpbC5jb20iLCJkYXRl
+  IjoiMjAxMy0wNC0wN1QxMDo0Nzo1N1oifSwidHJlZSI6eyJzaGEiOiJmOTNl
+  M2ExYTE1MjVmYjViOTEwMjBkYTg2ZTQ0ODEwYzg3YTJkN2JjIiwidXJsIjoi
+  aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbGxveS9wdXNoLmNvY29h
+  cG9kcy5vcmctdGVzdC9naXQvdHJlZXMvZjkzZTNhMWExNTI1ZmI1YjkxMDIw
+  ZGE4NmU0NDgxMGM4N2EyZDdiYyJ9LCJtZXNzYWdlIjoiZmlyc3QgY29tbWl0
+  IiwicGFyZW50cyI6W119

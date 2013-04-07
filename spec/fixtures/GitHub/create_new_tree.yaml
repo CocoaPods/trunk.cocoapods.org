@@ -1,0 +1,30 @@
+--- !ruby/object:REST::Response
+status_code: 201
+headers:
+  server:
+  - GitHub.com
+  date:
+  - Sun, 07 Apr 2013 12:22:18 GMT
+  content-type:
+  - application/json; charset=utf-8
+  connection:
+  - keep-alive
+  status:
+  - 201 Created
+  x-ratelimit-limit:
+  - '5000'
+  x-ratelimit-remaining:
+  - '4981'
+  location:
+  - https://api.github.com/repos/alloy/push.cocoapods.org-test/git/trees/18f8a32cdf45f0f627749e2be25229f5026f93ac
+  x-github-media-type:
+  - github.beta
+  x-content-type-options:
+  - nosniff
+  content-length:
+  - '631'
+  etag:
+  - ! '"a61f3c13f22aa724cea5779310d7804d"'
+  cache-control:
+  - max-age=0, private, must-revalidate
+body: ! '{"sha":"18f8a32cdf45f0f627749e2be25229f5026f93ac","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/trees/18f8a32cdf45f0f627749e2be25229f5026f93ac","tree":[{"mode":"040000","type":"tree","sha":"7f262264f60b53bc6aab37ca4d8ea106c819e76d","path":"AFNetworking-1.2.0","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/trees/7f262264f60b53bc6aab37ca4d8ea106c819e76d"},{"mode":"100644","type":"blob","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","path":"README.md","size":0,"url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"}]}'
