@@ -35,6 +35,8 @@ module Pod
         path   = File.join(name, version, "#{name}.podspec")
         GitHub.create_pull_request(title, body, branch, path, params['specification'])
 
+        pod_version.submitted_as_pull_request!
+
         status 200
       end
     end

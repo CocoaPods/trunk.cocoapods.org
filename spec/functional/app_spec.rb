@@ -31,6 +31,7 @@ module Pod::PushApp
       GitHub.expects(:create_pull_request).with('[Add] AFNetworking (1.2.0)', 'merge-42', 'merge-42', 'AFNetworking/1.2.0/AFNetworking.podspec', fixture_read('AFNetworking.podspec')).returns(3)
       post_spec!
       last_response.should.be.ok
+      Pod.first(:name => spec.name).versions.first.should.be.submitted_as_pull_request
     end
   end
 end
