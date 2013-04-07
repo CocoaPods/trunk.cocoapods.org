@@ -22,6 +22,11 @@ module Pod
         response = REST.get(url_for('git/refs/heads/master'), HEADERS, BASIC_AUTH)
         JSON.parse(response.body)['object']['sha']
       end
+
+      def sha_base_tree
+        response = REST.get(url_for("git/commits/#{sha_latest_commit}"), HEADERS, BASIC_AUTH)
+        JSON.parse(response.body)['tree']['sha']
+      end
     end
   end
 end
