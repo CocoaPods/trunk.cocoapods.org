@@ -15,6 +15,8 @@ ROOT = File.expand_path('../../', __FILE__)
 $:.unshift ROOT
 require 'app/controllers/app'
 
+Mocha::Configuration.prevent(:stubbing_non_existent_method)
+
 class Bacon::Context
   def fixture(filename)
     File.join(ROOT, 'spec/fixtures', filename)
