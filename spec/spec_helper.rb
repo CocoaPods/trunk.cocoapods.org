@@ -20,10 +20,10 @@ class Bacon::Context
     File.read(fixture(filename))
   end
 
-  alias_method :it_before_sequel, :it
-  def it(description, &block)
-    it_before_sequel(description) do
-      Sequel::Model.db.transaction(:rollback => :always) { block.call }
+  alias_method :run_requirement_before_sequel, :run_requirement
+  def run_requirement(description, spec)
+    Sequel::Model.db.transaction(:rollback => :always) do
+      run_requirement_before_sequel(description, spec)
     end
   end
 end

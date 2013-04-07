@@ -1,12 +1,12 @@
+require 'app/models/pod_version'
+
 module Pod
   module PushApp
     class Pod < Sequel::Model
       self.dataset = :pods
       plugin :timestamps
 
-      def self.find_or_create_by_name(name)
-        find_or_create(:name => name)
-      end
+      one_to_many :versions, :class => 'Pod::PushApp::PodVersion'
     end
   end
 end
