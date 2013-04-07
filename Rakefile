@@ -14,3 +14,10 @@ namespace :stories do
     sh 'saga convert --template design/requirements_template design/requirements.txt > design/requirements.html'
   end
 end
+
+desc 'Run the specs'
+task :spec do
+  sh "bacon #{FileList['spec/**/*_spec.rb'].shuffle.join(' ')}"
+end
+
+task :default => :spec
