@@ -4,7 +4,8 @@ require 'json'
 module Pod
   module PushApp
     class GitHub
-      BASE_URL    = "https://api.github.com/repos/#{ENV['GH_REPO']}".freeze # GH_REPO should be in the form of 'owner/repo'
+      REPO        = ENV['GH_REPO'].dup.freeze
+      BASE_URL    = "https://api.github.com/repos/#{REPO}".freeze # GH_REPO should be in the form of 'owner/repo'
       BASE_BRANCH = 'master'.freeze
       BASIC_AUTH  = { :username => ENV['GH_USERNAME'], :password => ENV['GH_PASSWORD'] }.freeze
       HEADERS     = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze

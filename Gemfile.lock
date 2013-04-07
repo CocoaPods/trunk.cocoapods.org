@@ -16,11 +16,15 @@ GEM
       multi_json (~> 1.0)
     addressable (2.3.3)
     bacon (1.2.0)
+    daemons (1.1.9)
     erubis (2.7.0)
+    eventmachine (1.0.3)
     faraday (0.8.7)
       multipart-post (~> 1.1)
     faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
+    foreman (0.62.0)
+      thor (>= 0.13.6)
     hashie (2.0.3)
     i18n (0.6.1)
     metaclass (0.0.1)
@@ -58,6 +62,11 @@ GEM
       tilt (~> 1.3, >= 1.3.4)
     sinatra-param (0.1.2)
       sinatra (~> 1.3)
+    thin (1.5.1)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
+    thor (0.18.1)
     tilt (1.3.6)
 
 PLATFORMS
@@ -66,6 +75,7 @@ PLATFORMS
 DEPENDENCIES
   bacon
   cocoapods-core!
+  foreman
   mocha-on-bacon
   nap
   pg
@@ -75,3 +85,4 @@ DEPENDENCIES
   sequel
   sinatra
   sinatra-param
+  thin
