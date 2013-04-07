@@ -56,7 +56,7 @@ sha_new_branch = response['object']['sha']
 
 #### Create pull-request
 
-body = { "title" => "[PUSH] Add #{test_name}", "body" => ":heart:", "head" => sha_new_branch, "base" => "master" }.to_json
+body = { "title" => "[PUSH] Add #{test_name}", "body" => ":heart:", "head" => "refs/heads/#{test_name}", "base" => "master" }.to_json
 p body
 response = handle_response(REST.post(url("pulls"), body, {}, auth_params))
 p response

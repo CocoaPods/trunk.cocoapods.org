@@ -57,14 +57,28 @@ module Pod::PushApp
 
     before do
       body = {
-        :ref => 'refs/heads/BRANCH-NAME',
+        :ref => 'refs/heads/AFNetworking-1.2.0',
         :sha => '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
       }.to_json
       REST.stubs(:post).with(@github.url_for('git/refs'), body, GitHub::HEADERS, GitHub::BASIC_AUTH).returns(fixture_response('create_new_branch'))
     end
 
     it "creates a new branch object with a new commit object" do
-      @github.create_new_branch_and_commit('BRANCH-NAME', '[Add] AFNetworking 1.2.0').should == '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
+      @github.create_new_branch('AFNetworking-1.2.0', '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d').should == 'refs/heads/AFNetworking-1.2.0'
+    end
+
+    before do
+      body = {
+        :title => '[Add] AFNetworking 1.2.0',
+        :body  => 'Specification for AFNetworking 1.2.0',
+        :head  => 'refs/heads/AFNetworking-1.2.0',
+        :base  => 'refs/heads/master'
+      }.to_json
+      REST.stubs(:post).with(@github.url_for('pulls'), body, GitHub::HEADERS, GitHub::BASIC_AUTH).returns(fixture_response('create_pull-request'))
+    end
+
+    it "creates a new pull-request for a branch and returns the pull/issue number" do
+      @github.create_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', 'AFNetworking-1.2.0').should == 3
     end
   end
 end
