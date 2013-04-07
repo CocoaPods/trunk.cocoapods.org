@@ -10,6 +10,14 @@ module Pod
         pod = Pod.find_or_create(:name => name)
         find_or_create(:pod => pod, :name => version_name)
       end
+
+      def submitted_as_pull_request!
+        update :state => 'submitted_as_pull_request'
+      end
+
+      def submitted_as_pull_request?
+        state == 'submitted_as_pull_request'
+      end
     end
   end
 end
