@@ -54,5 +54,17 @@ module Pod::PushApp
     it "creates a new commit object for the new tree object" do
       @github.create_new_commit('[Add] AFNetworking 1.2.0').should == '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
     end
+
+    before do
+      body = {
+        :ref => 'refs/heads/BRANCH-NAME',
+        :sha => '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
+      }.to_json
+      REST.stubs(:post).with(@github.url_for('git/refs'), body, GitHub::HEADERS, GitHub::BASIC_AUTH).returns(fixture_response('create_new_branch'))
+    end
+
+    it "creates a new branch object with a new commit object" do
+      @github.create_new_branch_and_commit('BRANCH-NAME', '[Add] AFNetworking 1.2.0').should == '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
+    end
   end
 end

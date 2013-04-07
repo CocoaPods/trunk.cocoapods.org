@@ -51,6 +51,15 @@ module Pod
         response = REST.post(url_for('git/commits'), body, HEADERS, BASIC_AUTH)
         JSON.parse(response.body)['sha']
       end
+
+      def create_new_branch_and_commit(branch_name, commit_message)
+        body = {
+          :ref => "refs/heads/#{branch_name}",
+          :sha => create_new_commit(commit_message)
+        }.to_json
+        response = REST.post(url_for('git/refs'), body, HEADERS, BASIC_AUTH)
+        JSON.parse(response.body)['object']['sha']
+      end
     end
   end
 end
