@@ -15,34 +15,6 @@ module Pod
         @destination_path, @content = destination_path, content
       end
 
-      def url_for(path)
-        File.join(BASE_URL, path)
-      end
-
-      def sha_latest_commit
-        response = REST.get(url_for("git/#{branch_ref(BASE_BRANCH)}"), HEADERS, BASIC_AUTH)
-        JSON.parse(response.body)['object']['sha']
-      end
-
-      def sha_base_tree
-        response = REST.get(url_for("git/commits/#{sha_latest_commit}"), HEADERS, BASIC_AUTH)
-        JSON.parse(response.body)['tree']['sha']
-      end
-
-      def create_new_tree
-        body = {
-          :base_tree => sha_base_tree,
-          :tree => [{
-            :encoding => 'utf-8',
-            :mode     => '100644',
-            :path     => @destination_path,
-            :content  => @content
-          }]
-        }.to_json
-        response = REST.post(url_for('git/trees'), body, HEADERS, BASIC_AUTH)
-        JSON.parse(response.body)['sha']
-      end
-
       def create_new_commit(message)
         body = {
           :parents => [sha_latest_commit],
@@ -77,6 +49,38 @@ module Pod
 
       def branch_ref(name)
         "refs/heads/#{name}"
+      end
+
+      def url_for(path)
+        File.join(BASE_URL, path)
+      end
+
+      def sha_latest_commit
+        @sha_latest_commit ||= begin
+          response = REST.get(url_for("git/#{branch_ref(BASE_BRANCH)}"), HEADERS, BASIC_AUTH)
+          JSON.parse(response.body)['object']['sha']
+        end
+      end
+
+      def sha_base_tree
+        @sha_base_tree ||= begin
+          response = REST.get(url_for("git/commits/#{sha_latest_commit}"), HEADERS, BASIC_AUTH)
+          JSON.parse(response.body)['tree']['sha']
+        end
+      end
+
+      def create_new_tree
+        body = {
+          :base_tree => sha_base_tree,
+          :tree => [{
+            :encoding => 'utf-8',
+            :mode     => '100644',
+            :path     => @destination_path,
+            :content  => @content
+          }]
+        }.to_json
+        response = REST.post(url_for('git/trees'), body, HEADERS, BASIC_AUTH)
+        JSON.parse(response.body)['sha']
       end
     end
   end
