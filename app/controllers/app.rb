@@ -20,10 +20,9 @@ module Pod
         # * wrap in a transaction for error handling
         # * store github pull-request progress state
         spec = YAML.load(request.body)
-        name, version = spec['name'], spec['version']
 
         # TODO we should probably verify some more data
-        if name && version
+        if spec.is_a?(Hash) && (name = spec['name']) && (version = spec['version'])
           pod_version = PodVersion.by_name_and_version(name, version)
 
           #title  = "[Add] #{name} (#{version})"

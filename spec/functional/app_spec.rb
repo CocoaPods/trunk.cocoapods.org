@@ -50,6 +50,11 @@ EOYAML
 
     it "fails with invalid spec data" do
       lambda do
+        post '/pods', ''
+      end.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 400
+
+      lambda do
         post '/pods', "---\nsomething: else\n"
       end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 400
