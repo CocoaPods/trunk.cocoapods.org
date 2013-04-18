@@ -21,15 +21,20 @@ module Pod
         # TODO
         # * wrap in a transaction for error handling
         # * store github pull-request progress state
-        hash = YAML.safe_load(request.body)
-        if hash.is_a?(Hash)
-          spec = Specification.from_hash(hash)
-          if spec.name
-            pod_version = PodVersion.by_name_and_version(spec.name, spec.version.to_s)
-            halt 202
-          end
+        if specification && specification.name
+          pod_version = PodVersion.by_name_and_version(specification.name, specification.version.to_s)
+          halt 202
         end
         error 400
+      end
+
+      private
+
+      def specification
+        @specification ||= begin
+          hash = YAML.safe_load(request.body)
+          Specification.from_hash(hash) if hash.is_a?(Hash)
+        end
       end
     end
   end
