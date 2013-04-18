@@ -45,13 +45,12 @@ GEM
       netrc (~> 0.7.7)
     pg (0.15.0)
     rack (1.5.2)
-    rack-contrib (1.1.0)
-      rack (>= 0.9.1)
     rack-protection (1.5.0)
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
     rake (10.0.4)
+    safe_yaml (0.9.0)
     saga (0.10.0)
       activesupport (>= 2.3)
       erubis (>= 2.6)
@@ -60,8 +59,6 @@ GEM
       rack (~> 1.5, >= 1.5.2)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
-    sinatra-param (0.1.2)
-      sinatra (~> 1.3)
     thin (1.5.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -79,10 +76,9 @@ DEPENDENCIES
   mocha-on-bacon
   nap
   pg
-  rack-contrib
   rack-test
+  safe_yaml
   saga
   sequel
   sinatra
-  sinatra-param
   thin

@@ -5,9 +5,8 @@ gem 'sequel'
 gem 'pg'
 gem 'foreman'
 gem 'thin'
+gem 'safe_yaml'
 gem 'sinatra'
-gem 'sinatra-param'
-gem 'rack-contrib'
 
 group :development do
   gem 'bacon'

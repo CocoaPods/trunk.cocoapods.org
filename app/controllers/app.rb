@@ -1,9 +1,11 @@
+require 'safe_yaml'
+require 'sinatra/base'
+
 require 'db/config'
 require 'app/models/github'
 require 'app/models/pod'
 
-require 'sinatra/base'
-require 'rack/contrib'
+SafeYAML::OPTIONS[:default_mode] = :safe
 
 module Pod
   module PushApp

@@ -7,7 +7,7 @@ module Pod::PushApp
 
   describe "GitHub" do
     def fixture_response(name)
-      YAML.load(fixture_read("GitHub/#{name}.yaml"))
+      YAML.unsafe_load(fixture_read("GitHub/#{name}.yaml"))
     end
 
     before do

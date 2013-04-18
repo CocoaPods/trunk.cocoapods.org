@@ -1,5 +1,21 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
+module Fixtures
+  # Taken from https://github.com/dtao/safe_yaml/blob/master/README.md#explanation
+  class ClassBuilder
+    def self.this_should_not_be_called!
+    end
+
+    def []=(key, value)
+      self.class.class_eval <<-EOS
+        def #{key}
+          #{value}
+        end
+      EOS
+    end
+  end
+end
+
 module Pod::PushApp
   describe "App" do
     extend Rack::Test::Methods
@@ -13,6 +29,7 @@ module Pod::PushApp
     end
 
     before do
+      header 'Content-Type', 'text/yaml'
       GitHub.stubs(:create_pull_request)
     end
 
@@ -22,8 +39,16 @@ module Pod::PushApp
       last_response.status.should == 406
     end
 
+    it "does not allow unsafe YAML to load" do
+      yaml = <<-EOYAML
+--- !ruby/hash:Fixtures::ClassBuilder
+"foo; end; this_should_not_be_called!; def bar": "baz"
+EOYAML
+      Fixtures::ClassBuilder.expects(:this_should_not_be_called!).never
+      post '/pods', yaml
+    end
+
     it "creates new pod and version records" do
-      header 'Content-Type', 'text/yaml'
       post '/pods', spec.to_yaml
       last_response.should.be.ok
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
