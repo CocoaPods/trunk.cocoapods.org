@@ -36,7 +36,7 @@ module Pod::PushApp
     it "only accepts YAML" do
       header 'Content-Type', 'application/json'
       post '/pods'
-      last_response.status.should == 406
+      last_response.status.should == 415
     end
 
     it "does not allow unsafe YAML to load" do
@@ -48,8 +48,19 @@ EOYAML
       post '/pods', yaml
     end
 
+    it "fails with invalid spec data" do
+      post '/pods', "---\nsomething: else\n"
+      lambda do
+        last_response.status.should == 400
+      end.should.not.change { Pod.count + PodVersion.count }
+    end
+
     it "creates new pod and version records" do
-      post '/pods', spec.to_yaml
+      lambda do
+        lambda do
+          post '/pods', spec.to_yaml
+        end.should.change { Pod.count }
+      end.should.change { PodVersion.count }
       last_response.should.be.ok
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
