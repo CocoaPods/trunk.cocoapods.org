@@ -49,10 +49,10 @@ EOYAML
     end
 
     it "fails with invalid spec data" do
-      post '/pods', "---\nsomething: else\n"
       lambda do
-        last_response.status.should == 400
+        post '/pods', "---\nsomething: else\n"
       end.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 400
     end
 
     it "creates new pod and version records" do
