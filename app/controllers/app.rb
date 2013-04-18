@@ -35,7 +35,7 @@ module Pod
           #pod_version.submitted_as_pull_request!
 
           #headers 'Location' => "https://github.com/#{GitHub::REPO}/pull/#{pull_request_number}"
-          status 200
+          status 202
         else
           error 400
         end

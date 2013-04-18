@@ -61,7 +61,7 @@ EOYAML
           post '/pods', spec.to_yaml
         end.should.change { Pod.count }
       end.should.change { PodVersion.count }
-      last_response.should.be.ok
+      last_response.status.should == 202
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
