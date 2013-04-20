@@ -77,6 +77,14 @@ EOYAML
       }
     end
 
+    it "does not allow a push for an existing pod version" do
+      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      lambda {
+        post '/pods', spec.to_yaml
+      }.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 409
+    end
+
     it "creates new pod and version records" do
       lambda {
         lambda {
@@ -87,12 +95,10 @@ EOYAML
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
-    it "does not allow a push for an existing pod version" do
-      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
-      lambda {
-        post '/pods', spec.to_yaml
-      }.should.not.change { Pod.count + PodVersion.count }
-      last_response.status.should == 409
+    it "returns the location where the submission flow status can be retrieved from" do
+    end
+
+    it "returns the status of the submission flow" do
     end
 
     #it "creates a pull-request for the specification" do
