@@ -86,6 +86,14 @@ EOYAML
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
+    it "does not allow a push for an existing pod version" do
+      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      lambda {
+        post '/pods', spec.to_yaml
+      }.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 409
+    end
+
     #it "creates a pull-request for the specification" do
       #PodVersion.any_instance.stubs(:id).returns(42)
       #GitHub.expects(:create_pull_request).with('[Add] AFNetworking (1.2.0)', 'merge-42', 'merge-42', 'AFNetworking/1.2.0/AFNetworking.podspec', fixture_read('AFNetworking.podspec')).returns(3)

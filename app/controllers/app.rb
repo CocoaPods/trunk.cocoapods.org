@@ -33,7 +33,12 @@ module Pod
           error 422, results.to_yaml
         end
 
-        pod_version = PodVersion.by_name_and_version(specification.name, specification.version.to_s)
+        pod = Pod.find_or_create(:name => specification.name)
+        version_name = specification.version.to_s
+        if pod.versions_dataset.where(:name => version_name).first
+          error 409, "Unable to accept duplicate entry for: #{specification}".to_yaml
+        end
+        version = pod.add_version(:name => version_name)
         halt 202
       end
 
