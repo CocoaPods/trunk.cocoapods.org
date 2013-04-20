@@ -2,6 +2,7 @@ require 'safe_yaml'
 require 'sinatra/base'
 
 require 'cocoapods-core/specification'
+require 'cocoapods-core/specification/linter'
 
 require 'db/config'
 require 'app/models/github'
@@ -21,9 +22,17 @@ module Pod
         # TODO
         # * wrap in a transaction for error handling
         # * store github pull-request progress state
-        if specification && specification.name
-          pod_version = PodVersion.by_name_and_version(specification.name, specification.version.to_s)
-          halt 202
+        if specification
+          linter = Specification::Linter.new(specification)
+          if linter.lint
+            pod_version = PodVersion.by_name_and_version(specification.name, specification.version.to_s)
+            halt 202
+          else
+            results = {}
+            results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
+            results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
+            error 422, results.to_yaml
+          end
         end
         error 400
       end

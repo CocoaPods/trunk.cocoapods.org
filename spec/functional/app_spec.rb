@@ -29,6 +29,7 @@ module Pod::PushApp
     end
 
     before do
+      @spec = nil
       header 'Content-Type', 'text/yaml'
       GitHub.stubs(:create_pull_request)
     end
@@ -48,24 +49,39 @@ EOYAML
       post '/pods', yaml
     end
 
-    it "fails with invalid spec data" do
-      lambda do
+    it "fails with data other than serialized spec data" do
+      lambda {
         post '/pods', ''
-      end.should.not.change { Pod.count + PodVersion.count }
+      }.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 400
 
-      lambda do
+      lambda {
         post '/pods', "---\nsomething: else\n"
-      end.should.not.change { Pod.count + PodVersion.count }
-      last_response.status.should == 400
+      }.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 422
+    end
+
+    it "fails with a spec that does not pass a quick lint" do
+      spec.name = nil
+      spec.license = nil
+
+      lambda {
+        post '/pods', spec.to_yaml
+      }.should.not.change { Pod.count + PodVersion.count }
+
+      last_response.status.should == 422
+      YAML.load(last_response.body).should == {
+        'errors'   => ['Missing required attribute `name`.'],
+        'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
+      }
     end
 
     it "creates new pod and version records" do
-      lambda do
-        lambda do
+      lambda {
+        lambda {
           post '/pods', spec.to_yaml
-        end.should.change { Pod.count }
-      end.should.change { PodVersion.count }
+        }.should.change { Pod.count }
+      }.should.change { PodVersion.count }
       last_response.status.should == 202
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
