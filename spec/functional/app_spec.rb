@@ -63,6 +63,7 @@ EOYAML
 
     it "fails with a spec that does not pass a quick lint" do
       spec.name = nil
+      spec.version = nil
       spec.license = nil
 
       lambda {
@@ -71,7 +72,7 @@ EOYAML
 
       last_response.status.should == 422
       YAML.load(last_response.body).should == {
-        'errors'   => ['Missing required attribute `name`.'],
+        'errors'   => ['Missing required attribute `name`.', 'The version of the spec should be higher than 0.'],
         'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
       }
     end

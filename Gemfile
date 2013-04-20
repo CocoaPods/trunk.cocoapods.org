@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'cocoapods-core'
+gem 'cocoapods-core', :git => 'git://github.com/CocoaPods/Core.git'
 gem 'foreman'
 gem 'nap'
 gem 'pg'
