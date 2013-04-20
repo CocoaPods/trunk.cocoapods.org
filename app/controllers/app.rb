@@ -14,27 +14,27 @@ module Pod
   module PushApp
     class App < Sinatra::Base
       before do
-        error 415 unless request.media_type == 'text/yaml'
         content_type 'text/yaml'
+        unless request.media_type == 'text/yaml'
+          error 415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.".to_yaml
+        end
       end
 
       post '/pods' do
-        # TODO
-        # * wrap in a transaction for error handling
-        # * store github pull-request progress state
-        if specification
-          linter = Specification::Linter.new(specification)
-          if linter.lint
-            pod_version = PodVersion.by_name_and_version(specification.name, specification.version.to_s)
-            halt 202
-          else
-            results = {}
-            results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
-            results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
-            error 422, results.to_yaml
-          end
+        if specification.nil?
+          error 400, 'Unable to load a Pod Specification from the provided input.'.to_yaml
         end
-        error 400
+
+        linter = Specification::Linter.new(specification)
+        unless linter.lint
+          results = {}
+          results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
+          results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
+          error 422, results.to_yaml
+        end
+
+        pod_version = PodVersion.by_name_and_version(specification.name, specification.version.to_s)
+        halt 202
       end
 
       private
