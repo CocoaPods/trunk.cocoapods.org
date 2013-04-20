@@ -27,10 +27,7 @@ module Pod
 
         linter = Specification::Linter.new(specification)
         unless linter.lint
-          results = {}
-          results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
-          results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
-          error 422, results.to_yaml
+          error 422, results(linter).to_yaml
         end
 
         pod = Pod.find_or_create(:name => specification.name)
@@ -49,6 +46,13 @@ module Pod
           hash = YAML.safe_load(request.body)
           Specification.from_hash(hash) if hash.is_a?(Hash)
         end
+      end
+
+      def results(linter)
+        results = {}
+        results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
+        results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
+        results
       end
     end
   end
