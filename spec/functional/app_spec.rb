@@ -97,6 +97,12 @@ EOYAML
       last_response.location.should == 'http://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
+    it "creates a submission job and log message once a new pod version is created" do
+      post '/pods', spec.to_yaml
+      job = Pod.first(:name => spec.name).versions.first.submission_job
+      job.log_messages.map(&:message).should == ['Submitted']
+    end
+
     #it "returns the status of the submission flow" do
     #end
 
