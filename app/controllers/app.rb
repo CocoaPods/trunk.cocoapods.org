@@ -25,9 +25,8 @@ module Pod
           error 400, 'Unable to load a Pod Specification from the provided input.'.to_yaml
         end
 
-        linter = Specification::Linter.new(specification)
-        unless linter.lint
-          error 422, results(linter).to_yaml
+        unless valid_specification?
+          error 422, validation_errors.to_yaml
         end
 
         version_name = specification.version.to_s
@@ -64,7 +63,15 @@ module Pod
         end
       end
 
-      def results(linter)
+      def linter
+        @linter ||= Specification::Linter.new(specification)
+      end
+
+      def valid_specification?
+        linter.lint
+      end
+
+      def validation_errors
         results = {}
         results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
         results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
