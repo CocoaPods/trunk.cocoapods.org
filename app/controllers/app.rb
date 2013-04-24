@@ -52,6 +52,7 @@ module Pod
             halt(version.published? ? 200 : 102, messages.to_yaml)
           end
         end
+        error 404
       end
 
       private

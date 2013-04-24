@@ -124,6 +124,13 @@ EOYAML
       last_response.status.should == 200
     end
 
+    it "returns a 404 when a pod or version can't be found" do
+      get '/pods/AFNetworking/versions/0.2.1'
+      last_response.status.should == 404
+      get '/pods/FANetworking/versions/1.2.0'
+      last_response.status.should == 404
+    end
+
     #it "creates a pull-request for the specification" do
       #PodVersion.any_instance.stubs(:id).returns(42)
       #GitHub.expects(:create_pull_request).with('[Add] AFNetworking (1.2.0)', 'merge-42', 'merge-42', 'AFNetworking/1.2.0/AFNetworking.podspec', fixture_read('AFNetworking.podspec')).returns(3)
