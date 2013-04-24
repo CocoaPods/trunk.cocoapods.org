@@ -107,11 +107,22 @@ EOYAML
       job = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s).submission_job
       job.add_log_message(:message => 'Another message')
       get '/pods/AFNetworking/versions/1.2.0'
-      last_response.status.should == 202
       last_response.body.should == job.log_messages.map do |log_message|
         { log_message.created_at => log_message.message }
       end.to_yaml
     end
+
+    it "returns that the pod version is not yet published" do
+      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      get '/pods/AFNetworking/versions/1.2.0'
+      last_response.status.should == 102
+    end
+
+    #it "returns that the pod version is published" do
+      #Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      #get '/pods/AFNetworking/versions/1.2.0'
+      #last_response.status.should == 200
+    #end
 
     #it "creates a pull-request for the specification" do
       #PodVersion.any_instance.stubs(:id).returns(42)
