@@ -8,7 +8,8 @@ module Pod::PushApp
         @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
       end
 
-      it "initializes with an unpublished state" do
+      it "initializes with a new state" do
+        @version.should.be.submitted
         @version.should.not.be.published
       end
     end

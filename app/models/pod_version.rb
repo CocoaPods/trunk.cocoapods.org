@@ -14,6 +14,10 @@ module Pod
         self.submission_job = SubmissionJob.create
       end
 
+      def submitted?
+        state == 'submitted'
+      end
+
       def published?
         state == 'published'
       end
