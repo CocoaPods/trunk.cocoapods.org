@@ -119,7 +119,7 @@ EOYAML
     end
 
     it "returns that the pod version is published" do
-      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :state => 'published')
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
     end
