@@ -49,7 +49,7 @@ module Pod
             messages = version.submission_job.log_messages.map do |log_message|
               { log_message.created_at => log_message.message }
             end
-            halt 102, messages.to_yaml
+            halt(version.published? ? 200 : 102, messages.to_yaml)
           end
         end
       end

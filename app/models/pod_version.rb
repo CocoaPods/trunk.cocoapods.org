@@ -14,6 +14,11 @@ module Pod
         self.submission_job = SubmissionJob.create
       end
 
+      # TODO I'm sure there's a better way to enable this through Sequel.
+      def published?
+        published
+      end
+
       # TODO this should move to the submission job
       def submitted_as_pull_request!
         update :state => 'submitted_as_pull_request'

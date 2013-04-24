@@ -118,11 +118,11 @@ EOYAML
       last_response.status.should == 102
     end
 
-    #it "returns that the pod version is published" do
-      #Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
-      #get '/pods/AFNetworking/versions/1.2.0'
-      #last_response.status.should == 200
-    #end
+    it "returns that the pod version is published" do
+      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      get '/pods/AFNetworking/versions/1.2.0'
+      last_response.status.should == 200
+    end
 
     #it "creates a pull-request for the specification" do
       #PodVersion.any_instance.stubs(:id).returns(42)
