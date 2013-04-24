@@ -14,6 +14,10 @@ module Pod
         super
         add_log_message(:message => 'Submitted')
       end
+
+      def submitted?
+        state == 'submitted'
+      end
     end
   end
 end
