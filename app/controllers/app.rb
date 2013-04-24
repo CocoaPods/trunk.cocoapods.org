@@ -43,6 +43,17 @@ module Pod
         halt 202
       end
 
+      get '/pods/:name/versions/:version' do
+        if pod = Pod.find(:name => params[:name])
+          if version = pod.versions_dataset.where(:name => params[:version]).first
+            messages = version.submission_job.log_messages.map do |log_message|
+              { log_message.created_at => log_message.message }
+            end
+            halt 202, messages.to_yaml
+          end
+        end
+      end
+
       private
 
       def specification
