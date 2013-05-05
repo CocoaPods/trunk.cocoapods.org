@@ -31,7 +31,6 @@ module Pod::PushApp
     before do
       @spec = nil
       header 'Content-Type', 'text/yaml'
-      GitHub.stubs(:create_pull_request)
     end
 
     it "only accepts YAML" do

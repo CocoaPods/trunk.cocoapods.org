@@ -10,21 +10,17 @@ module Pod
       BASIC_AUTH  = { :username => ENV['GH_USERNAME'], :password => ENV['GH_PASSWORD'] }.freeze
       HEADERS     = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
 
-      def self.create_pull_request(title, body, branch_name, destination_path, content)
-        github = new(destination_path, content)
-        sha_new_commit = github.create_new_commit(title)
-        ref_new_branch = github.create_new_branch(branch_name, sha_new_commit)
-        github.create_pull_request(title, body, ref_new_branch)
-      end
+      #def self.create_pull_request(title, body, branch_name, destination_path, content)
+        #github = new(destination_path, content)
+        #sha_new_commit = github.create_new_commit(title)
+        #ref_new_branch = github.create_new_branch(branch_name, sha_new_commit)
+        #github.create_pull_request(title, body, ref_new_branch)
+      #end
 
-      attr_reader :destination_path, :content
-
-      def initialize(destination_path, content)
-        @destination_path, @content = destination_path, content
-      end
-
-      def create_new_commit(message)
-        rest(:post, 'git/commits', :parents => [sha_latest_commit], :tree => create_new_tree, :message => message)['sha']
+      def create_new_commit(message, destination_path, content)
+        latest_commit_sha = get_latest_commit_sha
+        tree = create_new_tree(latest_commit_sha, destination_path, content)
+        rest(:post, 'git/commits', :parents => [latest_commit_sha], :tree => tree, :message => message)['sha']
       end
 
       def create_new_branch(name, commit_sha)
@@ -37,22 +33,23 @@ module Pod
 
       protected
 
-      def sha_latest_commit
-        @sha_latest_commit ||= rest(:get, "git/#{branch_ref(BASE_BRANCH)}")['object']['sha']
+      def get_latest_commit_sha
+        rest(:get, "git/#{branch_ref(BASE_BRANCH)}")['object']['sha']
       end
 
-      def sha_base_tree
-        @sha_base_tree ||= rest(:get, "git/commits/#{sha_latest_commit}")['tree']['sha']
+      def get_base_tree_sha(latest_commit_sha)
+        rest(:get, "git/commits/#{latest_commit_sha}")['tree']['sha']
       end
 
-      def create_new_tree
+      def create_new_tree(latest_commit_sha, destination_path, content)
+        sha_base_tree = get_base_tree_sha(latest_commit_sha)
         rest(:post, 'git/trees', {
           :base_tree => sha_base_tree,
           :tree => [{
             :encoding => 'utf-8',
             :mode     => '100644',
-            :path     => @destination_path,
-            :content  => @content
+            :path     => destination_path,
+            :content  => content
           }]
         })['sha']
       end
