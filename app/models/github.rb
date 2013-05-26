@@ -4,54 +4,45 @@ require 'json'
 module Pod
   module PushApp
     class GitHub
-      REPO        = ENV['GH_REPO'].dup.freeze
-      BASE_URL    = "https://api.github.com/repos/#{REPO}".freeze # GH_REPO should be in the form of 'owner/repo'
-      BASE_BRANCH = 'master'.freeze
-      BASIC_AUTH  = { :username => ENV['GH_USERNAME'], :password => ENV['GH_PASSWORD'] }.freeze
-      HEADERS     = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
+      BASE_URL = "https://api.github.com/repos/%s".freeze
+      HEADERS  = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
 
-      #def self.create_pull_request(title, body, branch_name, destination_path, content)
-        #github = new(destination_path, content)
-        #sha_new_commit = github.create_new_commit(title)
-        #ref_new_branch = github.create_new_branch(branch_name, sha_new_commit)
-        #github.create_pull_request(title, body, ref_new_branch)
-      #end
+      # `repo_name` should be in the form of 'owner/repo'.
+      def initialize(repo_name, base_branch_ref, basic_auth)
+        @base_url = BASE_URL % repo_name
+        @base_branch_ref, @basic_auth = base_branch_ref, basic_auth
+      end
 
-      def create_new_commit(message, destination_path, content)
-        latest_commit_sha = get_latest_commit_sha
-        tree = create_new_tree(latest_commit_sha, destination_path, content)
-        rest(:post, 'git/commits', :parents => [latest_commit_sha], :tree => tree, :message => message)['sha']
+      def fetch_latest_commit_sha
+        rest(:get, "git/#{branch_ref(@base_branch_ref)}")['object']['sha']
+      end
+
+      def fetch_base_tree_sha(commit_sha)
+        rest(:get, "git/commits/#{commit_sha}")['tree']['sha']
+      end
+
+      def create_new_tree(base_tree_sha, destination_path, data)
+        rest(:post, 'git/trees', {
+          :base_tree => base_tree_sha,
+          :tree => [{
+            :encoding => 'utf-8',
+            :mode     => '100644',
+            :path     => destination_path,
+            :content  => data
+          }]
+        })['sha']
+      end
+
+      def create_new_commit(new_tree_sha, base_commit_sha, message)
+        rest(:post, 'git/commits', :parents => [base_commit_sha], :tree => new_tree_sha, :message => message)['sha']
       end
 
       def create_new_branch(name, commit_sha)
         rest(:post, 'git/refs', :ref => branch_ref(name), :sha => commit_sha)['ref']
       end
 
-      def create_pull_request(title, body, from_branch_ref)
-        rest(:post, 'pulls', :title => title, :body => body, :head => from_branch_ref, :base => branch_ref(BASE_BRANCH))['number']
-      end
-
-      protected
-
-      def get_latest_commit_sha
-        rest(:get, "git/#{branch_ref(BASE_BRANCH)}")['object']['sha']
-      end
-
-      def get_base_tree_sha(latest_commit_sha)
-        rest(:get, "git/commits/#{latest_commit_sha}")['tree']['sha']
-      end
-
-      def create_new_tree(latest_commit_sha, destination_path, content)
-        sha_base_tree = get_base_tree_sha(latest_commit_sha)
-        rest(:post, 'git/trees', {
-          :base_tree => sha_base_tree,
-          :tree => [{
-            :encoding => 'utf-8',
-            :mode     => '100644',
-            :path     => destination_path,
-            :content  => content
-          }]
-        })['sha']
+      def create_new_pull_request(title, body, from_branch_ref)
+        rest(:post, 'pulls', :title => title, :body => body, :head => from_branch_ref, :base => branch_ref(@base_branch_ref))['number'].to_i
       end
 
       private
@@ -61,12 +52,12 @@ module Pod
       end
 
       def url_for(path)
-        File.join(BASE_URL, path)
+        File.join(@base_url, path)
       end
 
       # TODO handle failures
       def rest(method, path, body = nil)
-        args = [method, url_for(path), (body.to_json if body), HEADERS, BASIC_AUTH].compact
+        args = [method, url_for(path), (body.to_json if body), HEADERS, @basic_auth].compact
         response = REST.send(*args)
         JSON.parse(response.body)
       end
