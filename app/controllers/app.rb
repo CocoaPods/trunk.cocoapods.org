@@ -57,7 +57,20 @@ module Pod
         error 404
       end
 
+      post '/linter_statuses' do
+        error 401 unless authorized_travis_webhook?
+        halt 204
+      end
+
+      def self.travis_webhook_authorization_token
+        Digest::SHA2.hexdigest(ENV['GH_REPO'] + ENV['TRAVIS_API_TOKEN'])
+      end
+
       private
+
+      def authorized_travis_webhook?
+        self.class.travis_webhook_authorization_token == env['Authorization']
+      end
 
       def specification
         @specification ||= begin

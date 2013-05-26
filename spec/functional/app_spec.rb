@@ -134,13 +134,11 @@ EOYAML
       last_response.status.should == 404
     end
 
-    #it "creates a pull-request for the specification" do
-      #PodVersion.any_instance.stubs(:id).returns(42)
-      #GitHub.expects(:create_pull_request).with('[Add] AFNetworking (1.2.0)', 'merge-42', 'merge-42', 'AFNetworking/1.2.0/AFNetworking.podspec', fixture_read('AFNetworking.podspec')).returns(3)
-      #post '/pods', spec.to_yaml
-      #last_response.should.be.ok
-      #last_response.location.should == "https://github.com/#{GitHub::REPO}/pull/3"
-      #Pod.first(:name => spec.name).versions.first.should.be.submitted_as_pull_request
-    #end
+    it "updates the submission job's Travis build status" do
+      post '/linter_statuses', nil, { 'Authorization' => 'incorrect token' }
+      last_response.status.should == 401
+      post '/linter_statuses', nil, { 'Authorization' => App.travis_webhook_authorization_token }
+      last_response.status.should == 204
+    end
   end
 end

@@ -1,4 +1,5 @@
 * Slugify URLs?
+* generate branch names according to https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
 * API error handling
 * Can we set the author of the commit to the user's email?
 

@@ -8,6 +8,8 @@ ENV['GH_REPO']      = 'CocoaPods/Specs'
 ENV['GH_USERNAME']  = 'alloy'
 ENV['GH_PASSWORD']  = 'secret'
 
+ENV['TRAVIS_API_TOKEN'] = 'secret-travis-token'
+
 ENV['RACK_ENV']     = 'test'
 ENV['DATABASE_URL'] = 'postgres://localhost/push_cocoapods_org_test'
 
