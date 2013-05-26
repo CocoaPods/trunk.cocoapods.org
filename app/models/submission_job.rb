@@ -19,7 +19,11 @@ module Pod
         state == 'submitted'
       end
 
-      def perform_next_task!
+      def pull_request_submitted?
+        state == 'pull-request-submitted'
+      end
+
+      def perform_next_pull_request_task!
         if base_commit_sha.nil?
           fetch_base_commit_sha!
         elsif base_tree_sha.nil?
@@ -32,6 +36,8 @@ module Pod
           create_branch!
         elsif pull_request_number.nil?
           create_pull_request!
+        else
+          raise 'No more pull-request tasks to perform.'
         end
       end
 
