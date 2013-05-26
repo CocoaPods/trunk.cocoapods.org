@@ -77,11 +77,12 @@ module Pod::PushApp
         @job.update(:new_branch_ref => NEW_BRANCH_REF)
       end
 
-      it "creates a new branch" do
+      it "creates a new pull-request and changes state" do
         @job.perform_next_task!
         @job.pull_request_number.should == NEW_PR_NUMBER
         # TODO test that this is being done at the start of the method?
         @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF}."
+        @job.state.should == 'pull-request-submitted'
       end
 
     end

@@ -86,7 +86,8 @@ module Pod
       def create_pull_request!
         add_log_message(:message => "Creating new pull-request with branch #{new_branch_ref}.")
         title = "[Add] #{pod_version.pod.name} #{pod_version.name}"
-        update(:pull_request_number => github.create_new_pull_request(title,
+        update(:state => 'pull-request-submitted',
+               :pull_request_number => github.create_new_pull_request(title,
                                                                       pod_version.url,
                                                                       new_branch_ref))
       end
