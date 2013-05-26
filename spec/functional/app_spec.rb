@@ -98,12 +98,14 @@ EOYAML
 
     it "creates a submission job and log message once a new pod version is created" do
       post '/pods', spec.to_yaml
-      job = Pod.first(:name => spec.name).versions.first.submission_job
+      job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
+      job.specification_data.should == spec.to_yaml
       job.log_messages.map(&:message).should == ['Submitted']
     end
 
     it "returns the status of the submission flow" do
-      job = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s).submission_job
+      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      job = version.add_submission_job(:specification_data => spec.to_yaml)
       job.add_log_message(:message => 'Another message')
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.body.should == job.log_messages.map do |log_message|
@@ -112,13 +114,15 @@ EOYAML
     end
 
     it "returns that the pod version is not yet published" do
-      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      version.add_submission_job(:specification_data => spec.to_yaml)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 102
     end
 
     it "returns that the pod version is published" do
-      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      version.add_submission_job(:specification_data => spec.to_yaml)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
     end

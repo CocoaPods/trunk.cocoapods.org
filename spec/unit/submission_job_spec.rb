@@ -5,8 +5,8 @@ module Pod::PushApp
     describe "concerning submission progress state" do
       before do
         @pod = Pod.create(:name => 'AFNetworking')
-        @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :specification_data => fixture_read('AFNetworking.podspec'), :url => 'http://host/pods/AFNetworking/versions/1.2.0')
-        @job = @version.submission_job
+        @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :url => 'http://host/pods/AFNetworking/versions/1.2.0')
+        @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'))
 
         github = @job.send(:github)
         github.stubs(:fetch_latest_commit_sha).returns(BASE_COMMIT_SHA)

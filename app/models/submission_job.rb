@@ -70,7 +70,7 @@ module Pod
         destination_path = File.join(pod_version.pod.name, pod_version.name, "#{pod_version.pod.name}.podspec")
         update(:new_tree_sha => github.create_new_tree(base_tree_sha,
                                                        destination_path,
-                                                       pod_version.specification_data))
+                                                       specification_data))
       end
 
       def create_commit!

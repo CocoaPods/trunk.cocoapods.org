@@ -7,12 +7,7 @@ module Pod
       plugin :timestamps
 
       many_to_one :pod
-      one_to_one :submission_job
-
-      def after_create
-        super
-        self.submission_job = SubmissionJob.create
-      end
+      one_to_many :submission_jobs
 
       def published?
         published
