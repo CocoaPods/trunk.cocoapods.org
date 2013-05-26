@@ -30,15 +30,17 @@ module Pod
         end
 
         version_name = specification.version.to_s
+        resource_url = url("/pods/#{specification.name}/versions/#{version_name}")
+
         # Always set the location of the resource, even when the pod version already exists.
-        headers 'Location' => url("/pods/#{specification.name}/versions/#{version_name}")
+        headers 'Location' => resource_url
 
         pod = Pod.find_or_create(:name => specification.name)
         # TODO use a unique index in the DB for this instead?
         if pod.versions_dataset.where(:name => version_name).first
           error 409, "Unable to accept duplicate entry for: #{specification}".to_yaml
         end
-        version = pod.add_version(:name => version_name)
+        version = pod.add_version(:name => version_name, :url => resource_url)
         halt 202
       end
 

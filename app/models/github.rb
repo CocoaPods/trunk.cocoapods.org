@@ -42,7 +42,7 @@ module Pod
       end
 
       def create_new_pull_request(title, body, from_branch_ref)
-        rest(:post, 'pulls', :title => title, :body => body, :head => from_branch_ref, :base => branch_ref(@base_branch_ref))['number'].to_i
+        rest(:post, 'pulls', :title => title, :body => body, :head => from_branch_ref, :base => branch_ref(@base_branch_ref))['number']
       end
 
       private

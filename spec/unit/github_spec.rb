@@ -22,21 +22,20 @@ module Pod::PushApp
     end
 
     it "returns the SHA of the latest commit on the `master` branch" do
-      @github.fetch_latest_commit_sha.should == '632671a3f28771a3631119354731dba03963a276'
+      @github.fetch_latest_commit_sha.should == BASE_COMMIT_SHA
     end
 
     it "returns the SHA of the tree of the latest commit and caches it" do
-      commit_sha = '632671a3f28771a3631119354731dba03963a276'
-      @github.fetch_base_tree_sha(commit_sha).should == 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc'
+      @github.fetch_base_tree_sha(BASE_COMMIT_SHA).should == BASE_TREE_SHA
     end
 
     before do
       body = {
-        :base_tree => 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc',
+        :base_tree => BASE_TREE_SHA,
         :tree => [{
           :encoding => 'utf-8',
           :mode     => '100644',
-          :path     => 'AFNetworking/1.2.0/AFNetworking.podspec',
+          :path     => DESTINATION_PATH,
           :content  => fixture_read('AFNetworking.podspec')
         }]
       }.to_json
@@ -44,53 +43,46 @@ module Pod::PushApp
     end
 
     it "creates a new tree object, which represents the contents, and returns its SHA" do
-      base_tree_sha = 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc'
-      path, content = 'AFNetworking/1.2.0/AFNetworking.podspec', fixture_read('AFNetworking.podspec')
-      @github.create_new_tree(base_tree_sha, path, content).should == '18f8a32cdf45f0f627749e2be25229f5026f93ac'
+      @github.create_new_tree(BASE_TREE_SHA, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).should == NEW_TREE_SHA
     end
 
     before do
       body = {
-        :parents => ['632671a3f28771a3631119354731dba03963a276'],
-        :tree    => '18f8a32cdf45f0f627749e2be25229f5026f93ac',
-        :message => '[Add] AFNetworking 1.2.0'
+        :parents => [BASE_COMMIT_SHA],
+        :tree    => NEW_TREE_SHA,
+        :message => MESSAGE
       }.to_json
       REST.stubs(:post).with(@github.url_for('git/commits'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_new_commit'))
     end
 
     it "creates a new commit object for the new tree object" do
-      new_tree_sha = '18f8a32cdf45f0f627749e2be25229f5026f93ac'
-      base_commit_sha = '632671a3f28771a3631119354731dba03963a276'
-      message = '[Add] AFNetworking 1.2.0'
-      @github.create_new_commit(new_tree_sha, base_commit_sha, message).should == '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
+      @github.create_new_commit(NEW_TREE_SHA, BASE_COMMIT_SHA, '[Add] AFNetworking 1.2.0').should == NEW_COMMIT_SHA
     end
 
     before do
       body = {
         :ref => 'refs/heads/AFNetworking-1.2.0',
-        :sha => '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
+        :sha => NEW_COMMIT_SHA
       }.to_json
       REST.stubs(:post).with(@github.url_for('git/refs'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_new_branch'))
     end
 
     it "creates a new branch object with a new commit object" do
-      commit_sha = '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
-      @github.create_new_branch('AFNetworking-1.2.0', commit_sha).should == 'refs/heads/AFNetworking-1.2.0'
+      @github.create_new_branch(NEW_BRANCH_NAME, NEW_COMMIT_SHA).should == NEW_BRANCH_REF
     end
 
     before do
       body = {
         :title => '[Add] AFNetworking 1.2.0',
         :body  => 'Specification for AFNetworking 1.2.0',
-        :head  => 'refs/heads/AFNetworking-1.2.0',
+        :head  => NEW_BRANCH_REF,
         :base  => 'refs/heads/master'
       }.to_json
       REST.stubs(:post).with(@github.url_for('pulls'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_pull-request'))
     end
 
     it "creates a new pull-request for a branch and returns the pull/issue number" do
-      branch_ref = 'refs/heads/AFNetworking-1.2.0'
-      @github.create_new_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', branch_ref).should == 3
+      @github.create_new_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', NEW_BRANCH_REF).should == NEW_PR_NUMBER
     end
   end
 end
