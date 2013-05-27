@@ -7,6 +7,7 @@ require 'cocoapods-core/specification/linter'
 require 'db/config'
 require 'app/models/github'
 require 'app/models/pod'
+require 'app/models/travis'
 
 SafeYAML::OPTIONS[:default_mode] = :safe
 
@@ -59,29 +60,18 @@ module Pod
 
       # TODO fix headers that are set to YAML in the before block.
       post '/travis_build_results' do
-        error 401 unless authorized_travis_webhook?
+        error 401 unless Travis.authorized_webhook_notification?(env['Authorization'])
 
-        payload = JSON.parse(request.body.read)
-        type, number = payload['compare_url'].split('/').last(2)
-        if type == 'pull'
-          if job = SubmissionJob.find(:pull_request_number => number)
-            job.update(:travis_build_success => payload['result'] == 0)
-            halt 204
-          end
+        travis = Travis.new(JSON.parse(request.body.read))
+        if travis.pull_request? && job = SubmissionJob.find(:pull_request_number => travis.pull_request_number)
+          job.update(:travis_build_success => travis.build_success?)
+          halt 204
         end
 
         halt 200
       end
 
-      def self.travis_webhook_authorization_token
-        Digest::SHA2.hexdigest(ENV['GH_REPO'] + ENV['TRAVIS_API_TOKEN'])
-      end
-
       private
-
-      def authorized_travis_webhook?
-        self.class.travis_webhook_authorization_token == env['Authorization']
-      end
 
       def specification
         @specification ||= begin
