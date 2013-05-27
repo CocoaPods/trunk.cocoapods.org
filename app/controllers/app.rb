@@ -1,4 +1,3 @@
-require 'safe_yaml'
 require 'sinatra/base'
 
 require 'cocoapods-core/specification'
@@ -8,8 +7,7 @@ require 'db/config'
 require 'app/models/github'
 require 'app/models/pod'
 require 'app/models/travis'
-
-SafeYAML::OPTIONS[:default_mode] = :safe
+require 'app/models/specification_wrapper'
 
 module Pod
   module PushApp
@@ -22,26 +20,27 @@ module Pod
       end
 
       post '/pods' do
+        specification = SpecificationWrapper.from_yaml(request.body.read)
+
         if specification.nil?
           error 400, 'Unable to load a Pod Specification from the provided input.'.to_yaml
         end
 
-        unless valid_specification?
-          error 422, validation_errors.to_yaml
+        unless specification.valid?
+          error 422, specification.validation_errors.to_yaml
         end
 
-        version_name = specification.version.to_s
-        resource_url = url("/pods/#{specification.name}/versions/#{version_name}")
+        resource_url = url("/pods/#{specification.name}/versions/#{specification.version}")
 
         # Always set the location of the resource, even when the pod version already exists.
         headers 'Location' => resource_url
 
         pod = Pod.find_or_create(:name => specification.name)
         # TODO use a unique index in the DB for this instead?
-        if pod.versions_dataset.where(:name => version_name).first
+        if pod.versions_dataset.where(:name => specification.version).first
           error 409, "Unable to accept duplicate entry for: #{specification}".to_yaml
         end
-        version = pod.add_version(:name => version_name, :url => resource_url)
+        version = pod.add_version(:name => specification.version, :url => resource_url)
         version.add_submission_job(:specification_data => specification.to_yaml)
         halt 202
       end
@@ -69,30 +68,6 @@ module Pod
         end
 
         halt 200
-      end
-
-      private
-
-      def specification
-        @specification ||= begin
-          hash = YAML.safe_load(request.body)
-          Specification.from_hash(hash) if hash.is_a?(Hash)
-        end
-      end
-
-      def linter
-        @linter ||= Specification::Linter.new(specification)
-      end
-
-      def valid_specification?
-        linter.lint
-      end
-
-      def validation_errors
-        results = {}
-        results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
-        results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
-        results
       end
     end
   end
