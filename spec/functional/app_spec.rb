@@ -103,26 +103,26 @@ EOYAML
       job.log_messages.map(&:message).should == ['Submitted']
     end
 
+    before do
+      @version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      @job = @version.add_submission_job(:specification_data => spec.to_yaml, :pull_request_number => 3)
+    end
+
     it "returns the status of the submission flow" do
-      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
-      job = version.add_submission_job(:specification_data => spec.to_yaml)
-      job.add_log_message(:message => 'Another message')
+      @job.add_log_message(:message => 'Another message')
       get '/pods/AFNetworking/versions/1.2.0'
-      last_response.body.should == job.log_messages.map do |log_message|
+      last_response.body.should == @job.log_messages.map do |log_message|
         { log_message.created_at => log_message.message }
       end.to_yaml
     end
 
     it "returns that the pod version is not yet published" do
-      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:specification_data => spec.to_yaml)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 102
     end
 
     it "returns that the pod version is published" do
-      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
-      version.add_submission_job(:specification_data => spec.to_yaml)
+      @version.update(:published => true)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
     end
@@ -134,11 +134,22 @@ EOYAML
       last_response.status.should == 404
     end
 
-    it "updates the submission job's Travis build status" do
-      post '/linter_statuses', nil, { 'Authorization' => 'incorrect token' }
+    it "does not allow updates to submission job's if the client isn't authorized" do
+      post '/travis_build_results', fixture_read('TravisCI/pull-request_success_payload.json'), { 'Authorization' => 'incorrect token' }
       last_response.status.should == 401
-      post '/linter_statuses', nil, { 'Authorization' => App.travis_webhook_authorization_token }
+      @job.reload.travis_build_success?.should == nil
+    end
+
+    it "updates the submission job's Travis build status" do
+      post '/travis_build_results', fixture_read('TravisCI/pull-request_success_payload.json'), { 'Authorization' => App.travis_webhook_authorization_token }
       last_response.status.should == 204
+      @job.reload.travis_build_success?.should == true
+    end
+
+    it "updates the submission job's Travis build status" do
+      post '/travis_build_results', fixture_read('TravisCI/pull-request_failure_payload.json'), { 'Authorization' => App.travis_webhook_authorization_token }
+      last_response.status.should == 204
+      @job.reload.travis_build_success?.should == false
     end
   end
 end

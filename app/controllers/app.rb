@@ -57,8 +57,18 @@ module Pod
         error 404
       end
 
-      post '/linter_statuses' do
+      # TODO fix headers that are set to YAML in the before block.
+      post '/travis_build_results' do
         error 401 unless authorized_travis_webhook?
+
+        payload = JSON.parse(request.body.read)
+        type, number = payload['compare_url'].split('/').last(2)
+        if type == 'pull'
+          if job = SubmissionJob.find(:pull_request_number => Integer(number))
+            job.update(:travis_build_success => payload['result'] == 0)
+          end
+        end
+
         halt 204
       end
 

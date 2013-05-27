@@ -23,6 +23,8 @@ module Pod
         state == 'pull-request-submitted'
       end
 
+      alias_method :travis_build_success?, :travis_build_success
+
       def perform_next_pull_request_task!
         if base_commit_sha.nil?
           fetch_base_commit_sha!
