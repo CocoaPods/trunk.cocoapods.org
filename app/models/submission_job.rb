@@ -23,7 +23,21 @@ module Pod
         state == 'pull-request-submitted'
       end
 
+      def travis_notification_received?
+        state == 'travis-notification-received'
+      end
+
       alias_method :travis_build_success?, :travis_build_success
+
+      def pull_request_number=(number)
+        super
+        self.state = 'pull-request-submitted' unless pull_request_number.nil?
+      end
+
+      def travis_build_success=(result)
+        super
+        self.state = 'travis-notification-received' unless travis_build_success.nil?
+      end
 
       def perform_next_pull_request_task!
         if base_commit_sha.nil?
@@ -94,8 +108,7 @@ module Pod
       def create_pull_request!
         add_log_message(:message => "Creating new pull-request with branch #{new_branch_ref}.")
         title = "[Add] #{pod_version.pod.name} #{pod_version.name}"
-        update(:state => 'pull-request-submitted',
-               :pull_request_number => github.create_new_pull_request(title,
+        update(:pull_request_number => github.create_new_pull_request(title,
                                                                       pod_version.url,
                                                                       new_branch_ref))
       end
