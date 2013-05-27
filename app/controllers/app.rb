@@ -64,7 +64,7 @@ module Pod
         payload = JSON.parse(request.body.read)
         type, number = payload['compare_url'].split('/').last(2)
         if type == 'pull'
-          if job = SubmissionJob.find(:pull_request_number => Integer(number))
+          if job = SubmissionJob.find(:pull_request_number => number)
             job.update(:travis_build_success => payload['result'] == 0)
             halt 204
           end
