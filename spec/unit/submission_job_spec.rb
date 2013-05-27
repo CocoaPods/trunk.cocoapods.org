@@ -88,6 +88,9 @@ module Pod::PushApp
         @job.should.be.pull_request_submitted
       end
 
+      it "merges a pull-request" do
+        # TODO
+      end
     end
   end
 end
