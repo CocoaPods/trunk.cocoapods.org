@@ -4,6 +4,7 @@ rvm:
 before_script:
   - psql -c 'create database push_cocoapods_org_test;' -U postgres
 notifications:
+  webhooks: http://requestb.in/p2n27pp2
   campfire:
     on_success: change
     on_failure: always

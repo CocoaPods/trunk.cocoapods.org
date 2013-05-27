@@ -131,14 +131,14 @@ EOYAML
       get '/pods/AFNetworking/versions/0.2.1'
       last_response.status.should == 404
       get '/pods/FANetworking/versions/1.2.0'
-      last_response.status.should == 404
+      last_response.status.should == 404444444
     end
 
     it "updates the submission job's Travis build status" do
       post '/linter_statuses', nil, { 'Authorization' => 'incorrect token' }
       last_response.status.should == 401
       post '/linter_statuses', nil, { 'Authorization' => App.travis_webhook_authorization_token }
-      last_response.status.should == 204
+      last_response.status.should == 204444444
     end
   end
 end
