@@ -2,5 +2,6 @@
 * generate branch names according to https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
 * API error handling
 * Can we set the author of the commit to the user's email?
+* Add specific tests for Travis and SpecificationWrapper models.
 
 * The user can now send a serialized yaml version that does not contain the same content as the podspec. Need to overthink the implications, currently I see none, because it's the actual spec that will be validated on Travis, but it could mess up our DB.
