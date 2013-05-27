@@ -140,6 +140,12 @@ EOYAML
       @job.reload.travis_build_success?.should == nil
     end
 
+    it "does not break with a normal commit Travis build status notification" do
+      post '/travis_build_results', fixture_read('TravisCI/commit_payload.json'), { 'Authorization' => App.travis_webhook_authorization_token }
+      last_response.status.should == 200
+      @job.reload.travis_build_success?.should == nil
+    end
+
     it "updates the submission job's Travis build status" do
       post '/travis_build_results', fixture_read('TravisCI/pull-request_success_payload.json'), { 'Authorization' => App.travis_webhook_authorization_token }
       last_response.status.should == 204
