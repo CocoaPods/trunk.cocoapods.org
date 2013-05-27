@@ -1,0 +1,65 @@
+{
+    "author_email": "eloy.de.enige@gmail.com",
+    "author_name": "Eloy Dur\u00e1n",
+    "branch": "travis-payload-test",
+    "build_url": "https://travis-ci.org/CocoaPods/push.cocoapods.org/builds/7540806",
+    "commit": "09d0ed596f5ac91ecbd8acba7c03ea1e828af94b",
+    "committed_at": "2013-05-27T18:16:55Z",
+    "committer_email": "eloy.de.enige@gmail.com",
+    "committer_name": "Eloy Dur\u00e1n",
+    "compare_url": "https://github.com/CocoaPods/push.cocoapods.org/commit/09d0ed596f5a",
+    "config": {
+        ".result": "configured",
+        "before_script": ["psql -c 'create database push_cocoapods_org_test;' -U postgres"],
+        "language": "ruby",
+        "notifications": {
+            "webhooks": "http://requestb.in/p2n27pp2"
+        },
+        "rvm": ["1.9.3"]
+    },
+    "duration": 59,
+    "finished_at": "2013-05-27T18:19:20Z",
+    "id": 7540806,
+    "matrix": [{
+            "author_email": "eloy.de.enige@gmail.com",
+            "author_name": "Eloy Dur\u00e1n",
+            "branch": "travis-payload-test",
+            "commit": "09d0ed596f5ac91ecbd8acba7c03ea1e828af94b",
+            "committed_at": "2013-05-27T18:16:55Z",
+            "committer_email": "eloy.de.enige@gmail.com",
+            "committer_name": "Eloy Dur\u00e1n",
+            "compare_url": "https://github.com/CocoaPods/push.cocoapods.org/commit/09d0ed596f5a",
+            "config": {
+                ".result": "configured",
+                "before_script": ["psql -c 'create database push_cocoapods_org_test;' -U postgres"],
+                "language": "ruby",
+                "notifications": {
+                    "webhooks": "http://requestb.in/p2n27pp2"
+                },
+                "rvm": "1.9.3"
+            },
+            "finished_at": "2013-05-27T18:19:20Z",
+            "id": 7540807,
+            "message": "[Travis] Trying to get a sample payload of a pull-request build.",
+            "number": "5.1",
+            "parent_id": 7540806,
+            "repository_id": 557401,
+            "result": null,
+            "state": "finished",
+            "status": null
+        }
+    ],
+    "message": "[Travis] Trying to get a sample payload of a pull-request build.",
+    "number": "5",
+    "repository": {
+        "id": 557401,
+        "name": "push.cocoapods.org",
+        "owner_name": "CocoaPods",
+        "url": "https://github.com/CocoaPods/push.cocoapods.org"
+    },
+    "result": 0,
+    "result_message": "Passed",
+    "started_at": "2013-05-27T18:18:21Z",
+    "status": 0,
+    "status_message": "Passed"
+}
