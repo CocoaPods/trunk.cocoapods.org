@@ -66,11 +66,11 @@ module Pod
         if type == 'pull'
           if job = SubmissionJob.find(:pull_request_number => Integer(number))
             job.update(:travis_build_success => payload['result'] == 0)
+            halt 204
           end
-          halt 204
-        else
-          halt 200
         end
+
+        halt 200
       end
 
       def self.travis_webhook_authorization_token
