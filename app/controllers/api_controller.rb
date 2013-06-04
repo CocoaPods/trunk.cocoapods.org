@@ -1,5 +1,8 @@
 require 'app/controllers/app_controller'
 
+require 'app/controllers/app/authentication_headers'
+require 'app/controllers/app/authentication'
+
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/session'
@@ -8,10 +11,20 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class APIController < AppController
+      find_authenticated_user
+
       before do
         content_type 'text/yaml'
         unless request.media_type == 'text/yaml'
           error 415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.".to_yaml
+        end
+      end
+
+      get '/me' do
+        if @session
+          halt(200, @session.to_yaml)
+        else
+          error(404, "Unable to authentication owner.".to_yaml)
         end
       end
 
