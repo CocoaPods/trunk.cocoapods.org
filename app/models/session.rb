@@ -1,3 +1,5 @@
+require 'token'
+
 require 'app/models/owner'
 
 module Pod

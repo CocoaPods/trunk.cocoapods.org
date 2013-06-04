@@ -1,6 +1,8 @@
 require 'app/controllers/app_controller'
-require 'app/models/github'
+
+require 'app/models/owner'
 require 'app/models/pod'
+require 'app/models/session'
 require 'app/models/specification_wrapper'
 
 module Pod
