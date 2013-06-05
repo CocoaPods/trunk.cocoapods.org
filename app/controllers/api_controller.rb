@@ -1,6 +1,7 @@
 require 'app/controllers/app_controller'
 
 require 'app/controllers/app/authentication_headers'
+require 'app/controllers/app/authentication_helpers'
 require 'app/controllers/app/authentication'
 
 require 'app/models/owner'
@@ -11,7 +12,7 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class APIController < AppController
-      find_authenticated_user
+      find_authenticated_owner
 
       before do
         content_type 'text/yaml'
@@ -21,10 +22,8 @@ module Pod
       end
 
       get '/me' do
-        if @session
-          halt(200, @session.to_yaml)
-        else
-          error(404, "Unable to authentication owner.".to_yaml)
+        if owner?
+          halt(200, @owner.to_yaml)
         end
       end
 

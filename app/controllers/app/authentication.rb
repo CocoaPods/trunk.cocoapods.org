@@ -2,9 +2,11 @@ module Pod
   module PushApp
     class App
       module Authentication
-        def find_authenticated_user
+        def find_authenticated_owner
           before do
-            @session = Session.with_token(authentication_token)
+            if @session = Session.with_token(authentication_token)
+              @owner = @session.owner
+            end
           end
         end
       end

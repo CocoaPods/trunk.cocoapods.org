@@ -32,7 +32,7 @@ module Pod
 
       def self.with_token(token)
         return if token.nil?
-        valid.where(:token => token).first
+        valid.where('token = ?', token).first
       end
 
       private

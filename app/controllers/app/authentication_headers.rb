@@ -5,10 +5,8 @@ module Pod
         # Returns the Authorization header if the value of the header
         # starts with ‘Token’.
         def authorization_header
-          if (
-            authorization = headers['Authoriation'] &&
-            authorization.start_with?('Token')
-          )
+          authorization = env['HTTP_AUTHORIZATION']
+          if authorization.start_with?('Token')
             authorization
           end
         end
@@ -29,6 +27,7 @@ module Pod
         def authentication_token
           if token = token_from_authorization_header
             logger.debug("Got authentiation token: #{token}")
+            token
           end
         end
       end
