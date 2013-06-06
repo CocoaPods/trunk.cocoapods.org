@@ -5,9 +5,11 @@ module Pod
         # Returns the Authorization header if the value of the header
         # starts with ‘Token’.
         def authorization_header
-          authorization = env['HTTP_AUTHORIZATION']
-          if authorization.start_with?('Token')
-            authorization
+          authorization = env['Authorization'].to_s.strip
+          unless authorization == ''
+            if authorization.start_with?('Token')
+              authorization
+            end
           end
         end
 
