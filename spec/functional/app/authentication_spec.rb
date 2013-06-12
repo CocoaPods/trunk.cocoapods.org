@@ -1,16 +1,5 @@
 require File.expand_path('../../../spec_helper', __FILE__)
 
-module SpecHelpers
-  module Response
-    def yaml_response
-      YAML.load(last_response.body)
-    end
-  end
-
-  module Authentication
-  end
-end
-
 module Pod::PushApp
   describe "App" do
     def app
@@ -27,10 +16,7 @@ module Pod::PushApp
       end
 
       it "allows access with a valid session belonging to an owner" do
-        owner = Owner.create
-        session = Session.create
-        owner.add_session(session)
-
+        session = create_session_with_owner
         get '/me', nil, { 'Authorization' => "Token #{session.token}"}
         last_response.status.should == 200
       end
