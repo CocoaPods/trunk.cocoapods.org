@@ -8,6 +8,7 @@ module Pod::PushApp
 
     describe "authentication" do
       extend Rack::Test::Methods
+      extend SpecHelpers::App
       extend SpecHelpers::Response
       extend SpecHelpers::Authentication
 

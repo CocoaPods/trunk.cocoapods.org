@@ -1,5 +1,6 @@
 require 'app/controllers/app_controller'
 
+require 'app/controllers/app/response_helpers'
 require 'app/controllers/app/authentication_headers'
 require 'app/controllers/app/authentication_helpers'
 require 'app/controllers/app/authentication'
@@ -8,6 +9,8 @@ require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/session'
 require 'app/models/specification_wrapper'
+
+require 'core_ext/hash'
 
 module Pod
   module TrunkApp
@@ -24,6 +27,16 @@ module Pod
       get '/me' do
         if owner?
           halt(200, @owner.to_yaml)
+        end
+      end
+
+      post '/register' do
+        owner_params = YAML.load(request.body.read)
+        if !owner_params.kind_of?(Hash) || owner_params.empty?
+          yaml_error(422, 'Please send the owner email address in the body of your post.')
+        else
+          @owner = Owner.find_or_create_by_email(owner_params['email'])
+          yaml_message(201, @owner)
         end
       end
 
