@@ -118,13 +118,20 @@ EOYAML
 
     it "returns that the pod version is not yet published" do
       get '/pods/AFNetworking/versions/1.2.0'
-      last_response.status.should == 102
+      # last_response.status.should == 102
+      last_response.status.should == 202
     end
 
     it "returns that the pod version is published" do
       @version.update(:published => true)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
+    end
+
+    it "returns that the submission job failed" do
+      @job.update(:succeeded => false)
+      get '/pods/AFNetworking/versions/1.2.0'
+      last_response.status.should == 404
     end
 
     it "returns a 404 when a pod or version can't be found" do
