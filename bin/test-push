@@ -22,8 +22,8 @@ status_url = response.headers['location'].first
 puts "Registered resource URL: #{status_url}"
 
 loop do
-  response = REST.get(status_url, 'Content-Type' => 'text/yaml')
+  response = REST.get(status_url, 'Content-Type' => 'text/yaml', 'Accept' => 'text/yaml')
   puts "[#{response.status_code}] #{response.body}"
-  break if response.status_code == 200
+  break if [200, 404].include?(response.status_code)
   sleep 2
 end
