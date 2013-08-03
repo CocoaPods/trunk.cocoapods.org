@@ -84,5 +84,13 @@ module Pod::PushApp
     it "creates a new pull-request for a branch and returns the pull/issue number" do
       @github.create_new_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', NEW_BRANCH_REF).should == NEW_PR_NUMBER
     end
+
+    before do
+      REST.stubs(:put).with(@github.url_for("pulls/#{NEW_PR_NUMBER}/merge"), GitHub::HEADERS, @auth).returns(fixture_response('merge_pull-request'))
+    end
+
+    it "merges a pull-request for a branch and returns the pull/issue number" do
+      @github.merge_pull_request(NEW_PR_NUMBER).should == MERGE_COMMIT_SHA
+    end
   end
 end

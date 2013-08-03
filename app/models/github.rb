@@ -45,6 +45,10 @@ module Pod
         rest(:post, 'pulls', :title => title, :body => body, :head => from_branch_ref, :base => branch_ref(@base_branch_ref))['number']
       end
 
+      def merge_pull_request(number)
+        rest(:put, "pulls/#{number}/merge")['sha']
+      end
+
       private
 
       def branch_ref(name)

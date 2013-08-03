@@ -27,6 +27,10 @@ module Pod
         state == 'travis-notification-received'
       end
 
+      def completed?
+        state == 'completed'
+      end
+
       alias_method :travis_build_success?, :travis_build_success
 
       def pull_request_number=(number)
@@ -37,6 +41,11 @@ module Pod
       def travis_build_success=(result)
         super
         self.state = 'travis-notification-received' unless travis_build_success.nil?
+      end
+
+      def merge_commit_sha=(sha)
+        super
+        self.state = 'completed' unless merge_commit_sha.nil?
       end
 
       def perform_next_pull_request_task!
@@ -55,6 +64,11 @@ module Pod
         else
           raise 'No more pull-request tasks to perform.'
         end
+      end
+
+      def merge_pull_request!
+        add_log_message(:message => "Merging pull-request number #{pull_request_number}")
+        update(:merge_commit_sha => github.merge_pull_request(pull_request_number))
       end
 
       protected
