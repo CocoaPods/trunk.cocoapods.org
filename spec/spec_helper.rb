@@ -4,17 +4,13 @@ require 'rack/test'
 
 require 'cocoapods-core'
 
-ENV['GH_REPO']      = 'CocoaPods/Specs'
-ENV['GH_USERNAME']  = 'alloy'
-ENV['GH_PASSWORD']  = 'secret'
-
+ENV['RACK_ENV']         = 'test'
+ENV['GH_REPO']          = 'CocoaPods/Specs'
+ENV['GH_USERNAME']      = 'alloy'
+ENV['GH_PASSWORD']      = 'secret'
 ENV['TRAVIS_API_TOKEN'] = 'secret-travis-token'
 
-ENV['RACK_ENV']     = 'test'
-ENV['DATABASE_URL'] = 'postgres://localhost/push_cocoapods_org_test'
-
-ROOT = File.expand_path('../../', __FILE__)
-$:.unshift ROOT
+$:.unshift File.expand_path('../../', __FILE__)
 require 'app/controllers/app'
 
 Mocha::Configuration.prevent(:stubbing_non_existent_method)

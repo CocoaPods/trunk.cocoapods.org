@@ -54,6 +54,16 @@ module Pod::PushApp
         @job.reload.pull_request_number.should == 42
       end
 
+      it "considers a job failed if the retry threshold is reached" do
+        SubmissionJob::RETRY_COUNT.times do |i|
+          @job.perform_task "Try #{i+1}" do
+            raise "oh noes!"
+          end
+        end
+        @job.should.be.failed
+        @job.should.not.needs_to_perform_work
+      end
+
       it "fetches the SHA of the commit this PR will be based on" do
         @job.perform_next_task!
         @job.base_commit_sha.should == BASE_COMMIT_SHA

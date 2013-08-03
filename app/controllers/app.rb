@@ -1,7 +1,5 @@
 require 'sinatra/base'
-
-require 'cocoapods-core/specification'
-require 'cocoapods-core/specification/linter'
+require 'cocoapods-core'
 
 require 'db/config'
 require 'app/models/github'
@@ -12,6 +10,10 @@ require 'app/models/specification_wrapper'
 module Pod
   module PushApp
     class App < Sinatra::Base
+      configure do
+        enable :logging
+      end
+
       before do
         content_type 'text/yaml'
         unless request.media_type == 'text/yaml'

@@ -134,6 +134,10 @@ EOYAML
       last_response.status.should == 404
     end
 
+    before do
+      header 'Content-Type', 'application/json'
+    end
+
     it "does not allow updates to submission job's if the client isn't authorized" do
       post '/travis_build_results', fixture_read('TravisCI/pull-request_success_payload.json'), { 'Authorization' => 'incorrect token' }
       last_response.status.should == 401

@@ -21,21 +21,9 @@ begin
     end
   end
 
-  desc 'Start the server'
+  desc 'Starts processes for local development'
   task :serve do
-    exec "env PORT=4567 DATABASE_URL=postgres://localhost/push_cocoapods_org_dev foreman start"
-  end
-
-  desc 'Pushes the fixture podspec through the API'
-  task :push do
-    require 'rest'
-    require 'json'
-    require 'cocoapods-core'
-    path = 'spec/fixtures/AFNetworking.podspec'
-    spec = Pod::Specification.from_file(path)
-    body = { 'specification' => File.read(path), 'yaml' => spec.to_yaml }.to_json
-    response = REST.post('http://localhost:4567/pods', body, { 'Content-Type' => 'application/json' })
-    puts "[#{response.status_code}] #{response.headers.inspect}"
+    exec "env PORT=4567 RACK_ENV=development foreman start"
   end
 
   desc 'Run the specs'

@@ -1,10 +1,14 @@
-require 'app/models/pod_version'
+require 'app/models/github'
 require 'app/models/log_message'
+require 'app/models/pod'
+require 'app/models/pod_version'
 
 module Pod
   module PushApp
     class SubmissionJob < Sequel::Model
       class TaskError < ::StandardError; end
+
+      RETRY_COUNT = 10
 
       self.dataset = :submission_jobs
       plugin :timestamps
@@ -12,8 +16,22 @@ module Pod
       many_to_one :pod_version
       one_to_many :log_messages
 
+      def self.disable_info_logging
+        sev_threshold = PUSH_LOGGER.sev_threshold
+        PUSH_LOGGER.sev_threshold = Logger::WARN
+        yield
+      ensure
+        PUSH_LOGGER.sev_threshold = sev_threshold
+      end
+
+      def self.find_first_job_in_queue
+        disable_info_logging do
+          for_update.order(Sequel.asc(:updated_at)).first(:needs_to_perform_work => true)
+        end
+      end
+
       def self.perform_task!
-        if job = for_update.order(Sequel.asc(:updated_at)).first(:needs_to_perform_work => true)
+        if job = find_first_job_in_queue
           job.perform_next_task!
           true
         else
@@ -87,8 +105,14 @@ module Pod
         begin
           self.class.db.transaction(:savepoint => true, &block)
         rescue Object => e
+          if attempts == RETRY_COUNT
+            update(:succeeded => false, :needs_to_perform_work => false)
+          else
+            update(:attempts => attempts + 1)
+          end
           # TODO report full error to error reporting service
           add_log_message(:message => "Error: #{e.message}")
+          PUSH_LOGGER.error "#{e.message}\n\t\t#{e.backtrace.join("\n\t\t")}"
         end
       end
 
@@ -112,7 +136,7 @@ module Pod
 
       def fetch_base_tree_sha!
         perform_task "Fetching tree SHA of commit #{base_commit_sha}." do
-          update(:base_tree_sha => github.fetch_base_tree_sha)
+          update(:base_tree_sha => github.fetch_base_tree_sha(base_commit_sha))
         end
       end
 
