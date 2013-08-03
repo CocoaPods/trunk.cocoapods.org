@@ -6,7 +6,9 @@ require 'db/config'
 require 'app/models/submission_job'
 
 loop do
-  unless Pod::PushApp::SubmissionJob.perform_task!
+  if Pod::PushApp::SubmissionJob.perform_task!
+    sleep 0.1
+  else
     sleep 1
   end
 end
