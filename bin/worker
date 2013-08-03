@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+$:.unshift(File.expand_path('../../', __FILE__))
+
+require 'db/config'
+require 'app/models/submission_job'
+
+loop do
+  unless Pod::PushApp::SubmissionJob.perform_task!
+    sleep 1
+  end
+end

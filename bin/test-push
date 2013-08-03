@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+
+require 'rest'
+require 'json'
+require 'cocoapods-core'
+
+require 'safe_yaml'
+SafeYAML::OPTIONS[:default_mode] = :safe
+
+unless ARGV.size == 1
+  $stderr.puts "Usage: #{File.basename(__FILE__)} /path/to/file.podspec"
+  exit 1
+end
+
+spec = Pod::Specification.from_file(ARGV.first)
+response = REST.post('http://localhost:4567/pods', spec.to_yaml, 'Content-Type' => 'text/yaml')
+
+status_url = response.headers['location'].first
+puts "Registered resource URL: #{status_url}"
+
+loop do
+  response = REST.get(status_url, 'Content-Type' => 'text/yaml')
+  puts "[#{response.status_code}] #{response.body}"
+  break if response.status_code == 200
+  sleep 2
+end
