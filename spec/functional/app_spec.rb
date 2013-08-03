@@ -134,36 +134,32 @@ EOYAML
       last_response.status.should == 404
     end
 
-    before do
-      @job.update(:state => 'pull-request-submitted')
-    end
-
     it "does not allow updates to submission job's if the client isn't authorized" do
       post '/travis_build_results', fixture_read('TravisCI/pull-request_success_payload.json'), { 'Authorization' => 'incorrect token' }
       last_response.status.should == 401
       @job.reload.travis_build_success?.should == nil
-      @job.should.be.pull_request_submitted
+      @job.should.not.needs_to_perform_work
     end
 
     it "does not break with a normal commit Travis build status notification" do
       post '/travis_build_results', fixture_read('TravisCI/commit_payload.json'), { 'Authorization' => Travis.webhook_authorization_token }
       last_response.status.should == 200
       @job.reload.travis_build_success?.should == nil
-      @job.should.be.pull_request_submitted
+      @job.should.not.needs_to_perform_work
     end
 
     it "does not break with a Travis build status notification for an unknown pull-request" do
       post '/travis_build_results', fixture_read('TravisCI/pull-request_unknown_payload.json'), { 'Authorization' => Travis.webhook_authorization_token }
       last_response.status.should == 200
       @job.reload.travis_build_success?.should == nil
-      @job.should.be.pull_request_submitted
+      @job.should.not.needs_to_perform_work
     end
 
     it "updates the submission job's Travis build status as passing the lint process" do
       post '/travis_build_results', fixture_read('TravisCI/pull-request_success_payload.json'), { 'Authorization' => Travis.webhook_authorization_token }
       last_response.status.should == 204
       @job.reload.travis_build_success?.should == true
-      @job.should.be.travis_notification_received
+      @job.should.needs_to_perform_work
     end
 
     it "updates the submission job's Travis build status as failing the lint process" do

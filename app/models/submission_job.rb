@@ -4,11 +4,24 @@ require 'app/models/log_message'
 module Pod
   module PushApp
     class SubmissionJob < Sequel::Model
+      class TaskError < ::StandardError; end
+
       self.dataset = :submission_jobs
       plugin :timestamps
 
       many_to_one :pod_version
       one_to_many :log_messages
+
+      alias_method :travis_build_success?, :travis_build_success
+      alias_method :needs_to_perform_work?, :needs_to_perform_work
+
+      def completed?
+        !succeeded.nil? && succeeded
+      end
+
+      def failed?
+        !succeeded.nil? && !succeeded
+      end
 
       def after_create
         super
@@ -17,44 +30,28 @@ module Pod
 
       def pull_request_number=(number)
         super
-        self.state = 'pull-request-submitted' unless pull_request_number.nil?
+        self.needs_to_perform_work = pull_request_number.nil?
       end
 
       def travis_build_success=(result)
         super
         unless travis_build_success.nil?
-          self.state = travis_build_success ? 'travis-notification-received' : 'failed'
+          self.needs_to_perform_work = travis_build_success?
+          self.succeeded = false unless travis_build_success?
         end
       end
 
       def merge_commit_sha=(sha)
         super
-        self.state = 'completed' unless merge_commit_sha.nil?
+        self.needs_to_perform_work = merge_commit_sha.nil?
+        self.succeeded = true unless merge_commit_sha.nil?
       end
 
-      def submitted?
-        state == 'submitted'
-      end
+      def perform_next_task!
+        unless needs_to_perform_work?
+          raise TaskError, "This job is marked as not needing to perform work."
+        end
 
-      def pull_request_submitted?
-        state == 'pull-request-submitted'
-      end
-
-      def travis_notification_received?
-        state == 'travis-notification-received'
-      end
-
-      alias_method :travis_build_success?, :travis_build_success
-
-      def failed?
-        state == 'failed'
-      end
-
-      def completed?
-        state == 'completed'
-      end
-
-      def perform_next_pull_request_task!
         if base_commit_sha.nil?
           fetch_base_commit_sha!
         elsif base_tree_sha.nil?
@@ -67,14 +64,10 @@ module Pod
           create_branch!
         elsif pull_request_number.nil?
           create_pull_request!
+        elsif !travis_build_success.nil?
+          merge_pull_request!
         else
-          raise 'No more pull-request tasks to perform.'
-        end
-      end
-
-      def merge_pull_request!
-        perform_task "Merging pull-request number #{pull_request_number}" do
-          update(:merge_commit_sha => github.merge_pull_request(pull_request_number))
+          raise TaskError, "Unable to determine job state."
         end
       end
 
@@ -147,6 +140,12 @@ module Pod
           update(:pull_request_number => github.create_new_pull_request(title,
                                                                         pod_version.url,
                                                                         new_branch_ref))
+        end
+      end
+
+      def merge_pull_request!
+        perform_task "Merging pull-request number #{pull_request_number}" do
+          update(:merge_commit_sha => github.merge_pull_request(pull_request_number))
         end
       end
     end

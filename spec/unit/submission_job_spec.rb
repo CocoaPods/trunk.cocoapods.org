@@ -23,29 +23,29 @@ module Pod::PushApp
       end
 
       it "initializes with a new state" do
-        @job.state.should == 'submitted'
-        @job.should.be.submitted
+        @job.should.needs_to_perform_work
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
         @job.perform_task 'A failing task' do
-          @job.update(:state => 'not submitted')
+          @job.update(:pull_request_number => 42)
           raise "oh noes!"
         end
         @job.log_messages.last(2).map(&:message).should == ["A failing task", "Error: oh noes!"]
-        @job.reload.should.be.submitted
+        @job.reload.pull_request_number.should == nil
 
         @job.perform_task 'A succeeding task' do
-          @job.update(:state => 'completed')
+          @job.update(:pull_request_number => 42)
         end
         @job.log_messages.last.message.should == "A succeeding task"
-        @job.reload.should.be.completed
+        @job.reload.pull_request_number.should == 42
       end
 
       it "fetches the SHA of the commit this PR will be based on" do
-        @job.perform_next_pull_request_task!
+        @job.perform_next_task!
         @job.base_commit_sha.should == BASE_COMMIT_SHA
         @job.log_messages.last.message.should == "Fetching latest commit SHA."
+        @job.should.needs_to_perform_work
       end
 
       before do
@@ -53,9 +53,10 @@ module Pod::PushApp
       end
 
       it "fetches the SHA of the tree of the base commit" do
-        @job.perform_next_pull_request_task!
+        @job.perform_next_task!
         @job.base_tree_sha.should == BASE_TREE_SHA
         @job.log_messages.last.message.should == "Fetching tree SHA of commit #{BASE_COMMIT_SHA}."
+        @job.should.needs_to_perform_work
       end
 
       before do
@@ -63,9 +64,10 @@ module Pod::PushApp
       end
 
       it "creates a new tree" do
-        @job.perform_next_pull_request_task!
+        @job.perform_next_task!
         @job.new_tree_sha.should == NEW_TREE_SHA
         @job.log_messages.last.message.should == "Creating new tree based on tree #{BASE_TREE_SHA}."
+        @job.should.needs_to_perform_work
       end
 
       before do
@@ -73,9 +75,10 @@ module Pod::PushApp
       end
 
       it "creates a new commit" do
-        @job.perform_next_pull_request_task!
+        @job.perform_next_task!
         @job.new_commit_sha.should == NEW_COMMIT_SHA
         @job.log_messages.last.message.should == "Creating new commit with tree #{NEW_TREE_SHA}."
+        @job.should.needs_to_perform_work
       end
 
       before do
@@ -83,45 +86,54 @@ module Pod::PushApp
       end
 
       it "creates a new branch" do
-        @job.perform_next_pull_request_task!
+        @job.perform_next_task!
         @job.new_branch_ref.should == NEW_BRANCH_REF
         @job.log_messages.last.message.should == "Creating new branch `#{NEW_BRANCH_NAME}' with commit #{NEW_COMMIT_SHA}."
+        @job.should.needs_to_perform_work
       end
 
       before do
         @job.update(:new_branch_ref => NEW_BRANCH_REF)
       end
 
-      it "creates a new pull-request and changes state" do
-        @job.perform_next_pull_request_task!
+      it "creates a new pull-request and changes state to no longer needing work (until Travis reports back)" do
+        @job.perform_next_task!
         @job.pull_request_number.should == NEW_PR_NUMBER
-        @job.state.should == 'pull-request-submitted'
-        @job.should.be.pull_request_submitted
         @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF}."
+        @job.should.not.needs_to_perform_work
       end
 
       before do
-        @job.update(:pull_request_number => NEW_PR_NUMBER)
+        @job.update(:pull_request_number => NEW_PR_NUMBER, :needs_to_perform_work => false)
       end
 
-      it "changes the state if travis succeeds to build the pull-request" do
+      it "does not allow to perform a next task until travis reports back" do
+        should.raise SubmissionJob::TaskError do
+          @job.perform_next_task!
+        end
+      end
+
+      it "changes the state to needing work if travis succeeds to build the pull-request" do
         @job.update(:travis_build_success => true)
-        @job.state.should == 'travis-notification-received'
-        @job.should.be.travis_notification_received
+        @job.should.needs_to_perform_work
       end
 
       it "considers the job to have failed if travis reports a build failure" do
         @job.update(:travis_build_success => false)
-        @job.state.should == 'failed'
+        @job.should.not.needs_to_perform_work
         @job.should.be.failed
       end
 
-      it "merges a pull-request and changes state" do
-        @job.merge_pull_request!
+      before do
+        @job.update(:travis_build_success => true)
+      end
+
+      it "merges a pull-request and changes state to not needing any more work done" do
+        @job.perform_next_task!
         @job.merge_commit_sha.should == MERGE_COMMIT_SHA
-        @job.state.should == 'completed'
-        @job.should.be.completed
         @job.log_messages.last.message.should == "Merging pull-request number #{NEW_PR_NUMBER}"
+        @job.should.not.needs_to_perform_work
+        @job.should.be.completed
       end
     end
   end
