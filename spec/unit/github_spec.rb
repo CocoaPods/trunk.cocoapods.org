@@ -61,28 +61,28 @@ module Pod::PushApp
 
     before do
       body = {
-        :ref => 'refs/heads/AFNetworking-1.2.0',
+        :ref => 'refs/heads/AFNetworking-1.2.0-job-42',
         :sha => NEW_COMMIT_SHA
       }.to_json
       REST.stubs(:post).with(@github.url_for('git/refs'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_new_branch'))
     end
 
     it "creates a new branch object with a new commit object" do
-      @github.create_new_branch(NEW_BRANCH_NAME, NEW_COMMIT_SHA).should == NEW_BRANCH_REF
+      @github.create_new_branch(NEW_BRANCH_NAME % '42', NEW_COMMIT_SHA).should == NEW_BRANCH_REF % '42'
     end
 
     before do
       body = {
         :title => '[Add] AFNetworking 1.2.0',
         :body  => 'Specification for AFNetworking 1.2.0',
-        :head  => NEW_BRANCH_REF,
+        :head  => NEW_BRANCH_REF % '42',
         :base  => 'refs/heads/master'
       }.to_json
       REST.stubs(:post).with(@github.url_for('pulls'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_pull-request'))
     end
 
     it "creates a new pull-request for a branch and returns the pull/issue number" do
-      @github.create_new_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', NEW_BRANCH_REF).should == NEW_PR_NUMBER
+      @github.create_new_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', NEW_BRANCH_REF % '42').should == NEW_PR_NUMBER
     end
 
     before do

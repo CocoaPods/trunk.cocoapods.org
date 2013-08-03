@@ -27,4 +27,4 @@ headers:
   - ! '"b67c73f342572b4c70c2a92325c4529b"'
   cache-control:
   - max-age=0, private, must-revalidate
-body: ! '{"ref":"refs/heads/AFNetworking-1.2.0","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/refs/heads/AFNetworking-1.2.0","object":{"sha":"4ebf6619c831963fafb7ccd8e9aa3079f00ac41d","type":"commit","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/commits/4ebf6619c831963fafb7ccd8e9aa3079f00ac41d"}}'
+body: ! '{"ref":"refs/heads/AFNetworking-1.2.0-job-42","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/refs/heads/AFNetworking-1.2.0","object":{"sha":"4ebf6619c831963fafb7ccd8e9aa3079f00ac41d","type":"commit","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/commits/4ebf6619c831963fafb7ccd8e9aa3079f00ac41d"}}'

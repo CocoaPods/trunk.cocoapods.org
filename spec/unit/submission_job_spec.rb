@@ -30,8 +30,8 @@ module Pod::PushApp
         github.stubs(:fetch_base_tree_sha).returns(BASE_TREE_SHA)
         github.stubs(:create_new_tree).with(BASE_TREE_SHA, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(NEW_TREE_SHA)
         github.stubs(:create_new_commit).with(NEW_TREE_SHA, BASE_COMMIT_SHA, MESSAGE).returns(NEW_COMMIT_SHA)
-        github.stubs(:create_new_branch).with(NEW_BRANCH_NAME, NEW_COMMIT_SHA).returns(NEW_BRANCH_REF)
-        github.stubs(:create_new_pull_request).with(MESSAGE, @version.url, NEW_BRANCH_REF).returns(NEW_PR_NUMBER)
+        github.stubs(:create_new_branch).with(NEW_BRANCH_NAME % @job.id, NEW_COMMIT_SHA).returns(NEW_BRANCH_REF % @job.id)
+        github.stubs(:create_new_pull_request).with(MESSAGE, @version.url, NEW_BRANCH_REF % @job.id).returns(NEW_PR_NUMBER)
         github.stubs(:merge_pull_request).with(NEW_PR_NUMBER).returns(MERGE_COMMIT_SHA)
       end
 
@@ -110,19 +110,19 @@ module Pod::PushApp
 
       it "creates a new branch" do
         @job.perform_next_task!
-        @job.new_branch_ref.should == NEW_BRANCH_REF
-        @job.log_messages.last.message.should == "Creating new branch `#{NEW_BRANCH_NAME}' with commit #{NEW_COMMIT_SHA}."
+        @job.new_branch_ref.should == NEW_BRANCH_REF % @job.id
+        @job.log_messages.last.message.should == "Creating new branch `#{NEW_BRANCH_NAME % @job.id}' with commit #{NEW_COMMIT_SHA}."
         @job.should.needs_to_perform_work
       end
 
       before do
-        @job.update(:new_branch_ref => NEW_BRANCH_REF)
+        @job.update(:new_branch_ref => NEW_BRANCH_REF % @job.id)
       end
 
       it "creates a new pull-request and changes state to no longer needing work (until Travis reports back)" do
         @job.perform_next_task!
         @job.pull_request_number.should == NEW_PR_NUMBER
-        @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF}."
+        @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF % @job.id}."
         @job.should.not.needs_to_perform_work
       end
 

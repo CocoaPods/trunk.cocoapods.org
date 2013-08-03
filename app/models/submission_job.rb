@@ -167,7 +167,7 @@ module Pod
 
       # TODO create branch name according to: https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
       def create_branch!
-        branch_name = "#{pod_version.pod.name}-#{pod_version.name}"
+        branch_name = "#{pod_version.pod.name}-#{pod_version.name}-job-#{self.id}"
         perform_task "Creating new branch `#{branch_name}' with commit #{new_commit_sha}." do
           update(:new_branch_ref => github.create_new_branch(branch_name,
                                                              new_commit_sha))
