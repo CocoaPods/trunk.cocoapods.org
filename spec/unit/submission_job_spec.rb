@@ -1,6 +1,10 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::PushApp
+  class SubmissionJob
+    public :perform_task
+  end
+
   describe "SubmissionJob" do
     describe "concerning submission progress state" do
       before do
@@ -20,10 +24,22 @@ module Pod::PushApp
 
       it "initializes with a new state" do
         @job.state.should == 'submitted'
+        @job.should.be.submitted
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
-        # TODO
+        @job.perform_task 'A failing task' do
+          @job.update(:state => 'not submitted')
+          raise "oh noes!"
+        end
+        @job.log_messages.last(2).map(&:message).should == ["A failing task", "Error: oh noes!"]
+        @job.reload.should.be.submitted
+
+        @job.perform_task 'A succeeding task' do
+          @job.update(:state => 'completed')
+        end
+        @job.log_messages.last.message.should == "A succeeding task"
+        @job.reload.should.be.completed
       end
 
       it "fetches the SHA of the commit this PR will be based on" do

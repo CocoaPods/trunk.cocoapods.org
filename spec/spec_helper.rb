@@ -34,6 +34,9 @@ class Bacon::Context
 
   alias_method :run_requirement_before_sequel, :run_requirement
   def run_requirement(description, spec)
+    PUSH_LOGGER.info('-' * description.size)
+    PUSH_LOGGER.info(description)
+    PUSH_LOGGER.info('-' * description.size)
     Sequel::Model.db.transaction(:rollback => :always) do
       run_requirement_before_sequel(description, spec)
     end
