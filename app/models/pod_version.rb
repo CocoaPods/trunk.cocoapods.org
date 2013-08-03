@@ -9,9 +9,7 @@ module Pod
       many_to_one :pod
       one_to_many :submission_jobs
 
-      def published?
-        published
-      end
+      alias_method :published?, :published
     end
   end
 end

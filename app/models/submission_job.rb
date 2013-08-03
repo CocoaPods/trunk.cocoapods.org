@@ -55,6 +55,13 @@ module Pod
         add_log_message(:message => 'Submitted')
       end
 
+      def after_update
+        super
+        if @columns_updated.has_key?(:succeeded) && @columns_updated[:succeeded] == true
+          pod_version.update(:published => true)
+        end
+      end
+
       def pull_request_number=(number)
         super
         self.needs_to_perform_work = pull_request_number.nil?

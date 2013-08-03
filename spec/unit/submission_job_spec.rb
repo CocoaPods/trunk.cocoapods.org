@@ -158,6 +158,11 @@ module Pod::PushApp
         @job.should.not.needs_to_perform_work
         @job.should.be.completed
       end
+
+      it "publishes the pod version once the pull-request has been merged" do
+        @job.perform_next_task!
+        @version.should.be.published
+      end
     end
   end
 end
