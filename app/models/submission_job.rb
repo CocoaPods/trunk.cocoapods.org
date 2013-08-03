@@ -15,24 +15,6 @@ module Pod
         add_log_message(:message => 'Submitted')
       end
 
-      def submitted?
-        state == 'submitted'
-      end
-
-      def pull_request_submitted?
-        state == 'pull-request-submitted'
-      end
-
-      def travis_notification_received?
-        state == 'travis-notification-received'
-      end
-
-      def completed?
-        state == 'completed'
-      end
-
-      alias_method :travis_build_success?, :travis_build_success
-
       def pull_request_number=(number)
         super
         self.state = 'pull-request-submitted' unless pull_request_number.nil?
@@ -40,7 +22,9 @@ module Pod
 
       def travis_build_success=(result)
         super
-        self.state = 'travis-notification-received' unless travis_build_success.nil?
+        unless travis_build_success.nil?
+          self.state = travis_build_success ? 'travis-notification-received' : 'failed'
+        end
       end
 
       def merge_commit_sha=(sha)

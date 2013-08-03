@@ -20,7 +20,6 @@ module Pod::PushApp
 
       it "initializes with a new state" do
         @job.state.should == 'submitted'
-        @job.should.be.submitted
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
@@ -81,7 +80,6 @@ module Pod::PushApp
         @job.perform_next_pull_request_task!
         @job.pull_request_number.should == NEW_PR_NUMBER
         @job.state.should == 'pull-request-submitted'
-        @job.should.be.pull_request_submitted
         @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF}."
       end
 
@@ -89,11 +87,20 @@ module Pod::PushApp
         @job.update(:pull_request_number => NEW_PR_NUMBER)
       end
 
+      it "changes the state if travis succeeds to build the pull-request" do
+        @job.update(:travis_build_success => true)
+        @job.state.should == 'travis-notification-received'
+      end
+
+      it "considers the job to have failed if travis reports a build failure" do
+        @job.update(:travis_build_success => false)
+        @job.state.should == 'failed'
+      end
+
       it "merges a pull-request and changes state" do
         @job.merge_pull_request!
         @job.merge_commit_sha.should == MERGE_COMMIT_SHA
         @job.state.should == 'completed'
-        @job.should.be.completed?
         @job.log_messages.last.message.should == "Merging pull-request number #{NEW_PR_NUMBER}"
       end
     end
