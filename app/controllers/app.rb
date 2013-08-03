@@ -65,9 +65,9 @@ module Pod
 
       # TODO fix headers that are set to YAML in the before block.
       post '/travis_build_results' do
-        error 401 unless Travis.authorized_webhook_notification?(env['Authorization'])
+        error 401 unless Travis.authorized_webhook_notification?(env['HTTP_AUTHORIZATION'])
 
-        travis = Travis.new(JSON.parse(request.body.read))
+        travis = Travis.new(JSON.parse(request.POST['payload']))
         if travis.pull_request? && job = SubmissionJob.find(:pull_request_number => travis.pull_request_number)
           job.update(:travis_build_success => travis.build_success?)
           halt 204
