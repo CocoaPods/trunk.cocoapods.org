@@ -32,6 +32,24 @@ module Pod
         self.state = 'completed' unless merge_commit_sha.nil?
       end
 
+      def pull_request_submitted?
+        state == 'pull-request-submitted'
+      end
+
+      def travis_notification_received?
+        state == 'travis-notification-received'
+      end
+
+      alias_method :travis_build_success?, :travis_build_success
+
+      def failed?
+        state == 'failed'
+      end
+
+      def completed?
+        state == 'completed'
+      end
+
       def perform_next_pull_request_task!
         if base_commit_sha.nil?
           fetch_base_commit_sha!

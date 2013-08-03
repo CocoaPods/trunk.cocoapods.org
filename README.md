@@ -19,5 +19,5 @@ Available under the MIT license.
 To start a development server run the following command, replacing the environment variables with
 your GitHub credentials and a GitHub testing sandbox repository:
 
-    env GH_USERNAME=alloy GH_PASSWORD=secret GH_REPO=alloy/push.cocoapods.org-test rake serve
+    env GH_USERNAME=alloy GH_PASSWORD=secret GH_REPO=alloy/push.cocoapods.org-test TRAVIS_API_TOKEN=secret rake serve
 

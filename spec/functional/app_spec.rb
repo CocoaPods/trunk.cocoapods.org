@@ -170,7 +170,7 @@ EOYAML
       post '/travis_build_results', fixture_read('TravisCI/pull-request_failure_payload.json'), { 'Authorization' => Travis.webhook_authorization_token }
       last_response.status.should == 204
       @job.reload.travis_build_success?.should == false
-      @job.should.be.travis_notification_received
+      @job.should.be.failed
     end
   end
 end
