@@ -149,7 +149,7 @@ module Pod
 
       def create_tree!
         perform_task "Creating new tree based on tree #{base_tree_sha}." do
-          destination_path = File.join(pod_version.pod.name, pod_version.name, "#{pod_version.pod.name}.podspec")
+          destination_path = File.join(pod_version.pod.name, pod_version.name, "#{pod_version.pod.name}.podspec.yaml")
           update(:new_tree_sha => github.create_new_tree(base_tree_sha,
                                                          destination_path,
                                                          specification_data))
