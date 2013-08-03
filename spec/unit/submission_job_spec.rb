@@ -6,12 +6,25 @@ module Pod::PushApp
   end
 
   describe "SubmissionJob" do
+    before do
+      @pod = Pod.create(:name => 'AFNetworking')
+      @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :url => 'http://host/pods/AFNetworking/versions/1.2.0')
+      @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'))
+    end
+
+    it "takes a job from the queue and performs the next task" do
+      SubmissionJob.any_instance.expects(:perform_next_task!)
+      SubmissionJob.perform_task!.should == true
+    end
+
+    it "returns that there was no work to perform if there are no jobs that need work done" do
+      @job.update(:needs_to_perform_work => false)
+      SubmissionJob.any_instance.expects(:perform_next_task!).never
+      SubmissionJob.perform_task!.should == false
+    end
+
     describe "concerning submission progress state" do
       before do
-        @pod = Pod.create(:name => 'AFNetworking')
-        @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :url => 'http://host/pods/AFNetworking/versions/1.2.0')
-        @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'))
-
         github = @job.send(:github)
         github.stubs(:fetch_latest_commit_sha).returns(BASE_COMMIT_SHA)
         github.stubs(:fetch_base_tree_sha).returns(BASE_TREE_SHA)

@@ -12,6 +12,15 @@ module Pod
       many_to_one :pod_version
       one_to_many :log_messages
 
+      def self.perform_task!
+        if job = for_update.order(Sequel.asc(:updated_at)).first(:needs_to_perform_work => true)
+          job.perform_next_task!
+          true
+        else
+          false
+        end
+      end
+
       alias_method :travis_build_success?, :travis_build_success
       alias_method :needs_to_perform_work?, :needs_to_perform_work
 
