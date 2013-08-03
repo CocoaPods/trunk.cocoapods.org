@@ -8,11 +8,11 @@ Available under the MIT license.
 
 2. Install the dependencies:
 
-       rake bootstrap
+        rake bootstrap
 
 3. Create a PostgreSQL database:
 
-       createdb push_cocoapods_org_dev -E UTF8
+        createdb push_cocoapods_org_dev -E UTF8
 
 ## Usage
 
