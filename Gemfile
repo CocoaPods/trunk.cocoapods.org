@@ -14,5 +14,6 @@ group :development do
   gem 'mocha-on-bacon'
   gem 'rack-test'
 
+  gem 'kicker', :git => 'https://github.com/alloy/kicker.git', :branch => '3.0.0'
   gem 'saga'
 end

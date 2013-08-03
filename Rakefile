@@ -43,6 +43,11 @@ begin
     sh "bacon #{FileList['spec/**/*_spec.rb'].shuffle.join(' ')}"
   end
 
+  desc 'Use Kicker to automatically run specs'
+  task :kick do
+    exec 'kicker -c -rruby -b bacon'
+  end
+
   task :default => :spec
 rescue LoadError => e
   puts "[!] The normal tasks have been disabled: #{e.message}"
