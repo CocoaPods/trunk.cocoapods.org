@@ -34,7 +34,7 @@ sha_base_tree = response['tree']['sha']
 #### Create Git objects
 
 #test_name = "test-#{Time.now.to_i}"
-test_name = "AFNetworking-1.2.0"
+test_name = "AFNetworking-1.2.0-#{Time.now.to_i}"
 
 # Create new tree entry (the contents)
 body = { "base_tree" => sha_base_tree, "tree" => [{ "path" => "#{test_name}/1.2.0/#{test_name}.podspec", "encoding" => "utf-8", "content" => File.read('spec/fixtures/AFNetworking.podspec'), "mode" => "100644" }] }.to_json
@@ -60,4 +60,11 @@ body = { "title" => "[PUSH] Add #{test_name}", "body" => ":heart:", "head" => "r
 p body
 response = handle_response(REST.post(url("pulls"), body, {}, auth_params))
 p response
+pr_number = response['number']
 
+#### Merge pull-request
+
+body = { "commit_message" => "Merged by remote app." }.to_json
+p body
+response = handle_response(REST.put(url("pulls/#{pr_number}/merge"), body, {}, auth_params))
+p response
