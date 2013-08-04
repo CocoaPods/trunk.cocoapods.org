@@ -46,7 +46,7 @@ module Pod
       end
 
       def merge_pull_request(number)
-        rest(:put, "pulls/#{number}/merge")['sha']
+        rest(:put, "pulls/#{number}/merge", {})['sha']
       end
 
       private

@@ -86,7 +86,7 @@ module Pod::PushApp
     end
 
     before do
-      REST.stubs(:put).with(@github.url_for("pulls/#{NEW_PR_NUMBER}/merge"), GitHub::HEADERS, @auth).returns(fixture_response('merge_pull-request'))
+      REST.stubs(:put).with(@github.url_for("pulls/#{NEW_PR_NUMBER}/merge"), '{}', GitHub::HEADERS, @auth).returns(fixture_response('merge_pull-request'))
     end
 
     it "merges a pull-request for a branch and returns the pull/issue number" do
