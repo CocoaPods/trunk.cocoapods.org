@@ -21,6 +21,22 @@ begin
     end
   end
 
+  desc 'Show schema'
+  task :schema do
+    require 'terminal-table'
+    $:.unshift(File.expand_path('../', __FILE__))
+    require 'db/config'
+    DB.tables.each do |table|
+      p table
+      schema = DB.schema(table)
+      puts Terminal::Table.new(
+        :headings => [:name, *schema[0][1].keys],
+        :rows => schema.map { |c| [c[0], *c[1].values.map(&:inspect)] }
+      )
+      puts
+    end
+  end
+
   desc 'Starts processes for local development'
   task :serve do
     exec "env PORT=4567 RACK_ENV=development foreman start"

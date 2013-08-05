@@ -18,4 +18,5 @@ group :development do
 
   gem 'kicker', :git => 'https://github.com/alloy/kicker.git', :branch => '3.0.0'
   gem 'saga'
+  gem 'terminal-table'
 end

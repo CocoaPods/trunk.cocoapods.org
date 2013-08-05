@@ -66,6 +66,7 @@ GEM
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
     sinatra-twitter-bootstrap (2.3.1.1)
+    terminal-table (1.4.5)
     thin (1.5.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -90,4 +91,5 @@ DEPENDENCIES
   sequel
   sinatra
   sinatra-twitter-bootstrap
+  terminal-table
   thin
