@@ -5,6 +5,9 @@ module Pod
   module PushApp
     App = Rack::Builder.new do
       run APIController
+      map '/manage' do
+        run ManageController
+      end
     end
   end
 end

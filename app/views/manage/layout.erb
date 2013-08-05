@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Push • <%= @title %></title>
+  <%= bootstrap_assets %>
+</head>
+<body style="padding-top: 50px;">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="#">
+          Push
+        </a>
+
+        <ul class="nav">
+          <li><a href="<%= url('/jobs') %>">Jobs</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <%= yield %>
+  </div>
+</body>
+</html>

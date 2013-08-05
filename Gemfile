@@ -8,6 +8,7 @@ gem 'pg'
 gem 'safe_yaml'
 gem 'sequel'
 gem 'sinatra'
+gem 'sinatra-twitter-bootstrap'
 gem 'thin'
 
 group :development do
