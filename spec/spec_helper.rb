@@ -11,7 +11,7 @@ ENV['GH_PASSWORD']      = 'secret'
 ENV['TRAVIS_API_TOKEN'] = 'secret-travis-token'
 
 $:.unshift File.expand_path('../../', __FILE__)
-require 'app/controllers/app'
+require 'db/config'
 
 Mocha::Configuration.prevent(:stubbing_non_existent_method)
 

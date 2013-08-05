@@ -1,4 +1,5 @@
 require File.expand_path('../../spec_helper', __FILE__)
+require 'app/controllers/api_controller'
 
 module Fixtures
   # Taken from https://github.com/dtao/safe_yaml/blob/master/README.md#explanation
@@ -17,11 +18,11 @@ module Fixtures
 end
 
 module Pod::PushApp
-  describe "App" do
+  describe APIController do
     extend Rack::Test::Methods
 
     def app
-      App
+      APIController
     end
 
     def spec
