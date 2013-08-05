@@ -20,6 +20,9 @@ else
   PUSH_LOGGER.level = Logger::DEBUG
 end
 
+require 'safe_yaml'
+SafeYAML::OPTIONS[:default_mode] = :safe
+
 db_loggers = []
 db_loggers << PUSH_LOGGER unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)

@@ -20,6 +20,7 @@ module Pod
       end
 
       get '/jobs' do
+        @jobs = SubmissionJob.where(:succeeded => nil)
         erb :'jobs/index'
       end
     end

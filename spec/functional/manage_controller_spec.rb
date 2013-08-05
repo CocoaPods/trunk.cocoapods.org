@@ -9,10 +9,16 @@ module Pod::PushApp
       ManageController
     end
 
+    before do
+      @pod = Pod.create(:name => 'AFNetworking')
+      @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :url => 'http://host/pods/AFNetworking/versions/1.2.0')
+      @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'))
+    end
+
     it "shows a list of current submission jobs" do
       get '/jobs'
       last_response.should.be.ok
-      puts last_response.body
+      last_response.body.should.include @pod.name
     end
   end
 end

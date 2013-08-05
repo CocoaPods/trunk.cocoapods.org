@@ -1,1 +1,18 @@
 <% @title = 'Submission Jobs' %>
+
+<table class="table table-striped">
+  <tr>
+    <th>ID</th>
+    <th>Pod</th>
+    <th>Created At</th>
+    <th>Updated At</th>
+    <% @jobs.each do |job| %>
+      <tr>
+        <td><%= job.id %></td>
+        <td><%= job.pod_version.pod.name %></td>
+        <td><%= job.updated_at %></td>
+        <td><%= job.created_at %></td>
+      </tr>
+    <% end %>
+  </tr>
+</table>

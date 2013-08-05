@@ -1,6 +1,3 @@
-require 'safe_yaml'
-SafeYAML::OPTIONS[:default_mode] = :safe
-
 module Pod
   module PushApp
     class SpecificationWrapper
