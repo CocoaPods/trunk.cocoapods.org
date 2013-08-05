@@ -10,9 +10,12 @@ require 'app/models/specification_wrapper'
 module Pod
   module PushApp
     class APIController < Sinatra::Base
+      configure do
+        set :root, ROOT
+      end
+
       configure :development, :production do
         enable :logging
-        set :root, ROOT
       end
 
       before do

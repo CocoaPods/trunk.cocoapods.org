@@ -10,10 +10,13 @@ module Pod
     class ManageController < Sinatra::Base
       register Sinatra::Twitter::Bootstrap::Assets
 
-      configure :development, :production do
-        enable :logging
+      configure do
         set :root, ROOT
         set :views, settings.root + '/app/views/manage'
+      end
+
+      configure :development, :production do
+        enable :logging
       end
 
       get '/jobs' do
