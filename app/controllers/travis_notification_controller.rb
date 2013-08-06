@@ -18,17 +18,15 @@ module Pod
 
       before do
         error 415 unless request.media_type == 'application/x-www-form-urlencoded'
+        error 401 unless Travis.authorized_webhook_notification?(env['HTTP_AUTHORIZATION'])
       end
 
       post '/builds' do
-        error 401 unless Travis.authorized_webhook_notification?(env['HTTP_AUTHORIZATION'])
-
         travis = Travis.new(JSON.parse(request.POST['payload']))
         if travis.pull_request? && job = SubmissionJob.find(:pull_request_number => travis.pull_request_number)
           job.update(:travis_build_success => travis.build_success?)
           halt 204
         end
-
         halt 200
       end
     end

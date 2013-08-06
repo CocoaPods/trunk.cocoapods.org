@@ -34,29 +34,33 @@ module Pod::PushApp
       @job.should.not.needs_to_perform_work
     end
 
+    before do
+      header 'Authorization', Travis.webhook_authorization_token
+    end
+
     it "does not break with a normal commit Travis build status notification" do
-      post '/builds', { 'payload' => fixture_read('TravisCI/commit_payload.json') }, { 'HTTP_AUTHORIZATION' => Travis.webhook_authorization_token }
+      post '/builds', { 'payload' => fixture_read('TravisCI/commit_payload.json') }
       last_response.status.should == 200
       @job.reload.travis_build_success?.should == nil
       @job.should.not.needs_to_perform_work
     end
 
     it "does not break with a Travis build status notification for an unknown pull-request" do
-      post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_unknown_payload.json') }, { 'HTTP_AUTHORIZATION' => Travis.webhook_authorization_token }
+      post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_unknown_payload.json') }
       last_response.status.should == 200
       @job.reload.travis_build_success?.should == nil
       @job.should.not.needs_to_perform_work
     end
 
     it "updates the submission job's Travis build status as passing the lint process" do
-      post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_success_payload.json') }, { 'HTTP_AUTHORIZATION' => Travis.webhook_authorization_token }
+      post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_success_payload.json') }
       last_response.status.should == 204
       @job.reload.travis_build_success?.should == true
       @job.should.needs_to_perform_work
     end
 
     it "updates the submission job's Travis build status as failing the lint process" do
-      post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_failure_payload.json') }, { 'HTTP_AUTHORIZATION' => Travis.webhook_authorization_token }
+      post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_failure_payload.json') }
       last_response.status.should == 204
       @job.reload.travis_build_success?.should == false
       @job.should.be.failed

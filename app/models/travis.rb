@@ -1,4 +1,5 @@
 require 'json'
+require 'digest'
 
 module Pod
   module PushApp
