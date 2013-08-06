@@ -1,0 +1,8 @@
+table.table-hover tr td a
+{
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  color: rgb(51, 51, 51);
+  text-decoration: none;
+}

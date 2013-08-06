@@ -42,6 +42,11 @@ module Pod
         end
         erb :'jobs/index'
       end
+
+      get '/jobs/:id' do
+        @job = SubmissionJob.find(:id => params[:id])
+        erb :'jobs/show'
+      end
     end
   end
 end

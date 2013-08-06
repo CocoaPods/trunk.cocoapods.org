@@ -1,0 +1,31 @@
+<% @title = @job.pod_version.pod.name %>
+
+<div class="page-header">
+  <h1><%= @job.pod_version.pod.name %> <small><%= @job.pod_version.name %></small></h1>
+</div>
+
+<dl class="dl-horizontal">
+  <dt>Attempts</dt>
+  <dd><%= @job.attempts %></dd>
+  <dt>Duration</dt>
+  <dd><%= (@job.updated_at - @job.created_at).ceil %> sec<dd>
+  <dt>Pull-request</dt>
+  <dd><a href="https://github.com/<%= ENV['GH_REPO'] %>/pull/<%= @job.pull_request_number %>"><%= @job.pull_request_number %></a></dd>
+</dl>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Logged at</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @job.log_messages.each do |log_message| %>
+      <tr>
+        <td><%= log_message.created_at %></td>
+        <td><%= log_message.message %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

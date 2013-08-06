@@ -20,10 +20,10 @@
   <tbody>
     <% @jobs.each do |job| %>
       <tr class="<%= (job.succeeded ? 'success' : 'error') unless job.succeeded == nil %>">
-        <td><%= job.id %></td>
-        <td><%= job.pod_version.pod.name %></td>
-        <td><%= job.updated_at %></td>
-        <td><%= job.created_at %></td>
+        <% href = url("/jobs/#{job.id}") %>
+        <% [job.id, job.pod_version.pod.name, job.updated_at, job.created_at].each do |value| %>
+          <td><a href="<%= href %>"><%= value %></a></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

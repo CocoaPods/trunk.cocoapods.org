@@ -38,14 +38,14 @@ module Pod::PushApp
 
     it "shows a list of failed submission jobs" do
       @job.update(:succeeded => false)
-      get '/jobs?scope=failed'
+      get '/jobs', :scope => 'failed'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
     end
 
     it "shows a list of succeeded submission jobs" do
       @job.update(:succeeded => true)
-      get '/jobs?scope=succeeded'
+      get '/jobs', :scope => 'succeeded'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
     end
@@ -53,10 +53,16 @@ module Pod::PushApp
     it "shows a list of all submission jobs" do
       [nil, false, true].each do |scope|
         @job.update(:succeeded => scope)
-        get '/jobs?scope=all'
+        get '/jobs', :scope => 'all'
         last_response.should.be.ok
         last_response.body.should.include @pod.name
       end
+    end
+
+    it "shows an overview of an individual submission job" do
+      get "/jobs/#{@job.id}"
+      last_response.should.be.ok
+      last_response.body.should.include @pod.name
     end
   end
 end
