@@ -24,7 +24,7 @@ module Pod
       post '/builds' do
         travis = Travis.new(JSON.parse(request.POST['payload']))
         if travis.pull_request? && job = SubmissionJob.find(:pull_request_number => travis.pull_request_number)
-          job.update(:travis_build_success => travis.build_success?)
+          job.update(:travis_build_success => travis.build_success?, :travis_build_url => travis.build_url)
           halt 204
         end
         halt 200

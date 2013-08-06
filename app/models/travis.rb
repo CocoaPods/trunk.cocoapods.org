@@ -28,6 +28,10 @@ module Pod
       def build_success?
         @payload['result'] == 0
       end
+
+      def build_url
+        @payload['build_url']
+      end
     end
   end
 end
