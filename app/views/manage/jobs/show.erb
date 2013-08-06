@@ -11,6 +11,14 @@
   <dd><%= ((@job.updated_at || Time.now) - @job.created_at).ceil %> sec<dd>
   <dt>Pull-request</dt>
   <dd><a href="https://github.com/<%= ENV['GH_REPO'] %>/pull/<%= @job.pull_request_number %>"><%= @job.pull_request_number %></a></dd>
+  <dt>Travis build</dt>
+  <dd>
+    <% if @job.travis_build_url %>
+      <a href="<%= @job.travis_build_url %>"><%= File.basename(@job.travis_build_url) %></a>
+    <% else %>
+      n/a
+    <% end %>
+  </dd>
 </dl>
 
 <table class="table table-bordered">
