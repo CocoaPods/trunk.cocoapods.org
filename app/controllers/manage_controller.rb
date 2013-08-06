@@ -28,7 +28,18 @@ module Pod
       register Sinatra::Twitter::Bootstrap::Assets
 
       get '/jobs' do
-        @jobs = SubmissionJob.where(:succeeded => nil)
+        @jobs = SubmissionJob.dataset
+        case params[:scope]
+        when 'all'
+          # no-op
+        when 'failed'
+          @jobs = @jobs.where(:succeeded => false)
+        when 'succeeded'
+          @jobs = @jobs.where(:succeeded => true)
+        else
+          params[:scope] = 'current'
+          @jobs = @jobs.where(:succeeded => nil)
+        end
         erb :'jobs/index'
       end
     end

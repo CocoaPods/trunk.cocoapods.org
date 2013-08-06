@@ -30,9 +30,33 @@ module Pod::PushApp
     end
 
     it "shows a list of current submission jobs" do
+      @job.update(:succeeded => nil)
       get '/jobs'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
+    end
+
+    it "shows a list of failed submission jobs" do
+      @job.update(:succeeded => false)
+      get '/jobs?scope=failed'
+      last_response.should.be.ok
+      last_response.body.should.include @pod.name
+    end
+
+    it "shows a list of succeeded submission jobs" do
+      @job.update(:succeeded => true)
+      get '/jobs?scope=succeeded'
+      last_response.should.be.ok
+      last_response.body.should.include @pod.name
+    end
+
+    it "shows a list of all submission jobs" do
+      [nil, false, true].each do |scope|
+        @job.update(:succeeded => scope)
+        get '/jobs?scope=all'
+        last_response.should.be.ok
+        last_response.body.should.include @pod.name
+      end
     end
   end
 end
