@@ -8,7 +8,13 @@ require 'app/models/pod'
 module Pod
   module PushApp
     class ManageController < Sinatra::Base
-      register Sinatra::Twitter::Bootstrap::Assets
+      def self.hash_password(password)
+        Digest::SHA2.hexdigest(password)
+      end
+
+      use Rack::Auth::Basic, 'Protected Area' do |username, password|
+        username == 'admin' && hash_password(password) == ENV['PUSH_ADMIN_PASSWORD']
+      end
 
       configure do
         set :root, ROOT
@@ -18,6 +24,8 @@ module Pod
       configure :development, :production do
         enable :logging
       end
+
+      register Sinatra::Twitter::Bootstrap::Assets
 
       get '/jobs' do
         @jobs = SubmissionJob.where(:succeeded => nil)

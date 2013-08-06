@@ -15,6 +15,20 @@ module Pod::PushApp
       @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'))
     end
 
+    it "disallows access without authentication" do
+      get '/jobs'
+      last_response.status.should == 401
+    end
+
+    it "disallows access with incorrect authentication" do
+      authorize 'admin', 'incorrect'
+      last_response.status.should == 401
+    end
+
+    before do
+      authorize 'admin', 'secret'
+    end
+
     it "shows a list of current submission jobs" do
       get '/jobs'
       last_response.should.be.ok

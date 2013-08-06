@@ -1,4 +1,5 @@
 require File.expand_path('../../spec_helper', __FILE__)
+require 'app/models/pod_version'
 
 module Pod::PushApp
   describe "PodVersion" do
