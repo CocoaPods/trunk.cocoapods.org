@@ -4,7 +4,6 @@ require 'cocoapods-core'
 require 'db/config'
 require 'app/models/github'
 require 'app/models/pod'
-require 'app/models/travis'
 require 'app/models/specification_wrapper'
 
 module Pod
@@ -20,7 +19,7 @@ module Pod
 
       before do
         content_type 'text/yaml'
-        unless request.media_type == 'text/yaml' || request.path == '/travis_build_results'
+        unless request.media_type == 'text/yaml'
           error 415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.".to_yaml
         end
       end
@@ -65,19 +64,6 @@ module Pod
           end
         end
         error 404
-      end
-
-      # TODO fix headers that are set to YAML in the before block.
-      post '/travis_build_results' do
-        error 401 unless Travis.authorized_webhook_notification?(env['HTTP_AUTHORIZATION'])
-
-        travis = Travis.new(JSON.parse(request.POST['payload']))
-        if travis.pull_request? && job = SubmissionJob.find(:pull_request_number => travis.pull_request_number)
-          job.update(:travis_build_success => travis.build_success?)
-          halt 204
-        end
-
-        halt 200
       end
     end
   end

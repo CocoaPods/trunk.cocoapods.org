@@ -40,9 +40,9 @@ Available under the MIT license.
 
 To start a development server run the following command, replacing the environment variables with
 your GitHub credentials, a GitHub testing sandbox repository, your Travis-CI API token, and a SHA
-hashed version of the password for the admin area:
+hashed version of the password for the admin area (in this example the password is ‘secret’):
 
-    env GH_USERNAME=alloy GH_PASSWORD=secret GH_REPO=alloy/push.cocoapods.org-test TRAVIS_API_TOKEN=secret PUSH_ADMIN_PASSWORD=secret_sha rake serve
+    env GH_USERNAME=alloy GH_PASSWORD=secret GH_REPO=alloy/push.cocoapods.org-test TRAVIS_API_TOKEN=secret PUSH_ADMIN_PASSWORD=2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b rake serve
 
 Optional environment variables are:
 

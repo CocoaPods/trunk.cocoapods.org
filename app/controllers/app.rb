@@ -1,13 +1,13 @@
 require 'app/controllers/api_controller'
 require 'app/controllers/manage_controller'
+require 'app/controllers/travis_notification_controller'
 
 module Pod
   module PushApp
-    App = Rack::Builder.new do
-      run APIController
-      map '/manage' do
-        run ManageController
-      end
-    end
+    App = Rack::URLMap.new(
+      '/' => APIController,
+      '/manage' => ManageController,
+      '/travis' => TravisNotificationController
+    )
   end
 end
