@@ -2,7 +2,7 @@ require 'rest'
 require 'json'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class GitHub
       BASE_URL = "https://api.github.com/repos/%s".freeze
       HEADERS  = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze

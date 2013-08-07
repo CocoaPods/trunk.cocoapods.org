@@ -1,7 +1,7 @@
 require File.expand_path('../../spec_helper', __FILE__)
 require 'app/models/pod_version'
 
-module Pod::PushApp
+module Pod::TrunkApp
   describe "PodVersion" do
     describe "concerning submission progress state" do
       before do

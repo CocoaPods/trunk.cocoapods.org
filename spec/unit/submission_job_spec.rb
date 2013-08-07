@@ -1,7 +1,7 @@
 require File.expand_path('../../spec_helper', __FILE__)
 require 'app/models/submission_job'
 
-module Pod::PushApp
+module Pod::TrunkApp
   class SubmissionJob
     public :perform_task
   end

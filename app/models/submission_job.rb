@@ -4,7 +4,7 @@ require 'app/models/pod'
 require 'app/models/pod_version'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class SubmissionJob < Sequel::Model
       class TaskError < ::StandardError; end
 

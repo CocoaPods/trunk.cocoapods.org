@@ -6,7 +6,7 @@ require 'app/models/submission_job'
 require 'app/models/travis'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class TravisNotificationController < Sinatra::Base
       configure do
         set :root, ROOT

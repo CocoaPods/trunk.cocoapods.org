@@ -1,7 +1,7 @@
 require File.expand_path('../../spec_helper', __FILE__)
 require 'app/controllers/manage_controller'
 
-module Pod::PushApp
+module Pod::TrunkApp
   describe ManageController do
     extend Rack::Test::Methods
 

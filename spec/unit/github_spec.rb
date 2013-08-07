@@ -1,7 +1,7 @@
 require File.expand_path('../../spec_helper', __FILE__)
 require 'app/models/github'
 
-module Pod::PushApp
+module Pod::TrunkApp
   class GitHub
     public :url_for
   end

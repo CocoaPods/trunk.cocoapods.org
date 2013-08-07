@@ -6,7 +6,7 @@ require 'db/config'
 require 'app/models/pod'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class ManageController < Sinatra::Base
       def self.hash_password(password)
         Digest::SHA2.hexdigest(password)

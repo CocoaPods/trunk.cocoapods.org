@@ -1,7 +1,7 @@
 require 'app/models/submission_job'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class PodVersion < Sequel::Model
       self.dataset = :pod_versions
       plugin :timestamps

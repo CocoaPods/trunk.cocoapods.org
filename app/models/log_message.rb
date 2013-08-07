@@ -1,7 +1,7 @@
 require 'app/models/submission_job'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class LogMessage < Sequel::Model
       self.dataset = :log_messages
       plugin :timestamps

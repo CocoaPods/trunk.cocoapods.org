@@ -2,7 +2,7 @@ require 'json'
 require 'digest'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class Travis
       def self.webhook_authorization_token
         Digest::SHA2.hexdigest(ENV['GH_REPO'] + ENV['TRAVIS_API_TOKEN'])

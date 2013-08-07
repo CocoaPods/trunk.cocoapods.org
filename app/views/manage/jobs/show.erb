@@ -5,9 +5,9 @@
 </div>
 
 <% if params[:progress] == 'true' %>
-  <h3><%= @job.tasks_completed %> out of <%= Pod::PushApp::SubmissionJob.tasks.size %> tasks completed</h3>
+  <h3><%= @job.tasks_completed %> out of <%= Pod::TrunkApp::SubmissionJob.tasks.size %> tasks completed</h3>
   <div class="progress progress-striped <%= 'active' if @job.in_progress? %>">
-    <div class="bar" style="width: <%= (100.0 / Pod::PushApp::SubmissionJob.tasks.size) * @job.tasks_completed %>%;"></div>
+    <div class="bar" style="width: <%= (100.0 / Pod::TrunkApp::SubmissionJob.tasks.size) * @job.tasks_completed %>%;"></div>
   </div>
   <hr>
 <% end%>

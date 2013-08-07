@@ -1,5 +1,5 @@
 module Pod
-  module PushApp
+  module TrunkApp
     class SpecificationWrapper
       def self.from_yaml(yaml)
         hash = YAML.safe_load(yaml)

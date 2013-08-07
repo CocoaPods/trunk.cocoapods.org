@@ -17,7 +17,7 @@ module Fixtures
   end
 end
 
-module Pod::PushApp
+module Pod::TrunkApp
   describe APIController do
     extend Rack::Test::Methods
 

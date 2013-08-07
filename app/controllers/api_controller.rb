@@ -7,7 +7,7 @@ require 'app/models/pod'
 require 'app/models/specification_wrapper'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class APIController < Sinatra::Base
       configure do
         set :root, ROOT
