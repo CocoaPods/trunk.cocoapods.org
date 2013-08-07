@@ -5,7 +5,7 @@ require 'app/controllers/travis_notification_controller'
 module Pod
   module TrunkApp
     App = Rack::URLMap.new(
-      '/' => APIController,
+      '/api/v1' => APIController,
       '/manage' => ManageController,
       '/travis' => TravisNotificationController
     )
