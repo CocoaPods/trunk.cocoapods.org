@@ -29,4 +29,3 @@ db_loggers = []
 db_loggers << TRUNK_APP_LOGGER unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 Sequel.extension :core_extensions, :migration
-Sequel::Migrator.run(DB, File.expand_path('../migrations', __FILE__))
