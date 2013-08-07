@@ -39,6 +39,18 @@ module Pod
         end
       end
 
+      def after_create
+        super
+        add_log_message(:message => 'Submitted')
+      end
+
+      def after_update
+        super
+        if @columns_updated.has_key?(:succeeded) && @columns_updated[:succeeded] == true
+          pod_version.update(:published => true)
+        end
+      end
+
       alias_method :travis_build_success?, :travis_build_success
       alias_method :needs_to_perform_work?, :needs_to_perform_work
 
@@ -52,18 +64,6 @@ module Pod
 
       def failed?
         !succeeded.nil? && !succeeded
-      end
-
-      def after_create
-        super
-        add_log_message(:message => 'Submitted')
-      end
-
-      def after_update
-        super
-        if @columns_updated.has_key?(:succeeded) && @columns_updated[:succeeded] == true
-          pod_version.update(:published => true)
-        end
       end
 
       def pull_request_number=(number)
@@ -81,7 +81,6 @@ module Pod
 
       def merge_commit_sha=(sha)
         super
-        self.needs_to_perform_work = merge_commit_sha.nil?
         self.succeeded = true unless merge_commit_sha.nil?
       end
 
@@ -158,7 +157,7 @@ module Pod
       end
 
       def self.task(name, opts = {}, &block)
-        method = "get_#{name}!"
+        method = "perform_task_#{name}!"
         opts[:name] = name
         opts[:method] = method
         tasks << opts
@@ -213,9 +212,20 @@ module Pod
         end
       end
 
-      task :merge_commit_sha, :if => :travis_build_success? do
+      def should_perform_merge?
+        needs_value?(:merge_commit_sha) && travis_build_success?
+      end
+
+      task :merge_commit_sha, :if => :should_perform_merge? do
         perform_task "Merging pull-request number #{pull_request_number}" do
           update(:merge_commit_sha => github.merge_pull_request(pull_request_number))
+        end
+      end
+
+      task :deleted_branch do
+        perform_task "Deleting branch `#{new_branch_ref}'." do
+          github.delete_branch(new_branch_ref)
+          update(:deleted_branch => true, :needs_to_perform_work => false)
         end
       end
     end

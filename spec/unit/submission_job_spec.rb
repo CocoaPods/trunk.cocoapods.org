@@ -34,6 +34,7 @@ module Pod::TrunkApp
         github.stubs(:create_new_branch).with(NEW_BRANCH_NAME % @job.id, NEW_COMMIT_SHA).returns(NEW_BRANCH_REF % @job.id)
         github.stubs(:create_new_pull_request).with(MESSAGE, @version.url, NEW_BRANCH_REF % @job.id).returns(NEW_PR_NUMBER)
         github.stubs(:merge_pull_request).with(NEW_PR_NUMBER).returns(MERGE_COMMIT_SHA)
+        github.stubs(:delete_branch).with(NEW_BRANCH_REF % @job.id).returns(nil)
       end
 
       it "initializes with a new state" do
@@ -159,11 +160,11 @@ module Pod::TrunkApp
         @job.update(:travis_build_success => true)
       end
 
-      it "merges a pull-request and changes state to not needing any more work done" do
+      it "merges a pull-request" do
         @job.perform_next_task!
         @job.merge_commit_sha.should == MERGE_COMMIT_SHA
         @job.tasks_completed.should == 7
-        @job.should.not.needs_to_perform_work
+        @job.should.needs_to_perform_work
         @job.should.be.completed
         @job.log_messages.last.message.should == "Merging pull-request number #{NEW_PR_NUMBER}"
       end
@@ -172,7 +173,19 @@ module Pod::TrunkApp
         @job.perform_next_task!
         @version.should.be.published
       end
+
+      before do
+        @job.update(:merge_commit_sha => MERGE_COMMIT_SHA, :succeeded => true)
+      end
+
+      it "deletes the branch once the pull-request has been merged and changes state to not needing any more work done" do
+        @job.send(:github).expects(:delete_branch).with(NEW_BRANCH_REF % @job.id).returns(nil)
+        @job.perform_next_task!
+        @job.deleted_branch.should == true
+        @job.tasks_completed.should == 8
+        @job.should.not.needs_to_perform_work
+        @job.log_messages.last.message.should == "Deleting branch `#{NEW_BRANCH_REF % @job.id}'."
+      end
     end
   end
 end
-
