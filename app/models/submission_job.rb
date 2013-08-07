@@ -188,10 +188,14 @@ module Pod
 
       task :new_commit_sha do
         perform_task "Creating new commit with tree #{new_tree_sha}." do
+          # TODO get this from the user that pushed the spec.
+          pusher_name, pusher_email = 'Eloy Durán', 'eloy.de.enige@gmail.com'
           message = "[Add] #{pod_version.pod.name} #{pod_version.name}"
           update(:new_commit_sha => github.create_new_commit(new_tree_sha,
                                                              base_commit_sha,
-                                                             message))
+                                                             message,
+                                                             pusher_name,
+                                                             pusher_email))
         end
       end
 

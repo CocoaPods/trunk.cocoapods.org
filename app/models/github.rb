@@ -33,8 +33,16 @@ module Pod
         })['sha']
       end
 
-      def create_new_commit(new_tree_sha, base_commit_sha, message)
-        rest(:post, 'git/commits', :parents => [base_commit_sha], :tree => new_tree_sha, :message => message)['sha']
+      def create_new_commit(new_tree_sha, base_commit_sha, message, committer_name, committer_email)
+        rest(:post, 'git/commits', {
+          :parents   => [base_commit_sha],
+          :tree      => new_tree_sha,
+          :message   => message,
+          :committer => {
+            :name  => committer_name,
+            :email => committer_email,
+          },
+        })['sha']
       end
 
       def create_new_branch(name, commit_sha)

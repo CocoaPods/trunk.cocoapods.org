@@ -51,13 +51,17 @@ module Pod::TrunkApp
       body = {
         :parents => [BASE_COMMIT_SHA],
         :tree    => NEW_TREE_SHA,
-        :message => MESSAGE
+        :message => MESSAGE,
+        :committer => {
+          :name => 'Eloy Durán',
+          :email => 'eloy@example.com',
+        }
       }.to_json
       REST.stubs(:post).with(@github.url_for('git/commits'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_new_commit'))
     end
 
     it "creates a new commit object for the new tree object" do
-      @github.create_new_commit(NEW_TREE_SHA, BASE_COMMIT_SHA, '[Add] AFNetworking 1.2.0').should == NEW_COMMIT_SHA
+      @github.create_new_commit(NEW_TREE_SHA, BASE_COMMIT_SHA, '[Add] AFNetworking 1.2.0', 'Eloy Durán', 'eloy@example.com').should == NEW_COMMIT_SHA
     end
 
     before do
