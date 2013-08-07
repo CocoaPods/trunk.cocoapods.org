@@ -25,6 +25,10 @@ module Pod
         number if type == 'pull'
       end
 
+      def pending?
+        @payload['result_message'] == 'Pending'
+      end
+
       def build_success?
         @payload['result'] == 0
       end
