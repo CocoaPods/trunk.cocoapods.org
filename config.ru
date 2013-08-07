@@ -6,8 +6,10 @@ require 'app/controllers/app'
 #use Rack::Throttle::Hourly,   max: 100 # requests
 #use Rack::Throttle::Interval, min: 5.0 # seconds
 
-# Redirect sinatra output to log file.
+unless ENV['TRUNK_APP_LOG_TO_STDOUT']
+  # Redirect sinatra output to log file.
   STDOUT.reopen(TRUNK_APP_LOG_FILE)
   STDERR.reopen(TRUNK_APP_LOG_FILE)
+end
 
 run Pod::TrunkApp::App

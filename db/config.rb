@@ -9,7 +9,9 @@ require 'pg'
 require 'logger'
 require 'fileutils'
 
-if ENV['RACK_ENV'] == 'production'
+if ENV['TRUNK_APP_LOG_TO_STDOUT']
+  STDOUT.sync = true
+  STDERR.sync = true
   TRUNK_APP_LOGGER = Logger.new(STDOUT)
   TRUNK_APP_LOGGER.level = Logger::INFO
 else
