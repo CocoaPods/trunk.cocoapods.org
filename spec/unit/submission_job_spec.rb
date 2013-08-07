@@ -69,8 +69,9 @@ module Pod::PushApp
       it "fetches the SHA of the commit this PR will be based on" do
         @job.perform_next_task!
         @job.base_commit_sha.should == BASE_COMMIT_SHA
-        @job.log_messages.last.message.should == "Fetching latest commit SHA."
+        @job.tasks_completed.should == 1
         @job.should.needs_to_perform_work
+        @job.log_messages.last.message.should == "Fetching latest commit SHA."
       end
 
       before do
@@ -80,8 +81,9 @@ module Pod::PushApp
       it "fetches the SHA of the tree of the base commit" do
         @job.perform_next_task!
         @job.base_tree_sha.should == BASE_TREE_SHA
-        @job.log_messages.last.message.should == "Fetching tree SHA of commit #{BASE_COMMIT_SHA}."
+        @job.tasks_completed.should == 2
         @job.should.needs_to_perform_work
+        @job.log_messages.last.message.should == "Fetching tree SHA of commit #{BASE_COMMIT_SHA}."
       end
 
       before do
@@ -91,8 +93,9 @@ module Pod::PushApp
       it "creates a new tree" do
         @job.perform_next_task!
         @job.new_tree_sha.should == NEW_TREE_SHA
-        @job.log_messages.last.message.should == "Creating new tree based on tree #{BASE_TREE_SHA}."
+        @job.tasks_completed.should == 3
         @job.should.needs_to_perform_work
+        @job.log_messages.last.message.should == "Creating new tree based on tree #{BASE_TREE_SHA}."
       end
 
       before do
@@ -102,8 +105,9 @@ module Pod::PushApp
       it "creates a new commit" do
         @job.perform_next_task!
         @job.new_commit_sha.should == NEW_COMMIT_SHA
-        @job.log_messages.last.message.should == "Creating new commit with tree #{NEW_TREE_SHA}."
+        @job.tasks_completed.should == 4
         @job.should.needs_to_perform_work
+        @job.log_messages.last.message.should == "Creating new commit with tree #{NEW_TREE_SHA}."
       end
 
       before do
@@ -113,8 +117,9 @@ module Pod::PushApp
       it "creates a new branch" do
         @job.perform_next_task!
         @job.new_branch_ref.should == NEW_BRANCH_REF % @job.id
-        @job.log_messages.last.message.should == "Creating new branch `#{NEW_BRANCH_NAME % @job.id}' with commit #{NEW_COMMIT_SHA}."
+        @job.tasks_completed.should == 5
         @job.should.needs_to_perform_work
+        @job.log_messages.last.message.should == "Creating new branch `#{NEW_BRANCH_NAME % @job.id}' with commit #{NEW_COMMIT_SHA}."
       end
 
       before do
@@ -124,8 +129,9 @@ module Pod::PushApp
       it "creates a new pull-request and changes state to no longer needing work (until Travis reports back)" do
         @job.perform_next_task!
         @job.pull_request_number.should == NEW_PR_NUMBER
-        @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF % @job.id}."
+        @job.tasks_completed.should == 6
         @job.should.not.needs_to_perform_work
+        @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF % @job.id}."
       end
 
       before do
@@ -156,9 +162,10 @@ module Pod::PushApp
       it "merges a pull-request and changes state to not needing any more work done" do
         @job.perform_next_task!
         @job.merge_commit_sha.should == MERGE_COMMIT_SHA
-        @job.log_messages.last.message.should == "Merging pull-request number #{NEW_PR_NUMBER}"
+        @job.tasks_completed.should == 7
         @job.should.not.needs_to_perform_work
         @job.should.be.completed
+        @job.log_messages.last.message.should == "Merging pull-request number #{NEW_PR_NUMBER}"
       end
 
       it "publishes the pod version once the pull-request has been merged" do
