@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/CocoaPods/Core.git
-  revision: 63f310adb5210854b34c3d94bb9452bafd7cbc26
+  revision: 89bbeb9d14ef8666179675ba0fd2a77f816a0894
   specs:
     cocoapods-core (0.23.0.rc1)
       activesupport (~> 3.2.13)
@@ -42,7 +42,7 @@ GEM
       metaclass (~> 0.0.1)
     mocha-on-bacon (0.2.2)
       mocha (>= 0.13.0)
-    multi_json (1.7.7)
+    multi_json (1.7.8)
     nap (0.5.1)
     notify (0.5.2)
     pg (0.16.0)
@@ -56,7 +56,7 @@ GEM
       ffi (>= 0.5.0)
     rb-kqueue (0.2.0)
       ffi (>= 0.5.0)
-    safe_yaml (0.9.4)
+    safe_yaml (0.9.5)
     saga (0.10.0)
       activesupport (>= 2.3)
       erubis (>= 2.6)
