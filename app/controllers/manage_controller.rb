@@ -40,11 +40,15 @@ module Pod
           params[:scope] = 'current'
           @jobs = @jobs.where(:succeeded => nil)
         end
+
+        @refresh_automatically = params[:scope] == 'current'
         erb :'jobs/index'
       end
 
       get '/jobs/:id' do
         @job = SubmissionJob.find(:id => params[:id])
+
+        @refresh_automatically = @job.in_progress?
         erb :'jobs/show'
       end
     end
