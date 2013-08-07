@@ -48,6 +48,7 @@ module Pod
         super
         if @columns_updated.has_key?(:succeeded) && @columns_updated[:succeeded] == true
           pod_version.update(:published => true)
+          add_log_message(:message => 'Published')
         end
       end
 

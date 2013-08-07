@@ -166,12 +166,13 @@ module Pod::TrunkApp
         @job.tasks_completed.should == 7
         @job.should.needs_to_perform_work
         @job.should.be.completed
-        @job.log_messages.last.message.should == "Merging pull-request number #{NEW_PR_NUMBER}"
+        @job.log_messages[-2].message.should == "Merging pull-request number #{NEW_PR_NUMBER}"
       end
 
       it "publishes the pod version once the pull-request has been merged" do
         @job.perform_next_task!
         @version.should.be.published
+        @job.log_messages.last.message.should == "Published"
       end
 
       before do
