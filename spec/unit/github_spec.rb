@@ -69,21 +69,21 @@ module Pod::TrunkApp
     end
 
     it "creates a new branch object with a new commit object" do
-      @github.create_new_branch(NEW_BRANCH_NAME % '42', NEW_COMMIT_SHA).should == NEW_BRANCH_REF % '42'
+      @github.create_new_branch(NEW_BRANCH_NAME % 42, NEW_COMMIT_SHA).should == NEW_BRANCH_REF % 42
     end
 
     before do
       body = {
         :title => '[Add] AFNetworking 1.2.0',
         :body  => 'Specification for AFNetworking 1.2.0',
-        :head  => NEW_BRANCH_REF % '42',
+        :head  => NEW_BRANCH_REF % 42,
         :base  => 'refs/heads/master'
       }.to_json
       REST.stubs(:post).with(@github.url_for('pulls'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_pull-request'))
     end
 
     it "creates a new pull-request for a branch and returns the pull/issue number" do
-      @github.create_new_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', NEW_BRANCH_REF % '42').should == NEW_PR_NUMBER
+      @github.create_new_pull_request('[Add] AFNetworking 1.2.0', 'Specification for AFNetworking 1.2.0', NEW_BRANCH_REF % 42).should == NEW_PR_NUMBER
     end
 
     before do
@@ -92,6 +92,14 @@ module Pod::TrunkApp
 
     it "merges a pull-request for a branch and returns the merge commit SHA" do
       @github.merge_pull_request(NEW_PR_NUMBER).should == MERGE_COMMIT_SHA
+    end
+
+    before do
+      REST.stubs(:delete).with(@github.url_for("git/refs/heads/#{NEW_BRANCH_NAME % 42}"), GitHub::HEADERS, @auth).returns(stub(:status_code => 204, :body => nil))
+    end
+
+    it "deletes a branch" do
+      @github.delete_branch(NEW_BRANCH_REF % 42).should == nil
     end
   end
 end

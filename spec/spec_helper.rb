@@ -59,6 +59,6 @@ NEW_COMMIT_SHA = '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
 NEW_BRANCH_REF = 'refs/heads/AFNetworking-1.2.0-job-%s'
 DESTINATION_PATH = 'AFNetworking/1.2.0/AFNetworking.podspec.yaml'
 MESSAGE = '[Add] AFNetworking 1.2.0'
-NEW_BRANCH_NAME = 'AFNetworking-1.2.0-job-%s'
+NEW_BRANCH_NAME = 'AFNetworking-1.2.0-job-%d'
 NEW_PR_NUMBER = 3
 MERGE_COMMIT_SHA = '932255f89f266f3034545e51842b4ae743426ec4'

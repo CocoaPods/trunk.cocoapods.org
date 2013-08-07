@@ -49,6 +49,10 @@ module Pod
         rest(:put, "pulls/#{number}/merge", {})['sha']
       end
 
+      def delete_branch(branch_ref)
+        rest(:delete, "git/#{branch_ref}")
+      end
+
       private
 
       def branch_ref(name)
@@ -59,11 +63,17 @@ module Pod
         File.join(@base_url, path)
       end
 
-      # TODO handle failures
       def rest(method, path, body = nil)
         args = [method, url_for(path), (body.to_json if body), HEADERS, @basic_auth].compact
         response = REST.send(*args)
-        JSON.parse(response.body)
+        # TODO Make this pretty mkay
+        if (400...600).include?(response.status_code)
+          raise "[#{response.status_code}] #{response.headers.inspect} – #{response.body}}"
+        end
+        if method == :delete
+          TRUNK_APP_LOGGER.info(response.to_yaml)
+        end
+        JSON.parse(response.body) if response.body
       end
     end
   end
