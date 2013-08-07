@@ -90,26 +90,21 @@ module Pod
           raise TaskError, "This job is marked as not needing to perform work."
         end
 
-        if base_commit_sha.nil?
-          fetch_base_commit_sha!
-        elsif base_tree_sha.nil?
-          fetch_base_tree_sha!
-        elsif new_tree_sha.nil?
-          create_tree!
-        elsif new_commit_sha.nil?
-          create_commit!
-        elsif new_branch_ref.nil?
-          create_branch!
-        elsif pull_request_number.nil?
-          create_pull_request!
-        elsif !travis_build_success.nil?
-          merge_pull_request!
-        else
-          raise TaskError, "Unable to determine job state."
+        self.class.tasks.each do |options|
+          if options[:if] ? send(options[:if]) : needs_value?(options[:name])
+            send(options[:method])
+            return
+          end
         end
+
+        raise TaskError, "Unable to determine job state."
       end
 
       protected
+
+      def needs_value?(attribute)
+        send(attribute).nil?
+      end
 
       def perform_task(message, &block)
         add_log_message(:message => message)
@@ -127,6 +122,20 @@ module Pod
         end
       end
 
+      # Tasks state machine
+
+      def self.tasks
+        @tasks ||= []
+      end
+
+      def self.step(name, opts = {}, &block)
+        method = "get_#{name}!"
+        opts[:name] = name
+        opts[:method] = method
+        tasks << opts
+        define_method(method, &block)
+      end
+
       # GitHub pull-request
       #
       # TODO validate SHAs
@@ -139,19 +148,19 @@ module Pod
         @github ||= GitHub.new(REPO, BASE_BRANCH, BASIC_AUTH)
       end
 
-      def fetch_base_commit_sha!
+      step :base_commit_sha do
         perform_task "Fetching latest commit SHA." do
           update(:base_commit_sha => github.fetch_latest_commit_sha)
         end
       end
 
-      def fetch_base_tree_sha!
+      step :base_tree_sha do
         perform_task "Fetching tree SHA of commit #{base_commit_sha}." do
           update(:base_tree_sha => github.fetch_base_tree_sha(base_commit_sha))
         end
       end
 
-      def create_tree!
+      step :new_tree_sha do
         perform_task "Creating new tree based on tree #{base_tree_sha}." do
           destination_path = File.join(pod_version.pod.name, pod_version.name, "#{pod_version.pod.name}.podspec.yaml")
           update(:new_tree_sha => github.create_new_tree(base_tree_sha,
@@ -160,7 +169,7 @@ module Pod
         end
       end
 
-      def create_commit!
+      step :new_commit_sha do
         perform_task "Creating new commit with tree #{new_tree_sha}." do
           message = "[Add] #{pod_version.pod.name} #{pod_version.name}"
           update(:new_commit_sha => github.create_new_commit(new_tree_sha,
@@ -170,7 +179,7 @@ module Pod
       end
 
       # TODO create branch name according to: https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
-      def create_branch!
+      step :new_branch_ref do
         branch_name = "#{pod_version.pod.name}-#{pod_version.name}-job-#{self.id}"
         perform_task "Creating new branch `#{branch_name}' with commit #{new_commit_sha}." do
           update(:new_branch_ref => github.create_new_branch(branch_name,
@@ -178,7 +187,7 @@ module Pod
         end
       end
 
-      def create_pull_request!
+      step :pull_request_number do
         perform_task "Creating new pull-request with branch #{new_branch_ref}." do
           title = "[Add] #{pod_version.pod.name} #{pod_version.name}"
           update(:pull_request_number => github.create_new_pull_request(title,
@@ -187,7 +196,7 @@ module Pod
         end
       end
 
-      def merge_pull_request!
+      step :merge_commit_sha, :if => :travis_build_success? do
         perform_task "Merging pull-request number #{pull_request_number}" do
           update(:merge_commit_sha => github.merge_pull_request(pull_request_number))
         end
