@@ -4,6 +4,14 @@
   <h1><%= @job.pod_version.pod.name %> <small><%= @job.pod_version.name %></small></h1>
 </div>
 
+<% if params[:progress] == 'true' %>
+  <h3><%= @job.tasks_completed %> out of <%= Pod::PushApp::SubmissionJob.tasks.size %> tasks completed</h3>
+  <div class="progress progress-striped <%= 'active' if @job.in_progress? %>">
+    <div class="bar" style="width: <%= (100.0 / Pod::PushApp::SubmissionJob.tasks.size) * @job.tasks_completed %>%;"></div>
+  </div>
+  <hr>
+<% end%>
+
 <dl class="dl-horizontal">
   <dt>Attempts</dt>
   <dd><%= @job.attempts %></dd>
@@ -21,10 +29,9 @@
   </dd>
 </dl>
 
-<div class="progress progress-striped active">
-  <div class="bar" style="width: 40%;"></div>
-</div>
+<hr>
 
+<h3>Log messages</h3>
 <table class="table table-bordered">
   <thead>
     <tr>

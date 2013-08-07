@@ -60,9 +60,17 @@ module Pod::PushApp
     end
 
     it "shows an overview of an individual submission job" do
+      @job.update(:succeeded => true)
       get "/jobs/#{@job.id}"
       last_response.should.be.ok
       last_response.body.should.include @pod.name
+    end
+
+    it "redirects to an overview with a progress bar if the job is in progress" do
+      @job.update(:succeeded => nil)
+      get "/jobs/#{@job.id}"
+      last_response.should.be.redirect
+      last_response.location.should.end_with "/jobs/#{@job.id}?progress=true"
     end
   end
 end

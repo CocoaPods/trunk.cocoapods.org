@@ -47,9 +47,12 @@ module Pod
 
       get '/jobs/:id' do
         @job = SubmissionJob.find(:id => params[:id])
-
-        @refresh_automatically = @job.in_progress?
-        erb :'jobs/show'
+        if @job.in_progress? && params[:progress] != 'true'
+          redirect to("/jobs/#{@job.id}?progress=true")
+        else
+          @refresh_automatically = @job.in_progress?
+          erb :'jobs/show'
+        end
       end
     end
   end
