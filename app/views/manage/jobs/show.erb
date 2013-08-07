@@ -8,7 +8,7 @@
   <dt>Attempts</dt>
   <dd><%= @job.attempts %></dd>
   <dt>Duration</dt>
-  <dd><%= ((@job.updated_at || Time.now) - @job.created_at).ceil %> sec<dd>
+  <dd><%= ((@job.in_progress? ? Time.now : @job.updated_at) - @job.created_at).ceil %> sec<dd>
   <dt>Pull-request</dt>
   <dd><a href="https://github.com/<%= ENV['GH_REPO'] %>/pull/<%= @job.pull_request_number %>"><%= @job.pull_request_number %></a></dd>
   <dt>Travis build</dt>

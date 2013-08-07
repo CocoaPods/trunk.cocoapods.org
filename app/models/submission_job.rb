@@ -42,6 +42,10 @@ module Pod
       alias_method :travis_build_success?, :travis_build_success
       alias_method :needs_to_perform_work?, :needs_to_perform_work
 
+      def in_progress?
+        succeeded.nil?
+      end
+
       def completed?
         !succeeded.nil? && succeeded
       end

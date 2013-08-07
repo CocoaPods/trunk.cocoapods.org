@@ -38,6 +38,7 @@ module Pod::PushApp
 
       it "initializes with a new state" do
         @job.should.needs_to_perform_work
+        @job.should.be.in_progress
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
