@@ -8,6 +8,7 @@ require 'cocoapods-core'
 ENV['RACK_ENV']            = 'test'
 ENV['GH_REPO']             = 'CocoaPods/Specs'
 ENV['GH_USERNAME']         = 'alloy'
+ENV['GH_EMAIL']            = 'bot@example.com'
 ENV['GH_PASSWORD']         = 'secret'
 ENV['TRAVIS_API_TOKEN']    = 'secret-travis-token'
 ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')

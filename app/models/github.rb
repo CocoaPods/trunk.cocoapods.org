@@ -33,14 +33,18 @@ module Pod
         })['sha']
       end
 
-      def create_new_commit(new_tree_sha, base_commit_sha, message, committer_name, committer_email)
+      def create_new_commit(new_tree_sha, base_commit_sha, message, author_name, author_email)
         rest(:post, 'git/commits', {
           :parents   => [base_commit_sha],
           :tree      => new_tree_sha,
           :message   => message,
           :author => {
-            :name  => committer_name,
-            :email => committer_email,
+            :name  => author_name,
+            :email => author_email,
+          },
+          :committer => {
+            :name  => ENV['GH_USERNAME'],
+            :email => ENV['GH_EMAIL'],
           },
         })['sha']
       end

@@ -52,9 +52,13 @@ module Pod::TrunkApp
         :parents => [BASE_COMMIT_SHA],
         :tree    => NEW_TREE_SHA,
         :message => MESSAGE,
-        :committer => {
+        :author => {
           :name => 'Eloy Durán',
           :email => 'eloy@example.com',
+        },
+        :committer => {
+          :name => 'alloy',
+          :email => 'bot@example.com',
         }
       }.to_json
       REST.stubs(:post).with(@github.url_for('git/commits'), body, GitHub::HEADERS, @auth).returns(fixture_response('create_new_commit'))
