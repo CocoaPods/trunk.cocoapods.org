@@ -1,0 +1,30 @@
+--- !ruby/object:REST::Response
+status_code: 204
+headers:
+  server:
+  - GitHub.com
+  date:
+  - Wed, 07 Aug 2013 21:34:39 GMT
+  status:
+  - 204 No Content
+  x-ratelimit-limit:
+  - '5000'
+  x-ratelimit-remaining:
+  - '4987'
+  x-ratelimit-reset:
+  - '1375914541'
+  x-github-media-type:
+  - github.beta
+  x-content-type-options:
+  - nosniff
+  access-control-allow-credentials:
+  - 'true'
+  access-control-expose-headers:
+  - ETag, Link, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes,
+    X-Accepted-OAuth-Scopes
+  access-control-allow-origin:
+  - '*'
+  vary:
+  - Accept-Encoding
+body:
+

@@ -95,7 +95,7 @@ module Pod::TrunkApp
     end
 
     before do
-      REST.stubs(:delete).with(@github.url_for("git/refs/heads/#{NEW_BRANCH_NAME % 42}"), GitHub::HEADERS, @auth).returns(stub(:status_code => 204, :body => nil))
+      REST.stubs(:delete).with(@github.url_for("git/refs/heads/#{NEW_BRANCH_NAME % 42}"), GitHub::HEADERS, @auth).returns(fixture_response('delete_branch'))
     end
 
     it "deletes a branch" do

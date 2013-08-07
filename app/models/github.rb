@@ -70,9 +70,6 @@ module Pod
         if (400...600).include?(response.status_code)
           raise "[#{response.status_code}] #{response.headers.inspect} – #{response.body}}"
         end
-        if method == :delete
-          TRUNK_APP_LOGGER.info(response.to_yaml)
-        end
         JSON.parse(response.body) if response.body
       end
     end
