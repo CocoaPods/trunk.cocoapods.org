@@ -38,7 +38,7 @@ module Pod
           :parents   => [base_commit_sha],
           :tree      => new_tree_sha,
           :message   => message,
-          :committer => {
+          :author => {
             :name  => committer_name,
             :email => committer_email,
           },
