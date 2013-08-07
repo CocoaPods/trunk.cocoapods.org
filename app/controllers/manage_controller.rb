@@ -13,7 +13,7 @@ module Pod
       end
 
       use Rack::Auth::Basic, 'Protected Area' do |username, password|
-        username == 'admin' && hash_password(password) == ENV['PUSH_ADMIN_PASSWORD']
+        username == 'admin' && hash_password(password) == ENV['TRUNK_APP_ADMIN_PASSWORD']
       end
 
       configure do

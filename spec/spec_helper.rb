@@ -10,7 +10,7 @@ ENV['GH_REPO']             = 'CocoaPods/Specs'
 ENV['GH_USERNAME']         = 'alloy'
 ENV['GH_PASSWORD']         = 'secret'
 ENV['TRAVIS_API_TOKEN']    = 'secret-travis-token'
-ENV['PUSH_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
+ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
 $:.unshift File.expand_path('../../', __FILE__)
 require 'db/config'
@@ -32,9 +32,9 @@ class Bacon::Context
 
   alias_method :run_requirement_before_sequel, :run_requirement
   def run_requirement(description, spec)
-    PUSH_LOGGER.info('-' * description.size)
-    PUSH_LOGGER.info(description)
-    PUSH_LOGGER.info('-' * description.size)
+    TRUNK_APP_LOGGER.info('-' * description.size)
+    TRUNK_APP_LOGGER.info(description)
+    TRUNK_APP_LOGGER.info('-' * description.size)
     Sequel::Model.db.transaction(:rollback => :always) do
       run_requirement_before_sequel(description, spec)
     end

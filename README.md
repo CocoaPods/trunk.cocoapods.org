@@ -1,4 +1,4 @@
-# push.cocoapods.org
+# trunk.cocoapods.org
 
 Available under the MIT license.
 
@@ -28,13 +28,13 @@ Available under the MIT license.
 
 6. Create the PostgreSQL databases for the various environments:
 
-        $ createdb -h localhost push_cocoapods_org_test -E UTF8
-        $ createdb -h localhost push_cocoapods_org_development -E UTF8
-        $ createdb -h localhost push_cocoapods_org_production -E UTF8
+        $ createdb -h localhost trunk_cocoapods_org_test -E UTF8
+        $ createdb -h localhost trunk_cocoapods_org_development -E UTF8
+        $ createdb -h localhost trunk_cocoapods_org_production -E UTF8
 
 7. Test wether or not a
 
-        $ ./bin/test-push spec/fixtures/AFNetworking.podspec
+        $ ./bin/test-push localhost:4567 spec/fixtures/AFNetworking.podspec
 
 ## Usage
 
@@ -42,7 +42,7 @@ To start a development server run the following command, replacing the environme
 your GitHub credentials, a GitHub testing sandbox repository, your Travis-CI API token, and a SHA
 hashed version of the password for the admin area (in this example the password is ‘secret’):
 
-    env GH_USERNAME=alloy GH_PASSWORD=secret GH_REPO=alloy/push.cocoapods.org-test TRAVIS_API_TOKEN=secret PUSH_ADMIN_PASSWORD=2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b rake serve
+    env GH_USERNAME=alloy GH_PASSWORD=secret GH_REPO=alloy/trunk.cocoapods.org-test TRAVIS_API_TOKEN=secret TRUNK_APP_ADMIN_PASSWORD=2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b rake serve
 
 Optional environment variables are:
 

@@ -17,11 +17,11 @@ module Pod
       one_to_many :log_messages
 
       def self.disable_info_logging
-        sev_threshold = PUSH_LOGGER.sev_threshold
-        PUSH_LOGGER.sev_threshold = Logger::WARN
+        sev_threshold = TRUNK_APP_LOGGER.sev_threshold
+        TRUNK_APP_LOGGER.sev_threshold = Logger::WARN
         yield
       ensure
-        PUSH_LOGGER.sev_threshold = sev_threshold
+        TRUNK_APP_LOGGER.sev_threshold = sev_threshold
       end
 
       def self.find_first_job_in_queue
@@ -135,7 +135,7 @@ module Pod
           end
           # TODO report full error to error reporting service
           add_log_message(:message => "Error: #{e.message}")
-          PUSH_LOGGER.error "#{e.message}\n\t\t#{e.backtrace.join("\n\t\t")}"
+          TRUNK_APP_LOGGER.error "#{e.message}\n\t\t#{e.backtrace.join("\n\t\t")}"
         end
       end
 

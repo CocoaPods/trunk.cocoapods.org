@@ -7,7 +7,7 @@ require 'app/controllers/app'
 #use Rack::Throttle::Interval, min: 5.0 # seconds
 
 # Redirect sinatra output to log file.
-STDOUT.reopen(PUSH_LOG_FILE)
-STDERR.reopen(PUSH_LOG_FILE)
+  STDOUT.reopen(TRUNK_APP_LOG_FILE)
+  STDERR.reopen(TRUNK_APP_LOG_FILE)
 
-run Pod::PushApp::App
+run Pod::TrunkApp::App
