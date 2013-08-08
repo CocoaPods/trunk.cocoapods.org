@@ -14,7 +14,7 @@ ENV['TRAVIS_API_TOKEN']    = 'secret-travis-token'
 ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
 $:.unshift File.expand_path('../../', __FILE__)
-require 'db/config'
+require 'config/init'
 
 Mocha::Configuration.prevent(:stubbing_non_existent_method)
 

@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'cocoapods-core'
 
-require 'db/config'
+require 'config/init'
 require 'app/models/github'
 require 'app/models/pod'
 require 'app/models/specification_wrapper'

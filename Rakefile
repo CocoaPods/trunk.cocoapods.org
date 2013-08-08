@@ -22,10 +22,13 @@ begin
   end
 
   namespace :db do
-    desc 'Show schema'
-    task :schema do
+    task :env do
       $:.unshift(File.expand_path('../', __FILE__))
-      require 'db/config'
+      require 'config/init'
+    end
+
+    desc 'Show schema'
+    task :schema => :env do
       require 'terminal-table'
       DB.tables.each do |table|
         p table
@@ -39,9 +42,7 @@ begin
     end
 
     desc 'Run migrations'
-    task :migrate do
-      $:.unshift(File.expand_path('../', __FILE__))
-      require 'db/config'
+    task :migrate => :env do
       Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'))
     end
   end

@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'sinatra/twitter-bootstrap'
 require 'cocoapods-core'
 
-require 'db/config'
+require 'config/init'
 require 'app/models/pod'
 
 module Pod

@@ -2,7 +2,7 @@
 
 $:.unshift(File.expand_path('../../', __FILE__))
 
-require 'db/config'
+require 'config/init'
 require 'app/models/submission_job'
 
 loop do

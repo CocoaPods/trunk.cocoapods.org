@@ -1,10 +1,18 @@
-ENV['RACK_ENV'] ||= 'production'
-ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
+# -- General ------------------------------------------------------------------
 
 ROOT = File.expand_path('../../', __FILE__)
 
-require 'sequel'
-require 'pg'
+ENV['RACK_ENV'] ||= 'production'
+ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
+
+require 'safe_yaml'
+SafeYAML::OPTIONS[:default_mode] = :safe
+
+if ENV['RACK_ENV'] == 'production'
+  require 'newrelic_rpm'
+end
+
+# -- Logging ------------------------------------------------------------------
 
 require 'logger'
 require 'fileutils'
@@ -22,8 +30,10 @@ else
   TRUNK_APP_LOGGER.level = Logger::DEBUG
 end
 
-require 'safe_yaml'
-SafeYAML::OPTIONS[:default_mode] = :safe
+# -- Database -----------------------------------------------------------------
+
+require 'sequel'
+require 'pg'
 
 db_loggers = []
 db_loggers << TRUNK_APP_LOGGER unless ENV['RACK_ENV'] == 'production'

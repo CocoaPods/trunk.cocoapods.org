@@ -44,6 +44,7 @@ GEM
       mocha (>= 0.13.0)
     multi_json (1.7.8)
     nap (0.5.1)
+    newrelic_rpm (3.6.5.130)
     notify (0.5.2)
     pg (0.16.0)
     rack (1.5.2)
@@ -84,6 +85,7 @@ DEPENDENCIES
   kicker!
   mocha-on-bacon
   nap
+  newrelic_rpm
   pg
   rack-test
   safe_yaml
