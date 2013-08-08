@@ -39,3 +39,15 @@ db_loggers = []
 db_loggers << TRUNK_APP_LOGGER unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 Sequel.extension :core_extensions, :migration
+
+# -- Console ------------------------------------------------------------------
+
+if defined?(IRB)
+  puts "[!] Loading `#{ENV['RACK_ENV']}' environment."
+  Dir.chdir(ROOT) do
+    Dir.glob('app/models/*.rb').each do |model|
+      require model[0..-4]
+    end
+  end
+  include Pod::TrunkApp
+end

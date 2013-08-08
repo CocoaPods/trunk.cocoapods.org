@@ -21,12 +21,12 @@ begin
     end
   end
 
-  namespace :db do
-    task :env do
-      $:.unshift(File.expand_path('../', __FILE__))
-      require 'config/init'
-    end
+  task :env do
+    $:.unshift(File.expand_path('../', __FILE__))
+    require 'config/init'
+  end
 
+  namespace :db do
     desc 'Show schema'
     task :schema => :env do
       require 'terminal-table'
@@ -45,6 +45,11 @@ begin
     task :migrate => :env do
       Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'))
     end
+  end
+
+  desc 'Starts a interactive console with the model env loaded'
+  task :console do
+    exec 'irb', '-I', File.expand_path('../', __FILE__), '-r', 'config/init'
   end
 
   desc 'Starts processes for local development'
