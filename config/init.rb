@@ -36,7 +36,7 @@ require 'sequel'
 require 'pg'
 
 db_loggers = []
-db_loggers << TRUNK_APP_LOGGER unless ENV['RACK_ENV'] == 'production'
+db_loggers << TRUNK_APP_LOGGER # TODO For now also enable DB logger in production. unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 Sequel.extension :core_extensions, :migration
 
