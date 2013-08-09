@@ -5,6 +5,8 @@ ROOT = File.expand_path('../../', __FILE__)
 ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
 
+require 'active_support/core_ext'
+
 require 'safe_yaml'
 SafeYAML::OPTIONS[:default_mode] = :safe
 
