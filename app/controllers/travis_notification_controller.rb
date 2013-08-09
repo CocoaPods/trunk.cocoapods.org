@@ -1,13 +1,11 @@
-require 'sinatra/base'
-require 'cocoapods-core'
-
 require 'config/init'
+require 'app/controllers/app_controller'
 require 'app/models/submission_job'
 require 'app/models/travis'
 
 module Pod
   module TrunkApp
-    class TravisNotificationController < Sinatra::Base
+    class TravisNotificationController < AppController
       configure do
         set :root, ROOT
       end

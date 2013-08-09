@@ -1,14 +1,7 @@
 require File.expand_path('../../spec_helper', __FILE__)
-require 'app/controllers/manage_controller'
 
 module Pod::TrunkApp
   describe ManageController do
-    extend Rack::Test::Methods
-
-    def app
-      ManageController
-    end
-
     before do
       @pod = Pod.create(:name => 'AFNetworking')
       @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :url => 'http://host/pods/AFNetworking/versions/1.2.0')

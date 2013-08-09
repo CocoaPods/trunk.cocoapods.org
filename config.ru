@@ -1,7 +1,7 @@
 require 'bundler/setup'
 
 $:.unshift File.expand_path('..', __FILE__)
-require 'app/controllers/app'
+require 'app/controllers/app_controller'
 
 #use Rack::Throttle::Hourly,   max: 100 # requests
 #use Rack::Throttle::Interval, min: 5.0 # seconds

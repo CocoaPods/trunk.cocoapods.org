@@ -1,5 +1,4 @@
 require File.expand_path('../../spec_helper', __FILE__)
-require 'app/controllers/api_controller'
 
 module Fixtures
   # Taken from https://github.com/dtao/safe_yaml/blob/master/README.md#explanation
@@ -19,12 +18,6 @@ end
 
 module Pod::TrunkApp
   describe APIController do
-    extend Rack::Test::Methods
-
-    def app
-      APIController
-    end
-
     def spec
       @spec ||= fixture_specification('AFNetworking.podspec')
     end
@@ -36,7 +29,7 @@ module Pod::TrunkApp
 
     it "only accepts YAML" do
       header 'Content-Type', 'application/json'
-      post '/pods'
+      post '/pods', {}, { 'HTTPS' => 'on' }
       last_response.status.should == 415
     end
 
@@ -84,7 +77,7 @@ EOYAML
         }.should.change { Pod.count }
       }.should.change { PodVersion.count }
       last_response.status.should == 202
-      last_response.location.should == 'http://example.org/pods/AFNetworking/versions/1.2.0'
+      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
@@ -94,7 +87,7 @@ EOYAML
         post '/pods', spec.to_yaml
       }.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 409
-      last_response.location.should == 'http://example.org/pods/AFNetworking/versions/1.2.0'
+      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
     it "creates a submission job and log message once a new pod version is created" do

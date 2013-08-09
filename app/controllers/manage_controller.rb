@@ -1,13 +1,12 @@
-require 'sinatra/base'
-require 'sinatra/twitter-bootstrap'
-require 'cocoapods-core'
-
 require 'config/init'
+require 'app/controllers/app_controller'
 require 'app/models/pod'
+
+require 'sinatra/twitter-bootstrap'
 
 module Pod
   module TrunkApp
-    class ManageController < Sinatra::Base
+    class ManageController < AppController
       def self.hash_password(password)
         Digest::SHA2.hexdigest(password)
       end

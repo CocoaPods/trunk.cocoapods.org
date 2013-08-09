@@ -1,14 +1,7 @@
 require File.expand_path('../../spec_helper', __FILE__)
-require 'app/controllers/travis_notification_controller'
 
 module Pod::TrunkApp
   describe TravisNotificationController do
-    extend Rack::Test::Methods
-
-    def app
-      TravisNotificationController
-    end
-
     before do
       @pod = Pod.create(:name => 'AFNetworking')
       @version = PodVersion.create(

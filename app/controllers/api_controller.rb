@@ -1,14 +1,12 @@
-require 'sinatra/base'
-require 'cocoapods-core'
-
 require 'config/init'
+require 'app/controllers/app_controller'
 require 'app/models/github'
 require 'app/models/pod'
 require 'app/models/specification_wrapper'
 
 module Pod
   module TrunkApp
-    class APIController < Sinatra::Base
+    class APIController < AppController
       configure do
         set :root, ROOT
       end

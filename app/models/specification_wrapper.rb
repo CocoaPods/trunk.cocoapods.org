@@ -1,3 +1,5 @@
+require 'cocoapods-core'
+
 module Pod
   module TrunkApp
     class SpecificationWrapper

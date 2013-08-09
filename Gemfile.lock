@@ -50,6 +50,8 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
+    rack-ssl (1.3.3)
+      rack
     rack-test (0.6.2)
       rack (>= 1.0)
     rb-fsevent (0.9.3)
@@ -87,6 +89,7 @@ DEPENDENCIES
   nap
   newrelic_rpm
   pg
+  rack-ssl
   rack-test
   safe_yaml
   saga

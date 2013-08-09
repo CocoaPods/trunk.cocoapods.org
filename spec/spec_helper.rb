@@ -15,10 +15,16 @@ ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
 $:.unshift File.expand_path('../../', __FILE__)
 require 'config/init'
+require 'app/controllers/app_controller'
 
 Mocha::Configuration.prevent(:stubbing_non_existent_method)
 
 class Bacon::Context
+  def test_controller!(app)
+    extend Rack::Test::Methods
+    self.singleton_class.send(:define_method, :app) { app }
+  end
+
   def fixture(filename)
     File.join(ROOT, 'spec/fixtures', filename)
   end
@@ -38,6 +44,23 @@ class Bacon::Context
     TRUNK_APP_LOGGER.info('-' * description.size)
     Sequel::Model.db.transaction(:rollback => :always) do
       run_requirement_before_sequel(description, spec)
+    end
+  end
+end
+
+module Kernel
+  alias_method :describe_before_controller_tests, :describe
+
+  def describe(description, &block)
+    if description.is_a?(Class) && description.superclass == Pod::TrunkApp::AppController
+      # Configure controller test and always use HTTPS
+      describe_before_controller_tests(description) do
+        test_controller!(description)
+        before { header 'X-Forwarded-Proto', 'https' }
+        instance_eval(&block)
+      end
+    else
+      describe_before_controller_tests(description, &block)
     end
   end
 end
