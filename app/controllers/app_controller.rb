@@ -5,6 +5,14 @@ require 'sinatra/base'
 module Pod
   module TrunkApp
     class AppController < Sinatra::Base
+      configure do
+        set :root, ROOT
+      end
+
+      configure :development, :production do
+        enable :logging
+      end
+
       use Rack::SSL
     end
   end

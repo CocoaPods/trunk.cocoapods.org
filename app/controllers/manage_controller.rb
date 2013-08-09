@@ -16,12 +16,7 @@ module Pod
       end
 
       configure do
-        set :root, ROOT
         set :views, settings.root + '/app/views/manage'
-      end
-
-      configure :development, :production do
-        enable :logging
       end
 
       register Sinatra::Twitter::Bootstrap::Assets

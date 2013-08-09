@@ -7,14 +7,6 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class APIController < AppController
-      configure do
-        set :root, ROOT
-      end
-
-      configure :development, :production do
-        enable :logging
-      end
-
       before do
         content_type 'text/yaml'
         unless request.media_type == 'text/yaml'

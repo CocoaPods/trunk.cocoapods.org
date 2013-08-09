@@ -6,14 +6,6 @@ require 'app/models/travis'
 module Pod
   module TrunkApp
     class TravisNotificationController < AppController
-      configure do
-        set :root, ROOT
-      end
-
-      configure :development, :production do
-        enable :logging
-      end
-
       before do
         error 415 unless request.media_type == 'application/x-www-form-urlencoded'
         error 401 unless Travis.authorized_webhook_notification?(env['HTTP_AUTHORIZATION'])
