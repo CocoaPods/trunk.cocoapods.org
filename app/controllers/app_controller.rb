@@ -1,6 +1,8 @@
 require 'rack/ssl'
 require 'sinatra/base'
 
+require 'config/init'
+
 # First define the base controller class.
 module Pod
   module TrunkApp

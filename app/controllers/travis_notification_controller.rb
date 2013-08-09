@@ -1,4 +1,3 @@
-require 'config/init'
 require 'app/controllers/app_controller'
 require 'app/models/submission_job'
 require 'app/models/travis'
