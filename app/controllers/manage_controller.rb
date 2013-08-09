@@ -24,7 +24,7 @@ module Pod
       register Sinatra::Twitter::Bootstrap::Assets
 
       get '/jobs' do
-        @jobs = SubmissionJob.dataset
+        @jobs = SubmissionJob.order(Sequel.desc(:id))
         case params[:scope]
         when 'all'
           # no-op
