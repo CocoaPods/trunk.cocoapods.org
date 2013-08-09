@@ -13,6 +13,19 @@ module Pod::TrunkApp
       @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'))
     end
 
+    it "returns the duration in seconds relative to now" do
+      now = 41.seconds.from_now
+      Time.stubs(:now).returns(now)
+      @job.duration.should == 42
+    end
+
+    it "returns the duration in seconds relative till the latest update once finished" do
+      @job.update(:succeeded => false)
+      now = 41.seconds.from_now
+      Time.stubs(:now).returns(now)
+      @job.duration.should == 1
+    end
+
     it "takes a job from the queue and performs the next task" do
       SubmissionJob.any_instance.expects(:perform_next_task!)
       SubmissionJob.perform_task!.should == true

@@ -67,6 +67,10 @@ module Pod
         !succeeded.nil? && !succeeded
       end
 
+      def duration
+        ((in_progress? ? Time.now : updated_at) - created_at).ceil
+      end
+
       def pull_request_number=(number)
         super
         self.needs_to_perform_work = pull_request_number.nil?
