@@ -1,4 +1,5 @@
 require 'app/controllers/app_controller'
+require 'app/helpers/manage_helper'
 require 'app/models/pod'
 
 require 'sinatra/twitter-bootstrap'
@@ -17,6 +18,8 @@ module Pod
       configure do
         set :views, settings.root + '/app/views/manage'
       end
+
+      helpers ManageHelper
 
       register Sinatra::Twitter::Bootstrap::Assets
 

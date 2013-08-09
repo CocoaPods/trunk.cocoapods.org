@@ -22,7 +22,7 @@
     <% @jobs.each do |job| %>
       <tr class="<%= (job.succeeded ? 'success' : 'error') unless job.succeeded == nil %>">
         <% href = url("/jobs/#{job.id}") %>
-        <% [job.id, job.pod_version.pod.name, job.pod_version.name, job.created_at.to_formatted_s(:rfc822), job.updated_at].each do |value| %>
+        <% [job.id, job.pod_version.pod.name, job.pod_version.name, job.created_at.to_formatted_s(:rfc822), job.updated_at.to_formatted_s(:rfc822)].each do |value| %>
           <td><a href="<%= href %>"><%= value %></a></td>
         <% end %>
       </tr>
