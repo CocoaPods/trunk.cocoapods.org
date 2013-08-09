@@ -15,7 +15,7 @@ module Pod
         enable :logging
       end
 
-      use Rack::SSL
+      use Rack::SSL unless ENV['RACK_ENV'] == 'development'
     end
   end
 end
