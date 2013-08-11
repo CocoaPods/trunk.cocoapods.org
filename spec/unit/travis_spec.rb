@@ -32,5 +32,16 @@ module Pod::TrunkApp
         travis.build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
       end
     end
+
+    it "yields all pull requests" do
+      REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds')
+                        .returns(stub(:body => fixture_read('TravisCI/api_builds_payload.json')))
+      REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds/7540815')
+                        .returns(stub(:body => fixture_read('TravisCI/api_pull-request_payload.json')))
+
+      yielded = []
+      Travis.pull_requests { |travis| yielded << travis }
+      yielded.map(&:pull_request_number).should == [3]
+    end
   end
 end

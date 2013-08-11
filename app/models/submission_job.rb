@@ -58,6 +58,7 @@ module Pod
               false
             end
           end
+          # TODO stop iterating builds when `jobs` is empty
         end
       end
 
