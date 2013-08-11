@@ -9,6 +9,7 @@ module Pod
       class TaskError < ::StandardError; end
 
       RETRY_COUNT = 10
+      TRAVIS_BUILD_STATUS_TIMEOUT = -10.minutes
 
       self.dataset = :submission_jobs
       plugin :timestamps
@@ -39,8 +40,6 @@ module Pod
         end
       end
 
-      TRAVIS_BUILD_STATUS_TIMEOUT = -10.minutes
-
       def self.find_jobs_in_queue_that_need_travis_build_status_updates
         for_update.where(:succeeded => nil, :travis_build_success => nil)
                   .where('updated_at < ?', TRAVIS_BUILD_STATUS_TIMEOUT.from_now)
@@ -58,7 +57,7 @@ module Pod
               false
             end
           end
-          # TODO stop iterating builds when `jobs` is empty
+          break if jobs.empty?
         end
       end
 

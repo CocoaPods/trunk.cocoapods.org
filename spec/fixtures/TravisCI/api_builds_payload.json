@@ -40,5 +40,19 @@
     "branch": "refs/heads/master",
     "message": "[Add] AFNetworking 1.2.0",
     "event_type": "pull_request"
+  },
+  {
+    "id": 7540816,
+    "repository_id": 1183540,
+    "number": "12",
+    "state": "finished",
+    "result": 0,
+    "started_at": "2013-08-07T21:31:43Z",
+    "finished_at": "2013-08-07T21:34:37Z",
+    "duration": 174,
+    "commit": "f2d8c604ef41775d2c9bb517c005796634bfd98d",
+    "branch": "refs/heads/master",
+    "message": "[Add] AFNetworking 1.2.1",
+    "event_type": "pull_request"
   }
 ]

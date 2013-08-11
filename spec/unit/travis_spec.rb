@@ -36,11 +36,30 @@ module Pod::TrunkApp
     it "yields all pull requests" do
       REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds')
                         .returns(stub(:body => fixture_read('TravisCI/api_builds_payload.json')))
+                        .times(1)
       REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds/7540815')
                         .returns(stub(:body => fixture_read('TravisCI/api_pull-request_payload.json')))
-
+                        .times(1)
+      REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds/7540816')
+                        .returns(stub(:body => fixture_read('TravisCI/api_pull-request_payload.json')))
+                        .times(1)
       yielded = []
       Travis.pull_requests { |travis| yielded << travis }
+      yielded.map(&:pull_request_number).should == [3, 3]
+    end
+
+    it "stops fetching pull-requests once break is used" do
+      REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds')
+                        .returns(stub(:body => fixture_read('TravisCI/api_builds_payload.json')))
+                        .times(1)
+      REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds/7540815')
+                        .returns(stub(:body => fixture_read('TravisCI/api_pull-request_payload.json')))
+                        .times(1)
+      REST.expects(:get).with('https://api.travis-ci.org/repos/CocoaPods/Specs/builds/7540816')
+                        .returns(stub(:body => fixture_read('TravisCI/api_pull-request_payload.json')))
+                        .never
+      yielded = []
+      Travis.pull_requests { |travis| yielded << travis; break }
       yielded.map(&:pull_request_number).should == [3]
     end
   end
