@@ -7,6 +7,7 @@ module Pod
     class Travis
       TRAVIS_BUILDS_API_URL = File.join('https://api.travis-ci.org/repos', ENV['GH_REPO'], 'builds')
       TRAVIS_BUILD_WEB_URL  = File.join('https://travis-ci.org', ENV['GH_REPO'], 'builds/%d')
+      MAX_NUMBER_OF_BUILDS  = 20
 
       def self.webhook_authorization_token
         Digest::SHA2.hexdigest(ENV['GH_REPO'] + ENV['TRAVIS_API_TOKEN'])
@@ -18,25 +19,22 @@ module Pod
 
       # TODO make this breakable so it stops fetching build jobs
       def self.pull_requests
-        builds_response = REST.get(TRAVIS_BUILDS_API_URL)
-        # TODO Make this pretty mkay
-        if (400...600).include?(builds_response.status_code)
-          raise "[#{builds_response.status_code}] #{builds_response.headers.inspect} – #{builds_response.body}}"
-        end
-        builds = JSON.parse(builds_response.body)
+        builds = get_json(TRAVIS_BUILDS_API_URL)
+        builds = builds[0..MAX_NUMBER_OF_BUILDS-1] if builds.size > MAX_NUMBER_OF_BUILDS
         builds.each do |build|
           if build['event_type'] == 'pull_request'
-            url = File.join(TRAVIS_BUILDS_API_URL, build['id'].to_s)
-            TRUNK_APP_LOGGER.debug("GET: #{url}")
-            build_response = REST.get(url)
-            # TODO Make this pretty mkay
-            if (400...600).include?(build_response.status_code)
-              raise "[#{build_response.status_code}] #{build_response.headers.inspect} – #{build_response.body}}"
-            end
-            # TODO errors
-            yield Travis.new(JSON.parse(build_response.body))
+            yield Travis.new(get_json(File.join(TRAVIS_BUILDS_API_URL, build['id'].to_s)))
           end
         end
+      end
+
+      # TODO make this pretty and move to a place shared with github.rb
+      def self.get_json(url)
+        response = REST.get(url)
+        if (400...600).include?(response.status_code)
+          raise "[#{response.status_code}] #{response.headers.inspect} – #{response.body}}"
+        end
+        JSON.parse(response.body)
       end
 
       attr_reader :payload
