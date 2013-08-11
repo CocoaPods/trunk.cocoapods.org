@@ -46,13 +46,13 @@ module Pod
         disable_info_logging do
           for_update.where(:succeeded => nil, :travis_build_success => nil)
                     .where('updated_at < ?', TRAVIS_BUILD_STATUS_TIMEOUT.from_now)
-                    .exclude(:pull_request_number => nil)
+                    .exclude(:pull_request_number => nil).to_a
         end
       end
 
       def self.update_travis_build_statuses!
         TRUNK_APP_LOGGER.debug('--- Updating Travis build statuses ---')
-        jobs = find_jobs_in_queue_that_need_travis_build_status_updates.to_a
+        jobs = find_jobs_in_queue_that_need_travis_build_status_updates
         unless jobs.empty?
           jobs_count = jobs.size
           TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs_count} jobs in the queue that have not received a notification from Travis yet.")

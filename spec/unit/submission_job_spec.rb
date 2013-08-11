@@ -217,9 +217,9 @@ module Pod::TrunkApp
     describe "when the submission flow fails" do
       describe "by exceeding the Travis build status timeout" do
         it "does not find those that have not yet reached the travis stage or exceeded the timeout" do
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.to_a.should == []
+          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
           @job.update(:pull_request_number => NEW_PR_NUMBER)
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.to_a.should == []
+          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
         end
 
         before do
@@ -237,14 +237,14 @@ module Pod::TrunkApp
         end
 
         it "finds those jobs that need an update" do
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.to_a.should == [@job]
+          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == [@job]
         end
 
         it "does not find jobs that have already received a travis build status" do
           update(:travis_build_success => false)
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.to_a.should == []
+          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
           update(:travis_build_success => true)
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.to_a.should == []
+          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
         end
 
         # These aren't using actual API response payloads, but the spec/unit/travis_spec.rb specs
