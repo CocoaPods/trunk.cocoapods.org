@@ -27,7 +27,7 @@ module Pod
         builds.each do |build|
           if build['event_type'] == 'pull_request'
             url = File.join(TRAVIS_BUILDS_API_URL, build['id'].to_s)
-            TRUNK_APP_LOGGER.info("GET: #{url}")
+            TRUNK_APP_LOGGER.debug("GET: #{url}")
             build_response = REST.get(url)
             # TODO Make this pretty mkay
             if (400...600).include?(build_response.status_code)

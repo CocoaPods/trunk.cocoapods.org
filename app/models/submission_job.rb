@@ -19,6 +19,7 @@ module Pod
       one_to_many :log_messages
 
       def self.disable_info_logging
+        return yield if ENV['RACK_ENV'] == 'development'
         sev_threshold = TRUNK_APP_LOGGER.sev_threshold
         TRUNK_APP_LOGGER.sev_threshold = Logger::WARN
         yield
@@ -42,39 +43,40 @@ module Pod
       end
 
       def self.find_jobs_in_queue_that_need_travis_build_status_updates
-        for_update.where(:succeeded => nil, :travis_build_success => nil)
-                  .where('updated_at < ?', TRAVIS_BUILD_STATUS_TIMEOUT.from_now)
-                  .exclude(:pull_request_number => nil)
+        disable_info_logging do
+          for_update.where(:succeeded => nil, :travis_build_success => nil)
+                    .where('updated_at < ?', TRAVIS_BUILD_STATUS_TIMEOUT.from_now)
+                    .exclude(:pull_request_number => nil)
+        end
       end
 
       def self.update_travis_build_statuses!
-        TRUNK_APP_LOGGER.info('--- Updating Travis build statuses ---')
+        TRUNK_APP_LOGGER.debug('--- Updating Travis build statuses ---')
         jobs = find_jobs_in_queue_that_need_travis_build_status_updates.to_a
-        return if jobs.empty?
+        unless jobs.empty?
+          jobs_count = jobs.size
+          TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs_count} jobs in the queue that have not received a notification from Travis yet.")
 
-        jobs_count = jobs.size
-        TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs_count} jobs in the queue that have not received a notification from Travis yet.")
-
-        Travis.pull_requests do |travis|
-          jobs.delete_if do |job|
-            if job.pull_request_number == travis.pull_request_number
-              job.update_travis_build_status(travis, true)
-              TRUNK_APP_LOGGER.info(job.inspect)
-              true
-            else
-              false
+          Travis.pull_requests do |travis|
+            jobs.delete_if do |job|
+              if job.pull_request_number == travis.pull_request_number
+                job.update_travis_build_status(travis, true)
+                TRUNK_APP_LOGGER.info(job.inspect)
+                true
+              else
+                false
+              end
             end
+            break if jobs.empty?
           end
-          break if jobs.empty?
-        end
 
-        # Jobs that are not included in the build status list at all should have their attempt
-        # count bumped.
-        jobs.each do |job|
-          job.update(:attempts => job.attempts + 1)
+          # Jobs that are not included in the build status list at all should have their attempt
+          # count bumped.
+          jobs.each do |job|
+            job.update(:attempts => job.attempts + 1)
+          end
         end
-
-        TRUNK_APP_LOGGER.info('--- Done updating Travis build statuses ---')
+        TRUNK_APP_LOGGER.debug('--- Done updating Travis build statuses ---')
       end
 
       def after_create
