@@ -2,6 +2,7 @@ require 'app/models/github'
 require 'app/models/log_message'
 require 'app/models/pod'
 require 'app/models/pod_version'
+require 'app/models/travis'
 
 module Pod
   module TrunkApp
