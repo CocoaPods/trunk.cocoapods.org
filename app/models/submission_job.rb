@@ -120,10 +120,12 @@ module Pod
       end
 
       def update_travis_build_status(travis)
-        if travis.finished?
-          update(:travis_build_success => travis.build_success?, :travis_build_url => travis.build_url)
-        else
-          update(:travis_build_url => travis.build_url)
+        perform_task "Received Travis build status: finished=#{travis.finished?} build_url=#{travis.build_url}" do
+          if travis.finished?
+            update(:travis_build_success => travis.build_success?, :travis_build_url => travis.build_url)
+          else
+            update(:travis_build_url => travis.build_url)
+          end
         end
       end
 
