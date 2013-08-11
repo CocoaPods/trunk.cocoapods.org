@@ -59,7 +59,7 @@ module Pod
         # remaining queue after updating the build status.
         jobs.delete_if do |job|
           if job.travis_build_id
-            job.perform_task('Updating Travis build status.') do
+            job.send(:perform_task, 'Updating Travis build status.') do
               travis = Travis.pull_request_with_build_id(job.travis_build_id)
               job.update_travis_build_status(travis, true)
             end
