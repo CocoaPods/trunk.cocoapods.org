@@ -164,7 +164,9 @@ module Pod
       end
 
       def update_travis_build_status(travis, bump_attempt = false)
-        perform_task "Received Travis build status: finished=#{travis.finished?} build ID=#{travis.build_id}" do
+        message = "Received Travis build status: finished=#{travis.finished?} build ID=#{travis.build_id}"
+        message << " success=#{travis.build_success?}" if travis.finished?
+        perform_task message do
           attributes = { :travis_build_id => travis.build_id }
           attributes[:travis_build_success] = travis.build_success? if travis.finished?
           attributes[:attempts] = attempts + 1 if bump_attempt
