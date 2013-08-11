@@ -10,7 +10,7 @@ module Pod
       class TaskError < ::StandardError; end
 
       RETRY_COUNT = 10
-      TRAVIS_BUILD_STATUS_TIMEOUT = -10.minutes
+      TRAVIS_BUILD_STATUS_TIMEOUT = -6.minutes
 
       self.dataset = :submission_jobs
       plugin :timestamps
