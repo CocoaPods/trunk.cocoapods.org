@@ -27,9 +27,13 @@ module Pod
         builds = builds[0..MAX_NUMBER_OF_BUILDS-1] if builds.size > MAX_NUMBER_OF_BUILDS
         builds.each do |build|
           if build['event_type'] == 'pull_request'
-            yield Travis.new(get_json(File.join(TRAVIS_BUILDS_API_URL, build['id'].to_s)))
+            yield pull_request_with_build_id(build['id'])
           end
         end
+      end
+
+      def self.pull_request_with_build_id(id)
+        Travis.new(get_json(File.join(TRAVIS_BUILDS_API_URL, id.to_s)))
       end
 
       # TODO make this pretty and move to a place shared with github.rb

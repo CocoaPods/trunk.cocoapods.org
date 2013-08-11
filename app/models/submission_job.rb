@@ -52,35 +52,49 @@ module Pod
 
       def self.update_travis_build_statuses!
         jobs = find_jobs_in_queue_that_need_travis_build_status_updates
-        unless jobs.empty?
-          jobs_count = jobs.size
-          TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs_count} jobs in the queue that have not received a notification from Travis yet.")
+        return if jobs.empty?
+        TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs.size} jobs in the queue that have not received a notification from Travis yet.")
 
-          jobs.each do |job|
-            job.add_log_message(:message => 'Updating Travis build status.')
-          end
-
-          perform_task do
-            # TODO the jobs for which we already know the build ID, we don’t need to fetch all the build statuses.
-            Travis.pull_requests do |travis|
-              jobs.delete_if do |job|
-                if job.pull_request_number == travis.pull_request_number
-                  job.update_travis_build_status(travis, true)
-                  TRUNK_APP_LOGGER.info(job.inspect)
-                  true
-                else
-                  false
-                end
-              end
-              break if jobs.empty?
+        # First see if any of the jobs already knows its build ID and remove the job from the
+        # remaining queue after updating the build status.
+        jobs.delete_if do |job|
+          message = 'Updating Travis build status.'
+          if job.travis_build_id
+            job.perform_task(message) do
+              travis = Travis.pull_request_with_build_id(job.travis_build_id)
+              job.update_travis_build_status(travis, true)
             end
+            true
+          else
+            # Needs to have its build ID resolved. Log the message now because we can’t do it
+            # inside the next `perform_task` block when we actually fetch the status.
+            job.add_log_message(:message => message)
+            false
           end
+        end
 
-          # Jobs that are not included in the build status list at all should have their attempt
-          # count bumped.
-          jobs.each do |job|
-            job.update(:attempts => job.attempts + 1)
+        # No need to fetch all the build statuses anymore if there are no jobs left in the queue.
+        return if jobs.empty?
+
+        # Get the build status for all builds and try to find those that belong to our jobs.
+        perform_task do
+          Travis.pull_requests do |travis|
+            jobs.delete_if do |job|
+              if job.pull_request_number == travis.pull_request_number
+                job.update_travis_build_status(travis, true)
+                true
+              else
+                false
+              end
+            end
+            break if jobs.empty?
           end
+        end
+
+        # Jobs that are not included in the build status list at all should have their attempt
+        # count bumped.
+        jobs.each do |job|
+          job.update(:attempts => job.attempts + 1)
         end
       end
 

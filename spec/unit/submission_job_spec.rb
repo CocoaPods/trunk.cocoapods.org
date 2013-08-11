@@ -273,6 +273,14 @@ module Pod::TrunkApp
           @job.should.be.failed
           @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
         end
+
+        it "does not fetch all pull-requests from Travis if the build IDs are known" do
+          update(:travis_build_id => 7540815)
+          Travis.expects(:pull_request_with_build_id).with(7540815).returns(Travis.new(fixture_json('TravisCI/pull-request_success_payload.json')))
+          Travis.expects(:pull_requests).never
+          SubmissionJob.update_travis_build_statuses!
+          @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
+        end
       end
     end
   end
