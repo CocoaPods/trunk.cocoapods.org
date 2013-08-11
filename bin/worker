@@ -6,9 +6,19 @@ require 'config/init'
 require 'app/models/submission_job'
 
 loop do
+  slept ||= 0
+
+  if slept == 0
+    Pod::TrunkApp::SubmissionJob.update_travis_build_statuses!
+  end
+
   if Pod::TrunkApp::SubmissionJob.perform_task!
-    sleep 0.1
+    slept += sleep(0.1)
   else
-    sleep 1
+    slept += sleep(1)
+  end
+
+  if slept > Pod::TrunkApp::SubmissionJob::TRAVIS_BUILD_STATUS_TIMEOUT
+    slept = 0
   end
 end
