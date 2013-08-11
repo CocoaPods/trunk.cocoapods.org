@@ -43,7 +43,8 @@ begin
 
     desc 'Run migrations'
     task :migrate => :env do
-      Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'))
+      version = ENV['VERSION'].to_i if ENV['VERSION']
+      Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'), :target => version)
     end
   end
 
