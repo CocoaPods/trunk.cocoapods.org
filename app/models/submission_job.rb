@@ -56,7 +56,7 @@ module Pod
         Travis.pull_requests do |travis|
           jobs.delete_if do |job|
             if job.pull_request_number == travis.pull_request_number
-              job.update_travis_build_status(travis)
+              job.update_travis_build_status(travis, true)
               TRUNK_APP_LOGGER.info(job.inspect)
               true
             else
@@ -102,6 +102,14 @@ module Pod
         ((in_progress? ? Time.now : updated_at) - created_at).ceil
       end
 
+      def attempts=(count)
+        super
+        if count >= RETRY_COUNT
+          self.succeeded = false
+          self.needs_to_perform_work = false
+        end
+      end
+
       def pull_request_number=(number)
         super
         self.needs_to_perform_work = pull_request_number.nil?
@@ -120,13 +128,12 @@ module Pod
         self.succeeded = true unless merge_commit_sha.nil?
       end
 
-      def update_travis_build_status(travis)
+      def update_travis_build_status(travis, bump_attempt = false)
         perform_task "Received Travis build status: finished=#{travis.finished?} build_url=#{travis.build_url}" do
-          if travis.finished?
-            update(:travis_build_success => travis.build_success?, :travis_build_url => travis.build_url)
-          else
-            update(:travis_build_url => travis.build_url)
-          end
+          attributes = { :travis_build_url => travis.build_url }
+          attributes[:travis_build_success] = travis.build_success? if travis.finished?
+          attributes[:attempts] = attempts + 1 if bump_attempt
+          update(attributes)
         end
       end
 
@@ -173,11 +180,7 @@ module Pod
         begin
           self.class.db.transaction(:savepoint => true, &block)
         rescue Object => e
-          if attempts == RETRY_COUNT
-            update(:succeeded => false, :needs_to_perform_work => false)
-          else
-            update(:attempts => attempts + 1)
-          end
+          update(:attempts => attempts + 1)
           # TODO report full error to error reporting service
           add_log_message(:message => "Error: #{e.message}")
           TRUNK_APP_LOGGER.error "#{e.message}\n\t\t#{e.backtrace.join("\n\t\t")}"

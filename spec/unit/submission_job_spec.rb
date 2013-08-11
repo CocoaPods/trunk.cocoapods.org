@@ -37,6 +37,12 @@ module Pod::TrunkApp
       SubmissionJob.perform_task!.should == false
     end
 
+    it "considers a build failed once the retry count is reached" do
+      @job.update(:attempts => SubmissionJob::RETRY_COUNT)
+      @job.reload.should.be.failed
+      @job.should.not.needs_to_perform_work
+    end
+
     describe "concerning submission progress state" do
       before do
         github = @job.send(:github)
@@ -70,7 +76,7 @@ module Pod::TrunkApp
         @job.reload.pull_request_number.should == 42
       end
 
-      it "considers a job failed if the retry threshold is reached" do
+      it "bumps the attempt count as long as the threshold isn't reached" do
         SubmissionJob::RETRY_COUNT.times do |i|
           @job.perform_task "Try #{i+1}" do
             raise "oh noes!"
