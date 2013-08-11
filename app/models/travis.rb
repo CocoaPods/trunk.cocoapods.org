@@ -1,3 +1,4 @@
+require 'rest'
 require 'json'
 require 'digest'
 
@@ -18,13 +19,20 @@ module Pod
       # TODO make this breakable so it stops fetching build jobs
       def self.pull_requests
         builds_response = REST.get(TRAVIS_BUILDS_API_URL)
-        # TODO errors
+        # TODO Make this pretty mkay
+        if (400...600).include?(builds_response.status_code)
+          raise "[#{builds_response.status_code}] #{builds_response.headers.inspect} – #{builds_response.body}}"
+        end
         builds = JSON.parse(builds_response.body)
         builds.each do |build|
           if build['event_type'] == 'pull_request'
             url = File.join(TRAVIS_BUILDS_API_URL, build['id'].to_s)
             TRUNK_APP_LOGGER.info("GET: #{url}")
             build_response = REST.get(url)
+            # TODO Make this pretty mkay
+            if (400...600).include?(build_response.status_code)
+              raise "[#{build_response.status_code}] #{build_response.headers.inspect} – #{build_response.body}}"
+            end
             # TODO errors
             yield Travis.new(JSON.parse(build_response.body))
           end
