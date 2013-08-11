@@ -94,7 +94,7 @@ EOYAML
       post '/pods', spec.to_yaml
       job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
       job.specification_data.should == spec.to_yaml
-      job.log_messages.map(&:message).should == ['Submitted']
+      job.log_messages.map(&:message).should == ['Submitted.']
     end
 
     before do

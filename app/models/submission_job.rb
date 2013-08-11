@@ -61,6 +61,7 @@ module Pod
           end
 
           perform_task do
+            # TODO the jobs for which we already know the build ID, we don’t need to fetch all the build statuses.
             Travis.pull_requests do |travis|
               jobs.delete_if do |job|
                 if job.pull_request_number == travis.pull_request_number
@@ -85,14 +86,17 @@ module Pod
 
       def after_create
         super
-        add_log_message(:message => 'Submitted')
+        add_log_message(:message => 'Submitted.')
       end
 
       def after_update
         super
-        if @columns_updated.has_key?(:succeeded) && @columns_updated[:succeeded] == true
+        case @columns_updated[:succeeded]
+        when true
           pod_version.update(:published => true)
-          add_log_message(:message => 'Published')
+          add_log_message(:message => 'Published.')
+        when false
+          add_log_message(:message => 'Failed.')
         end
       end
 
