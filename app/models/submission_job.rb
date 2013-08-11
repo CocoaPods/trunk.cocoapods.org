@@ -134,7 +134,11 @@ module Pod
       end
 
       def travis_build_url
-        Travis.web_url_for_id(travis_build_id) if travis_build_id
+        if defined?(super)
+          super
+        else
+          Travis.web_url_for_id(travis_build_id) if travis_build_id
+        end
       end
 
       def attempts=(count)
