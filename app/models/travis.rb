@@ -18,7 +18,6 @@ module Pod
       # TODO make this breakable so it stops fetching build jobs
       def self.pull_requests
         builds_response = REST.get(TRAVIS_BUILDS_API_URL)
-        TRUNK_APP_LOGGER.info(builds_response.body)
         # TODO errors
         builds = JSON.parse(builds_response.body)
         builds.each do |build|
@@ -26,7 +25,6 @@ module Pod
             url = File.join(TRAVIS_BUILDS_API_URL, build['id'].to_s)
             TRUNK_APP_LOGGER.info("GET: #{url}")
             build_response = REST.get(url)
-            TRUNK_APP_LOGGER.info(build_response.body)
             # TODO errors
             yield Travis.new(JSON.parse(build_response.body))
           end

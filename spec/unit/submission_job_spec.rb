@@ -43,6 +43,12 @@ module Pod::TrunkApp
       @job.should.not.needs_to_perform_work
     end
 
+    it "optionally bumps the attempt count when updating the travis count" do
+      before = @job.attempts
+      @job.update_travis_build_status(stub(:finished? => false, :build_url => 'URL'), true)
+      @job.reload.attempts.should == before + 1
+    end
+
     describe "concerning submission progress state" do
       before do
         github = @job.send(:github)

@@ -51,7 +51,9 @@ module Pod
         TRUNK_APP_LOGGER.info('--- Updating Travis build statuses ---')
         jobs = find_jobs_in_queue_that_need_travis_build_status_updates.to_a
         return if jobs.empty?
-        TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs.size} jobs in the queue that have not received a notification from Travis yet.")
+
+        jobs_count = jobs.size
+        TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs_count} jobs in the queue that have not received a notification from Travis yet.")
 
         Travis.pull_requests do |travis|
           jobs.delete_if do |job|
@@ -63,11 +65,16 @@ module Pod
               false
             end
           end
-          if jobs.empty?
-            TRUNK_APP_LOGGER.info('--- Done updating Travis build statuses ---')
-            break
-          end
+          break if jobs.empty?
         end
+
+        # Jobs that are not included in the build status list at all should have their attempt
+        # count bumped.
+        jobs.each do |job|
+          job.update(:attempts => job.attempts + 1)
+        end
+
+        TRUNK_APP_LOGGER.info('--- Done updating Travis build statuses ---')
       end
 
       def after_create
