@@ -49,6 +49,9 @@ module Pod
       def self.update_travis_build_statuses!
         TRUNK_APP_LOGGER.info('--- Updating Travis build statuses ---')
         jobs = find_jobs_in_queue_that_need_travis_build_status_updates.to_a
+        return if jobs.empty?
+        TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs.size} jobs in the queue that have not received a notification from Travis yet.")
+
         Travis.pull_requests do |travis|
           jobs.delete_if do |job|
             if job.pull_request_number == travis.pull_request_number
