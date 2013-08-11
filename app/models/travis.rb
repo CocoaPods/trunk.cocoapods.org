@@ -12,8 +12,14 @@ module Pod
         webhook_authorization_token == token
       end
 
+      attr_reader :payload
+
       def initialize(payload)
         @payload = payload
+      end
+
+      def id
+        @payload['id']
       end
 
       def pull_request?
@@ -22,19 +28,21 @@ module Pod
 
       def pull_request_number
         type, number = @payload['compare_url'].split('/').last(2)
-        number if type == 'pull'
+        number.to_i if type == 'pull'
       end
 
-      def pending?
-        @payload['result_message'] == 'Pending'
+      def finished?
+        !@payload['finished_at'].nil?
       end
 
       def build_success?
         @payload['result'] == 0
       end
 
+      TRAVIS_BUILD_URL = File.join('https://travis-ci.org', ENV['GH_REPO'], 'builds/%d')
+
       def build_url
-        @payload['build_url']
+        @payload['build_url'] ||= (TRAVIS_BUILD_URL % id)
       end
     end
   end

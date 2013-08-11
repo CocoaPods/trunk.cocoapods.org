@@ -37,6 +37,10 @@ class Bacon::Context
     Pod::Specification.from_file(fixture(filename))
   end
 
+  def fixture_json(filename)
+    JSON.parse(fixture_read(filename))
+  end
+
   alias_method :run_requirement_before_sequel, :run_requirement
   def run_requirement(description, spec)
     TRUNK_APP_LOGGER.info('-' * description.size)

@@ -49,7 +49,7 @@ module Pod::TrunkApp
       post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_start_payload.json') }
       last_response.status.should == 204
       @job.reload.travis_build_success?.should == nil
-      @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/push.cocoapods.org/builds/7540815'
+      @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
       @job.should.not.needs_to_perform_work
     end
 
@@ -57,7 +57,7 @@ module Pod::TrunkApp
       post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_success_payload.json') }
       last_response.status.should == 204
       @job.reload.travis_build_success?.should == true
-      @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/push.cocoapods.org/builds/7540815'
+      @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
       @job.should.needs_to_perform_work
     end
 
@@ -65,7 +65,7 @@ module Pod::TrunkApp
       post '/builds', { 'payload' => fixture_read('TravisCI/pull-request_failure_payload.json') }
       last_response.status.should == 204
       @job.reload.travis_build_success?.should == false
-      @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/push.cocoapods.org/builds/7541777'
+      @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
       @job.should.be.failed
     end
   end

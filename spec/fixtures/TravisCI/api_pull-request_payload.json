@@ -1,0 +1,94 @@
+{
+  "id": 7540815,
+  "repository_id": 1183540,
+  "number": "23",
+  "config": {
+    "language": "objective-c",
+    "env": [
+      "RVM_RUBY_VERSION=system"
+    ],
+    "before_install": [
+      "source ~/.rvm/scripts/rvm && rvm use $RVM_RUBY_VERSION",
+      "brew install cmake"
+    ],
+    "before_script": [
+      "echo -e \"Host github.com\\n\\tStrictHostKeyChecking no\\n\" >> ~/.ssh/config"
+    ],
+    "install": "bundle install",
+    "script": "bundle exec rake",
+    "branches": {
+      "except": [
+        "/-job-\\d+$/"
+      ]
+    },
+    "notifications": {
+      "webhooks": {
+        "urls": [
+          "http://cocoapods-trunk-service.herokuapp.com/travis/builds",
+          "http://requestb.in/19f67qf1"
+        ],
+        "on_success": "always",
+        "on_failure": "always",
+        "on_start": true
+      }
+    },
+    ".result": "configured"
+  },
+  "state": "finished",
+  "result": 0,
+  "status": 0,
+  "started_at": "2013-08-11T12:44:59Z",
+  "finished_at": "2013-08-11T12:45:56Z",
+  "duration": 57,
+  "commit": "4977a0f4c68fb276d852831969353036a7681791",
+  "branch": "refs/heads/master",
+  "message": "[Add] CocoaLumberjack 1.6",
+  "committed_at": "2013-08-11T12:43:26Z",
+  "author_name": "Eloy Durán",
+  "author_email": "eloy.de.enige@gmail.com",
+  "committer_name": "CocoaPodsBot",
+  "committer_email": "eloy.de.enige+cocoapods.github.bot@gmail.com",
+  "compare_url": "https://github.com/CocoaPods/Specs/pull/3",
+  "event_type": "pull_request",
+  "matrix": [
+    {
+      "id": 10082669,
+      "repository_id": 1183540,
+      "number": "23.1",
+      "config": {
+        "language": "objective-c",
+        "env": "RVM_RUBY_VERSION=system",
+        "before_install": [
+          "source ~/.rvm/scripts/rvm && rvm use $RVM_RUBY_VERSION",
+          "brew install cmake"
+        ],
+        "before_script": [
+          "echo -e \"Host github.com\\n\\tStrictHostKeyChecking no\\n\" >> ~/.ssh/config"
+        ],
+        "install": "bundle install",
+        "script": "bundle exec rake",
+        "branches": {
+          "except": [
+            "/-job-\\d+$/"
+          ]
+        },
+        "notifications": {
+          "webhooks": {
+            "urls": [
+              "http://cocoapods-trunk-service.herokuapp.com/travis/builds",
+              "http://requestb.in/19f67qf1"
+            ],
+            "on_success": "always",
+            "on_failure": "always",
+            "on_start": true
+          }
+        },
+        ".result": "configured"
+      },
+      "result": 0,
+      "started_at": "2013-08-11T12:44:59Z",
+      "finished_at": "2013-08-11T12:45:56Z",
+      "allow_failure": false
+    }
+  ]
+}
