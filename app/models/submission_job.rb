@@ -119,6 +119,10 @@ module Pod
         ((in_progress? ? Time.now : updated_at) - created_at).ceil
       end
 
+      def travis_build_url
+        Travis.web_url_for_id(travis_build_id) if travis_build_id
+      end
+
       def attempts=(count)
         super
         if count >= RETRY_COUNT
@@ -146,8 +150,8 @@ module Pod
       end
 
       def update_travis_build_status(travis, bump_attempt = false)
-        perform_task "Received Travis build status: finished=#{travis.finished?} build_url=#{travis.build_url}" do
-          attributes = { :travis_build_url => travis.build_url }
+        perform_task "Received Travis build status: finished=#{travis.finished?} build ID=#{travis.build_id}" do
+          attributes = { :travis_build_id => travis.build_id }
           attributes[:travis_build_success] = travis.build_success? if travis.finished?
           attributes[:attempts] = attempts + 1 if bump_attempt
           update(attributes)

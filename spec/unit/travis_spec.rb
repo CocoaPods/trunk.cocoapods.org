@@ -29,7 +29,7 @@ module Pod::TrunkApp
       ].each do |fixture_name|
         travis = Travis.new(fixture_json(fixture_name))
         travis.pull_request_number.should == NEW_PR_NUMBER
-        travis.build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
+        travis.build_id.should == 7540815
       end
     end
 

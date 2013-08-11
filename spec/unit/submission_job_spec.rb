@@ -45,7 +45,7 @@ module Pod::TrunkApp
 
     it "optionally bumps the attempt count when updating the travis count" do
       before = @job.attempts
-      @job.update_travis_build_status(stub(:finished? => false, :build_url => 'URL'), true)
+      @job.update_travis_build_status(stub(:finished? => false, :build_id => 42), true)
       @job.reload.attempts.should == before + 1
     end
 

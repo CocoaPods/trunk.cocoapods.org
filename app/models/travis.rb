@@ -17,6 +17,10 @@ module Pod
         webhook_authorization_token == token
       end
 
+      def self.web_url_for_id(id)
+        TRAVIS_BUILD_WEB_URL % id
+      end
+
       # TODO make this breakable so it stops fetching build jobs
       def self.pull_requests
         builds = get_json(TRAVIS_BUILDS_API_URL)
@@ -64,8 +68,8 @@ module Pod
         @payload['result'] == 0
       end
 
-      def build_url
-        @payload['build_url'] ||= (TRAVIS_BUILD_WEB_URL % id)
+      def build_id
+        @payload['id']
       end
     end
   end
