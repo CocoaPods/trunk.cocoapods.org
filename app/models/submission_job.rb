@@ -58,9 +58,8 @@ module Pod
         # First see if any of the jobs already knows its build ID and remove the job from the
         # remaining queue after updating the build status.
         jobs.delete_if do |job|
-          message = 'Updating Travis build status.'
           if job.travis_build_id
-            job.perform_task(message) do
+            job.perform_task('Updating Travis build status.') do
               travis = Travis.pull_request_with_build_id(job.travis_build_id)
               job.update_travis_build_status(travis, true)
             end
@@ -68,7 +67,7 @@ module Pod
           else
             # Needs to have its build ID resolved. Log the message now because we can’t do it
             # inside the next `perform_task` block when we actually fetch the status.
-            job.add_log_message(:message => message)
+            job.add_log_message(:message => 'Updating Travis build status by fetching all builds.')
             false
           end
         end
@@ -78,6 +77,7 @@ module Pod
 
         # Get the build status for all builds and try to find those that belong to our jobs.
         perform_task do
+          TRUNK_APP_LOGGER.info('[!] Fetching all the build results.')
           Travis.pull_requests do |travis|
             jobs.delete_if do |job|
               if job.pull_request_number == travis.pull_request_number
