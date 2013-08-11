@@ -51,23 +51,28 @@ module Pod
       end
 
       def self.update_travis_build_statuses!
-        TRUNK_APP_LOGGER.debug('--- Updating Travis build statuses ---')
         jobs = find_jobs_in_queue_that_need_travis_build_status_updates
         unless jobs.empty?
           jobs_count = jobs.size
           TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs_count} jobs in the queue that have not received a notification from Travis yet.")
 
-          Travis.pull_requests do |travis|
-            jobs.delete_if do |job|
-              if job.pull_request_number == travis.pull_request_number
-                job.update_travis_build_status(travis, true)
-                TRUNK_APP_LOGGER.info(job.inspect)
-                true
-              else
-                false
+          jobs.each do |job|
+            job.add_log_message(:message => 'Updating Travis build status.')
+          end
+
+          perform_task do
+            Travis.pull_requests do |travis|
+              jobs.delete_if do |job|
+                if job.pull_request_number == travis.pull_request_number
+                  job.update_travis_build_status(travis, true)
+                  TRUNK_APP_LOGGER.info(job.inspect)
+                  true
+                else
+                  false
+                end
               end
+              break if jobs.empty?
             end
-            break if jobs.empty?
           end
 
           # Jobs that are not included in the build status list at all should have their attempt
@@ -76,7 +81,6 @@ module Pod
             job.update(:attempts => job.attempts + 1)
           end
         end
-        TRUNK_APP_LOGGER.debug('--- Done updating Travis build statuses ---')
       end
 
       def after_create
@@ -184,15 +188,20 @@ module Pod
         !needs_value?(options[:name])
       end
 
+      def self.perform_task(&block)
+        db.transaction(:savepoint => true, &block)
+        return nil
+      rescue Object => error
+        TRUNK_APP_LOGGER.error "#{error.message}\n\t\t#{error.backtrace.join("\n\t\t")}"
+        return error
+      end
+
       def perform_task(message, &block)
         add_log_message(:message => message)
-        begin
-          self.class.db.transaction(:savepoint => true, &block)
-        rescue Object => e
+        if error = self.class.perform_task(&block)
           update(:attempts => attempts + 1)
           # TODO report full error to error reporting service
-          add_log_message(:message => "Error: #{e.message}")
-          TRUNK_APP_LOGGER.error "#{e.message}\n\t\t#{e.backtrace.join("\n\t\t")}"
+          add_log_message(:message => "Error: #{error.message}")
         end
       end
 
@@ -279,7 +288,7 @@ module Pod
       end
 
       task :merge_commit_sha, :if => :should_perform_merge? do
-        perform_task "Merging pull-request number #{pull_request_number}" do
+        perform_task "Merging pull-request number #{pull_request_number}." do
           update(:merge_commit_sha => github.merge_pull_request(pull_request_number))
         end
       end
