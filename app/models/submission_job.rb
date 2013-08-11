@@ -39,6 +39,28 @@ module Pod
         end
       end
 
+      TRAVIS_BUILD_STATUS_TIMEOUT = -10.minutes
+
+      def self.find_jobs_in_queue_that_need_travis_build_status_updates
+        for_update.where(:succeeded => nil, :travis_build_success => nil)
+                  .where('updated_at < ?', TRAVIS_BUILD_STATUS_TIMEOUT.from_now)
+                  .exclude(:pull_request_number => nil)
+      end
+
+      def self.update_travis_build_statuses!
+        jobs = find_jobs_in_queue_that_need_travis_build_status_updates.to_a
+        Travis.pull_requests do |travis|
+          jobs.delete_if do |job|
+            if job.pull_request_number == travis.pull_request_number
+              job.update_travis_build_status(travis)
+              true
+            else
+              false
+            end
+          end
+        end
+      end
+
       def after_create
         super
         add_log_message(:message => 'Submitted')
@@ -87,6 +109,14 @@ module Pod
       def merge_commit_sha=(sha)
         super
         self.succeeded = true unless merge_commit_sha.nil?
+      end
+
+      def update_travis_build_status(travis)
+        if travis.finished?
+          update(:travis_build_success => travis.build_success?, :travis_build_url => travis.build_url)
+        else
+          update(:travis_build_url => travis.build_url)
+        end
       end
 
       def perform_next_task!

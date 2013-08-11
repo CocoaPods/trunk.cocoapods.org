@@ -12,6 +12,9 @@ module Pod
         webhook_authorization_token == token
       end
 
+      def self.pull_requests
+      end
+
       attr_reader :payload
 
       def initialize(payload)
