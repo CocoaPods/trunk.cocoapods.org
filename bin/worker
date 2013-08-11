@@ -7,10 +7,6 @@ require 'app/models/submission_job'
 
 loop do
   Pod::TrunkApp::SubmissionJob.update_travis_build_statuses!
-
-  if Pod::TrunkApp::SubmissionJob.perform_task!
-    slept += sleep(0.1)
-  else
-    slept += sleep(1)
-  end
+  Pod::TrunkApp::SubmissionJob.perform_task!
+  sleep(1)
 end
