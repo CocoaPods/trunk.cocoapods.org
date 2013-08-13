@@ -19,6 +19,11 @@ require 'app/controllers/app_controller'
 
 Mocha::Configuration.prevent(:stubbing_non_existent_method)
 
+$:.unshift(ROOT, 'spec')
+Dir.glob(File.join(ROOT, 'spec/spec_helper/**/*.rb')).each do |filename|
+  require File.join('spec_helper', File.basename(filename, '.rb'))
+end
+
 class Bacon::Context
   def test_controller!(app)
     extend Rack::Test::Methods
@@ -55,16 +60,17 @@ end
 module Kernel
   alias_method :describe_before_controller_tests, :describe
 
-  def describe(description, &block)
-    if description.is_a?(Class) && description.superclass == Pod::TrunkApp::AppController
+  def describe(*description, &block)
+    if description.first.is_a?(Class) && description.first.superclass == Pod::TrunkApp::AppController
+      klass = description.first
       # Configure controller test and always use HTTPS
-      describe_before_controller_tests(description) do
-        test_controller!(description)
+      describe_before_controller_tests(*description) do
+        test_controller!(klass)
         before { header 'X-Forwarded-Proto', 'https' }
         instance_eval(&block)
       end
     else
-      describe_before_controller_tests(description, &block)
+      describe_before_controller_tests(*description, &block)
     end
   end
 end

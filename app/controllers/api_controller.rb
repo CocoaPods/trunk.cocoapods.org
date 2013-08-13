@@ -1,11 +1,22 @@
 require 'app/controllers/app_controller'
-require 'app/models/github'
+
+# First define the class as a subclass of AppController, then require these.
+class Pod::TrunkApp::APIController < Pod::TrunkApp::AppController; end
+require 'app/controllers/api_controller/response_helpers'
+require 'app/controllers/api_controller/authentication_headers'
+require 'app/controllers/api_controller/authentication_helpers'
+require 'app/controllers/api_controller/authentication'
+
+require 'app/models/owner'
 require 'app/models/pod'
+require 'app/models/session'
 require 'app/models/specification_wrapper'
 
 module Pod
   module TrunkApp
     class APIController < AppController
+      find_authenticated_owner %r{^/(me|pods)$}
+
       before do
         content_type 'text/yaml'
         unless request.media_type == 'text/yaml'
@@ -13,30 +24,49 @@ module Pod
         end
       end
 
+      get '/me' do
+        if owner?
+          halt(200, @owner.to_yaml)
+        end
+      end
+
+      # TODO disallow an authenticated owner to register.
+      post '/register' do
+        owner_params = YAML.load(request.body.read)
+        if !owner_params.kind_of?(Hash) || owner_params.empty?
+          yaml_error(422, 'Please send the owner email address in the body of your post.')
+        else
+          @owner = Owner.find_or_create_by_email(owner_params['email'])
+          yaml_message(201, @owner)
+        end
+      end
+
       post '/pods' do
-        specification = SpecificationWrapper.from_yaml(request.body.read)
+        #if owner?
+          specification = SpecificationWrapper.from_yaml(request.body.read)
 
-        if specification.nil?
-          error 400, 'Unable to load a Pod Specification from the provided input.'.to_yaml
-        end
+          if specification.nil?
+            error 400, 'Unable to load a Pod Specification from the provided input.'.to_yaml
+          end
 
-        unless specification.valid?
-          error 422, specification.validation_errors.to_yaml
-        end
+          unless specification.valid?
+            error 422, specification.validation_errors.to_yaml
+          end
 
-        resource_url = url("/pods/#{specification.name}/versions/#{specification.version}")
+          resource_url = url("/pods/#{specification.name}/versions/#{specification.version}")
 
-        # Always set the location of the resource, even when the pod version already exists.
-        headers 'Location' => resource_url
+          # Always set the location of the resource, even when the pod version already exists.
+          headers 'Location' => resource_url
 
-        pod = Pod.find_or_create(:name => specification.name)
-        # TODO use a unique index in the DB for this instead?
-        if pod.versions_dataset.where(:name => specification.version).first
-          error 409, "Unable to accept duplicate entry for: #{specification}".to_yaml
-        end
-        version = pod.add_version(:name => specification.version, :url => resource_url)
-        version.add_submission_job(:specification_data => specification.to_yaml)
-        halt 202
+          pod = Pod.find_or_create(:name => specification.name)
+          # TODO use a unique index in the DB for this instead?
+          if pod.versions_dataset.where(:name => specification.version).first
+            error 409, "Unable to accept duplicate entry for: #{specification}".to_yaml
+          end
+          version = pod.add_version(:name => specification.version, :url => resource_url)
+          version.add_submission_job(:specification_data => specification.to_yaml)
+          halt 202
+        #end
       end
 
       get '/pods/:name/versions/:version' do

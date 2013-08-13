@@ -17,12 +17,16 @@ module Fixtures
 end
 
 module Pod::TrunkApp
-  describe APIController do
+  describe APIController, "with an authenticated owner" do
+    extend SpecHelpers::Authentication
+
     def spec
       @spec ||= fixture_specification('AFNetworking.podspec')
     end
 
     before do
+      sign_in!
+
       @spec = nil
       header 'Content-Type', 'text/yaml'
     end
@@ -135,4 +139,80 @@ EOYAML
       last_response.status.should == 404
     end
   end
+
+  describe APIController, "an unauthenticated consumer" do
+    before do
+      @email = 'jenny@example.com'
+      header 'Content-Type', 'text/yaml'
+    end
+
+    #it "is not allowed to post a new pod" do
+      #spec = fixture_specification('AFNetworking.podspec')
+      #lambda {
+        #lambda {
+          #post '/pods', spec.to_yaml
+        #}.should.not.change { Pod.count }
+      #}.should.not.change { PodVersion.count }
+      #last_response.status.should == 401
+    #end
+
+    it "is allowed to GET status of a pod version" do
+      spec = fixture_specification('AFNetworking.podspec')
+      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      version.add_submission_job(:specification_data => spec.to_yaml, :pull_request_number => 3)
+      get '/pods/AFNetworking/versions/1.2.0'
+      last_response.status.should == 202
+    end
+  end
+
+  describe APIController, "concerning registration" do
+    extend SpecHelpers::Response
+
+    before do
+      @email = 'jenny@example.com'
+      header 'Content-Type', 'text/yaml'
+    end
+
+    it "sees a useful error message when posting blank owner data" do
+      post '/register'
+      last_response.status.should == 422
+      yaml = yaml_response
+      yaml.keys.should == %w(error)
+      yaml['error'].should == "Please send the owner email address in the body of your post."
+    end
+
+    it "creates a new session" do
+      post '/register', { 'email' => @email }.to_yaml
+      last_response.status.should == 201
+      yaml_response['email'].should == @email
+    end
+  end
+
+  describe APIController, "concerning authentication" do
+    extend SpecHelpers::Response
+    extend SpecHelpers::Authentication
+
+    before do
+      header 'Content-Type', 'text/yaml'
+    end
+
+    it "allows access with a valid session belonging to an owner" do
+      session = create_session_with_owner
+      get '/me', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
+      last_response.status.should == 200
+    end
+
+    it "does not allow access when no authentication token is supplied" do
+      get '/me'
+      last_response.status.should == 401
+      yaml_response.should == "Please supply an authentication token."
+    end
+
+    it "does not allow access when an invalid authentication token is supplied" do
+      get '/me', nil, { 'HTTP_AUTHORIZATION' => 'Token invalid' }
+      last_response.status.should == 401
+      yaml_response.should == "Authentication token is invalid."
+    end
+  end
 end
+
