@@ -62,7 +62,7 @@ module Kernel
 
   def describe(*description, &block)
     if description.first.is_a?(Class) && description.first.superclass == Pod::TrunkApp::AppController
-      klass = description.shift
+      klass = description.first
       # Configure controller test and always use HTTPS
       describe_before_controller_tests(*description) do
         test_controller!(klass)
