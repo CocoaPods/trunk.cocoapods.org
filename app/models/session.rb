@@ -5,8 +5,6 @@ require 'app/models/owner'
 module Pod
   module TrunkApp
     class Session < Sequel::Model
-      SECONDS_IN_DAY = 3600 * 24
-
       DEFAULT_TOKEN_LENGTH = 32 # characters
       DEFAULT_VALIDITY_LENGTH = 128 # days
 
@@ -28,7 +26,7 @@ module Pod
 
       def valid_for=(duration_in_days)
         @valid_for = duration_in_days
-        self.valid_until = Time.now + (duration_in_days * SECONDS_IN_DAY)
+        self.valid_until = Time.now + duration_in_days.days
       end
 
       def self.with_token(token)

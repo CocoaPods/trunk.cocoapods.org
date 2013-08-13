@@ -6,7 +6,8 @@ $:.unshift File.join(ROOT, 'lib')
 ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
 
-require 'active_support/core_ext'
+require 'active_support/core_ext/numeric/time'
+require 'active_support/core_ext/date/calculations'
 
 require 'safe_yaml'
 SafeYAML::OPTIONS[:default_mode] = :safe
