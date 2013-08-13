@@ -34,7 +34,7 @@ module Pod::TrunkApp
 
     it "allows access with a valid session belonging to an owner" do
       session = create_session_with_owner
-      get '/me', nil, { 'Authorization' => "Token #{session.token}"}
+      get '/me', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
       last_response.status.should == 200
     end
 
@@ -45,7 +45,7 @@ module Pod::TrunkApp
     end
 
     it "does not allow access when an invalid authentication token is supplied" do
-      get '/me', nil, { 'Authorization' => 'Token invalid' }
+      get '/me', nil, { 'HTTP_AUTHORIZATION' => 'Token invalid' }
       last_response.status.should == 401
       yaml_response.should == "Authentication token is invalid."
     end
