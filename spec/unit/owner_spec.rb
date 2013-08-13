@@ -3,6 +3,7 @@ require File.expand_path('../../spec_helper', __FILE__)
 module Pod::TrunkApp
   describe "Owner" do
     before do
+      Mail::TestMailer.deliveries.clear
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
     end
 
@@ -35,6 +36,13 @@ module Pod::TrunkApp
       owner = Owner.find_or_create_by_email(" #{email.upcase} ")
       owner.should.not.be.new
       owner.email.should == email
+    end
+
+    it "sends an email to the email address on create" do
+      mail = Mail::TestMailer.deliveries.last
+      mail.to.should == [@owner.email]
+      mail.subject.should == 'This is a test email'
+      mail.body.decoded.should.include @owner.name
     end
   end
 end

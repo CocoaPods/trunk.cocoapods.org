@@ -33,6 +33,16 @@ module Pod
           create(:email => email)
         end
       end
+
+      def after_create
+        super
+        mail = Mail.new
+        mail.from    'info@cocoapods.org'
+        mail.to      email
+        mail.subject 'This is a test email'
+        mail.body    "Hi #{self.name}!"
+        mail.deliver!
+      end
     end
   end
 end

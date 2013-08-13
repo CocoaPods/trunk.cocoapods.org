@@ -44,6 +44,27 @@ db_loggers << TRUNK_APP_LOGGER # TODO For now also enable DB logger in productio
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 Sequel.extension :core_extensions, :migration
 
+# -- Email --------------------------------------------------------------------
+
+require 'mail'
+
+Mail.defaults do
+  case ENV['RACK_ENV']
+  when 'production'
+    delivery_method :smtp, {
+      :address => 'smtp.sendgrid.net',
+      :port => '587',
+      :domain => 'heroku.com',
+      :user_name => ENV['SENDGRID_USERNAME'],
+      :password => ENV['SENDGRID_PASSWORD'],
+      :authentication => :plain,
+      :enable_starttls_auto => true
+    }
+  else
+    delivery_method :test
+  end
+end
+
 # -- Console ------------------------------------------------------------------
 
 if defined?(IRB)

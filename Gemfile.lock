@@ -37,7 +37,11 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
+    mail (2.5.4)
+      mime-types (~> 1.16)
+      treetop (~> 1.4.8)
     metaclass (0.0.1)
+    mime-types (1.23)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     mocha-on-bacon (0.2.2)
@@ -47,6 +51,7 @@ GEM
     newrelic_rpm (3.6.5.130)
     notify (0.5.2)
     pg (0.16.0)
+    polyglot (0.3.3)
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
@@ -76,6 +81,9 @@ GEM
       rack (>= 1.0.0)
     thor (0.18.1)
     tilt (1.4.1)
+    treetop (1.4.14)
+      polyglot
+      polyglot (>= 0.3.1)
 
 PLATFORMS
   ruby
@@ -86,6 +94,7 @@ DEPENDENCIES
   cocoapods-core!
   foreman
   kicker!
+  mail
   mocha-on-bacon
   nap
   newrelic_rpm
