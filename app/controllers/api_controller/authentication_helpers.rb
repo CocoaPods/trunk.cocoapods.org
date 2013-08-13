@@ -1,6 +1,6 @@
 module Pod
-  module PushApp
-    class App
+  module TrunkApp
+    class APIController
       module AuthenticationHelpers
         def owner?
           if @owner

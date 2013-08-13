@@ -1,7 +1,8 @@
 require File.expand_path('../../spec_helper', __FILE__)
+require 'app/models/session'
 
-module Pod::PushApp
-  describe "Session" do
+module Pod::TrunkApp
+  describe Session do
     describe "when initializing" do
       it "automatically creates a token for itself" do
         Session.new.token.length.should == 32

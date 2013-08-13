@@ -1,6 +1,6 @@
 module Pod
-  module PushApp
-    class App
+  module TrunkApp
+    class APIController
       module Authentication
         def find_authenticated_owner
           before do

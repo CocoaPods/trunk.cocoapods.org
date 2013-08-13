@@ -1,6 +1,6 @@
 module Pod
-  module PushApp
-    class App
+  module TrunkApp
+    class APIController
       module AuthenticationHeaders
         # Returns the Authorization header if the value of the header
         # starts with ‘Token’.

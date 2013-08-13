@@ -18,7 +18,7 @@ end
 
 module Pod::TrunkApp
   describe APIController do
-    extend SpecHelpers::App
+    extend SpecHelpers::Authentication
 
     def spec
       @spec ||= fixture_specification('AFNetworking.podspec')
@@ -135,38 +135,6 @@ EOYAML
       last_response.status.should == 404
       get '/pods/FANetworking/versions/1.2.0'
       last_response.status.should == 404
-    end
-  end
-end
-
-module Pod::PushApp
-  describe "App" do
-    before do
-      @email = 'jenny@example.com'
-    end
-
-    describe "an unauthenticated consumer, which is not known to the system" do
-      extend Rack::Test::Methods
-      extend SpecHelpers::App
-      extend SpecHelpers::Response
-
-      before do
-        header 'Content-Type', 'text/yaml'
-      end
-
-      it "sees a useful error message when posting blank owner data" do
-        post '/register'
-        last_response.status.should == 422
-        yaml = yaml_response
-        yaml.keys.should == %w(error)
-        yaml['error'].should == "Please send the owner email address in the body of your post."
-      end
-
-      it "creates a new session" do
-        post '/register', { 'email' => @email }.to_yaml
-        last_response.status.should == 201
-        yaml_response['email'].should == @email
-      end
     end
   end
 end

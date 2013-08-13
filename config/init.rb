@@ -1,6 +1,7 @@
 # -- General ------------------------------------------------------------------
 
 ROOT = File.expand_path('../../', __FILE__)
+$:.unshift File.join(ROOT, 'lib')
 
 ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"

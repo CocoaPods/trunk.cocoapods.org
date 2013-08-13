@@ -1,10 +1,10 @@
 module Pod
-  module PushApp
+  module TrunkApp
     class Owner < Sequel::Model
       self.dataset = :owners
       plugin :timestamps
 
-      one_to_many :sessions, :class => 'Pod::PushApp::Session'
+      one_to_many :sessions, :class => 'Pod::TrunkApp::Session'
 
       def attributes
         values.inject({}) do |hash, (key, value)|

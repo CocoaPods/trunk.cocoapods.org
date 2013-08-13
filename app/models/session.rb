@@ -3,7 +3,7 @@ require 'token'
 require 'app/models/owner'
 
 module Pod
-  module PushApp
+  module TrunkApp
     class Session < Sequel::Model
       SECONDS_IN_DAY = 3600 * 24
 
@@ -12,8 +12,9 @@ module Pod
 
       self.dataset = :sessions
       plugin :timestamps
+      plugin :after_initialize
 
-      many_to_one :owner, :class => 'Pod::PushApp::Owner'
+      many_to_one :owner, :class => 'Pod::TrunkApp::Owner'
 
       attr_accessor :token_length
       attr_reader :valid_for

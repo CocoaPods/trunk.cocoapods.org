@@ -1,6 +1,6 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
-module Pod::PushApp
+module Pod::TrunkApp
   describe "Owner" do
     before do
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')

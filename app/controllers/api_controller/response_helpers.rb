@@ -1,6 +1,6 @@
 module Pod
-  module PushApp
-    class App
+  module TrunkApp
+    class APIController
       module ResponseHelpers
         def yaml_error(status, message)
           error(status, { 'error' => message }.to_yaml)

@@ -1,16 +1,16 @@
 require 'app/controllers/app_controller'
 
-require 'app/controllers/app/response_helpers'
-require 'app/controllers/app/authentication_headers'
-require 'app/controllers/app/authentication_helpers'
-require 'app/controllers/app/authentication'
+# First define the class as a subclass of AppController, then require these.
+class Pod::TrunkApp::APIController < Pod::TrunkApp::AppController; end
+require 'app/controllers/api_controller/response_helpers'
+require 'app/controllers/api_controller/authentication_headers'
+require 'app/controllers/api_controller/authentication_helpers'
+require 'app/controllers/api_controller/authentication'
 
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/session'
 require 'app/models/specification_wrapper'
-
-require 'core_ext/hash'
 
 module Pod
   module TrunkApp
