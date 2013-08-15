@@ -146,15 +146,15 @@ EOYAML
       header 'Content-Type', 'text/yaml'
     end
 
-    #it "is not allowed to post a new pod" do
-      #spec = fixture_specification('AFNetworking.podspec')
-      #lambda {
-        #lambda {
-          #post '/pods', spec.to_yaml
-        #}.should.not.change { Pod.count }
-      #}.should.not.change { PodVersion.count }
-      #last_response.status.should == 401
-    #end
+    it "is not allowed to post a new pod" do
+      spec = fixture_specification('AFNetworking.podspec')
+      lambda {
+        lambda {
+          post '/pods', spec.to_yaml
+        }.should.not.change { Pod.count }
+      }.should.not.change { PodVersion.count }
+      last_response.status.should == 401
+    end
 
     it "is allowed to GET status of a pod version" do
       spec = fixture_specification('AFNetworking.podspec')

@@ -54,7 +54,7 @@ module Pod
       end
 
       post '/pods' do
-        #if owner?
+        if owner?
           specification = SpecificationWrapper.from_yaml(request.body.read)
 
           if specification.nil?
@@ -78,7 +78,7 @@ module Pod
           version = pod.add_version(:name => specification.version, :url => resource_url)
           version.add_submission_job(:specification_data => specification.to_yaml)
           halt 202
-        #end
+        end
       end
 
       get '/pods/:name/versions/:version' do
