@@ -18,6 +18,7 @@ module Pod
       attr_reader :valid_for
 
       subset(:valid) { valid_until > Time.now }
+      subset(:verified, :verified => true)
 
       def after_initialize
         super
@@ -33,9 +34,11 @@ module Pod
         { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }.to_yaml
       end
 
-      def self.with_token(token)
+      def self.with_token(token, verified_only = true)
         return if token.nil?
-        valid.where('token = ?', token).first
+        dataset = valid
+        dataset = dataset.verified if verified_only
+        dataset.where(:token => token).first
       end
 
       private

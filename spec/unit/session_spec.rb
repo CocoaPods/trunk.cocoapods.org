@@ -38,23 +38,35 @@ module Pod::TrunkApp
     end
 
     describe "finders" do
+      before do
+        @session = Session.create(:verified => true)
+      end
+
       it "finds nothing for a blank token" do
         Session.with_token(nil).should.be.nil
       end
 
       it "finds a valid session based on a token" do
-        session = Session.create
-        Session.with_token(session.token).should == session
+        Session.with_token(@session.token).should == @session
       end
 
       it "does not find an invalid session based on a token" do
-        session = Session.create(:valid_until => Time.now - 240)
-        Session.with_token(session.token).should == session
+        @session.update(:valid_until => Time.now - 240)
+        Session.with_token(@session.token).should.be.nil
       end
 
       it "does not find a session with a wrong token" do
-        Session.create
         Session.with_token('wrong').should.be.nil
+      end
+
+      it "does not find an unverified session" do
+        @session.update(:verified => false)
+        Session.with_token(@session.token).should.be.nil
+      end
+
+      it "finds an unverified session if explicitely specified" do
+        @session.update(:verified => false)
+        Session.with_token(@session.token, false).should == @session
       end
     end
 
