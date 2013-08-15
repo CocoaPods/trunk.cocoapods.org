@@ -216,6 +216,30 @@ EOYAML
       session = Owner.find_by_email(@email).sessions_dataset.valid.last
       mail.body.decoded.should.include "https://example.org/sessions/confirm/#{session.token}"
     end
+
+    before do
+      header 'Content-Type', 'text/plain'
+    end
+
+    it "confirms a session" do
+      session = Session.create
+      get "/sessions/confirm/#{session.token}"
+      last_response.status.should == 200
+      session.reload.verified.should == true
+    end
+
+    it "does not confirm an invalid session" do
+      session = Session.create
+      session.update(:valid_until => 1.second.ago)
+      get "/sessions/confirm/#{session.token}"
+      last_response.status.should == 404
+      session.reload.verified.should == false
+    end
+
+    it "does not confirm an unexisting session" do
+      get "/sessions/confirm/doesnotexist"
+      last_response.status.should == 404
+    end
   end
 
   describe APIController, "concerning authentication" do
