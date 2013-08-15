@@ -10,20 +10,46 @@ require 'cocoapods-core'
 require 'safe_yaml'
 SafeYAML::OPTIONS[:default_mode] = :safe
 
-unless ARGV.size == 2
-  $stderr.puts "Usage: #{File.basename(__FILE__)} scheme://host:port /path/to/file.podspec"
-  exit 1
+def print_response(response)
+  puts "[#{response.status_code}]"
+  puts response.body
 end
 
-spec = Pod::Specification.from_file(ARGV[1])
-response = REST.post("#{ARGV[0]}/api/v1/pods", spec.to_yaml, 'Content-Type' => 'text/yaml')
+def register(base_url, email, name)
+  print_response REST.post("#{base_url}/api/v1/register", { 'email' => email, 'name' => name }.to_yaml, 'Content-Type' => 'text/yaml')
+end
 
-status_url = response.headers['location'].first
-puts "Registered resource URL: #{status_url}"
+def me(base_url, token)
+  print_response REST.get("#{base_url}/api/v1/me", 'Content-Type' => 'text/yaml', 'Authorization' => "Token #{token}")
+end
 
-loop do
-  response = REST.get(status_url, 'Content-Type' => 'text/yaml', 'Accept' => 'text/yaml')
-  puts "[#{response.status_code}] #{response.body}"
-  break if [200, 404].include?(response.status_code)
-  sleep 2
+def push_spec(base_url, token, spec_path)
+  spec = Pod::Specification.from_file(spec_path)
+  response = REST.post("#{base_url}/api/v1/pods", spec.to_yaml, 'Content-Type' => 'text/yaml', 'Authorization' => "Token #{token}")
+
+  status_url = response.headers['location'].first
+  puts "Registered resource URL: #{status_url}"
+
+  loop do
+    response = REST.get(status_url, 'Content-Type' => 'text/yaml', 'Accept' => 'text/yaml')
+    print_response(response)
+    break if [200, 404].include?(response.status_code)
+    sleep 2
+  end
+end
+
+case [ARGV.shift, ARGV.size]
+when ['register', 3]
+  register(*ARGV)
+when ['me', 2]
+  me(*ARGV)
+when ['push', 3]
+  push_spec(*ARGV)
+else
+  $stderr.puts "Usage:"
+  $stderr.puts ""
+  $stderr.puts "  Register: $ #{File.basename(__FILE__)} register scheme://host:port email name"
+  $stderr.puts "        Me: $ #{File.basename(__FILE__)} me scheme://host:port token"
+  $stderr.puts "      Push: $ #{File.basename(__FILE__)} push scheme://host:port token /path/to/file.podspec"
+  exit 1
 end

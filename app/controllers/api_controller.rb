@@ -21,7 +21,7 @@ module Pod
 
       before do
         content_type 'text/yaml'
-        unless request.media_type == 'text/yaml' || request.path =~ %r{/sessions/confirm/\w+$}
+        unless request.media_type == 'text/yaml' || request.path =~ %r{/sessions/verify/\w+$}
           error 415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.".to_yaml
         end
       end
@@ -38,13 +38,13 @@ module Pod
           yaml_error(422, 'Please send the owner email address in the body of your post.')
         else
           owner = Owner.find_by_email(owner_params['email']) || Owner.create(owner_params.slice('email', 'name'))
-          session = owner.create_session!(url('/sessions/confirm/%s'))
+          session = owner.create_session!(url('/sessions/verify/%s'))
           yaml_message(201, session)
         end
       end
 
       # TODO render HTML
-      get '/sessions/confirm/:token' do
+      get '/sessions/verify/:token' do
         if session = Session.with_token(params[:token], false)
           session.update(:verified => true)
           yaml_message(200, session)

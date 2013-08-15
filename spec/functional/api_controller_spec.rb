@@ -214,7 +214,7 @@ EOYAML
       mail = Mail::TestMailer.deliveries.last
       mail.to.should == [@email]
       session = Owner.find_by_email(@email).sessions_dataset.valid.last
-      mail.body.decoded.should.include "https://example.org/sessions/confirm/#{session.token}"
+      mail.body.decoded.should.include "https://example.org/sessions/verify/#{session.token}"
     end
 
     before do
@@ -223,7 +223,7 @@ EOYAML
 
     it "confirms a session" do
       session = Session.create
-      get "/sessions/confirm/#{session.token}"
+      get "/sessions/verify/#{session.token}"
       last_response.status.should == 200
       session.reload.verified.should == true
     end
@@ -231,13 +231,13 @@ EOYAML
     it "does not confirm an invalid session" do
       session = Session.create
       session.update(:valid_until => 1.second.ago)
-      get "/sessions/confirm/#{session.token}"
+      get "/sessions/verify/#{session.token}"
       last_response.status.should == 404
       session.reload.verified.should == false
     end
 
     it "does not confirm an unexisting session" do
-      get "/sessions/confirm/doesnotexist"
+      get "/sessions/verify/doesnotexist"
       last_response.status.should == 404
     end
   end
