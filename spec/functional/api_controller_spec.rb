@@ -205,7 +205,7 @@ EOYAML
       yaml_response['verified'].should == false
     end
 
-    it "sends an email with the session confirmation link" do
+    it "sends an email with the session verification link" do
       lambda {
         post '/register', { 'email' => @email, 'name' => @name }.to_yaml
       }.should.change { Mail::TestMailer.deliveries.size }
@@ -214,29 +214,29 @@ EOYAML
       mail = Mail::TestMailer.deliveries.last
       mail.to.should == [@email]
       session = Owner.find_by_email(@email).sessions_dataset.valid.last
-      mail.body.decoded.should.include "https://example.org/sessions/verify/#{session.token}"
+      mail.body.decoded.should.include "https://example.org/sessions/verify/#{session.verification_token}"
     end
 
     before do
       header 'Content-Type', 'text/plain'
     end
 
-    it "confirms a session" do
+    it "verifies a session" do
       session = Session.create
-      get "/sessions/verify/#{session.token}"
+      get "/sessions/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
     end
 
-    it "does not confirm an invalid session" do
+    it "does not verify an invalid session" do
       session = Session.create
       session.update(:valid_until => 1.second.ago)
-      get "/sessions/verify/#{session.token}"
+      get "/sessions/verify/#{session.verification_token}"
       last_response.status.should == 404
       session.reload.verified.should == false
     end
 
-    it "does not confirm an unexisting session" do
+    it "does not verify an unexisting session" do
       get "/sessions/verify/doesnotexist"
       last_response.status.should == 404
     end

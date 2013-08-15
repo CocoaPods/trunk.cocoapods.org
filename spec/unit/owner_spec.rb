@@ -42,7 +42,7 @@ module Pod::TrunkApp
       mail.to.should == [@owner.email]
       mail.subject.should == '[CocoaPods] Confirm your registration.'
       mail.body.decoded.should.include 'confirm your registration with CocoaPods'
-      mail.body.decoded.should.include "https://example.com/#{@owner.sessions_dataset.valid.last.token}"
+      mail.body.decoded.should.include "https://example.com/#{@owner.sessions_dataset.valid.last.verification_token}"
     end
 
     it "sends a new session confirmation email if the owner was not just created" do
@@ -52,7 +52,7 @@ module Pod::TrunkApp
       mail.to.should == [@owner.email]
       mail.subject.should == '[CocoaPods] Confirm your session.'
       mail.body.decoded.should.include 'confirm your CocoaPods session'
-      mail.body.decoded.should.include "https://example.com/#{@owner.sessions_dataset.valid.last.token}"
+      mail.body.decoded.should.include "https://example.com/#{@owner.sessions_dataset.valid.last.verification_token}"
     end
   end
 end

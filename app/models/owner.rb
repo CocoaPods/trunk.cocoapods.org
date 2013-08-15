@@ -32,7 +32,7 @@ module Pod
       def create_session!(confirmation_url_template)
         session = add_session({})
         was_created = @was_created
-        confirmation_url = confirmation_url_template % session.token
+        confirmation_url = confirmation_url_template % session.verification_token
 
         mail = Mail.new
         mail.charset = 'UTF-8'
