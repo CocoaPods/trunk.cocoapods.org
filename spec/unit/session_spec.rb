@@ -46,19 +46,23 @@ module Pod::TrunkApp
 
       it "finds nothing for a blank token" do
         Session.with_token(nil).should.be.nil
+        Session.with_verification_token(nil).should.be.nil
       end
 
       it "finds a valid session based on a token" do
         Session.with_token(@session.token).should == @session
+        Session.with_verification_token(@session.verification_token).should == @session
       end
 
       it "does not find an invalid session based on a token" do
         @session.update(:valid_until => Time.now - 240)
         Session.with_token(@session.token).should.be.nil
+        Session.with_verification_token(@session.verification_token).should.be.nil
       end
 
       it "does not find a session with a wrong token" do
         Session.with_token('wrong').should.be.nil
+        Session.with_verification_token('wrong').should.be.nil
       end
 
       it "does not find an unverified session" do
@@ -66,9 +70,9 @@ module Pod::TrunkApp
         Session.with_token(@session.token).should.be.nil
       end
 
-      it "finds an unverified session if explicitely specified" do
+      it "finds an unverified session by verification token" do
         @session.update(:verified => false)
-        Session.with_token(@session.token, false).should == @session
+        Session.with_verification_token(@session.verification_token).should == @session
       end
     end
 

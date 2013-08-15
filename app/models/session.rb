@@ -35,11 +35,14 @@ module Pod
         { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }.to_yaml
       end
 
-      def self.with_token(token, verified_only = true)
+      def self.with_token(token)
         return if token.nil?
-        dataset = valid
-        dataset = dataset.verified if verified_only
-        dataset.where(:token => token).first
+        valid.verified.where(:token => token).first
+      end
+
+      def self.with_verification_token(token)
+        return if token.nil?
+        valid.where(:verification_token => token).first
       end
 
       private
