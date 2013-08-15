@@ -6,6 +6,7 @@ module Pod
   module TrunkApp
     class Session < Sequel::Model
       DEFAULT_TOKEN_LENGTH = 32 # characters
+      DEFAULT_VERIFICATION_TOKEN_LENGTH = 8 # characters
       DEFAULT_VALIDITY_LENGTH = 128 # days
 
       self.dataset = :sessions
@@ -47,12 +48,13 @@ module Pod
         if new?
           self.valid_for ||= DEFAULT_VALIDITY_LENGTH
           self.token_length ||= DEFAULT_TOKEN_LENGTH
-          set_token
+          set_tokens
         end
       end
 
-      def set_token
+      def set_tokens
         self.token = Token.generate(:length => token_length)
+        self.verification_token = Token.generate(:length => DEFAULT_VERIFICATION_TOKEN_LENGTH)
       end
     end
   end

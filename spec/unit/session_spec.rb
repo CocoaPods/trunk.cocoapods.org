@@ -8,8 +8,10 @@ module Pod::TrunkApp
         Session.create.verified.should == false
       end
 
-      it "automatically creates a token for itself" do
-        Session.new.token.length.should == 32
+      it "automatically creates a token and a verification token for itself" do
+        session = Session.new
+        session.token.length.should == 32
+        session.verification_token.length.should == 8
       end
 
       it "allows you to configure the token length" do
