@@ -1,0 +1,10 @@
+Hi<%= (' ' << name) if name %>,
+
+Please confirm your <%= was_created ? 'registration with CocoaPods' : 'CocoaPods session' %> by clicking the following link:
+
+    <%= confirmation_url %>
+
+If you did not request this you do not need to take any further action.
+
+Kind regards,
+the CocoaPods team

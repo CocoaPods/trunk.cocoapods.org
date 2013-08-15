@@ -38,11 +38,31 @@ module Pod::TrunkApp
       owner.email.should == email
     end
 
-    it "sends an email to the email address on create" do
+    it "adds a new session" do
+      session = nil
+      lambda {
+        session = @owner.create_session!('https://example.com/%s')
+      }.should.change { Session.count }
+      @owner.sessions_dataset.valid.to_a.should == [session]
+    end
+
+    it "sends a registration confirmation email if the owner was just created" do
+      @owner.reload.create_session!('https://example.com/%s')
       mail = Mail::TestMailer.deliveries.last
       mail.to.should == [@owner.email]
-      mail.subject.should == 'This is a test email'
-      mail.body.decoded.should.include @owner.name
+      mail.subject.should == '[CocoaPods] Confirm your registration.'
+      mail.body.decoded.should.include 'confirm your registration with CocoaPods'
+      mail.body.decoded.should.include "https://example.com/#{@owner.sessions_dataset.valid.last.token}"
+    end
+
+    it "sends a new session confirmation email if the owner was not just created" do
+      owner = Owner.find(:id => @owner.id)
+      owner.create_session!('https://example.com/%s')
+      mail = Mail::TestMailer.deliveries.last
+      mail.to.should == [@owner.email]
+      mail.subject.should == '[CocoaPods] Confirm your session.'
+      mail.body.decoded.should.include 'confirm your CocoaPods session'
+      mail.body.decoded.should.include "https://example.com/#{@owner.sessions_dataset.valid.last.token}"
     end
   end
 end

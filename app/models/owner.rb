@@ -1,3 +1,5 @@
+require 'erb'
+
 module Pod
   module TrunkApp
     class Owner < Sequel::Model
@@ -36,13 +38,23 @@ module Pod
 
       def after_create
         super
+        @was_created = true
+      end
+
+      def create_session!(confirmation_url_template)
+        session = add_session({})
+        was_created = @was_created
+        confirmation_url = confirmation_url_template % session.token
+
         mail = Mail.new
         mail.charset = 'UTF-8'
         mail.from    = 'info@cocoapods.org'
         mail.to      = email
-        mail.subject = 'This is a test email'
-        mail.body    = "Hi #{self.name}!"
+        mail.subject = @was_created ? '[CocoaPods] Confirm your registration.' : '[CocoaPods] Confirm your session.'
+        mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/create_session.erb'))).result(binding)
         mail.deliver!
+
+        session
       end
     end
   end
