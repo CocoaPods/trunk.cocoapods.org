@@ -4,6 +4,10 @@ require 'app/models/session'
 module Pod::TrunkApp
   describe Session do
     describe "when initializing" do
+      it "is not verified yet" do
+        Session.create.verified.should == false
+      end
+
       it "automatically creates a token for itself" do
         Session.new.token.length.should == 32
       end
