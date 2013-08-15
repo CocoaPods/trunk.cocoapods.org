@@ -27,6 +27,11 @@ def push_spec(base_url, token, spec_path)
   spec = Pod::Specification.from_file(spec_path)
   response = REST.post("#{base_url}/api/v1/pods", spec.to_yaml, 'Content-Type' => 'text/yaml', 'Authorization' => "Token #{token}")
 
+  if (400...600).include?(response.status_code)
+    print_response(response)
+    return
+  end
+
   status_url = response.headers['location'].first
   puts "Registered resource URL: #{status_url}"
 
