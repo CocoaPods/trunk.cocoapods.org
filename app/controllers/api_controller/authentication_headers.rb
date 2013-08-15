@@ -28,7 +28,7 @@ module Pod
         #   Authorization: Token 34jk45df98
         def authentication_token
           if token = token_from_authorization_header
-            logger.debug("Got authentiation token: #{token}")
+            logger.debug("Got authentication token: #{token}")
             token
           end
         end

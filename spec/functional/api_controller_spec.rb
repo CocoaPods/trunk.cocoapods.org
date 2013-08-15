@@ -250,7 +250,7 @@ EOYAML
       header 'Content-Type', 'text/yaml'
     end
 
-    it "allows access with a valid session belonging to an owner" do
+    it "allows access with a valid verified session belonging to an owner" do
       session = create_session_with_owner
       get '/me', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
       last_response.status.should == 200
@@ -265,7 +265,15 @@ EOYAML
     it "does not allow access when an invalid authentication token is supplied" do
       get '/me', nil, { 'HTTP_AUTHORIZATION' => 'Token invalid' }
       last_response.status.should == 401
-      yaml_response.should == "Authentication token is invalid."
+      yaml_response.should == "Authentication token is invalid or unverified."
+    end
+
+    it "does not allow access when an unverified authentication token is supplied" do
+      session = create_session_with_owner
+      session.update(:verified => false)
+      get '/me', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
+      last_response.status.should == 401
+      yaml_response.should == "Authentication token is invalid or unverified."
     end
   end
 end

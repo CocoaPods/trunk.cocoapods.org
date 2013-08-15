@@ -45,7 +45,7 @@ module Pod
 
       # TODO render HTML
       get '/sessions/confirm/:token' do
-        if session = Session.with_token(params[:token])
+        if session = Session.with_token(params[:token], false)
           session.update(:verified => true)
           yaml_message(200, session)
         else
