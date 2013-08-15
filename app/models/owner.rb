@@ -8,19 +8,8 @@ module Pod
 
       one_to_many :sessions, :class => 'Pod::TrunkApp::Session'
 
-      def attributes
-        values.inject({}) do |hash, (key, value)|
-          hash[key.to_s] = value
-          hash
-        end
-      end
-
-      def public_attributes
-        attributes
-      end
-
       def to_yaml
-        public_attributes.to_yaml
+        { 'created_at' => created_at, 'id' => id, 'email' => email, 'name' => name }.to_yaml
       end
 
       def self.normalize_email(email)

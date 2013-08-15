@@ -29,6 +29,10 @@ module Pod
         self.valid_until = Time.now + duration_in_days.days
       end
 
+      def to_yaml
+        { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }.to_yaml
+      end
+
       def self.with_token(token)
         return if token.nil?
         valid.where('token = ?', token).first

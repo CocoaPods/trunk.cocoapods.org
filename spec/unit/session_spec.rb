@@ -57,5 +57,10 @@ module Pod::TrunkApp
         Session.with_token('wrong').should.be.nil
       end
     end
+
+    it "coerces to YAML" do
+      yaml = YAML.load(Session.new.to_yaml)
+      yaml.keys.sort.should == %w(created_at token valid_until verified)
+    end
   end
 end
