@@ -16,13 +16,12 @@ module Pod
         email.to_s.strip.downcase
       end
 
-      def self.find_or_create_by_email(email)
-        email = normalize_email(email)
-        if owner = where('email = ?', email).first
-          owner
-        else
-          create(:email => email)
-        end
+      def self.find_by_email(email)
+        first(:email => normalize_email(email))
+      end
+
+      def email=(email)
+        super(self.class.normalize_email(email))
       end
 
       def after_create
