@@ -169,6 +169,7 @@ EOYAML
     extend SpecHelpers::Response
 
     before do
+      @name = 'Jenny'
       @email = 'jenny@example.com'
       header 'Content-Type', 'text/yaml'
     end
@@ -181,10 +182,39 @@ EOYAML
       yaml['error'].should == "Please send the owner email address in the body of your post."
     end
 
-    it "creates a new session" do
-      post '/register', { 'email' => @email }.to_yaml
+    it "creates a new owner" do
+      lambda {
+        post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+      }.should.change { Owner.count }
       last_response.status.should == 201
-      yaml_response['email'].should == @email
+
+      owner = Owner.find_by_email(@email)
+      owner.email.should == @email
+      owner.name.should == @name
+    end
+
+    it "creates a new session" do
+      lambda {
+        post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+      }.should.change { Session.count }
+      last_response.status.should == 201
+
+      session = Owner.find_by_email(@email).sessions_dataset.valid.last
+      yaml_response['token'].should == session.token
+      yaml_response['valid_until'].should == session.valid_until
+      yaml_response['verified'].should == false
+    end
+
+    it "sends an email with the session confirmation link" do
+      lambda {
+        post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+      }.should.change { Mail::TestMailer.deliveries.size }
+      last_response.status.should == 201
+
+      mail = Mail::TestMailer.deliveries.last
+      mail.to.should == [@email]
+      session = Owner.find_by_email(@email).sessions_dataset.valid.last
+      mail.body.decoded.should.include "https://example.org/sessions/confirm/#{session.token}"
     end
   end
 

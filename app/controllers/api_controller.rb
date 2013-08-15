@@ -12,6 +12,8 @@ require 'app/models/pod'
 require 'app/models/session'
 require 'app/models/specification_wrapper'
 
+require 'active_support/core_ext/hash/slice'
+
 module Pod
   module TrunkApp
     class APIController < AppController
@@ -30,14 +32,14 @@ module Pod
         end
       end
 
-      # TODO disallow an authenticated owner to register.
       post '/register' do
         owner_params = YAML.load(request.body.read)
         if !owner_params.kind_of?(Hash) || owner_params.empty?
           yaml_error(422, 'Please send the owner email address in the body of your post.')
         else
-          @owner = Owner.find_or_create_by_email(owner_params['email'])
-          yaml_message(201, @owner)
+          owner = Owner.find_by_email(owner_params['email']) || Owner.create(owner_params.slice('email', 'name'))
+          session = owner.create_session!(url('/sessions/confirm/%s'))
+          yaml_message(201, session)
         end
       end
 
