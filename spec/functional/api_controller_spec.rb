@@ -182,7 +182,7 @@ EOYAML
       yaml['error'].should == "Please send the owner email address in the body of your post."
     end
 
-    it "creates a new owner" do
+    it "creates a new owner on first registration" do
       lambda {
         post '/register', { 'email' => @email, 'name' => @name }.to_yaml
       }.should.change { Owner.count }
@@ -193,7 +193,7 @@ EOYAML
       owner.name.should == @name
     end
 
-    it "creates a new session" do
+    it "creates a new session on first registration" do
       lambda {
         post '/register', { 'email' => @email, 'name' => @name }.to_yaml
       }.should.change { Session.count }
@@ -203,6 +203,17 @@ EOYAML
       yaml_response['token'].should == session.token
       yaml_response['valid_until'].should == session.valid_until
       yaml_response['verified'].should == false
+    end
+
+    it "creates only a new session on subsequent registrations" do
+      owner = Owner.create(:email => @email)
+      owner.add_session({})
+      lambda {
+        lambda {
+          post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+        }.should.not.change { Owner.count }
+      }.should.change { Session.count }
+      owner.reload.sessions.size.should == 2
     end
 
     it "sends an email with the session verification link" do
