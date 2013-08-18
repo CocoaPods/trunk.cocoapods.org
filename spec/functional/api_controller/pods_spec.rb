@@ -123,7 +123,9 @@ EOYAML
       version.add_submission_job(:succeeded => false)
       version.add_submission_job(:succeeded => false)
       lambda {
-        post '/pods', spec.to_yaml
+        lambda {
+          post '/pods', spec.to_yaml
+        }.should.not.change { PodVersion.count }
       }.should.change { SubmissionJob.count }
       last_response.status.should == 202
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
