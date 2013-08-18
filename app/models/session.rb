@@ -26,17 +26,22 @@ module Pod
         set_defaults
       end
 
-      def valid_for=(duration_in_days)
-        @valid_for = duration_in_days
-        self.valid_until = Time.now + duration_in_days.days
-      end
-
       def public_attributes
         { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }
       end
 
       def to_yaml
         public_attributes.to_yaml
+      end
+
+      def valid_for=(duration_in_days)
+        @valid_for = duration_in_days
+        self.valid_until = duration_in_days.days.from_now
+      end
+
+      def prolong!
+        raise 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.now && verified
+        update(:valid_for => DEFAULT_VALIDITY_LENGTH)
       end
 
       def self.with_token(token)

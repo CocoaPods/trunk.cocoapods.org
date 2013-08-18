@@ -55,7 +55,7 @@ module Pod::TrunkApp
       end
 
       it "does not find an invalid session based on a token" do
-        @session.update(:valid_until => Time.now - 240)
+        @session.update(:valid_until => 1.second.ago)
         Session.with_token(@session.token).should.be.nil
         Session.with_verification_token(@session.verification_token).should.be.nil
       end
@@ -79,6 +79,22 @@ module Pod::TrunkApp
     it "coerces to YAML" do
       yaml = YAML.load(Session.new.to_yaml)
       yaml.keys.sort.should == %w(created_at token valid_until verified)
+    end
+
+    it "extends the validity" do
+      session = Session.create
+      session.update(:valid_until => 10.seconds.from_now, :verified => true)
+      session.prolong!
+      session.reload.valid_until.should > 10.seconds.from_now
+    end
+
+    it "does not extend the validity of an invalid session" do
+      session = Session.create
+      session.update(:valid_until => 10.seconds.ago, :verified => true)
+      lambda { session.prolong! }.should.raise
+      session = Session.create
+      session.update(:valid_until => 10.seconds.from_now, :verified => false)
+      lambda { session.prolong! }.should.raise
     end
   end
 end
