@@ -82,8 +82,10 @@ module Pod
           headers 'Location' => resource_url
 
           # TODO use a unique index in the DB for this instead?
-          if pod.versions_dataset.where(:name => specification.version).first
-            yaml_error(409, "Unable to accept duplicate entry for: #{specification}")
+          if version = pod.versions_dataset.where(:name => specification.version).first
+            if version.published? || version.submission_jobs_dataset.where(:succeeded => nil).first
+              yaml_error(409, "Unable to accept duplicate entry for: #{specification}")
+            end
           end
 
           version = pod.add_version(:name => specification.version, :url => resource_url)

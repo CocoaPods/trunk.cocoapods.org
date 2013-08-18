@@ -88,8 +88,18 @@ EOYAML
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
-    it "does not allow a push for an existing pod version" do
-      @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
+    it "creates a submission job and log message once a new pod version is created" do
+      lambda {
+        post '/pods', spec.to_yaml
+      }.should.change { SubmissionJob.count }
+      job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
+      job.owner.should == @owner
+      job.specification_data.should == spec.to_yaml
+      job.log_messages.map(&:message).should == ['Submitted.']
+    end
+
+    it "does not allow a push for an existing pod version if it's published" do
+      @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
       lambda {
         post '/pods', spec.to_yaml
       }.should.not.change { Pod.count + PodVersion.count }
@@ -97,12 +107,26 @@ EOYAML
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
-    it "creates a submission job and log message once a new pod version is created" do
-      post '/pods', spec.to_yaml
-      job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
-      job.owner.should == @owner
-      job.specification_data.should == spec.to_yaml
-      job.log_messages.map(&:message).should == ['Submitted.']
+    it "does not allow a push for an existing pod version while a job is in progress" do
+      version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
+      version.add_submission_job(:succeeded => false)
+      version.add_submission_job(:succeeded => nil)
+      lambda {
+        post '/pods', spec.to_yaml
+      }.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 409
+      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
+    end
+
+    it "does allow a push for an existing pod version if the previous jobs have failed" do
+      version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
+      version.add_submission_job(:succeeded => false)
+      version.add_submission_job(:succeeded => false)
+      lambda {
+        post '/pods', spec.to_yaml
+      }.should.change { SubmissionJob.count }
+      last_response.status.should == 202
+      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
     before do
