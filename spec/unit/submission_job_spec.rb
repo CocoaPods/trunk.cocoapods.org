@@ -8,9 +8,10 @@ module Pod::TrunkApp
 
   describe "SubmissionJob" do
     before do
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @pod = Pod.create(:name => 'AFNetworking')
       @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :url => 'http://host/pods/AFNetworking/versions/1.2.0')
-      @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'))
+      @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'), :owner => @owner)
     end
 
     it "returns the duration in seconds relative to now" do
@@ -55,7 +56,7 @@ module Pod::TrunkApp
         github.stubs(:fetch_latest_commit_sha).returns(BASE_COMMIT_SHA)
         github.stubs(:fetch_base_tree_sha).returns(BASE_TREE_SHA)
         github.stubs(:create_new_tree).with(BASE_TREE_SHA, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(NEW_TREE_SHA)
-        github.stubs(:create_new_commit).with(NEW_TREE_SHA, BASE_COMMIT_SHA, MESSAGE, 'Eloy Durán', 'eloy.de.enige@gmail.com').returns(NEW_COMMIT_SHA)
+        github.stubs(:create_new_commit).with(NEW_TREE_SHA, BASE_COMMIT_SHA, MESSAGE, 'Appie', 'appie@example.com').returns(NEW_COMMIT_SHA)
         github.stubs(:create_new_branch).with(NEW_BRANCH_NAME % @job.id, NEW_COMMIT_SHA).returns(NEW_BRANCH_REF % @job.id)
         github.stubs(:create_new_pull_request).with(MESSAGE, @version.url, NEW_BRANCH_REF % @job.id).returns(NEW_PR_NUMBER)
         github.stubs(:merge_pull_request).with(NEW_PR_NUMBER).returns(MERGE_COMMIT_SHA)
