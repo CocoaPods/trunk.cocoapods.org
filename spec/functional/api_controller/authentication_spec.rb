@@ -64,29 +64,11 @@ module Pod::TrunkApp
       session = Owner.find_by_email(@email).sessions_dataset.valid.last
       mail.body.decoded.should.include "https://example.org/sessions/verify/#{session.verification_token}"
     end
+  end
 
-    it "shows an overview of all active sessions" do
-      session = sign_in!
-      owner = session.owner
-      sessions = [session, owner.add_session({})]
-
-      get '/sessions'
-      last_response.status.should == 200
-      yaml_response.should == sessions.map(&:public_attributes)
-    end
-
-    it "clears all active sessions except the currently used one" do
-      session = sign_in!
-      owner = session.owner
-      owner.add_session({})
-      lambda {
-        delete '/sessions'
-      }.should.change { Session.count }
-      last_response.status.should == 200
-
-      owner.sessions.should == [session]
-      yaml_response.should == session.public_attributes
-    end
+  describe APIController, "concerning sessions" do
+    extend SpecHelpers::Response
+    extend SpecHelpers::Authentication
 
     before do
       header 'Content-Type', 'text/plain'
@@ -110,6 +92,40 @@ module Pod::TrunkApp
     it "does not verify an unexisting session" do
       get "/sessions/verify/doesnotexist"
       last_response.status.should == 404
+    end
+
+    before do
+      header 'Content-Type', 'text/yaml'
+    end
+
+    it "shows an overview of all active sessions" do
+      session = sign_in!
+      owner = session.owner
+      owner.add_session({})
+
+      get '/sessions'
+      last_response.status.should == 200
+      yaml_response.should == owner.sessions.map(&:public_attributes)
+    end
+
+    it "clears all active sessions except the currently used one" do
+      session = sign_in!
+      owner = session.owner
+      owner.add_session({})
+      lambda {
+        delete '/sessions'
+      }.should.change { Session.count }
+      last_response.status.should == 200
+
+      owner.sessions.should == [session.reload]
+      yaml_response.should == session.public_attributes
+    end
+
+    it "prolongs a session each time it's required" do
+      session = sign_in!
+      session.update(:valid_until => 10.seconds.from_now)
+      get '/me'
+      session.reload.valid_until.should > 10.seconds.from_now
     end
   end
 

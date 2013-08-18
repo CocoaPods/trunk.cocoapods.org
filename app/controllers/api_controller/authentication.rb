@@ -7,6 +7,7 @@ module Pod
         before /^(#{paths.join('|')})$/ do
           if @session = Session.with_token(authentication_token)
             @owner = @session.owner
+            @session.prolong!
           end
         end
       end
