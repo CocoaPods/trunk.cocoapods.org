@@ -1,5 +1,6 @@
 require 'app/models/github'
 require 'app/models/log_message'
+require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/pod_version'
 require 'app/models/travis'
@@ -16,6 +17,7 @@ module Pod
       plugin :timestamps
 
       many_to_one :pod_version
+      many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
       def self.disable_info_logging

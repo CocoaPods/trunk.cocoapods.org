@@ -100,6 +100,7 @@ EOYAML
     it "creates a submission job and log message once a new pod version is created" do
       post '/pods', spec.to_yaml
       job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
+      job.owner.should == @owner
       job.specification_data.should == spec.to_yaml
       job.log_messages.map(&:message).should == ['Submitted.']
     end

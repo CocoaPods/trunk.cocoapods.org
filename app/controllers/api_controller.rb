@@ -87,7 +87,7 @@ module Pod
           end
 
           version = pod.add_version(:name => specification.version, :url => resource_url)
-          version.add_submission_job(:specification_data => specification.to_yaml)
+          version.add_submission_job(:specification_data => specification.to_yaml, :owner => @owner)
           halt 202
         end
       end
