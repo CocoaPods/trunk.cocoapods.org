@@ -1,12 +1,5 @@
 require 'app/controllers/app_controller'
 
-# First define the class as a subclass of AppController, then require these.
-class Pod::TrunkApp::APIController < Pod::TrunkApp::AppController; end
-require 'app/controllers/api_controller/response_helpers'
-require 'app/controllers/api_controller/authentication_headers'
-require 'app/controllers/api_controller/authentication_helpers'
-require 'app/controllers/api_controller/authentication'
-
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/session'
@@ -17,16 +10,12 @@ require 'active_support/core_ext/hash/slice'
 module Pod
   module TrunkApp
     class APIController < AppController
+      require 'app/controllers/api_controller/yaml_request_response'
+      require 'app/controllers/api_controller/authentication'
+
       find_authenticated_owner '/me', '/sessions', '/pods'
 
-      before do
-        content_type 'text/yaml'
-        if request.post? && request.media_type != 'text/yaml'
-          yaml_error(415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.")
-        end
-      end
-
-      # --- Authentication ------------------------------------------------------------------------
+      # --- Sessions ------------------------------------------------------------------------------
 
       get '/me' do
         if owner?
