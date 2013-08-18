@@ -14,15 +14,16 @@
       <th>ID</th>
       <th>Pod</th>
       <th>Version</th>
+      <th>Jobs</th>
       <th>Created At</th>
       <th>Updated At</th>
     </tr>
   </thead>
   <tbody>
     <% @versions.each do |version| %>
-      <tr class="<%= 'success' if version.published? %>">
+      <tr class="<%= version.published? ? 'success' : ('error' if version.submission_jobs.all?(&:failed?)) %>">
         <% href = url("/versions/#{version.id}") %>
-        <% [version.id, version.pod.name, version.name, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
+        <% [version.id, version.pod.name, version.name, version.submission_jobs_dataset.count, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
           <td><a href="<%= href %>"><%= value || 'n/a' %></a></td>
         <% end %>
       </tr>
