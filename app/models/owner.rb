@@ -1,3 +1,6 @@
+require 'app/models/pod'
+require 'app/models/session'
+
 require 'erb'
 
 module Pod
