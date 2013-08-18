@@ -3,12 +3,43 @@ require 'app/models/pod'
 
 module Pod::TrunkApp
   describe Pod do
+    before do
+      @owner = Owner.create(:email => 'jenny@example.com')
+    end
+
     it "adds an owner" do
-      owner1 = Owner.create(:email => 'jenny@example.com')
       owner2 = Owner.create(:email => 'appie@example.com')
-      pod = owner1.add_pod(:name => 'AFNetworking')
+      pod = @owner.add_pod(:name => 'AFNetworking')
       pod.add_owner(owner2)
-      pod.owners.should == [owner1, owner2]
+      pod.owners.should == [@owner, owner2]
+    end
+
+    it "creates a pod if it did not exist yet" do
+      pod = nil
+      lambda {
+        pod = Pod.find_by_name_and_owner('AFNetworking', @owner)
+      }.should.change { Pod.count }
+      pod.name.should == 'AFNetworking'
+      pod.owners.should == [@owner]
+    end
+
+    it "returns an existing pod if it's owned by the specified owner" do
+      pod = @owner.add_pod(:name => 'AFNetworking')
+      found_pod = nil
+      lambda {
+        found_pod = Pod.find_by_name_and_owner('AFNetworking', @owner)
+      }.should.not.change { Pod.count }
+      found_pod.should == pod
+    end
+
+    it "does not return a pod if it's not owned by the specified owner" do
+      other_owner = Owner.create(:email => 'appie@example.com')
+      other_owner.add_pod(:name => 'AFNetworking')
+      found_pod = nil
+      lambda {
+        found_pod = Pod.find_by_name_and_owner('AFNetworking', @owner)
+      }.should.not.change { Pod.count }
+      found_pod.should == nil
     end
   end
 end
