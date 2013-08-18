@@ -21,7 +21,7 @@ module Pod
 
       before do
         content_type 'text/yaml'
-        unless request.media_type == 'text/yaml' || request.path =~ %r{/sessions/verify/\w+$}
+        if request.post? && request.media_type != 'text/yaml'
           error 415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.".to_yaml
         end
       end
