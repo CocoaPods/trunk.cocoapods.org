@@ -14,10 +14,18 @@ module Pod::TrunkApp
       pod.owners.should == [@owner, owner2]
     end
 
-    it "creates a pod if it did not exist yet" do
+    it "does not create a pod if it doesn't exist yet" do
       pod = nil
       lambda {
         pod = Pod.find_by_name_and_owner('AFNetworking', @owner)
+      }.should.not.change { Pod.count }
+      pod.should == nil
+    end
+
+    it "creates a pod if it did not exist yet" do
+      pod = nil
+      lambda {
+        pod = Pod.find_by_name_and_owner('AFNetworking', @owner, true)
       }.should.change { Pod.count }
       pod.name.should == 'AFNetworking'
       pod.owners.should == [@owner]

@@ -73,7 +73,7 @@ module Pod
             yaml_error(422, specification.validation_errors)
           end
 
-          unless pod = Pod.find_by_name_and_owner(specification.name, @owner)
+          unless pod = Pod.find_by_name_and_owner(specification.name, @owner, true)
             yaml_error(403, 'You are not allowed to push new versions for this pod.')
           end
 
