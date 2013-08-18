@@ -10,7 +10,9 @@ module Pod
       many_to_many :pods
 
       def public_attributes
-        { 'created_at' => created_at, 'id' => id, 'email' => email, 'name' => name }
+        attributes = { 'created_at' => created_at, 'email' => email }
+        attributes['name'] = name if name
+        attributes
       end
 
       def to_yaml

@@ -9,7 +9,7 @@ module Pod::TrunkApp
     describe "in general" do
       it "coerces to YAML" do
         yaml = YAML.load(@owner.to_yaml)
-        yaml.keys.sort.should == %w(created_at email id name)
+        yaml.keys.sort.should == %w(created_at email name)
       end
 
       it "finds itself with an email address" do
