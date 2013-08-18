@@ -1,4 +1,5 @@
 * Why is the session token length configurable? E.g. token_length
+* Manfred sez don't show all the tokens themselves on GET /sessions, but why exactly?
 
 * Add validations to all models.
   - Session: verify token uniqueness.

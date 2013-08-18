@@ -31,8 +31,12 @@ module Pod
         self.valid_until = Time.now + duration_in_days.days
       end
 
+      def public_attributes
+        { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }
+      end
+
       def to_yaml
-        { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }.to_yaml
+        public_attributes.to_yaml
       end
 
       def self.with_token(token)

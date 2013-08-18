@@ -166,6 +166,7 @@ EOYAML
   end
 
   describe APIController, "concerning registration" do
+    extend SpecHelpers::Authentication
     extend SpecHelpers::Response
 
     before do
@@ -226,6 +227,29 @@ EOYAML
       mail.to.should == [@email]
       session = Owner.find_by_email(@email).sessions_dataset.valid.last
       mail.body.decoded.should.include "https://example.org/sessions/verify/#{session.verification_token}"
+    end
+
+    it "shows an overview of all active sessions" do
+      session = sign_in!
+      owner = session.owner
+      sessions = [session, owner.add_session({})]
+
+      get '/sessions'
+      last_response.status.should == 200
+      yaml_response.should == sessions.map(&:public_attributes)
+    end
+
+    it "clears all active sessions except the currently used one" do
+      session = sign_in!
+      owner = session.owner
+      owner.add_session({})
+      lambda {
+        delete '/sessions'
+      }.should.change { Session.count }
+      last_response.status.should == 200
+
+      owner.sessions.should == [session]
+      yaml_response.should == session.public_attributes
     end
 
     before do

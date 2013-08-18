@@ -17,7 +17,7 @@ require 'active_support/core_ext/hash/slice'
 module Pod
   module TrunkApp
     class APIController < AppController
-      find_authenticated_owner %r{^/(me|pods)$}
+      find_authenticated_owner %r{^/(me|sessions|pods)$}
 
       before do
         content_type 'text/yaml'
@@ -50,6 +50,21 @@ module Pod
           yaml_message(200, session)
         else
           yaml_error(404, 'Session not found.')
+        end
+      end
+
+      get '/sessions' do
+        if owner?
+          yaml_message(200, @owner.sessions.map(&:public_attributes))
+        end
+      end
+
+      delete '/sessions' do
+        if owner?
+          @owner.sessions.each do |session|
+            session.destroy unless session == @session
+          end
+          yaml_message(200, @session)
         end
       end
 

@@ -8,8 +8,12 @@ module Pod
 
       one_to_many :sessions, :class => 'Pod::TrunkApp::Session'
 
+      def public_attributes
+        { 'created_at' => created_at, 'id' => id, 'email' => email, 'name' => name }
+      end
+
       def to_yaml
-        { 'created_at' => created_at, 'id' => id, 'email' => email, 'name' => name }.to_yaml
+        public_attributes.to_yaml
       end
 
       def self.normalize_email(email)
