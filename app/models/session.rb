@@ -13,7 +13,7 @@ module Pod
       plugin :timestamps
       plugin :after_initialize
 
-      many_to_one :owner, :class => 'Pod::TrunkApp::Owner'
+      many_to_one :owner
 
       attr_accessor :token_length
       attr_reader :valid_for

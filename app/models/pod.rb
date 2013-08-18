@@ -7,6 +7,7 @@ module Pod
       plugin :timestamps
 
       one_to_many :versions, :class => 'Pod::TrunkApp::PodVersion'
+      many_to_many :owners
     end
   end
 end

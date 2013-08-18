@@ -6,7 +6,8 @@ module Pod
       self.dataset = :owners
       plugin :timestamps
 
-      one_to_many :sessions, :class => 'Pod::TrunkApp::Session'
+      one_to_many :sessions
+      many_to_many :pods
 
       def public_attributes
         { 'created_at' => created_at, 'id' => id, 'email' => email, 'name' => name }
