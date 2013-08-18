@@ -198,6 +198,7 @@ module Pod::TrunkApp
       it "publishes the pod version once the pull-request has been merged" do
         @job.perform_next_task!
         @version.should.be.published
+        @version.published_by_submission_job.should == @job
         @job.log_messages.last.message.should == "Published."
       end
 
