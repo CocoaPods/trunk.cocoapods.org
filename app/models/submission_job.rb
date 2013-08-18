@@ -16,7 +16,7 @@ module Pod
       plugin :timestamps
 
       many_to_one :pod_version
-      one_to_many :log_messages
+      one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
       def self.disable_info_logging
         return yield if ENV['RACK_ENV'] == 'development'
