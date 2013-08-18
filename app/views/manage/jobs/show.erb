@@ -13,6 +13,18 @@
 <% end%>
 
 <dl class="dl-horizontal">
+  <dt>Status</dt>
+  <dd>
+    <% if @job.succeeded == true %>
+      <span class="label label-success">Published</span>
+    <% elsif @job.succeeded == false %>
+      <span class="label label-important">Failed</span>
+    <% else %>
+      <span class="label">In progress</span>
+    <% end %>
+  </dd>
+  <dt>Owner</dt>
+  <dd><%= @job.owner.name %> &lt;<%= @job.owner.email %>&gt;</dd>
   <dt>Attempts</dt>
   <dd><%= @job.attempts %></dd>
   <dt>Duration</dt>
