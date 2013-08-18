@@ -89,7 +89,7 @@ EOYAML
     end
 
     it "does not allow a push for an existing pod version" do
-      Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
       lambda {
         post '/pods', spec.to_yaml
       }.should.not.change { Pod.count + PodVersion.count }
@@ -165,6 +165,49 @@ EOYAML
       version.add_submission_job(:specification_data => spec.to_yaml, :pull_request_number => 3)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 202
+    end
+  end
+
+  describe APIController, "concerning authorization" do
+    extend SpecHelpers::Authentication
+    extend SpecHelpers::Response
+
+    def spec
+      @spec ||= fixture_specification('AFNetworking.podspec')
+    end
+
+    before do
+      sign_in!
+      header 'Content-Type', 'text/yaml'
+    end
+
+    it "allows a push for an non-existing pod and makes the authenticated owner the owner" do
+      lambda {
+        lambda {
+          post '/pods', spec.to_yaml
+        }.should.change { Pod.count }
+      }.should.change { PodVersion.count }
+      Pod.find(:name => spec.name).owners.should == [@owner]
+    end
+
+    it "allows a push for an existing pod owned by the authenticated owner" do
+      @owner.add_pod(:name => spec.name)
+      lambda {
+        lambda {
+          post '/pods', spec.to_yaml
+        }.should.not.change { Pod.count }
+      }.should.change { PodVersion.count }
+    end
+
+    it "does not allow a push for an existing pod not owned by the authenticated owner" do
+      other_owner = Owner.create(:email => 'appie@example.com')
+      other_owner.add_pod(:name => spec.name)
+      lambda {
+        lambda {
+          post '/pods', spec.to_yaml
+        }.should.not.change { Pod.count }
+      }.should.not.change { PodVersion.count }
+      last_response.status.should == 403
     end
   end
 end

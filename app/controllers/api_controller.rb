@@ -73,12 +73,14 @@ module Pod
             yaml_error(422, specification.validation_errors)
           end
 
-          resource_url = url("/pods/#{specification.name}/versions/#{specification.version}")
+          unless pod = Pod.find_by_name_and_owner(specification.name, @owner)
+            yaml_error(403, 'You are not allowed to push new versions for this pod.')
+          end
 
           # Always set the location of the resource, even when the pod version already exists.
+          resource_url = url("/pods/#{specification.name}/versions/#{specification.version}")
           headers 'Location' => resource_url
 
-          pod = Pod.find_or_create(:name => specification.name)
           # TODO use a unique index in the DB for this instead?
           if pod.versions_dataset.where(:name => specification.version).first
             yaml_error(409, "Unable to accept duplicate entry for: #{specification}")
