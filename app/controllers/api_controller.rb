@@ -17,7 +17,7 @@ require 'active_support/core_ext/hash/slice'
 module Pod
   module TrunkApp
     class APIController < AppController
-      find_authenticated_owner %r{^/(me|sessions|pods)$}
+      find_authenticated_owner '/me', '/sessions', '/pods'
 
       before do
         content_type 'text/yaml'
@@ -25,6 +25,8 @@ module Pod
           error 415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.".to_yaml
         end
       end
+
+      # --- Authentication ------------------------------------------------------------------------
 
       get '/me' do
         if owner?
@@ -67,6 +69,8 @@ module Pod
           yaml_message(200, @session)
         end
       end
+
+      # --- Pods ----------------------------------------------------------------------------------
 
       post '/pods' do
         if owner?
