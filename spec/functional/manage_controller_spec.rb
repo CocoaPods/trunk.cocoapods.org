@@ -66,5 +66,11 @@ module Pod::TrunkApp
       last_response.should.be.redirect
       last_response.location.should.end_with "/jobs/#{@job.id}?progress=true"
     end
+
+    it "shows a list of all pod versions" do
+      get '/versions'
+      last_response.should.be.ok
+      last_response.body.should.include @version.name
+    end
   end
 end

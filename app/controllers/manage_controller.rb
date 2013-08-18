@@ -50,6 +50,11 @@ module Pod
           erb :'jobs/show'
         end
       end
+
+      get '/versions' do
+        @versions = PodVersion.order(Sequel.desc(:id))
+        erb :'pod_versions/index'
+      end
     end
   end
 end
