@@ -13,7 +13,7 @@ module Pod
       require 'app/controllers/api_controller/yaml_request_response'
       require 'app/controllers/api_controller/authentication'
 
-      find_authenticated_owner '/me', '/sessions', '/pods'
+      find_authenticated_owner '/me', '/sessions', '/pods', '/pods/:name/owners'
 
       # --- Sessions ------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ module Pod
             yaml_error(422, specification.validation_errors)
           end
 
-          unless pod = Pod.find_by_name_and_owner(specification.name, @owner, true)
+          pod = Pod.find_or_create_by_name_and_owner(specification.name, @owner) do
             yaml_error(403, 'You are not allowed to push new versions for this pod.')
           end
 
@@ -85,9 +85,33 @@ module Pod
           if pod.versions_dataset.where(:name => specification.version).first
             yaml_error(409, "Unable to accept duplicate entry for: #{specification}")
           end
+
           version = pod.add_version(:name => specification.version, :url => resource_url)
           version.add_submission_job(:specification_data => specification.to_yaml)
           halt 202
+        end
+      end
+
+      put '/pods/:name/owners' do
+        if owner?
+          pod = Pod.find_by_name_and_owner(params[:name], @owner) do
+            yaml_error(403, 'You are not allowed to add owners to this pod.')
+          end
+          unless pod
+            yaml_error(404, 'No pod found with the specified name.')
+          end
+
+          owner_params = YAML.load(request.body.read)
+          if !owner_params.kind_of?(Hash) || owner_params.empty?
+            yaml_error(422, 'Please send the owner email address in the body of your post.')
+          end
+
+          unless other_owner = Owner.find_by_email(owner_params['email'])
+            yaml_error(404, 'No owner found with the specified email address.')
+          end
+
+          pod.add_owner(other_owner)
+          yaml_message(200, pod.owners.map(&:public_attributes))
         end
       end
 

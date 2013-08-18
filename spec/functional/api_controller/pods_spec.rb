@@ -200,7 +200,7 @@ EOYAML
     end
 
     it "does not allow a push for an existing pod not owned by the authenticated owner" do
-      other_owner = Owner.create(:email => 'appie@example.com')
+      other_owner = Owner.create(:email => 'jenny@example.com')
       other_owner.add_pod(:name => spec.name)
       lambda {
         lambda {
@@ -208,6 +208,22 @@ EOYAML
         }.should.not.change { Pod.count }
       }.should.not.change { PodVersion.count }
       last_response.status.should == 403
+    end
+
+    it "adds an owner to the pod's owners" do
+      pod = @owner.add_pod(:name => spec.name)
+      other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
+      put '/pods/AFNetworking/owners', { 'email' => other_owner.email }.to_yaml
+      last_response.status.should == 200
+      pod.owners.should == [@owner, other_owner]
+    end
+
+    it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
+      other_owner = Owner.create(:email => 'jenny@example.com')
+      pod = other_owner.add_pod(:name => spec.name)
+      put '/pods/AFNetworking/owners', { 'email' => @owner.email }.to_yaml
+      last_response.status.should == 403
+      pod.owners.should == [other_owner]
     end
   end
 end

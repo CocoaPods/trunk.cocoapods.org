@@ -4,10 +4,12 @@ module Pod
   module TrunkApp
     class APIController
       def self.find_authenticated_owner(*paths)
-        before /^(#{paths.join('|')})$/ do
-          if @session = Session.with_token(authentication_token)
-            @owner = @session.owner
-            @session.prolong!
+        paths.each do |path|
+          before(path) do
+            if @session = Session.with_token(authentication_token)
+              @owner = @session.owner
+              @session.prolong!
+            end
           end
         end
       end
