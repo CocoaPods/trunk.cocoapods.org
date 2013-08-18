@@ -22,7 +22,7 @@ module Pod
       before do
         content_type 'text/yaml'
         if request.post? && request.media_type != 'text/yaml'
-          error 415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.".to_yaml
+          yaml_error(415, "Unable to accept input with Content-Type `#{request.media_type}`, must be `text/yaml`.")
         end
       end
 
@@ -30,7 +30,7 @@ module Pod
 
       get '/me' do
         if owner?
-          halt(200, @owner.to_yaml)
+          yaml_message(200, @owner)
         end
       end
 
@@ -77,11 +77,11 @@ module Pod
           specification = SpecificationWrapper.from_yaml(request.body.read)
 
           if specification.nil?
-            error 400, 'Unable to load a Pod Specification from the provided input.'.to_yaml
+            yaml_error(400, 'Unable to load a Pod Specification from the provided input.')
           end
 
           unless specification.valid?
-            error 422, specification.validation_errors.to_yaml
+            yaml_error(422, specification.validation_errors)
           end
 
           resource_url = url("/pods/#{specification.name}/versions/#{specification.version}")
@@ -92,7 +92,7 @@ module Pod
           pod = Pod.find_or_create(:name => specification.name)
           # TODO use a unique index in the DB for this instead?
           if pod.versions_dataset.where(:name => specification.version).first
-            error 409, "Unable to accept duplicate entry for: #{specification}".to_yaml
+            yaml_error(409, "Unable to accept duplicate entry for: #{specification}")
           end
           version = pod.add_version(:name => specification.version, :url => resource_url)
           version.add_submission_job(:specification_data => specification.to_yaml)
@@ -110,7 +110,7 @@ module Pod
             # Would have preferred to use 102 instead of 202, but Ruby’s Net::HTTP apperantly does
             # not read the body of a 102 and so the client might have problems reporting status.
             status = job.failed? ? 404 : (version.published? ? 200 : 202)
-            halt(status, messages.to_yaml)
+            yaml_message(status, messages)
           end
         end
         error 404

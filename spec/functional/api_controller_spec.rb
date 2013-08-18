@@ -19,6 +19,7 @@ end
 module Pod::TrunkApp
   describe APIController, "with an authenticated owner" do
     extend SpecHelpers::Authentication
+    extend SpecHelpers::Response
 
     def spec
       @spec ||= fixture_specification('AFNetworking.podspec')
@@ -68,9 +69,11 @@ EOYAML
       }.should.not.change { Pod.count + PodVersion.count }
 
       last_response.status.should == 422
-      YAML.load(last_response.body).should == {
-        'errors'   => ['Missing required attribute `name`.', 'The version of the spec should be higher than 0.'],
-        'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
+      yaml_response.should == {
+        'error' => {
+          'errors'   => ['Missing required attribute `name`.', 'The version of the spec should be higher than 0.'],
+          'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
+        }
       }
     end
 
