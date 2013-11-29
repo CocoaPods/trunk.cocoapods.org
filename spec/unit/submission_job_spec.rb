@@ -46,12 +46,16 @@ module Pod::TrunkApp
 
     describe "concerning submission progress state" do
       before do
-        github = @job.send(:github)
-        github.stubs(:fetch_latest_commit_sha).returns(fixture_base_commit_sha)
-        github.stubs(:fetch_base_tree_sha).returns(fixture_base_tree_sha)
-        github.stubs(:create_new_tree).with(fixture_base_tree_sha, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(fixture_new_tree_sha)
-        github.stubs(:create_new_commit).with(fixture_new_tree_sha, fixture_base_commit_sha, MESSAGE, 'Appie', 'appie@example.com').returns(fixture_new_commit_sha)
-        github.stubs(:add_commit_to_branch).with(fixture_new_commit_sha, 'master').returns(fixture_add_commit_to_branch)
+        @github = @job.send(:github)
+        @github.stubs(:fetch_latest_commit_sha).returns(fixture_base_commit_sha)
+        @github.stubs(:fetch_base_tree_sha).returns(fixture_base_tree_sha)
+        @github.stubs(:create_new_tree).with(fixture_base_tree_sha, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(fixture_new_tree_sha)
+        @github.stubs(:create_new_commit).with(fixture_new_tree_sha, fixture_base_commit_sha, MESSAGE, 'Appie', 'appie@example.com').returns(fixture_new_commit_sha)
+        @github.stubs(:add_commit_to_branch).with(fixture_new_commit_sha, 'master').returns(fixture_add_commit_to_branch)
+      end
+
+      it "configures the GitHub client" do
+        @github.basic_auth.should == { :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic' }
       end
 
       it "initializes with a new state" do

@@ -9,7 +9,7 @@ ENV['RACK_ENV']            = 'test'
 ENV['GH_REPO']             = 'CocoaPods/Specs'
 ENV['GH_USERNAME']         = 'alloy'
 ENV['GH_EMAIL']            = 'bot@example.com'
-ENV['GH_PASSWORD']         = 'secret'
+ENV['GH_TOKEN']            = 'secret'
 ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
 $:.unshift File.expand_path('../../', __FILE__)

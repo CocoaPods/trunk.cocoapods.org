@@ -15,7 +15,7 @@ Now configure the whole thing in your app server's environment; for example, her
 
     export DATABASE_URL=postgres://localhost/push_cocoapods_org_dev
     export GH_USERNAME=manfred
-    export GH_PASSWORD=secret
+    export GH_TOKEN=secret
     export GH_REPO=manfred/push.cocoapods.org-test
 
 Replace the username, password, and repo by your own. Please. Don't even…

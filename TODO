@@ -1,4 +1,3 @@
-* Use GitHub Personal Access Token everywhere.
 * Use JSON instead of YAML? While YAML is aesthetically nicer than JSON, JSON ensures there will never be Ruby YAML vulnerabilities and browsers have native support for this, which means it's at least more portable to one big platform.
 
 * Why is the session token length configurable? E.g. token_length

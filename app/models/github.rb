@@ -7,6 +7,8 @@ module Pod
       BASE_URL = "https://api.github.com/repos/%s".freeze
       HEADERS  = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
 
+      attr_reader :basic_auth
+
       # `repo_name` should be in the form of 'owner/repo'.
       def initialize(repo_name, base_branch_ref, basic_auth)
         @base_url = BASE_URL % repo_name

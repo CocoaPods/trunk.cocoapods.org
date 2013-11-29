@@ -127,7 +127,7 @@ module Pod
 
       REPO        = ENV['GH_REPO'].dup.freeze
       BASE_BRANCH = 'master'.freeze
-      BASIC_AUTH  = { :username => ENV['GH_USERNAME'], :password => ENV['GH_PASSWORD'] }.freeze
+      BASIC_AUTH  = { :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic' }.freeze
 
       def github
         @github ||= GitHub.new(REPO, BASE_BRANCH, BASIC_AUTH)
