@@ -71,6 +71,6 @@ begin
   end
 
   task :default => :spec
-rescue LoadError => e
+rescue SystemExit, LoadError => e
   puts "[!] The normal tasks have been disabled: #{e.message}"
 end
