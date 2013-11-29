@@ -51,10 +51,6 @@ module Pod::TrunkApp
         github.stubs(:fetch_base_tree_sha).returns(BASE_TREE_SHA)
         github.stubs(:create_new_tree).with(BASE_TREE_SHA, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(NEW_TREE_SHA)
         github.stubs(:create_new_commit).with(NEW_TREE_SHA, BASE_COMMIT_SHA, MESSAGE, 'Appie', 'appie@example.com').returns(NEW_COMMIT_SHA)
-        github.stubs(:create_new_branch).with(NEW_BRANCH_NAME % @job.id, NEW_COMMIT_SHA).returns(NEW_BRANCH_REF % @job.id)
-        github.stubs(:create_new_pull_request).with(MESSAGE, @version.url, NEW_BRANCH_REF % @job.id).returns(NEW_PR_NUMBER)
-        github.stubs(:merge_pull_request).with(NEW_PR_NUMBER).returns(MERGE_COMMIT_SHA)
-        github.stubs(:delete_branch).with(NEW_BRANCH_REF % @job.id).returns(nil)
       end
 
       it "initializes with a new state" do
@@ -64,17 +60,17 @@ module Pod::TrunkApp
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
         @job.perform_task 'A failing task' do
-          @job.update(:pull_request_number => 42)
+          @job.update(:base_commit_sha => BASE_COMMIT_SHA)
           raise "oh noes!"
         end
         @job.log_messages.last(2).map(&:message).should == ["A failing task", "Error: oh noes!"]
-        @job.reload.pull_request_number.should == nil
+        @job.reload.base_commit_sha.should == nil
 
         @job.perform_task 'A succeeding task' do
-          @job.update(:pull_request_number => 42)
+          @job.update(:base_commit_sha => BASE_COMMIT_SHA)
         end
         @job.log_messages.last.message.should == "A succeeding task"
-        @job.reload.pull_request_number.should == 42
+        @job.reload.base_commit_sha.should == BASE_COMMIT_SHA
       end
 
       it "bumps the attempt count as long as the threshold isn't reached" do

@@ -49,22 +49,6 @@ module Pod
         })['sha']
       end
 
-      def create_new_branch(name, commit_sha)
-        rest(:post, 'git/refs', :ref => branch_ref(name), :sha => commit_sha)['ref']
-      end
-
-      def create_new_pull_request(title, body, from_branch_ref)
-        rest(:post, 'pulls', :title => title, :body => body, :head => from_branch_ref, :base => branch_ref(@base_branch_ref))['number']
-      end
-
-      def merge_pull_request(number)
-        rest(:put, "pulls/#{number}/merge", {})['sha']
-      end
-
-      def delete_branch(branch_ref)
-        rest(:delete, "git/#{branch_ref}")
-      end
-
       private
 
       def branch_ref(name)

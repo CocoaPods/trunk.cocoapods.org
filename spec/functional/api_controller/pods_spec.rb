@@ -133,7 +133,7 @@ EOYAML
 
     before do
       @version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
-      @job = @version.add_submission_job(:specification_data => spec.to_yaml, :pull_request_number => 3)
+      @job = @version.add_submission_job(:specification_data => spec.to_yaml)
     end
 
     it "returns the status of the submission flow" do
@@ -189,7 +189,7 @@ EOYAML
     it "is allowed to GET status of a pod version" do
       spec = fixture_specification('AFNetworking.podspec')
       version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:specification_data => spec.to_yaml, :pull_request_number => 3)
+      version.add_submission_job(:specification_data => spec.to_yaml)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 202
     end

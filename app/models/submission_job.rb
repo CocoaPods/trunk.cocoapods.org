@@ -84,16 +84,6 @@ module Pod
         end
       end
 
-      def pull_request_number=(number)
-        super
-        self.needs_to_perform_work = pull_request_number.nil?
-      end
-
-      def merge_commit_sha=(sha)
-        super
-        self.succeeded = true unless merge_commit_sha.nil?
-      end
-
       def perform_next_task!
         unless needs_to_perform_work?
           raise TaskError, "This job is marked as not needing to perform work."
@@ -205,41 +195,6 @@ module Pod
                                                              message,
                                                              owner.name,
                                                              owner.email))
-        end
-      end
-
-      # TODO create branch name according to: https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
-      task :new_branch_ref do
-        branch_name = "#{pod_version.pod.name}-#{pod_version.name}-job-#{self.id}"
-        perform_task "Creating new branch `#{branch_name}' with commit #{new_commit_sha}." do
-          update(:new_branch_ref => github.create_new_branch(branch_name,
-                                                             new_commit_sha))
-        end
-      end
-
-      task :pull_request_number do
-        perform_task "Creating new pull-request with branch #{new_branch_ref}." do
-          title = "[Add] #{pod_version.pod.name} #{pod_version.name}"
-          update(:pull_request_number => github.create_new_pull_request(title,
-                                                                        pod_version.url,
-                                                                        new_branch_ref))
-        end
-      end
-
-      def should_perform_merge?
-        needs_value?(:merge_commit_sha)
-      end
-
-      task :merge_commit_sha, :if => :should_perform_merge? do
-        perform_task "Merging pull-request number #{pull_request_number}." do
-          update(:merge_commit_sha => github.merge_pull_request(pull_request_number))
-        end
-      end
-
-      task :deleted_branch do
-        perform_task "Deleting branch `#{new_branch_ref}'." do
-          github.delete_branch(new_branch_ref)
-          update(:deleted_branch => true, :needs_to_perform_work => false)
         end
       end
     end
