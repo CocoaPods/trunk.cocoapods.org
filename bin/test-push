@@ -11,7 +11,7 @@ require 'safe_yaml'
 SafeYAML::OPTIONS[:default_mode] = :safe
 
 def print_response(response)
-  puts "[#{response.status_code}]"
+  puts "[HTTP: #{response.status_code}]"
   puts response.body
 end
 
