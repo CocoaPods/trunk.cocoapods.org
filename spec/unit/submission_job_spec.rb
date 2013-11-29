@@ -51,6 +51,7 @@ module Pod::TrunkApp
         github.stubs(:fetch_base_tree_sha).returns(fixture_base_tree_sha)
         github.stubs(:create_new_tree).with(fixture_base_tree_sha, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(fixture_new_tree_sha)
         github.stubs(:create_new_commit).with(fixture_new_tree_sha, fixture_base_commit_sha, MESSAGE, 'Appie', 'appie@example.com').returns(fixture_new_commit_sha)
+        github.stubs(:add_commit_to_branch).with(fixture_new_commit_sha, 'master').returns(fixture_add_commit_to_branch)
       end
 
       it "initializes with a new state" do
@@ -129,6 +130,15 @@ module Pod::TrunkApp
 
       before do
         @job.update(:new_commit_sha => fixture_new_commit_sha)
+      end
+
+      it "adds a commit to the master branch" do
+        @job.stubs(:after_update)
+        @job.perform_next_task!
+        @job.new_commit_url.should == fixture_add_commit_to_branch
+        @job.tasks_completed.should == 5
+        @job.should.not.needs_to_perform_work
+        @job.log_messages.last.message.should == "Adding commit to master branch #{fixture_new_commit_sha}."
       end
 
       it "publishes the pod version once the pull-request has been merged" do

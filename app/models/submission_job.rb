@@ -76,12 +76,19 @@ module Pod
         ((in_progress? ? Time.now : updated_at) - created_at).ceil
       end
 
+      def succeeded=(status)
+        super
+        self.needs_to_perform_work = false unless status.nil?
+      end
+
       def attempts=(count)
         super
-        if count >= RETRY_COUNT
-          self.succeeded = false
-          self.needs_to_perform_work = false
-        end
+        self.succeeded = false if count >= RETRY_COUNT
+      end
+
+      def new_commit_url=(url)
+        super
+        self.succeeded = true unless new_commit_url.nil?
       end
 
       def perform_next_task!
@@ -188,13 +195,18 @@ module Pod
 
       task :new_commit_sha do
         perform_task "Creating new commit with tree #{new_tree_sha}." do
-          # TODO get this from the user that pushed the spec.
           message = "[Add] #{pod_version.pod.name} #{pod_version.name}"
           update(:new_commit_sha => github.create_new_commit(new_tree_sha,
                                                              base_commit_sha,
                                                              message,
                                                              owner.name,
                                                              owner.email))
+        end
+      end
+
+      task :new_commit_url do
+        perform_task "Adding commit to master branch #{new_commit_sha}." do
+          update(:new_commit_url => github.add_commit_to_branch(new_commit_sha, 'master'))
         end
       end
     end

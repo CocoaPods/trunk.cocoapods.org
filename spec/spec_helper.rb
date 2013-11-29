@@ -65,6 +65,10 @@ class Bacon::Context
     @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['sha']
   end
 
+  def fixture_add_commit_to_branch
+    @@fixture_add_commit_to_branch ||= JSON.parse(fixture_response('add_commit_to_branch').body)['object']['url']
+  end
+
   alias_method :run_requirement_before_sequel, :run_requirement
   def run_requirement(description, spec)
     TRUNK_APP_LOGGER.info('-' * description.size)

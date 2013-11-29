@@ -50,7 +50,7 @@ module Pod
       end
 
       def add_commit_to_branch(new_commit_sha, branch_name)
-        rest(:patch, "git/#{branch_ref(branch_name)}", :sha => new_commit_sha)['object']['sha']
+        rest(:patch, "git/#{branch_ref(branch_name)}", :sha => new_commit_sha)['object']['url']
       end
 
       private

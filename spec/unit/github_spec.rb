@@ -70,7 +70,7 @@ module Pod::TrunkApp
     end
 
     it "adds a commit to the master branch" do
-      @github.add_commit_to_branch(fixture_new_commit_sha, 'master').should == fixture_new_commit_sha
+      @github.add_commit_to_branch(fixture_new_commit_sha, 'master').should == fixture_add_commit_to_branch
     end
   end
 end
