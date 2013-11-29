@@ -71,7 +71,7 @@ EOYAML
       last_response.status.should == 422
       yaml_response.should == {
         'error' => {
-          'errors'   => ['Missing required attribute `name`.', 'The version of the spec should be higher than 0.'],
+          'errors'   => ['Missing required attribute `name`.', 'A version is required.'],
           'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
         }
       }
