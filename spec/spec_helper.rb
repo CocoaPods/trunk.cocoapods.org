@@ -45,6 +45,26 @@ class Bacon::Context
     JSON.parse(fixture_read(filename))
   end
 
+  def fixture_response(name)
+    YAML.unsafe_load(fixture_read("GitHub/#{name}.yaml"))
+  end
+
+  def fixture_base_commit_sha
+    @@fixture_base_commit_sha ||= JSON.parse(fixture_response('fetch_latest_commit_sha').body)['object']['sha']
+  end
+
+  def fixture_base_tree_sha
+    @@fixture_base_tree_sha ||= JSON.parse(fixture_response('fetch_base_tree_sha').body)['tree']['sha']
+  end
+
+  def fixture_new_tree_sha
+    @@fixture_new_tree_sha ||= JSON.parse(fixture_response('create_new_tree').body)['sha']
+  end
+
+  def fixture_new_commit_sha
+    @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['sha']
+  end
+
   alias_method :run_requirement_before_sequel, :run_requirement
   def run_requirement(description, spec)
     TRUNK_APP_LOGGER.info('-' * description.size)
@@ -84,10 +104,6 @@ module Net
   end
 end
 
-# SHAs used in PR fixtures
-BASE_COMMIT_SHA = '632671a3f28771a3631119354731dba03963a276'
-BASE_TREE_SHA = 'f93e3a1a1525fb5b91020da86e44810c87a2d7bc'
-NEW_TREE_SHA = '18f8a32cdf45f0f627749e2be25229f5026f93ac'
-NEW_COMMIT_SHA = '4ebf6619c831963fafb7ccd8e9aa3079f00ac41d'
+# Used in GitHub fixtures
 DESTINATION_PATH = 'AFNetworking/1.2.0/AFNetworking.podspec.yaml'
 MESSAGE = '[Add] AFNetworking 1.2.0'

@@ -47,10 +47,10 @@ module Pod::TrunkApp
     describe "concerning submission progress state" do
       before do
         github = @job.send(:github)
-        github.stubs(:fetch_latest_commit_sha).returns(BASE_COMMIT_SHA)
-        github.stubs(:fetch_base_tree_sha).returns(BASE_TREE_SHA)
-        github.stubs(:create_new_tree).with(BASE_TREE_SHA, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(NEW_TREE_SHA)
-        github.stubs(:create_new_commit).with(NEW_TREE_SHA, BASE_COMMIT_SHA, MESSAGE, 'Appie', 'appie@example.com').returns(NEW_COMMIT_SHA)
+        github.stubs(:fetch_latest_commit_sha).returns(fixture_base_commit_sha)
+        github.stubs(:fetch_base_tree_sha).returns(fixture_base_tree_sha)
+        github.stubs(:create_new_tree).with(fixture_base_tree_sha, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(fixture_new_tree_sha)
+        github.stubs(:create_new_commit).with(fixture_new_tree_sha, fixture_base_commit_sha, MESSAGE, 'Appie', 'appie@example.com').returns(fixture_new_commit_sha)
       end
 
       it "initializes with a new state" do
@@ -60,17 +60,17 @@ module Pod::TrunkApp
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
         @job.perform_task 'A failing task' do
-          @job.update(:base_commit_sha => BASE_COMMIT_SHA)
+          @job.update(:base_commit_sha => fixture_base_commit_sha)
           raise "oh noes!"
         end
         @job.log_messages.last(2).map(&:message).should == ["A failing task", "Error: oh noes!"]
         @job.reload.base_commit_sha.should == nil
 
         @job.perform_task 'A succeeding task' do
-          @job.update(:base_commit_sha => BASE_COMMIT_SHA)
+          @job.update(:base_commit_sha => fixture_base_commit_sha)
         end
         @job.log_messages.last.message.should == "A succeeding task"
-        @job.reload.base_commit_sha.should == BASE_COMMIT_SHA
+        @job.reload.base_commit_sha.should == fixture_base_commit_sha
       end
 
       it "bumps the attempt count as long as the threshold isn't reached" do
@@ -85,50 +85,50 @@ module Pod::TrunkApp
 
       it "fetches the SHA of the commit this PR will be based on" do
         @job.perform_next_task!
-        @job.base_commit_sha.should == BASE_COMMIT_SHA
+        @job.base_commit_sha.should == fixture_base_commit_sha
         @job.tasks_completed.should == 1
         @job.should.needs_to_perform_work
         @job.log_messages.last.message.should == "Fetching latest commit SHA."
       end
 
       before do
-        @job.update(:base_commit_sha => BASE_COMMIT_SHA)
+        @job.update(:base_commit_sha => fixture_base_commit_sha)
       end
 
       it "fetches the SHA of the tree of the base commit" do
         @job.perform_next_task!
-        @job.base_tree_sha.should == BASE_TREE_SHA
+        @job.base_tree_sha.should == fixture_base_tree_sha
         @job.tasks_completed.should == 2
         @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Fetching tree SHA of commit #{BASE_COMMIT_SHA}."
+        @job.log_messages.last.message.should == "Fetching tree SHA of commit #{fixture_base_commit_sha}."
       end
 
       before do
-        @job.update(:base_tree_sha => BASE_TREE_SHA)
+        @job.update(:base_tree_sha => fixture_base_tree_sha)
       end
 
       it "creates a new tree" do
         @job.perform_next_task!
-        @job.new_tree_sha.should == NEW_TREE_SHA
+        @job.new_tree_sha.should == fixture_new_tree_sha
         @job.tasks_completed.should == 3
         @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Creating new tree based on tree #{BASE_TREE_SHA}."
+        @job.log_messages.last.message.should == "Creating new tree based on tree #{fixture_base_tree_sha}."
       end
 
       before do
-        @job.update(:new_tree_sha => NEW_TREE_SHA)
+        @job.update(:new_tree_sha => fixture_new_tree_sha)
       end
 
       it "creates a new commit" do
         @job.perform_next_task!
-        @job.new_commit_sha.should == NEW_COMMIT_SHA
+        @job.new_commit_sha.should == fixture_new_commit_sha
         @job.tasks_completed.should == 4
         @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Creating new commit with tree #{NEW_TREE_SHA}."
+        @job.log_messages.last.message.should == "Creating new commit with tree #{fixture_new_tree_sha}."
       end
 
       before do
-        @job.update(:new_commit_sha => NEW_COMMIT_SHA)
+        @job.update(:new_commit_sha => fixture_new_commit_sha)
       end
 
       it "publishes the pod version once the pull-request has been merged" do

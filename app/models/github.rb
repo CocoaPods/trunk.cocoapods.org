@@ -49,6 +49,10 @@ module Pod
         })['sha']
       end
 
+      def add_commit_to_branch(new_commit_sha, branch_name)
+        rest(:patch, "git/#{branch_ref(branch_name)}", :sha => new_commit_sha)['object']['sha']
+      end
+
       private
 
       def branch_ref(name)
@@ -60,13 +64,18 @@ module Pod
       end
 
       def rest(method, path, body = nil)
+        response = perform_request(method, path, body)
+        JSON.parse(response.body) if response.body
+      end
+
+      def perform_request(method, path, body = nil)
         args = [method, url_for(path), (body.to_json if body), HEADERS, @basic_auth].compact
         response = REST.send(*args)
         # TODO Make this pretty mkay
         if (400...600).include?(response.status_code)
           raise "[#{response.status_code}] #{response.headers.inspect} – #{response.body}}"
         end
-        JSON.parse(response.body) if response.body
+        response
       end
     end
   end

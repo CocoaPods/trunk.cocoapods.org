@@ -7,15 +7,11 @@ module Pod::TrunkApp
   end
 
   describe "GitHub" do
-    def fixture_response(name)
-      YAML.unsafe_load(fixture_read("GitHub/#{name}.yaml"))
-    end
-
     before do
       @auth = { :username => 'alloy', :password => 'secret' }
       @github = GitHub.new('CocoaPods/Specs', 'master', @auth)
-      REST.stubs(:get).with(@github.url_for('git/refs/heads/master'), GitHub::HEADERS, @auth).returns(fixture_response('sha_latest_commit'))
-      REST.stubs(:get).with(@github.url_for('git/commits/632671a3f28771a3631119354731dba03963a276'), GitHub::HEADERS, @auth).returns(fixture_response('sha_base_tree'))
+      REST.stubs(:get).with(@github.url_for('git/refs/heads/master'), GitHub::HEADERS, @auth).returns(fixture_response('fetch_latest_commit_sha'))
+      REST.stubs(:get).with(@github.url_for("git/commits/#{fixture_base_commit_sha}"), GitHub::HEADERS, @auth).returns(fixture_response('fetch_base_tree_sha'))
     end
 
     it "returns a URL for a given API path" do
@@ -23,16 +19,16 @@ module Pod::TrunkApp
     end
 
     it "returns the SHA of the latest commit on the `master` branch" do
-      @github.fetch_latest_commit_sha.should == BASE_COMMIT_SHA
+      @github.fetch_latest_commit_sha.should == fixture_base_commit_sha
     end
 
     it "returns the SHA of the tree of the latest commit and caches it" do
-      @github.fetch_base_tree_sha(BASE_COMMIT_SHA).should == BASE_TREE_SHA
+      @github.fetch_base_tree_sha(fixture_base_commit_sha).should == fixture_base_tree_sha
     end
 
     before do
       body = {
-        :base_tree => BASE_TREE_SHA,
+        :base_tree => fixture_base_tree_sha,
         :tree => [{
           :encoding => 'utf-8',
           :mode     => '100644',
@@ -44,13 +40,13 @@ module Pod::TrunkApp
     end
 
     it "creates a new tree object, which represents the contents, and returns its SHA" do
-      @github.create_new_tree(BASE_TREE_SHA, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).should == NEW_TREE_SHA
+      @github.create_new_tree(fixture_base_tree_sha, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).should == fixture_new_tree_sha
     end
 
     before do
       body = {
-        :parents => [BASE_COMMIT_SHA],
-        :tree    => NEW_TREE_SHA,
+        :parents => [fixture_base_commit_sha],
+        :tree    => fixture_new_tree_sha,
         :message => MESSAGE,
         :author => {
           :name => 'Eloy Durán',
@@ -65,10 +61,16 @@ module Pod::TrunkApp
     end
 
     it "creates a new commit object for the new tree object" do
-      @github.create_new_commit(NEW_TREE_SHA, BASE_COMMIT_SHA, '[Add] AFNetworking 1.2.0', 'Eloy Durán', 'eloy@example.com').should == NEW_COMMIT_SHA
+      @github.create_new_commit(fixture_new_tree_sha, fixture_base_commit_sha, '[Add] AFNetworking 1.2.0', 'Eloy Durán', 'eloy@example.com').should == fixture_new_commit_sha
     end
 
-    it "adds a new commit to the master branch" do
+    before do
+      body = { :sha => fixture_new_commit_sha }.to_json
+      REST.stubs(:patch).with(@github.url_for('git/refs/heads/master'), body, GitHub::HEADERS, @auth).returns(fixture_response('add_commit_to_branch'))
+    end
+
+    it "adds a commit to the master branch" do
+      @github.add_commit_to_branch(fixture_new_commit_sha, 'master').should == fixture_new_commit_sha
     end
   end
 end
