@@ -121,23 +121,6 @@ module Pod
         send(attribute).nil?
       end
 
-      def self.perform_task(&block)
-        db.transaction(:savepoint => true, &block)
-        return nil
-      rescue Object => error
-        TRUNK_APP_LOGGER.error "#{error.message}\n\t\t#{error.backtrace.join("\n\t\t")}"
-        return error
-      end
-
-      def perform_task(message, &block)
-        add_log_message(:message => message)
-        if error = self.class.perform_task(&block)
-          update(:attempts => attempts + 1)
-          # TODO report full error to error reporting service
-          add_log_message(:message => "Error: #{error.message}")
-        end
-      end
-
       # GitHub pull-request
       #
       # TODO validate SHAs
@@ -152,7 +135,24 @@ module Pod
 
       # Tasks state machine
 
-      TASK_NAME_TEMPLATE = 'perform_task_%s!'
+      def self.perform_work(&block)
+        db.transaction(:savepoint => true, &block)
+        return nil
+      rescue Object => error
+        TRUNK_APP_LOGGER.error "#{error.message}\n\t\t#{error.backtrace.join("\n\t\t")}"
+        return error
+      end
+
+      def perform_work(message, &block)
+        add_log_message(:message => message)
+        if error = self.class.perform_work(&block)
+          update(:attempts => attempts + 1)
+          # TODO report full error to error reporting service
+          add_log_message(:message => "Error: #{error.message}")
+        end
+      end
+
+      TASK_NAME_TEMPLATE = 'perform_work_%s!'
 
       def self.tasks
         @tasks ||= []
@@ -164,19 +164,19 @@ module Pod
       end
 
       task :base_commit_sha do
-        perform_task "Fetching latest commit SHA." do
+        perform_work "Fetching latest commit SHA." do
           update(:base_commit_sha => github.fetch_latest_commit_sha)
         end
       end
 
       task :base_tree_sha do
-        perform_task "Fetching tree SHA of commit #{base_commit_sha}." do
+        perform_work "Fetching tree SHA of commit #{base_commit_sha}." do
           update(:base_tree_sha => github.fetch_base_tree_sha(base_commit_sha))
         end
       end
 
       task :new_tree_sha do
-        perform_task "Creating new tree based on tree #{base_tree_sha}." do
+        perform_work "Creating new tree based on tree #{base_tree_sha}." do
           destination_path = File.join(pod_version.pod.name, pod_version.name, "#{pod_version.pod.name}.podspec.yaml")
           update(:new_tree_sha => github.create_new_tree(base_tree_sha,
                                                          destination_path,
@@ -185,7 +185,7 @@ module Pod
       end
 
       task :new_commit_sha do
-        perform_task "Creating new commit with tree #{new_tree_sha}." do
+        perform_work "Creating new commit with tree #{new_tree_sha}." do
           message = "[Add] #{pod_version.pod.name} #{pod_version.name}"
           update(:new_commit_sha => github.create_new_commit(new_tree_sha,
                                                              base_commit_sha,
@@ -196,7 +196,7 @@ module Pod
       end
 
       task :new_commit_url do
-        perform_task "Adding commit to master branch #{new_commit_sha}." do
+        perform_work "Adding commit to master branch #{new_commit_sha}." do
           update(:new_commit_url => github.add_commit_to_branch(new_commit_sha, 'master'))
         end
       end

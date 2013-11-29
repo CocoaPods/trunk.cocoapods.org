@@ -3,7 +3,7 @@ require 'app/models/submission_job'
 
 module Pod::TrunkApp
   class SubmissionJob
-    public :perform_task
+    public :perform_work
   end
 
   describe "SubmissionJob" do
@@ -60,14 +60,14 @@ module Pod::TrunkApp
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
-        @job.perform_task 'A failing task' do
+        @job.perform_work 'A failing task' do
           @job.update(:base_commit_sha => fixture_base_commit_sha)
           raise "oh noes!"
         end
         @job.log_messages.last(2).map(&:message).should == ["A failing task", "Error: oh noes!"]
         @job.reload.base_commit_sha.should == nil
 
-        @job.perform_task 'A succeeding task' do
+        @job.perform_work 'A succeeding task' do
           @job.update(:base_commit_sha => fixture_base_commit_sha)
         end
         @job.log_messages.last.message.should == "A succeeding task"
@@ -76,7 +76,7 @@ module Pod::TrunkApp
 
       it "bumps the attempt count as long as the threshold isn't reached" do
         SubmissionJob::RETRY_COUNT.times do |i|
-          @job.perform_task "Try #{i+1}" do
+          @job.perform_work "Try #{i+1}" do
             raise "oh noes!"
           end
         end
