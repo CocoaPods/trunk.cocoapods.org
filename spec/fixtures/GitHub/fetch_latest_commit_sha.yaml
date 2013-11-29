@@ -1,0 +1,42 @@
+--- !ruby/object:REST::Response
+status_code: 200
+headers:
+  server:
+  - GitHub.com
+  date:
+  - Fri, 29 Nov 2013 21:37:23 GMT
+  content-type:
+  - application/json; charset=utf-8
+  transfer-encoding:
+  - chunked
+  status:
+  - 200 OK
+  x-ratelimit-limit:
+  - '5000'
+  x-ratelimit-remaining:
+  - '4999'
+  x-ratelimit-reset:
+  - '1385764643'
+  cache-control:
+  - private, max-age=60, s-maxage=60
+  last-modified:
+  - Sun, 18 Aug 2013 19:24:39 GMT
+  etag:
+  - '"786430fba88eae829c143d967fd731ab"'
+  vary:
+  - Accept, Authorization, Cookie, X-GitHub-OTP
+  - Accept-Encoding
+  x-github-media-type:
+  - github.beta
+  x-content-type-options:
+  - nosniff
+  access-control-allow-credentials:
+  - 'true'
+  access-control-expose-headers:
+  - ETag, Link, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes,
+    X-Accepted-OAuth-Scopes, X-Poll-Interval
+  access-control-allow-origin:
+  - '*'
+  x-github-request-id:
+  - 3EA3ABC5:2640:8039632:52990912
+body: '{"ref":"refs/heads/master","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/refs/heads/master","object":{"sha":"a0bf9f34e51af792e0e7fe278e038b6eae818c76","type":"commit","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/commits/a0bf9f34e51af792e0e7fe278e038b6eae818c76"}}'

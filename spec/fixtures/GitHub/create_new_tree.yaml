@@ -4,27 +4,38 @@ headers:
   server:
   - GitHub.com
   date:
-  - Sun, 07 Apr 2013 12:22:18 GMT
+  - Fri, 29 Nov 2013 21:37:24 GMT
   content-type:
   - application/json; charset=utf-8
-  connection:
-  - keep-alive
   status:
   - 201 Created
   x-ratelimit-limit:
   - '5000'
   x-ratelimit-remaining:
-  - '4981'
+  - '4997'
+  x-ratelimit-reset:
+  - '1385764643'
+  cache-control:
+  - private, max-age=60, s-maxage=60
+  etag:
+  - '"eb8fbe58a9c8eeea4202b1dc7220ae46"'
   location:
-  - https://api.github.com/repos/alloy/push.cocoapods.org-test/git/trees/18f8a32cdf45f0f627749e2be25229f5026f93ac
+  - https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/7d95273a9667cc7a2034479b8b22c474fa9aad03
+  vary:
+  - Accept, Authorization, Cookie, X-GitHub-OTP
   x-github-media-type:
   - github.beta
   x-content-type-options:
   - nosniff
   content-length:
-  - '631'
-  etag:
-  - ! '"a61f3c13f22aa724cea5779310d7804d"'
-  cache-control:
-  - max-age=0, private, must-revalidate
-body: ! '{"sha":"18f8a32cdf45f0f627749e2be25229f5026f93ac","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/trees/18f8a32cdf45f0f627749e2be25229f5026f93ac","tree":[{"mode":"040000","type":"tree","sha":"7f262264f60b53bc6aab37ca4d8ea106c819e76d","path":"AFNetworking-1.2.0","url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/trees/7f262264f60b53bc6aab37ca4d8ea106c819e76d"},{"mode":"100644","type":"blob","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","path":"README.md","size":0,"url":"https://api.github.com/repos/alloy/push.cocoapods.org-test/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"}]}'
+  - '3318'
+  access-control-allow-credentials:
+  - 'true'
+  access-control-expose-headers:
+  - ETag, Link, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes,
+    X-Accepted-OAuth-Scopes, X-Poll-Interval
+  access-control-allow-origin:
+  - '*'
+  x-github-request-id:
+  - 3EA3ABC5:2640:8039716:52990913
+body: '{"sha":"7d95273a9667cc7a2034479b8b22c474fa9aad03","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/7d95273a9667cc7a2034479b8b22c474fa9aad03","tree":[{"mode":"100644","type":"blob","sha":"7613264ee377739fb0b4477f6ab2cbb7bd0bbf9c","path":".travis.yml","size":502,"url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/blobs/7613264ee377739fb0b4477f6ab2cbb7bd0bbf9c"},{"mode":"040000","type":"tree","sha":"9f18573f46b83fb623a5fd7694754e3823551ed1","path":"AFCache","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/9f18573f46b83fb623a5fd7694754e3823551ed1"},{"mode":"040000","type":"tree","sha":"c823cddf959c8f3ae05ad558bb12a9392b043e4c","path":"AFNetworking","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/c823cddf959c8f3ae05ad558bb12a9392b043e4c"},{"mode":"040000","type":"tree","sha":"389c3ab877d21baca26fe78e67fb90595f13b913","path":"CocoaLumberjack","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/389c3ab877d21baca26fe78e67fb90595f13b913"},{"mode":"040000","type":"tree","sha":"77ab17f0cf86817851197539d95b67024e5f1594","path":"FTAssetRenderer","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/77ab17f0cf86817851197539d95b67024e5f1594"},{"mode":"040000","type":"tree","sha":"f821fb9297840142119d25c97ebb3420c18574dd","path":"FTFontSelector","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/f821fb9297840142119d25c97ebb3420c18574dd"},{"mode":"040000","type":"tree","sha":"91920bb46b9270ef761a42f454bcf917a97f1e9c","path":"GRMustache","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/91920bb46b9270ef761a42f454bcf917a97f1e9c"},{"mode":"100644","type":"blob","sha":"81648bd0401292b6f00be3a55ebab34a26101488","path":"Gemfile","size":345,"url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/blobs/81648bd0401292b6f00be3a55ebab34a26101488"},{"mode":"040000","type":"tree","sha":"8a2cd6e2c63e4a0926038cd1dd5c5bc972ce1971","path":"REDebugClient","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/8a2cd6e2c63e4a0926038cd1dd5c5bc972ce1971"},{"mode":"100644","type":"blob","sha":"bda8a737fed99132337e6c1d39d2c51876a403a3","path":"Rakefile","size":10060,"url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/blobs/bda8a737fed99132337e6c1d39d2c51876a403a3"},{"mode":"040000","type":"tree","sha":"778cb1e83478187b530e11c0b7009e10d91fae95","path":"RestKit","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/778cb1e83478187b530e11c0b7009e10d91fae95"},{"mode":"040000","type":"tree","sha":"73f473291d820d1963f357815efee62b8012b69b","path":"SHAccountManager","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/73f473291d820d1963f357815efee62b8012b69b"},{"mode":"040000","type":"tree","sha":"b0d126f7ef1aa84391d65656c9da0dfa998eefec","path":"SSZipArchive","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/b0d126f7ef1aa84391d65656c9da0dfa998eefec"},{"mode":"040000","type":"tree","sha":"8ab23eeea16c7aa0e9370278dcaf385d91462e4b","path":"TTTAttributedLabel","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/8ab23eeea16c7aa0e9370278dcaf385d91462e4b"}]}'

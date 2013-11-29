@@ -38,3 +38,5 @@ new_tree_sha = perform_action(:create_new_tree, base_tree_sha, destination_path,
 name = `git config --global user.name`.strip
 email = `git config --global user.email`.strip
 new_commit_sha = perform_action(:create_new_commit, new_tree_sha, latest_commit_sha, '[Add] AFNetworking 1.2.0', name, email)
+
+perform_action(:add_commit_to_branch, new_commit_sha, 'master')

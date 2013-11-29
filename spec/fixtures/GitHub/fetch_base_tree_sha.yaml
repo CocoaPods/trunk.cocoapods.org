@@ -1,0 +1,45 @@
+--- !ruby/object:REST::Response
+status_code: 200
+headers:
+  server:
+  - GitHub.com
+  date:
+  - Fri, 29 Nov 2013 21:37:23 GMT
+  content-type:
+  - application/json; charset=utf-8
+  transfer-encoding:
+  - chunked
+  status:
+  - 200 OK
+  x-ratelimit-limit:
+  - '5000'
+  x-ratelimit-remaining:
+  - '4998'
+  x-ratelimit-reset:
+  - '1385764643'
+  cache-control:
+  - private, max-age=60, s-maxage=60
+  last-modified:
+  - Sun, 18 Aug 2013 19:24:37 GMT
+  etag:
+  - '"3f87e3180527b7bb3f99b948df2532d3"'
+  vary:
+  - Accept, Authorization, Cookie, X-GitHub-OTP
+  - Accept-Encoding
+  x-github-media-type:
+  - github.beta
+  x-content-type-options:
+  - nosniff
+  access-control-allow-credentials:
+  - 'true'
+  access-control-expose-headers:
+  - ETag, Link, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes,
+    X-Accepted-OAuth-Scopes, X-Poll-Interval
+  access-control-allow-origin:
+  - '*'
+  x-github-request-id:
+  - 3EA3ABC5:2640:80396A3:52990913
+body: '{"sha":"a0bf9f34e51af792e0e7fe278e038b6eae818c76","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/commits/a0bf9f34e51af792e0e7fe278e038b6eae818c76","html_url":"https://github.com/alloy/trunk.cocoapods.org-test/commits/a0bf9f34e51af792e0e7fe278e038b6eae818c76","author":{"name":"CocoaPods
+  Bot","email":"eloy.de.enige+cocoapods.github.bot@gmail.com","date":"2013-08-18T19:24:37Z"},"committer":{"name":"CocoaPods
+  Bot","email":"eloy.de.enige+cocoapods.github.bot@gmail.com","date":"2013-08-18T19:24:37Z"},"tree":{"sha":"2d045a7f3910f3b8752fa13ec4b85b63d04e64b1","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/trees/2d045a7f3910f3b8752fa13ec4b85b63d04e64b1"},"message":"Merge
+  pull request #33 from alloy/refs/heads/AFCache-0.0.1-job-18\n\n[Add] AFCache 0.0.1","parents":[{"sha":"980248fc83cab412c39047383b8e8269d9058876","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/commits/980248fc83cab412c39047383b8e8269d9058876","html_url":"https://github.com/alloy/trunk.cocoapods.org-test/commits/980248fc83cab412c39047383b8e8269d9058876"},{"sha":"0350b90904470eb1278a86201ebcb46e3e9bc6ca","url":"https://api.github.com/repos/alloy/trunk.cocoapods.org-test/git/commits/0350b90904470eb1278a86201ebcb46e3e9bc6ca","html_url":"https://github.com/alloy/trunk.cocoapods.org-test/commits/0350b90904470eb1278a86201ebcb46e3e9bc6ca"}]}'
