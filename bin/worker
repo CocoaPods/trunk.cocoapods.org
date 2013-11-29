@@ -6,7 +6,6 @@ require 'config/init'
 require 'app/models/submission_job'
 
 loop do
-  Pod::TrunkApp::SubmissionJob.update_travis_build_statuses!
   Pod::TrunkApp::SubmissionJob.perform_task!
   sleep(1)
 end

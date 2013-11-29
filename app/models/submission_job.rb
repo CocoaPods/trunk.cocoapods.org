@@ -3,7 +3,6 @@ require 'app/models/log_message'
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/pod_version'
-require 'app/models/travis'
 
 module Pod
   module TrunkApp
@@ -11,7 +10,6 @@ module Pod
       class TaskError < ::StandardError; end
 
       RETRY_COUNT = 6
-      TRAVIS_BUILD_STATUS_TIMEOUT = -10.minutes
 
       self.dataset = :submission_jobs
       plugin :timestamps
@@ -44,62 +42,6 @@ module Pod
         end
       end
 
-      def self.find_jobs_in_queue_that_need_travis_build_status_updates
-        disable_info_logging do
-          for_update.where(:succeeded => nil, :travis_build_success => nil)
-                    .where('updated_at < ?', TRAVIS_BUILD_STATUS_TIMEOUT.from_now)
-                    .exclude(:pull_request_number => nil).to_a
-        end
-      end
-
-      def self.update_travis_build_statuses!
-        jobs = find_jobs_in_queue_that_need_travis_build_status_updates
-        return if jobs.empty?
-        TRUNK_APP_LOGGER.info("[!] There are a total of #{jobs.size} jobs in the queue that have not received a notification from Travis yet.")
-
-        # First see if any of the jobs already knows its build ID and remove the job from the
-        # remaining queue after updating the build status.
-        jobs.delete_if do |job|
-          if job.travis_build_id
-            job.send(:perform_task, 'Updating Travis build status.') do
-              travis = Travis.pull_request_with_build_id(job.travis_build_id)
-              job.update_travis_build_status(travis, true)
-            end
-            true
-          else
-            # Needs to have its build ID resolved. Log the message now because we can’t do it
-            # inside the next `perform_task` block when we actually fetch the status.
-            job.add_log_message(:message => 'Updating Travis build status by fetching all builds.')
-            false
-          end
-        end
-
-        # No need to fetch all the build statuses anymore if there are no jobs left in the queue.
-        return if jobs.empty?
-
-        # Get the build status for all builds and try to find those that belong to our jobs.
-        perform_task do
-          TRUNK_APP_LOGGER.info('[!] Fetching all the build results.')
-          Travis.pull_requests do |travis|
-            jobs.delete_if do |job|
-              if job.pull_request_number == travis.pull_request_number
-                job.update_travis_build_status(travis, true)
-                true
-              else
-                false
-              end
-            end
-            break if jobs.empty?
-          end
-        end
-
-        # Jobs that are not included in the build status list at all should have their attempt
-        # count bumped.
-        jobs.each do |job|
-          job.update(:attempts => job.attempts + 1)
-        end
-      end
-
       def after_create
         super
         add_log_message(:message => 'Submitted.')
@@ -116,7 +58,6 @@ module Pod
         end
       end
 
-      alias_method :travis_build_success?, :travis_build_success
       alias_method :needs_to_perform_work?, :needs_to_perform_work
 
       def in_progress?
@@ -135,10 +76,6 @@ module Pod
         ((in_progress? ? Time.now : updated_at) - created_at).ceil
       end
 
-      def travis_build_url
-        Travis.web_url_for_id(travis_build_id) if travis_build_id
-      end
-
       def attempts=(count)
         super
         if count >= RETRY_COUNT
@@ -152,28 +89,9 @@ module Pod
         self.needs_to_perform_work = pull_request_number.nil?
       end
 
-      def travis_build_success=(result)
-        super
-        unless travis_build_success.nil?
-          self.needs_to_perform_work = travis_build_success?
-          self.succeeded = false unless travis_build_success?
-        end
-      end
-
       def merge_commit_sha=(sha)
         super
         self.succeeded = true unless merge_commit_sha.nil?
-      end
-
-      def update_travis_build_status(travis, bump_attempt = false)
-        message = "Received Travis build status: finished=#{travis.finished?} build ID=#{travis.build_id}"
-        message << " success=#{travis.build_success?}" if travis.finished?
-        perform_task message do
-          attributes = { :travis_build_id => travis.build_id }
-          attributes[:travis_build_success] = travis.build_success? if travis.finished?
-          attributes[:attempts] = attempts + 1 if bump_attempt
-          update(attributes)
-        end
       end
 
       def perform_next_task!
@@ -309,7 +227,7 @@ module Pod
       end
 
       def should_perform_merge?
-        needs_value?(:merge_commit_sha) && travis_build_success?
+        needs_value?(:merge_commit_sha)
       end
 
       task :merge_commit_sha, :if => :should_perform_merge? do

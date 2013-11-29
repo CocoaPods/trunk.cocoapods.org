@@ -44,12 +44,6 @@ module Pod::TrunkApp
       @job.should.not.needs_to_perform_work
     end
 
-    it "optionally bumps the attempt count when updating the travis count" do
-      before = @job.attempts
-      @job.update_travis_build_status(stub(:finished? => false, :build_id => 42), true)
-      @job.reload.attempts.should == before + 1
-    end
-
     describe "concerning submission progress state" do
       before do
         github = @job.send(:github)
@@ -141,151 +135,15 @@ module Pod::TrunkApp
         @job.update(:new_commit_sha => NEW_COMMIT_SHA)
       end
 
-      it "creates a new branch" do
-        @job.perform_next_task!
-        @job.new_branch_ref.should == NEW_BRANCH_REF % @job.id
-        @job.tasks_completed.should == 5
-        @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Creating new branch `#{NEW_BRANCH_NAME % @job.id}' with commit #{NEW_COMMIT_SHA}."
-      end
-
-      before do
-        @job.update(:new_branch_ref => NEW_BRANCH_REF % @job.id)
-      end
-
-      it "creates a new pull-request and changes state to no longer needing work (until Travis reports back)" do
-        @job.perform_next_task!
-        @job.pull_request_number.should == NEW_PR_NUMBER
-        @job.tasks_completed.should == 6
-        @job.should.not.needs_to_perform_work
-        @job.log_messages.last.message.should == "Creating new pull-request with branch #{NEW_BRANCH_REF % @job.id}."
-      end
-
-      before do
-        @job.update(:pull_request_number => NEW_PR_NUMBER)
-      end
-
-      it "does not allow to perform a next task until travis reports back" do
-        should.raise SubmissionJob::TaskError do
-          @job.perform_next_task!
-        end
-      end
-
-      it "changes the state to needing work if travis succeeds to build the pull-request" do
-        @job.update(:travis_build_success => true)
-        @job.should.needs_to_perform_work
-      end
-
-      it "considers the job to have failed if travis reports a build failure" do
-        @job.update(:travis_build_success => false)
-        @job.should.not.needs_to_perform_work
-        @job.should.be.failed
-      end
-
-      before do
-        @job.update(:travis_build_success => true)
-      end
-
-      it "merges a pull-request" do
-        @job.perform_next_task!
-        @job.merge_commit_sha.should == MERGE_COMMIT_SHA
-        @job.tasks_completed.should == 7
-        @job.should.needs_to_perform_work
-        @job.should.be.completed
-        @job.log_messages[-2].message.should == "Merging pull-request number #{NEW_PR_NUMBER}."
-      end
-
       it "publishes the pod version once the pull-request has been merged" do
         @job.perform_next_task!
         @version.should.be.published
         @version.published_by_submission_job.should == @job
         @job.log_messages.last.message.should == "Published."
       end
-
-      before do
-        @job.update(:merge_commit_sha => MERGE_COMMIT_SHA, :succeeded => true)
-      end
-
-      it "deletes the branch once the pull-request has been merged and changes state to not needing any more work done" do
-        @job.send(:github).expects(:delete_branch).with(NEW_BRANCH_REF % @job.id).returns(nil)
-        @job.perform_next_task!
-        @job.deleted_branch.should == true
-        @job.tasks_completed.should == 8
-        @job.should.not.needs_to_perform_work
-        @job.log_messages.last.message.should == "Deleting branch `#{NEW_BRANCH_REF % @job.id}'."
-      end
     end
 
     describe "when the submission flow fails" do
-      describe "by exceeding the Travis build status timeout" do
-        it "does not find those that have not yet reached the travis stage or exceeded the timeout" do
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
-          @job.update(:pull_request_number => NEW_PR_NUMBER)
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
-        end
-
-        before do
-          # Set the job's last update having occurred 11 minutes ago.
-          # TODO find out how to explicitely set updated_at with Sequel.
-          @updated_at = (SubmissionJob::TRAVIS_BUILD_STATUS_TIMEOUT - 1).from_now
-          update(:pull_request_number => NEW_PR_NUMBER)
-        end
-
-        def update(attrs)
-          @now ||= Time.now
-          Time.stubs(:now).returns(@updated_at)
-          @job.update(attrs)
-          Time.stubs(:now).returns(@now)
-        end
-
-        # I have no idea why this fails on Travis, but since the ID is good enough to check, we'll
-        # just do that.
-        it "finds those jobs that need an update" do
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.map(&:id).should == [@job.id]
-        end
-
-        it "does not find jobs that have already received a travis build status" do
-          update(:travis_build_success => false)
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
-          update(:travis_build_success => true)
-          SubmissionJob.find_jobs_in_queue_that_need_travis_build_status_updates.should == []
-        end
-
-        # These aren't using actual API response payloads, but the spec/unit/travis_spec.rb specs
-        # verify that these are interchangable for our purposes.
-
-        it "updates only the build URL is not finished yet" do
-          Travis.expects(:pull_requests).yields(Travis.new(fixture_json('TravisCI/pull-request_start_payload.json')))
-          SubmissionJob.update_travis_build_statuses!
-          @job.reload.travis_build_success.should == nil
-          @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
-        end
-
-        it "changes the state to needing work if travis succeeded to build the pull-request" do
-          Travis.expects(:pull_requests).yields(Travis.new(fixture_json('TravisCI/pull-request_success_payload.json')))
-          SubmissionJob.update_travis_build_statuses!
-          @job.reload.travis_build_success.should == true
-          @job.should.needs_to_perform_work
-          @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
-        end
-
-        it "considers the job to have failed if travis reports a build failure" do
-          Travis.expects(:pull_requests).yields(Travis.new(fixture_json('TravisCI/pull-request_failure_payload.json')))
-          SubmissionJob.update_travis_build_statuses!
-          @job.reload.travis_build_success.should == false
-          @job.should.not.needs_to_perform_work
-          @job.should.be.failed
-          @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
-        end
-
-        it "does not fetch all pull-requests from Travis if the build IDs are known" do
-          update(:travis_build_id => 7540815)
-          Travis.expects(:pull_request_with_build_id).with(7540815).returns(Travis.new(fixture_json('TravisCI/pull-request_success_payload.json')))
-          Travis.expects(:pull_requests).never
-          SubmissionJob.update_travis_build_statuses!
-          @job.travis_build_url.should == 'https://travis-ci.org/CocoaPods/Specs/builds/7540815'
-        end
-      end
     end
   end
 end
