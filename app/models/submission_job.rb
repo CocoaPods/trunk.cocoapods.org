@@ -96,9 +96,9 @@ module Pod
           raise TaskError, "This job is marked as not needing to perform work."
         end
 
-        self.class.tasks.each do |options|
-          if needs_to_perform_task?(options)
-            send(options[:method])
+        self.class.tasks.each do |name|
+          if needs_value?(name)
+            send(TASK_NAME_TEMPLATE % name)
             return
           end
         end
@@ -108,8 +108,8 @@ module Pod
 
       def tasks_completed
         count = 0
-        self.class.tasks.each do |options|
-          return count unless has_performed_task?(options)
+        self.class.tasks.each do |name|
+          return count if needs_value?(name)
           count += 1
         end
         count
@@ -119,14 +119,6 @@ module Pod
 
       def needs_value?(attribute)
         send(attribute).nil?
-      end
-
-      def needs_to_perform_task?(options)
-        options[:if] ? send(options[:if]) : needs_value?(options[:name])
-      end
-
-      def has_performed_task?(options)
-        !needs_value?(options[:name])
       end
 
       def self.perform_task(&block)
@@ -160,16 +152,15 @@ module Pod
 
       # Tasks state machine
 
+      TASK_NAME_TEMPLATE = 'perform_task_%s!'
+
       def self.tasks
         @tasks ||= []
       end
 
-      def self.task(name, opts = {}, &block)
-        method = "perform_task_#{name}!"
-        opts[:name] = name
-        opts[:method] = method
-        tasks << opts
-        define_method(method, &block)
+      def self.task(name, &block)
+        tasks << name
+        define_method(TASK_NAME_TEMPLATE % name, &block)
       end
 
       task :base_commit_sha do
