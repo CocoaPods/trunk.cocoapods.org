@@ -23,6 +23,10 @@ def me(base_url, token)
   print_response REST.get("#{base_url}/api/v1/me", 'Content-Type' => 'text/yaml', 'Authorization' => "Token #{token}")
 end
 
+def add_owner(base_url, token, pod, email)
+  print_response REST.put("#{base_url}/api/v1/pods/#{pod}/owners", { 'email' => email }.to_yaml, 'Content-Type' => 'text/yaml', 'Authorization' => "Token #{token}")
+end
+
 def push_spec(base_url, token, spec_path)
   spec = Pod::Specification.from_file(spec_path)
   response = REST.post("#{base_url}/api/v1/pods", spec.to_yaml, 'Content-Type' => 'text/yaml', 'Authorization' => "Token #{token}")
@@ -48,6 +52,8 @@ when ['register', 3]
   register(*ARGV)
 when ['me', 2]
   me(*ARGV)
+when ['add-owner', 4]
+  add_owner(*ARGV)
 when ['push', 3]
   push_spec(*ARGV)
 else
@@ -56,5 +62,6 @@ else
   $stderr.puts "  Register: $ #{File.basename(__FILE__)} register scheme://host:port email name"
   $stderr.puts "        Me: $ #{File.basename(__FILE__)} me scheme://host:port token"
   $stderr.puts "      Push: $ #{File.basename(__FILE__)} push scheme://host:port token /path/to/file.podspec"
+  $stderr.puts " Add Owner: $ #{File.basename(__FILE__)} add-owner scheme://host:port token pod email"
   exit 1
 end
