@@ -20,7 +20,7 @@ Available under the MIT license.
         $ createdb -h localhost trunk_cocoapods_org_development -E UTF8
         $ createdb -h localhost trunk_cocoapods_org_production -E UTF8
 
-5. Test wether or not a
+5. Test whether or not a pod sends correctly
 
         $ ./bin/test-push localhost:4567 spec/fixtures/AFNetworking.podspec
 
