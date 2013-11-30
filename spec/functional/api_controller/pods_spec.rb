@@ -133,15 +133,17 @@ EOYAML
 
     before do
       @version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
+      @version.pod.add_owner(@owner)
       @job = @version.add_submission_job(:specification_data => spec.to_yaml)
     end
 
     it "returns the status of the submission flow" do
       @job.add_log_message(:message => 'Another message')
       get '/pods/AFNetworking/versions/1.2.0'
-      last_response.body.should == @job.log_messages.map do |log_message|
+      messages = @job.log_messages.map do |log_message|
         { log_message.created_at => log_message.message }
-      end.to_yaml
+      end
+      last_response.body.should == { :messages => messages, :owners => [@owner.public_attributes] }.to_yaml
     end
 
     it "returns that the pod version is not yet published" do
