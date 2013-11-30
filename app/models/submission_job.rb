@@ -177,9 +177,8 @@ module Pod
 
       task :new_tree_sha do
         perform_work "Creating new tree based on tree #{base_tree_sha}." do
-          destination_path = File.join(pod_version.pod.name, pod_version.name, "#{pod_version.pod.name}.podspec.yaml")
           update(:new_tree_sha => github.create_new_tree(base_tree_sha,
-                                                         destination_path,
+                                                         pod_version.destination_path,
                                                          specification_data))
         end
       end

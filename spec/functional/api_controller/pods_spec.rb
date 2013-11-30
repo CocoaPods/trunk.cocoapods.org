@@ -159,9 +159,9 @@ EOYAML
     end
 
     it "includes a spec data URL" do
-      @version.update(:published => true, :data_url => 'DATA URL')
+      @version.update(:published => true, :commit_sha => fixture_new_commit_sha)
       get '/pods/AFNetworking/versions/1.2.0'
-      YAML.load(last_response.body)['data_url'].should == 'DATA URL'
+      YAML.load(last_response.body)['data_url'].should == @version.data_url
     end
 
     it "returns that the submission job failed" do
