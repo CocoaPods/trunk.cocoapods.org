@@ -143,7 +143,7 @@ EOYAML
       messages = @job.log_messages.map do |log_message|
         { log_message.created_at => log_message.message }
       end
-      last_response.body.should == { :messages => messages, :owners => [@owner.public_attributes] }.to_yaml
+      last_response.body.should == { 'messages' => messages, 'owners' => [@owner.public_attributes], 'data_url' => nil }.to_yaml
     end
 
     it "returns that the pod version is not yet published" do
@@ -156,6 +156,12 @@ EOYAML
       @version.update(:published => true)
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
+    end
+
+    it "includes a spec data URL" do
+      @version.update(:published => true, :data_url => 'DATA URL')
+      get '/pods/AFNetworking/versions/1.2.0'
+      YAML.load(last_response.body)['data_url'].should == 'DATA URL'
     end
 
     it "returns that the submission job failed" do

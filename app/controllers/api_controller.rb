@@ -129,7 +129,9 @@ module Pod
             # Would have preferred to use 102 instead of 202, but Ruby’s Net::HTTP apperantly does
             # not read the body of a 102 and so the client might have problems reporting status.
             status = job.failed? ? 404 : (version.published? ? 200 : 202)
-            yaml_message(status, :messages => messages, :owners => pod.owners.map(&:public_attributes))
+            yaml_message(status, 'messages' => messages,
+                                 'owners'   => pod.owners.map(&:public_attributes),
+                                 'data_url' => version.data_url)
           end
         end
         error 404
