@@ -51,7 +51,7 @@ module Pod
         super
         case @columns_updated[:succeeded]
         when true
-          pod_version.update(:published => true, :published_by_submission_job => self)
+          pod_version.update(:published => true, :published_by_submission_job => self, :commit_sha => new_commit_sha)
           add_log_message(:message => 'Published.')
         when false
           add_log_message(:message => 'Failed.')

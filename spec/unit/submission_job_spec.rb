@@ -149,6 +149,7 @@ module Pod::TrunkApp
         @job.perform_next_task!
         @version.should.be.published
         @version.published_by_submission_job.should == @job
+        @version.commit_sha.should == fixture_new_commit_sha
         @job.log_messages.last.message.should == "Published."
       end
     end
