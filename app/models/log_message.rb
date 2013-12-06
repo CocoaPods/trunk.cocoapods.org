@@ -7,6 +7,10 @@ module Pod
       plugin :timestamps
 
       many_to_one :submission_job
+
+      def public_attributes
+        { created_at => message }
+      end
     end
   end
 end

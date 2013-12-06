@@ -83,14 +83,17 @@ module Pod
               headers 'Location' => url(version.resource_path)
               yaml_error(409, "Unable to accept duplicate entry for: #{specification}")
             end
-          end
-
-          unless version
+          else
             version = pod.add_version(:name => specification.version)
           end
-          version.add_submission_job(:specification_data => specification.to_yaml, :owner => @owner)
-          headers 'Location' => url(version.resource_path)
-          halt 202
+
+          job = version.add_submission_job(:specification_data => specification.to_yaml, :owner => @owner)
+          if job.submit_specification_data!
+            redirect url(version.resource_path)
+          else
+            yaml_error(500, 'Failed to publish. In case this keeps failing, please open a ticket ' \
+                            'including the name and version at https://github.com/CocoaPods/Specs/issues/new.')
+          end
         end
       end
 
@@ -120,16 +123,10 @@ module Pod
       get '/pods/:name/versions/:version' do
         if pod = Pod.find(:name => params[:name])
           if version = pod.versions_dataset.where(:name => params[:version]).first
+            yaml_error(404, 'Pod version not found.') unless version.published?
             job = version.submission_jobs.last
-            messages = job.log_messages.map do |log_message|
-              { log_message.created_at => log_message.message }
-            end
-            # Would have preferred to use 102 instead of 202, but Ruby’s Net::HTTP apperantly does
-            # not read the body of a 102 and so the client might have problems reporting status.
-            status = job.failed? ? 404 : (version.published? ? 200 : 202)
-            yaml_message(status, 'messages' => messages,
-                                 'owners'   => pod.owners.map(&:public_attributes),
-                                 'data_url' => version.data_url)
+            yaml_message(200, 'messages' => job.log_messages.map(&:public_attributes),
+                              'data_url' => version.data_url)
           end
         end
         error 404

@@ -26,9 +26,11 @@ module Pod::TrunkApp
     end
 
     before do
-      sign_in!
-
       @spec = nil
+
+      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
+
+      sign_in!
       header 'Content-Type', 'text/yaml'
     end
 
@@ -77,18 +79,28 @@ EOYAML
       }
     end
 
+    it "does not allow a push for an existing pod version if it's published" do
+      @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      lambda {
+        post '/pods', spec.to_yaml
+      }.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 409
+      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
+    end
+
     it "creates new pod and version records" do
       lambda {
         lambda {
           post '/pods', spec.to_yaml
         }.should.change { Pod.count }
       }.should.change { PodVersion.count }
-      last_response.status.should == 202
+      last_response.status.should == 302
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
     it "creates a submission job and log message once a new pod version is created" do
+      SubmissionJob.any_instance.expects(:submit_specification_data!).returns(true)
       lambda {
         post '/pods', spec.to_yaml
       }.should.change { SubmissionJob.count }
@@ -97,13 +109,11 @@ EOYAML
       job.specification_data.should == spec.to_yaml
     end
 
-    it "does not allow a push for an existing pod version if it's published" do
-      @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
-      lambda {
-        post '/pods', spec.to_yaml
-      }.should.not.change { Pod.count + PodVersion.count }
-      last_response.status.should == 409
-      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
+    it "does not redirect to the pod version if submitting to GitHub fails" do
+      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(false)
+      post '/pods', spec.to_yaml
+      last_response.status.should == 500
+      last_response.location.should == nil
     end
 
     it "does not allow a push for an existing pod version while a job is in progress" do
@@ -126,7 +136,7 @@ EOYAML
           post '/pods', spec.to_yaml
         }.should.not.change { PodVersion.count }
       }.should.change { SubmissionJob.count }
-      last_response.status.should == 202
+      last_response.status.should == 302
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
@@ -136,44 +146,33 @@ EOYAML
       @job = @version.add_submission_job(:specification_data => spec.to_yaml)
     end
 
-    it "returns the status of the submission flow" do
-      @job.add_log_message(:message => 'Another message')
-      get '/pods/AFNetworking/versions/1.2.0'
-      messages = @job.log_messages.map do |log_message|
-        { log_message.created_at => log_message.message }
-      end
-      last_response.body.should == { 'messages' => messages, 'owners' => [@owner.public_attributes], 'data_url' => nil }.to_yaml
-    end
-
-    it "returns that the pod version is not yet published" do
-      get '/pods/AFNetworking/versions/1.2.0'
-      # last_response.status.should == 102
-      last_response.status.should == 202
-    end
-
-    it "returns that the pod version is published" do
-      @version.update(:published => true)
-      get '/pods/AFNetworking/versions/1.2.0'
-      last_response.status.should == 200
-    end
-
-    it "includes a spec data URL" do
-      @version.update(:published => true, :commit_sha => fixture_new_commit_sha)
-      get '/pods/AFNetworking/versions/1.2.0'
-      YAML.load(last_response.body)['data_url'].should == @version.data_url
-    end
-
-    it "returns that the submission job failed" do
-      @job.update(:succeeded => false)
-      get '/pods/AFNetworking/versions/1.2.0'
-      last_response.status.should == 404
-    end
-
     it "returns a 404 when a pod or version can't be found" do
       get '/pods/AFNetworking/versions/0.2.1'
       last_response.status.should == 404
       get '/pods/FANetworking/versions/1.2.0'
       last_response.status.should == 404
+    end
+
+    it "considers a pod version non-existant if it's not yet published" do
+      get '/pods/AFNetworking/versions/1.2.0'
+      last_response.status.should == 404
+      last_response.body.should == { 'error' => 'Pod version not found.' }.to_yaml
+    end
+
+    it "returns an overview of a published pod version" do
+      @version.update(:published => true)
+      get '/pods/AFNetworking/versions/1.2.0'
+      last_response.status.should == 200
+      last_response.body.should == {
+        'messages' => @job.log_messages.map(&:public_attributes),
+        'data_url' => @version.data_url
+      }.to_yaml
+    end
+
+    it "returns an overview of a pod" do
+      #@version.update(:published => true, :commit_sha => fixture_new_commit_sha)
+      #get '/pods/AFNetworking/versions/1.2.0'
+      #YAML.load(last_response.body)['owners'].should == @version.data_url
     end
   end
 
@@ -191,14 +190,6 @@ EOYAML
         }.should.not.change { Pod.count }
       }.should.not.change { PodVersion.count }
       last_response.status.should == 401
-    end
-
-    it "is allowed to GET status of a pod version" do
-      spec = fixture_specification('AFNetworking.podspec')
-      version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:specification_data => spec.to_yaml)
-      get '/pods/AFNetworking/versions/1.2.0'
-      last_response.status.should == 202
     end
   end
 
