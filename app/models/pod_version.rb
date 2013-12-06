@@ -21,6 +21,10 @@ module Pod
       def data_url
         DATA_URL % [commit_sha, destination_path] if commit_sha
       end
+
+      def resource_path
+        URI.escape("/pods/#{pod.name}/versions/#{name}")
+      end
     end
   end
 end

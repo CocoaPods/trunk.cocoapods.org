@@ -10,7 +10,7 @@ module Pod::TrunkApp
     before do
       @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @pod = Pod.create(:name => 'AFNetworking')
-      @version = PodVersion.create(:pod => @pod, :name => '1.2.0', :url => 'http://host/pods/AFNetworking/versions/1.2.0')
+      @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
       @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'), :owner => @owner)
     end
 

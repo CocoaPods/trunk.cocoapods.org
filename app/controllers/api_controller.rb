@@ -77,21 +77,19 @@ module Pod
             yaml_error(403, 'You are not allowed to push new versions for this pod.')
           end
 
-          # Always set the location of the resource, even when the pod version already exists.
-          resource_url = url("/pods/#{specification.name}/versions/#{specification.version}")
-          headers 'Location' => resource_url
-
           # TODO use a unique index in the DB for this instead?
           if version = pod.versions_dataset.where(:name => specification.version).first
             if version.published? || version.submission_jobs_dataset.where(:succeeded => nil).first
+              headers 'Location' => url(version.resource_path)
               yaml_error(409, "Unable to accept duplicate entry for: #{specification}")
             end
           end
 
           unless version
-            version = pod.add_version(:name => specification.version, :url => resource_url)
+            version = pod.add_version(:name => specification.version)
           end
           version.add_submission_job(:specification_data => specification.to_yaml, :owner => @owner)
+          headers 'Location' => url(version.resource_path)
           halt 202
         end
       end

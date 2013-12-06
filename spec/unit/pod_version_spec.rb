@@ -21,6 +21,10 @@ module Pod::TrunkApp
         @version.commit_sha = 'commit-sha'
         @version.data_url.should == "https://raw.github.com/CocoaPods/Specs/commit-sha/#{@version.destination_path}"
       end
+
+      it "returns the resource path for this version" do
+        @version.resource_path.should == '/pods/AFNetworking/versions/1.2.0'
+      end
     end
   end
 end
