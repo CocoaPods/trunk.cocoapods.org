@@ -27,134 +27,64 @@ module Pod::TrunkApp
       @job.duration.should == 1
     end
 
-    it "takes a job from the queue and performs the next task" do
-      SubmissionJob.any_instance.expects(:perform_next_task!)
-      SubmissionJob.perform_task!.should == true
+    before do
+      @github = @job.class.send(:github)
     end
 
-    it "returns that there was no work to perform if there are no jobs that need work done" do
-      @job.update(:needs_to_perform_work => false)
-      SubmissionJob.any_instance.expects(:perform_next_task!).never
-      SubmissionJob.perform_task!.should == false
+    it "configures the GitHub client" do
+      @github.basic_auth.should == { :username => 'secret', :password => 'x-oauth-basic' }
     end
 
-    it "considers a build failed once the retry count is reached" do
-      @job.update(:attempts => SubmissionJob::RETRY_COUNT)
+    it "initializes with a new state" do
+      @job.should.be.in_progress
+    end
+
+    it "creates log messages before anything else and gets persisted regardless of further errors" do
+      result = @job.perform_work 'A failing task' do
+        @job.update(:commit_sha => 'sha')
+        raise "oh noes!"
+      end
+      result.should == false
+      @job.log_messages.last(2).map(&:message).should == ["A failing task", "Failed with error: oh noes!"]
+      @job.reload.commit_sha.should == nil
+
+      result = @job.perform_work 'A succeeding task' do
+        @job.update(:commit_sha => 'sha')
+      end
+      result.should == true
+      @job.log_messages.last.message.should == "A succeeding task"
+      @job.reload.commit_sha.should == 'sha'
+    end
+
+    it "reports it failed" do
+      @github.stubs(:create_new_commit).raises
+      @job.submit_specification_data!.should == false
       @job.reload.should.be.failed
-      @job.should.not.needs_to_perform_work
+      @job.should.not.be.completed
     end
 
-    describe "concerning submission progress state" do
-      before do
-        @github = @job.send(:github)
-        @github.stubs(:fetch_latest_commit_sha).returns(fixture_base_commit_sha)
-        @github.stubs(:fetch_base_tree_sha).returns(fixture_base_tree_sha)
-        @github.stubs(:create_new_tree).with(fixture_base_tree_sha, DESTINATION_PATH, fixture_read('AFNetworking.podspec')).returns(fixture_new_tree_sha)
-        @github.stubs(:create_new_commit).with(fixture_new_tree_sha, fixture_base_commit_sha, MESSAGE, 'Appie', 'appie@example.com').returns(fixture_new_commit_sha)
-        @github.stubs(:add_commit_to_branch).with(fixture_new_commit_sha, 'master').returns(fixture_add_commit_to_branch)
-      end
-
-      it "configures the GitHub client" do
-        @github.basic_auth.should == { :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic' }
-      end
-
-      it "initializes with a new state" do
-        @job.should.needs_to_perform_work
-        @job.should.be.in_progress
-      end
-
-      it "creates log messages before anything else and gets persisted regardless of further errors" do
-        @job.perform_work 'A failing task' do
-          @job.update(:base_commit_sha => fixture_base_commit_sha)
-          raise "oh noes!"
-        end
-        @job.log_messages.last(2).map(&:message).should == ["A failing task", "Error: oh noes!"]
-        @job.reload.base_commit_sha.should == nil
-
-        @job.perform_work 'A succeeding task' do
-          @job.update(:base_commit_sha => fixture_base_commit_sha)
-        end
-        @job.log_messages.last.message.should == "A succeeding task"
-        @job.reload.base_commit_sha.should == fixture_base_commit_sha
-      end
-
-      it "bumps the attempt count as long as the threshold isn't reached" do
-        SubmissionJob::RETRY_COUNT.times do |i|
-          @job.perform_work "Try #{i+1}" do
-            raise "oh noes!"
-          end
-        end
-        @job.should.be.failed
-        @job.should.not.needs_to_perform_work
-      end
-
-      it "fetches the SHA of the commit this PR will be based on" do
-        @job.perform_next_task!
-        @job.base_commit_sha.should == fixture_base_commit_sha
-        @job.tasks_completed.should == 1
-        @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Fetching latest commit SHA."
-      end
-
-      before do
-        @job.update(:base_commit_sha => fixture_base_commit_sha)
-      end
-
-      it "fetches the SHA of the tree of the base commit" do
-        @job.perform_next_task!
-        @job.base_tree_sha.should == fixture_base_tree_sha
-        @job.tasks_completed.should == 2
-        @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Fetching tree SHA of commit #{fixture_base_commit_sha}."
-      end
-
-      before do
-        @job.update(:base_tree_sha => fixture_base_tree_sha)
-      end
-
-      it "creates a new tree" do
-        @job.perform_next_task!
-        @job.new_tree_sha.should == fixture_new_tree_sha
-        @job.tasks_completed.should == 3
-        @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Creating new tree based on tree #{fixture_base_tree_sha}."
-      end
-
-      before do
-        @job.update(:new_tree_sha => fixture_new_tree_sha)
-      end
-
-      it "creates a new commit" do
-        @job.perform_next_task!
-        @job.new_commit_sha.should == fixture_new_commit_sha
-        @job.tasks_completed.should == 4
-        @job.should.needs_to_perform_work
-        @job.log_messages.last.message.should == "Creating new commit with tree #{fixture_new_tree_sha}."
-      end
-
-      before do
-        @job.update(:new_commit_sha => fixture_new_commit_sha)
-      end
-
-      it "adds a commit to the master branch" do
-        @job.stubs(:after_update)
-        @job.perform_next_task!
-        @job.new_commit_url.should == fixture_add_commit_to_branch
-        @job.tasks_completed.should == 5
-        @job.should.not.needs_to_perform_work
-        @job.log_messages.last.message.should == "Adding commit to master branch #{fixture_new_commit_sha}."
-      end
-
-      it "publishes the pod version once the pull-request has been merged" do
-        @job.perform_next_task!
-        @version.should.be.published
-        @version.published_by_submission_job.should == @job
-        @version.commit_sha.should == fixture_new_commit_sha
-        @job.log_messages.last.message.should == "Published."
-      end
+    before do
+      @github.stubs(:create_new_commit).with(@version.destination_path,
+                                             @job.specification_data,
+                                             MESSAGE,
+                                             'Appie',
+                                             'appie@example.com').returns(fixture_new_commit_sha)
     end
 
-    describe "when the submission flow fails" do
+    it "creates a new commit" do
+      @job.submit_specification_data!.should == true
+      @job.reload.commit_sha.should == fixture_new_commit_sha
+      @job.reload.should.be.completed
+      @job.should.not.be.failed
+      @job.log_messages.first.message.should == 'Submitting specification data to GitHub'
+    end
+
+    it "publishes the pod version once the commit has been created" do
+      @job.submit_specification_data!
+      @version.should.be.published
+      @version.published_by_submission_job.should == @job
+      @version.commit_sha.should == fixture_new_commit_sha
+      @job.log_messages.last.message.should == "Published."
     end
   end
 end

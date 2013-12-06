@@ -49,24 +49,8 @@ class Bacon::Context
     YAML.unsafe_load(fixture_read("GitHub/#{name}.yaml"))
   end
 
-  def fixture_base_commit_sha
-    @@fixture_base_commit_sha ||= JSON.parse(fixture_response('fetch_latest_commit_sha').body)['object']['sha']
-  end
-
-  def fixture_base_tree_sha
-    @@fixture_base_tree_sha ||= JSON.parse(fixture_response('fetch_base_tree_sha').body)['tree']['sha']
-  end
-
-  def fixture_new_tree_sha
-    @@fixture_new_tree_sha ||= JSON.parse(fixture_response('create_new_tree').body)['sha']
-  end
-
   def fixture_new_commit_sha
     @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['content']['sha']
-  end
-
-  def fixture_add_commit_to_branch
-    @@fixture_add_commit_to_branch ||= JSON.parse(fixture_response('add_commit_to_branch').body)['object']['url']
   end
 
   alias_method :run_requirement_before_sequel, :run_requirement
