@@ -62,7 +62,7 @@ class Bacon::Context
   end
 
   def fixture_new_commit_sha
-    @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['sha']
+    @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['content']['sha']
   end
 
   def fixture_add_commit_to_branch

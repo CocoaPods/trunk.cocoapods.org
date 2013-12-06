@@ -1,69 +1,38 @@
 require 'rest'
 require 'json'
+require 'uri'
+require 'base64'
 
 module Pod
   module TrunkApp
     class GitHub
       BASE_URL = "https://api.github.com/repos/%s".freeze
       HEADERS  = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
+      BRANCH   = 'master'
 
       attr_reader :basic_auth
 
       # `repo_name` should be in the form of 'owner/repo'.
-      def initialize(repo_name, base_branch_ref, basic_auth)
-        @base_url = BASE_URL % repo_name
-        @base_branch_ref, @basic_auth = base_branch_ref, basic_auth
+      def initialize(repo_name, basic_auth)
+        @base_url   = BASE_URL % repo_name
+        @basic_auth = basic_auth
       end
 
-      def fetch_latest_commit_sha
-        rest(:get, "git/#{branch_ref(@base_branch_ref)}")['object']['sha']
-      end
-
-      def fetch_base_tree_sha(commit_sha)
-        rest(:get, "git/commits/#{commit_sha}")['tree']['sha']
-      end
-
-      def create_new_tree(base_tree_sha, destination_path, data)
-        rest(:post, 'git/trees', {
-          :base_tree => base_tree_sha,
-          :tree => [{
-            :encoding => 'utf-8',
-            :mode     => '100644',
-            :path     => destination_path,
-            :content  => data
-          }]
-        })['sha']
-      end
-
-      def create_new_commit(new_tree_sha, base_commit_sha, message, author_name, author_email)
-        rest(:post, 'git/commits', {
-          :parents   => [base_commit_sha],
-          :tree      => new_tree_sha,
+      def create_new_commit(destination_path, data, message, author_name, author_email)
+        rest(:put, File.join('contents', URI.escape(destination_path)), {
           :message   => message,
-          :author => {
-            :name  => author_name,
-            :email => author_email,
-          },
-          :committer => {
-            :name  => ENV['GH_USERNAME'],
-            :email => ENV['GH_EMAIL'],
-          },
-        })['sha']
-      end
-
-      def add_commit_to_branch(new_commit_sha, branch_name)
-        rest(:patch, "git/#{branch_ref(branch_name)}", :sha => new_commit_sha)['object']['url']
-      end
-
-      private
-
-      def branch_ref(name)
-        "refs/heads/#{name}"
+          :branch    => BRANCH,
+          :content   => Base64.encode64(data).delete("\r\n"),
+          :author    => { :name => author_name,        :email => author_email },
+          :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
+        })['content']['sha']
       end
 
       def url_for(path)
         File.join(@base_url, path)
       end
+
+      private
 
       def rest(method, path, body = nil)
         response = perform_request(method, path, body)
