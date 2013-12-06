@@ -15,7 +15,7 @@ module Pod
       alias_method :published?, :published
 
       def destination_path
-        File.join(pod.name, name, "#{pod.name}.podspec.yaml")
+        File.join('Specs', pod.name, name, "#{pod.name}.podspec.yaml")
       end
 
       def data_url
