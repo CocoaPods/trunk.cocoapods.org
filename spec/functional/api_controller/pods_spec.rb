@@ -95,7 +95,6 @@ EOYAML
       job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
       job.owner.should == @owner
       job.specification_data.should == spec.to_yaml
-      job.log_messages.map(&:message).should == ['Submitted.']
     end
 
     it "does not allow a push for an existing pod version if it's published" do
