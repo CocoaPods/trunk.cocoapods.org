@@ -50,7 +50,7 @@ class Bacon::Context
   end
 
   def fixture_new_commit_sha
-    @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['content']['sha']
+    @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['commit']['sha']
   end
 
   alias_method :run_requirement_before_sequel, :run_requirement

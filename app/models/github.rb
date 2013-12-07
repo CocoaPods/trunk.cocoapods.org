@@ -25,7 +25,7 @@ module Pod
           :content   => Base64.encode64(data).delete("\r\n"),
           :author    => { :name => author_name,        :email => author_email },
           :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
-        })['content']['sha']
+        })['commit']['sha']
       end
 
       def url_for(path)
