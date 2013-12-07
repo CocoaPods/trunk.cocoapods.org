@@ -88,17 +88,18 @@ module Pod
       post '/pods' do
         if owner?
           specification = SpecificationWrapper.from_yaml(request.body.read)
-
           if specification.nil?
             yaml_error(400, 'Unable to load a Pod Specification from the provided input.')
           end
-
           unless specification.valid?
             yaml_error(422, specification.validation_errors)
           end
 
-          pod = Pod.find_or_create_by_name_and_owner(specification.name, @owner) do
+          pod = Pod.find_by_name_and_owner(specification.name, @owner) do
             yaml_error(403, 'You are not allowed to push new versions for this pod.')
+          end
+          unless pod
+            pod = Pod.create(:name => specification.name)
           end
 
           # TODO use a unique index in the DB for this instead?

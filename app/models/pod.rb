@@ -11,20 +11,18 @@ module Pod
 
       # Finds a pod by name.
       #
-      # If the owner does not have access to the pod, the block is yielded.
+      # If the pod has no owner yet it is returned. If, however, the pod has
+      # owners but the specified user is not one of the owners the 'no access
+      # allowed' block will be called.
       def self.find_by_name_and_owner(name, owner)
         if pod = find(:name => name)
-          if pod.owners.include?(owner)
+          if pod.owners.empty? || pod.owners.include?(owner)
             return pod
           else
             yield if block_given?
           end
         end
         nil
-      end
-
-      def self.find_or_create_by_name_and_owner(name, owner, &block)
-        find_by_name_and_owner(name, owner, &block) || owner.add_pod(:name => name)
       end
     end
   end

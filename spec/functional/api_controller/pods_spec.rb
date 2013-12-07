@@ -219,15 +219,6 @@ EOYAML
       sign_in!
     end
 
-    it "allows a push for an non-existing pod and makes the authenticated user the owner" do
-      lambda {
-        lambda {
-          post '/pods', spec.to_yaml
-        }.should.change { Pod.count }
-      }.should.change { PodVersion.count }
-      Pod.find(:name => spec.name).owners.should == [@owner]
-    end
-
     it "allows a push for an existing pod owned by the authenticated owner" do
       @owner.add_pod(:name => spec.name)
       lambda {

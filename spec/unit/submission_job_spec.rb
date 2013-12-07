@@ -86,5 +86,10 @@ module Pod::TrunkApp
       @version.commit_sha.should == fixture_new_commit_sha
       @job.log_messages.last.message.should == "Published."
     end
+
+    it "adds the submitter as the owner of the pod if the pod has no owners yet" do
+      @job.submit_specification_data!
+      @pod.reload.owners.should == [@owner]
+    end
   end
 end
