@@ -14,6 +14,10 @@ module Pod
 
       alias_method :published?, :published
 
+      def public_attributes
+        { 'created_at' => created_at, 'name' => name }
+      end
+
       def destination_path
         File.join('Specs', pod.name, name, "#{pod.name}.podspec.yaml")
       end

@@ -16,22 +16,35 @@ module Fixtures
   end
 end
 
-module Pod::TrunkApp
-  describe APIController, "with an authenticated owner" do
-    extend SpecHelpers::Authentication
-    extend SpecHelpers::Response
-
-    def spec
-      @spec ||= fixture_specification('AFNetworking.podspec')
+module SpecHelpers::APIController
+  def self.extended(context)
+    context.send(:extend, SpecHelpers::Authentication)
+    context.send(:extend, SpecHelpers::Response)
+    context.before do
+      header 'Content-Type', 'text/yaml'
+      @spec = @pod = @version = @job = @owner = nil
     end
+  end
+
+  def spec
+    @spec ||= fixture_specification('AFNetworking.podspec')
+  end
+
+  def create_pod_version!
+    @pod = Pod::TrunkApp::Pod.create(:name => spec.name)
+    @pod.add_owner(@owner) if @owner
+    @version = @pod.add_version(:name => spec.version.to_s)
+    @job = @version.add_submission_job(:specification_data => spec.to_yaml)
+  end
+end
+
+module Pod::TrunkApp
+  describe APIController, "when POSTing pod versions with an authenticated owner" do
+    extend SpecHelpers::APIController
 
     before do
-      @spec = nil
-
       SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
-
       sign_in!
-      header 'Content-Type', 'text/yaml'
     end
 
     it "only accepts YAML" do
@@ -139,18 +152,47 @@ EOYAML
       last_response.status.should == 302
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
+  end
+
+  describe APIController, "with an unauthenticated consumer" do
+    extend SpecHelpers::APIController
+
+    it "is not allowed to post a new pod" do
+      lambda {
+        lambda {
+          post '/pods', spec.to_yaml
+        }.should.not.change { Pod.count }
+      }.should.not.change { PodVersion.count }
+      last_response.status.should == 401
+    end
 
     before do
-      @version = Pod.create(:name => spec.name).add_version(:name => spec.version.to_s)
-      @version.pod.add_owner(@owner)
-      @job = @version.add_submission_job(:specification_data => spec.to_yaml)
+      create_pod_version!
     end
 
     it "returns a 404 when a pod or version can't be found" do
-      get '/pods/AFNetworking/versions/0.2.1'
-      last_response.status.should == 404
       get '/pods/FANetworking/versions/1.2.0'
       last_response.status.should == 404
+      get '/pods/AFNetworking/versions/0.2.1'
+      last_response.status.should == 404
+    end
+
+    it "considers a pod non-existant if no version is published yet" do
+      get '/pods/AFNetworking'
+      last_response.status.should == 404
+      last_response.body.should == { 'error' => 'Pod not found.' }.to_yaml
+    end
+
+    it "returns an overview of a pod including only the published versions" do
+      create_session_with_owner
+      @pod.add_owner(@owner)
+      @pod.add_version(:name => '0.2.1', :published => false)
+      @version.update(:published => true)
+      get '/pods/AFNetworking'
+      last_response.body.should == {
+        'versions' => [@version.public_attributes],
+        'owners' => [@owner.public_attributes],
+      }.to_yaml
     end
 
     it "considers a pod version non-existant if it's not yet published" do
@@ -168,45 +210,16 @@ EOYAML
         'data_url' => @version.data_url
       }.to_yaml
     end
-
-    it "returns an overview of a pod" do
-      #@version.update(:published => true, :commit_sha => fixture_new_commit_sha)
-      #get '/pods/AFNetworking/versions/1.2.0'
-      #YAML.load(last_response.body)['owners'].should == @version.data_url
-    end
-  end
-
-  describe APIController, "an unauthenticated consumer" do
-    before do
-      @email = 'jenny@example.com'
-      header 'Content-Type', 'text/yaml'
-    end
-
-    it "is not allowed to post a new pod" do
-      spec = fixture_specification('AFNetworking.podspec')
-      lambda {
-        lambda {
-          post '/pods', spec.to_yaml
-        }.should.not.change { Pod.count }
-      }.should.not.change { PodVersion.count }
-      last_response.status.should == 401
-    end
   end
 
   describe APIController, "concerning authorization" do
-    extend SpecHelpers::Authentication
-    extend SpecHelpers::Response
-
-    def spec
-      @spec ||= fixture_specification('AFNetworking.podspec')
-    end
+    extend SpecHelpers::APIController
 
     before do
       sign_in!
-      header 'Content-Type', 'text/yaml'
     end
 
-    it "allows a push for an non-existing pod and makes the authenticated owner the owner" do
+    it "allows a push for an non-existing pod and makes the authenticated user the owner" do
       lambda {
         lambda {
           post '/pods', spec.to_yaml

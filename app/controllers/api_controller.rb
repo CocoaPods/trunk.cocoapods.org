@@ -61,6 +61,30 @@ module Pod
 
       # --- Pods ----------------------------------------------------------------------------------
 
+      get '/pods/:name' do
+        if pod = Pod.find(:name => params[:name])
+          versions = pod.versions_dataset.where(:published => true).to_a
+          unless versions.empty?
+            yaml_message(200, 'versions' => versions.map(&:public_attributes),
+                              'owners'   => pod.owners.map(&:public_attributes))
+          end
+        end
+        yaml_error(404, 'Pod not found.')
+      end
+
+      get '/pods/:name/versions/:version' do
+        if pod = Pod.find(:name => params[:name])
+          if version = pod.versions_dataset.where(:name => params[:version]).first
+            if version.published?
+              job = version.submission_jobs.last
+              yaml_message(200, 'messages' => job.log_messages.map(&:public_attributes),
+                                'data_url' => version.data_url)
+            end
+          end
+        end
+        yaml_error(404, 'Pod version not found.')
+      end
+
       post '/pods' do
         if owner?
           specification = SpecificationWrapper.from_yaml(request.body.read)
@@ -118,18 +142,6 @@ module Pod
           pod.add_owner(other_owner)
           yaml_message(200, pod.owners.map(&:public_attributes))
         end
-      end
-
-      get '/pods/:name/versions/:version' do
-        if pod = Pod.find(:name => params[:name])
-          if version = pod.versions_dataset.where(:name => params[:version]).first
-            yaml_error(404, 'Pod version not found.') unless version.published?
-            job = version.submission_jobs.last
-            yaml_message(200, 'messages' => job.log_messages.map(&:public_attributes),
-                              'data_url' => version.data_url)
-          end
-        end
-        error 404
       end
     end
   end
