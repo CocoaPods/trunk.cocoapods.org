@@ -34,14 +34,13 @@ module Pod
 
       private
 
-      def rest(method, path, body = nil)
+      def rest(method, path, body)
         response = perform_request(method, path, body)
         JSON.parse(response.body) if response.body
       end
 
-      def perform_request(method, path, body = nil)
-        args = [method, url_for(path), (body.to_json if body), HEADERS, @basic_auth].compact
-        response = REST.send(*args)
+      def perform_request(method, path, body)
+        response = REST.send(method, url_for(path), body.to_json, HEADERS, @basic_auth)
         # TODO Make this pretty mkay
         if (400...600).include?(response.status_code)
           raise "[#{response.status_code}] #{response.headers.inspect} – #{response.body}}"
