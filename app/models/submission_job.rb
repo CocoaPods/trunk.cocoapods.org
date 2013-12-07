@@ -47,11 +47,8 @@ module Pod
 
       protected
 
-      REPO       = ENV['GH_REPO'].dup.freeze
-      BASIC_AUTH = { :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic' }.freeze
-
       def self.github
-        @github ||= GitHub.new(REPO, BASIC_AUTH)
+        @github ||= GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
       end
 
       def self.perform_work(&block)
