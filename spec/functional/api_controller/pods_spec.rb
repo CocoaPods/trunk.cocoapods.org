@@ -180,7 +180,7 @@ EOYAML
     it "considers a pod non-existant if no version is published yet" do
       get '/pods/AFNetworking'
       last_response.status.should == 404
-      last_response.body.should == { 'error' => 'Pod not found.' }.to_yaml
+      last_response.body.should == { 'error' => 'No pod found with the specified name.' }.to_yaml
     end
 
     it "returns an overview of a pod including only the published versions" do
@@ -198,7 +198,7 @@ EOYAML
     it "considers a pod version non-existant if it's not yet published" do
       get '/pods/AFNetworking/versions/1.2.0'
       last_response.status.should == 404
-      last_response.body.should == { 'error' => 'Pod version not found.' }.to_yaml
+      last_response.body.should == { 'error' => 'No pod found with the specified version.' }.to_yaml
     end
 
     it "returns an overview of a published pod version" do
@@ -251,7 +251,7 @@ EOYAML
     it "adds an owner to the pod's owners" do
       pod = @owner.add_pod(:name => spec.name)
       other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
-      put '/pods/AFNetworking/owners', { 'email' => other_owner.email }.to_yaml
+      patch '/pods/AFNetworking/owners', { 'email' => other_owner.email }.to_yaml
       last_response.status.should == 200
       pod.owners.should == [@owner, other_owner]
     end
@@ -259,7 +259,7 @@ EOYAML
     it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
       other_owner = Owner.create(:email => 'jenny@example.com')
       pod = other_owner.add_pod(:name => spec.name)
-      put '/pods/AFNetworking/owners', { 'email' => @owner.email }.to_yaml
+      patch '/pods/AFNetworking/owners', { 'email' => @owner.email }.to_yaml
       last_response.status.should == 403
       pod.owners.should == [other_owner]
     end

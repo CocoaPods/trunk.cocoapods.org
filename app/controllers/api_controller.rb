@@ -69,7 +69,7 @@ module Pod
                               'owners'   => pod.owners.map(&:public_attributes))
           end
         end
-        yaml_error(404, 'Pod not found.')
+        yaml_error(404, 'No pod found with the specified name.')
       end
 
       get '/pods/:name/versions/:version' do
@@ -82,7 +82,7 @@ module Pod
             end
           end
         end
-        yaml_error(404, 'Pod version not found.')
+        yaml_error(404, 'No pod found with the specified version.')
       end
 
       post '/pods' do
@@ -121,7 +121,7 @@ module Pod
         end
       end
 
-      put '/pods/:name/owners' do
+      patch '/pods/:name/owners' do
         if owner?
           pod = Pod.find_by_name_and_owner(params[:name], @owner) do
             yaml_error(403, 'You are not allowed to add owners to this pod.')
