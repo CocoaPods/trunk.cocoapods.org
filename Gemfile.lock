@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/CocoaPods/Core.git
-  revision: 88f665e11b1e9632e328aeee1b244a68adff89a3
+  revision: e82b1c846c85486f725fab849ec0d1bab5631dc7
   specs:
     cocoapods-core (0.28.0)
       activesupport (>= 3.2.15, < 4)
@@ -50,9 +50,9 @@ GEM
       mocha (>= 0.13.0)
     multi_json (1.8.2)
     nap (0.6.0)
-    newrelic_rpm (3.7.0.177)
+    newrelic_rpm (3.7.1.180)
     notify (0.5.2)
-    pg (0.17.0)
+    pg (0.17.1)
     polyglot (0.3.3)
     rack (1.5.2)
     rack-protection (1.5.1)
@@ -61,9 +61,9 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    rake (10.1.0)
+    rake (10.1.1)
     rb-fsevent (0.9.3)
-    rb-inotify (0.9.2)
+    rb-inotify (0.9.3)
       ffi (>= 0.5.0)
     rb-kqueue (0.2.0)
       ffi (>= 0.5.0)
