@@ -69,7 +69,7 @@ class Bacon::Context
   end
 
   def fixture_response(name)
-    YAML.unsafe_load(fixture_read("GitHub/#{name}.yaml"))
+    YAML.load(fixture_read("GitHub/#{name}.yaml"))
   end
 
   def fixture_new_commit_sha

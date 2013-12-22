@@ -67,7 +67,6 @@ GEM
       ffi (>= 0.5.0)
     rb-kqueue (0.2.0)
       ffi (>= 0.5.0)
-    safe_yaml (0.9.7)
     saga (0.10.0)
       activesupport (>= 2.3)
       erubis (>= 2.6)
@@ -105,7 +104,6 @@ DEPENDENCIES
   rack-ssl
   rack-test
   rake
-  safe_yaml
   saga
   sequel
   sinatra
