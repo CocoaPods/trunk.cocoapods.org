@@ -94,7 +94,7 @@ module Pod::TrunkApp
       }.should.change { SubmissionJob.count }
       job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
       job.owner.should == @owner
-      job.specification_data.should == spec.to_json
+      job.specification_data.should == JSON.pretty_generate(spec)
     end
 
     it "does not redirect to the pod version if submitting to GitHub fails" do

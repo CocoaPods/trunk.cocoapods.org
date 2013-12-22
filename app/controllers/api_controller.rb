@@ -117,7 +117,7 @@ module Pod
             version = pod.add_version(:name => specification.version)
           end
 
-          job = version.add_submission_job(:specification_data => specification.to_json, :owner => @owner)
+          job = version.add_submission_job(:specification_data => JSON.pretty_generate(specification), :owner => @owner)
           if job.submit_specification_data!
             redirect url(version.resource_path)
           else
