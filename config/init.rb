@@ -9,6 +9,9 @@ ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_EN
 require 'active_support/core_ext/numeric/time'
 require 'active_support/core_ext/date/calculations'
 
+# Explicitely load the C-ext version.
+require 'json/ext'
+
 if !defined?(IRB) && ENV['RACK_ENV'] == 'production'
   require 'newrelic_rpm'
 end

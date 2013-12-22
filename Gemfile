@@ -3,6 +3,7 @@ ruby '2.0.0'
 
 gem 'activesupport'
 gem 'cocoapods-core', :git => 'git://github.com/CocoaPods/Core.git'
+gem 'json', '~> 1.8'
 gem 'mail'
 gem 'nap', '>= 0.6'
 gem 'pg'
