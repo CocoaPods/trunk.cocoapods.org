@@ -23,6 +23,29 @@ Dir.glob(File.join(ROOT, 'spec/spec_helper/**/*.rb')).each do |filename|
   require File.join('spec_helper', File.basename(filename, '.rb'))
 end
 
+module Bacon
+  module BacktraceFilter
+    def handle_summary
+      ErrorLog.gsub!(/\t(.+?)\n/) do |line|
+        if $1.start_with?('/')
+          downcased = $1.downcase
+          if downcased.include?('cocoapods') && !downcased.include?('spec/spec_helper')
+            line
+          else
+            ''
+          end
+        else
+          # always include relative paths
+          line
+        end
+      end
+      super
+    end
+  end
+
+  extend BacktraceFilter
+end
+
 class Bacon::Context
   def test_controller!(app)
     extend Rack::Test::Methods
