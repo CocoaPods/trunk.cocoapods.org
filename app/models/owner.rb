@@ -18,8 +18,8 @@ module Pod
         attributes
       end
 
-      def to_yaml
-        public_attributes.to_yaml
+      def to_json(*a)
+        public_attributes.to_json(*a)
       end
 
       def self.normalize_email(email)

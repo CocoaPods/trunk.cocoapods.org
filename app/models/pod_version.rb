@@ -19,7 +19,7 @@ module Pod
       end
 
       def destination_path
-        File.join('Specs', pod.name, name, "#{pod.name}.podspec.yaml")
+        File.join('Specs', pod.name, name, "#{pod.name}.podspec.json")
       end
 
       def data_url

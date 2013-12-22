@@ -30,8 +30,8 @@ module Pod
         { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }
       end
 
-      def to_yaml
-        public_attributes.to_yaml
+      def to_json(*a)
+        public_attributes.to_json(*a)
       end
 
       def valid_for=(duration_in_days)

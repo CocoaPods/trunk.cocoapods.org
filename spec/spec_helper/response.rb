@@ -1,7 +1,7 @@
 module SpecHelpers
   module Response
-    def yaml_response
-      YAML.load(last_response.body)
+    def json_response
+      JSON.parse(last_response.body)
     end
   end
 end

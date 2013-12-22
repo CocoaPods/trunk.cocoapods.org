@@ -8,20 +8,20 @@ module Pod::TrunkApp
     before do
       @name = 'Jenny'
       @email = 'jenny@example.com'
-      header 'Content-Type', 'text/yaml'
+      header 'Content-Type', 'application/json; charset=utf-8'
     end
 
     it "sees a useful error message when posting blank owner data" do
       post '/register'
       last_response.status.should == 422
-      yaml = yaml_response
-      yaml.keys.should == %w(error)
-      yaml['error'].should == "Please send the owner email address in the body of your post."
+      json = json_response
+      json.keys.should == %w(error)
+      json['error'].should == "Please send the owner email address in the body of your post."
     end
 
     it "creates a new owner on first registration" do
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+        post '/register', { 'email' => @email, 'name' => @name }.to_json
       }.should.change { Owner.count }
       last_response.status.should == 201
 
@@ -32,14 +32,14 @@ module Pod::TrunkApp
 
     it "creates a new session on first registration" do
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+        post '/register', { 'email' => @email, 'name' => @name }.to_json
       }.should.change { Session.count }
       last_response.status.should == 201
 
       session = Owner.find_by_email(@email).sessions_dataset.valid.last
-      yaml_response['token'].should == session.token
-      yaml_response['valid_until'].should == session.valid_until
-      yaml_response['verified'].should == false
+      json_response['token'].should == session.token
+      json_response['valid_until'].should == session.valid_until.to_s
+      json_response['verified'].should == false
     end
 
     it "creates only a new session on subsequent registrations" do
@@ -47,7 +47,7 @@ module Pod::TrunkApp
       owner.add_session({})
       lambda {
         lambda {
-          post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+          post '/register', { 'email' => @email, 'name' => @name }.to_json
         }.should.not.change { Owner.count }
       }.should.change { Session.count }
       owner.reload.sessions.size.should == 2
@@ -55,7 +55,7 @@ module Pod::TrunkApp
 
     it "sends an email with the session verification link" do
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_yaml
+        post '/register', { 'email' => @email, 'name' => @name }.to_json
       }.should.change { Mail::TestMailer.deliveries.size }
       last_response.status.should == 201
 
@@ -95,7 +95,7 @@ module Pod::TrunkApp
     end
 
     before do
-      header 'Content-Type', 'text/yaml'
+      header 'Content-Type', 'text/json'
     end
 
     it "shows an overview of all active sessions" do
@@ -105,7 +105,7 @@ module Pod::TrunkApp
 
       get '/sessions'
       last_response.status.should == 200
-      yaml_response.should == owner.sessions.map(&:public_attributes)
+      json_response.should == JSON.parse(owner.sessions.map(&:public_attributes).to_json)
     end
 
     it "clears all active sessions except the currently used one" do
@@ -118,7 +118,7 @@ module Pod::TrunkApp
       last_response.status.should == 200
 
       owner.sessions.should == [session.reload]
-      yaml_response.should == session.public_attributes
+      json_response.should == JSON.parse(session.public_attributes.to_json)
     end
 
     it "prolongs a session each time it's required" do
@@ -134,7 +134,7 @@ module Pod::TrunkApp
     extend SpecHelpers::Authentication
 
     before do
-      header 'Content-Type', 'text/yaml'
+      header 'Content-Type', 'application/json; charset=utf-8'
     end
 
     it "allows access with a valid verified session belonging to an owner" do
@@ -146,13 +146,13 @@ module Pod::TrunkApp
     it "does not allow access when no authentication token is supplied" do
       get '/me'
       last_response.status.should == 401
-      yaml_response.should == "Please supply an authentication token."
+      json_response['error'].should == "Please supply an authentication token."
     end
 
     it "does not allow access when an invalid authentication token is supplied" do
       get '/me', nil, { 'HTTP_AUTHORIZATION' => 'Token invalid' }
       last_response.status.should == 401
-      yaml_response.should == "Authentication token is invalid or unverified."
+      json_response['error'].should == "Authentication token is invalid or unverified."
     end
 
     it "does not allow access when an unverified authentication token is supplied" do
@@ -160,7 +160,7 @@ module Pod::TrunkApp
       session.update(:verified => false)
       get '/me', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
       last_response.status.should == 401
-      yaml_response.should == "Authentication token is invalid or unverified."
+      json_response['error'].should == "Authentication token is invalid or unverified."
     end
   end
 end

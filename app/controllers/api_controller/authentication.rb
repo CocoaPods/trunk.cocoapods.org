@@ -22,9 +22,9 @@ module Pod
         if @owner
           return true
         elsif authentication_token.blank?
-          error(401, "Please supply an authentication token.".to_yaml)
+          error(401, { 'error' => 'Please supply an authentication token.' }.to_json)
         else
-          error(401, "Authentication token is invalid or unverified.".to_yaml)
+          error(401, { 'error' => 'Authentication token is invalid or unverified.' }.to_json)
         end
         false
       end

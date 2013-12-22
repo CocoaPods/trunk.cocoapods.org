@@ -14,7 +14,7 @@ module Pod::TrunkApp
       end
 
       it "returns the destination path in the repo" do
-        @version.destination_path.should == 'Specs/AFNetworking/1.2.0/AFNetworking.podspec.yaml'
+        @version.destination_path.should == 'Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
       end
 
       it "returns a URL from where the spec data can be retrieved" do

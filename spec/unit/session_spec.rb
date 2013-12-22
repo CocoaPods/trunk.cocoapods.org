@@ -76,9 +76,9 @@ module Pod::TrunkApp
       end
     end
 
-    it "coerces to YAML" do
-      yaml = YAML.load(Session.new.to_yaml)
-      yaml.keys.sort.should == %w(created_at token valid_until verified)
+    it "coerces to JSON" do
+      json = JSON.parse(Session.new.to_json)
+      json.keys.sort.should == %w(created_at token valid_until verified)
     end
 
     it "extends the validity" do

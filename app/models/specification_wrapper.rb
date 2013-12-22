@@ -3,11 +3,14 @@ require 'cocoapods-core'
 module Pod
   module TrunkApp
     class SpecificationWrapper
-      def self.from_yaml(yaml)
-        hash = YAML.safe_load(yaml)
+      def self.from_json(json)
+        hash = JSON.parse(json)
         if hash.is_a?(Hash)
           new(Specification.from_hash(hash))
         end
+      rescue JSON::ParserError
+        # TODO report error?
+        nil
       end
 
       def initialize(specification)
@@ -26,8 +29,8 @@ module Pod
         @specification.to_s
       end
 
-      def to_yaml
-        @specification.to_yaml
+      def to_json(*a)
+        @specification.to_json(*a)
       end
 
       def valid?
