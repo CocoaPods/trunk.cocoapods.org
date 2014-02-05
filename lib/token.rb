@@ -1,24 +1,33 @@
+require 'securerandom'
+
 class Token
-  DEFAULT_LENGTH = 16
+  class CollisionError < StandardError; end
 
-  srand
+  MAX_COLLISIONS = 10
 
-  # Generates a random token
+  # Generates a random token and verifies it by yielding it to a block until
+  # the return value of that block is `false` or `nil`.
   #
-  # The generated hexadecimal tokens are seeded with:
-  # * The current time
-  # * Random number between 0 and 1 (Kernel::rand)
-  # * The current process ID
+  # The `length` should be an even amount and currently defaults to 32.
   #
-  # By default the generated token will be 16 characters long, override this by
-  # setting the <tt>:length</tt> option.
-  #
-  # Because of the universe, _and_ the fact that the tokens are cut off at the
-  # +token_length+, there’s a slight chance that a token isn’t unique. Pesky
-  # universe!
-  def self.generate(options={})
-    length = options[:length] || DEFAULT_LENGTH
-    token = Digest::SHA1.hexdigest("#{Time.now}-#{Time.now.usec}-#{rand}-#{Process.pid}")
-    token[0, length]
+  def self.generate(length = nil, raise_after_collisions = MAX_COLLISIONS)
+    # SecureRandom generates strings twice the size.
+    length /= 2 if length
+    count = 0
+    token = nil
+    loop do
+      token = SecureRandom.hex(length)
+      collision = yield(token)
+      if collision
+        count += 1
+        if count == raise_after_collisions
+          raise CollisionError, "#{raise_after_collisions} number of " \
+            "collisions have occurred while generating a token."
+        end
+      else
+        break
+      end
+    end
+    token
   end
 end
