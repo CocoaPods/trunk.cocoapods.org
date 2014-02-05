@@ -23,6 +23,7 @@ end
 # Now load subclass controllers.
 require 'app/controllers/api_controller'
 require 'app/controllers/manage_controller'
+require 'app/controllers/claim_controller'
 
 # And assemble base routes to controllers map.
 module Pod
@@ -30,6 +31,7 @@ module Pod
     App = Rack::URLMap.new(
       '/api/v1' => APIController,
       '/manage' => ManageController,
+      '/claim' => ClaimController,
     )
   end
 end
