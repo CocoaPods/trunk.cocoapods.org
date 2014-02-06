@@ -6,6 +6,14 @@ module Pod::TrunkApp
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
     end
 
+    describe "concerning validations" do
+      it "raises if for whatever reason a duplicate email gets inserted into the DB" do
+        should.raise Sequel::UniqueConstraintViolation do
+          Owner.create(:email => 'jenny@example.com', :name => 'Penny')
+        end
+      end
+    end
+
     describe "in general" do
       it "coerces to JSON" do
         json = JSON.parse(@owner.to_json)
