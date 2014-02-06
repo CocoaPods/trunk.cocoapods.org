@@ -20,9 +20,9 @@ module Pod
       def after_initialize
         super
         if new?
-          self.valid_for = VALIDITY_LENGTH
-          self.token = Token.generate(TOKEN_LENGTH) { |t| Session.find(:token => t) }
-          self.verification_token = Token.generate(VERIFICATION_TOKEN_LENGTH) { |t| Session.find(:verification_token => t) }
+          self.valid_for = VALIDITY_LENGTH unless self.valid_until
+          self.token ||= Token.generate(TOKEN_LENGTH) { |t| Session.find(:token => t) }
+          self.verification_token ||= Token.generate(VERIFICATION_TOKEN_LENGTH) { |t| Session.find(:verification_token => t) }
         end
       end
 

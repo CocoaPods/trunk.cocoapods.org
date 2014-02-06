@@ -20,6 +20,17 @@ module Pod::TrunkApp
       end
     end
 
+    describe "concerning validations" do
+      %w{ token verification_token }.each do |attr|
+        it "raises if for whatever reason a duplicate #{attr} gets inserted into the DB" do
+          Session.create(attr => 'secret')
+          should.raise Sequel::UniqueConstraintViolation do
+            Session.create(attr => 'secret')
+          end
+        end
+      end
+    end
+
     describe "finders" do
       before do
         @session = Session.create(:verified => true)
