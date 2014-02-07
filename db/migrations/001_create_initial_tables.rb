@@ -1,3 +1,5 @@
+# TODO
+# * Add NOT NULL constraints to all timestamp fields.
 Sequel.migration do
   change do
     create_table :pods do
