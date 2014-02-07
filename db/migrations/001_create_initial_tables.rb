@@ -1,95 +1,85 @@
-# TODO
-# * Add NOT NULL constraints to all timestamp fields.
-# * Normalize: sequel -d DB_URL > db/migrations/001_create_initial_tables.rb
 Sequel.migration do
   change do
-    create_table :pods do
+    create_table(:owners, :ignore_index_errors=>true) do
       primary_key :id
-
-      column :name,               :varchar
-      column :created_at,         :timestamp
-      column :updated_at,         :timestamp
-
-      index :name
+      String :email, :size=>255, :null=>false
+      String :name, :size=>255, :null=>false
+      DateTime :created_at
+      DateTime :updated_at
+      
+      index [:email], :unique=>true
     end
-
-    create_table :pod_versions do
+    
+    create_table(:pods, :ignore_index_errors=>true) do
       primary_key :id
-
-      column :name,               :varchar
-      column :published,          :boolean,  :default => false
-      column :commit_sha,         :varchar
-      column :created_at,         :timestamp
-      column :updated_at,         :timestamp
+      String :name, :size=>255, :null=>false
+      DateTime :created_at, :null=>false
+      DateTime :updated_at
+      
+      index [:name], :unique=>true
     end
-
-    create_table :submission_jobs do
+    
+    #create_table(:schema_info) do
+      #Integer :version, :default=>0, :null=>false
+    #end
+    
+    create_table(:owners_pods) do
+      foreign_key :owner_id, :owners, :key=>[:id]
+      foreign_key :pod_id, :pods, :key=>[:id]
+    end
+    
+    create_table(:sessions, :ignore_index_errors=>true) do
       primary_key :id
-
-      column :specification_data, :text
-      column :succeeded,          :boolean,  :default => nil
-      column :commit_sha,         :varchar
-      column :created_at,         :timestamp
-      column :updated_at,         :timestamp
+      String :token, :size=>255, :null=>false
+      String :verification_token, :size=>255, :null=>false
+      TrueClass :verified, :default=>false, :null=>false
+      DateTime :valid_until, :null=>false
+      DateTime :created_at
+      DateTime :updated_at
+      foreign_key :owner_id, :owners, :null=>false, :key=>[:id]
+      
+      index [:token], :unique=>true
+      index [:verification_token], :unique=>true
     end
-
-    create_table :log_messages do
+    
+    create_table(:log_messages) do
       primary_key :id
-
-      column :message,            :text
-      column :created_at,         :timestamp
-      column :updated_at,         :timestamp
+      String :message, :text=>true, :null=>false
+      DateTime :created_at
+      DateTime :updated_at
+      Integer :submission_job_id, :null=>false
     end
-
-    create_table :owners do
+    
+    create_table(:pod_versions, :ignore_index_errors=>true) do
       primary_key :id
-
-      column :email,              :varchar
-      column :name,               :varchar
-      column :created_at,         :timestamp
-      column :updated_at,         :timestamp
-
-      index :email
+      String :name, :size=>255, :null=>false
+      TrueClass :published, :default=>false, :null=>false
+      String :commit_sha, :size=>255
+      DateTime :created_at
+      DateTime :updated_at
+      foreign_key :pod_id, :pods, :null=>false, :key=>[:id]
+      Integer :published_by_submission_job_id
+      
+      index [:pod_id, :name], :unique=>true
     end
-
-    create_table :sessions do
+    
+    create_table(:submission_jobs) do
       primary_key :id
-
-      column :token,              :varchar
-      column :verification_token, :varchar
-      column :verified,           :boolean,  :default => false
-      column :valid_until,        :timestamp
-      column :created_at,         :timestamp
-      column :updated_at,         :timestamp
-
-      index :token
-      #index :verification_token
+      String :specification_data, :text=>true, :null=>false
+      TrueClass :succeeded
+      String :commit_sha, :size=>255
+      DateTime :created_at
+      DateTime :updated_at
+      foreign_key :pod_version_id, :pod_versions, :null=>false, :key=>[:id]
+      foreign_key :owner_id, :owners, :null=>false, :key=>[:id]
     end
-
-    # Foreign references
-
-    alter_table :pod_versions do
-      add_foreign_key :pod_id, :pods
-      add_foreign_key :published_by_submission_job_id, :submission_jobs
-      add_index [:pod_id, :name]
+    
+    alter_table(:log_messages) do
+      add_foreign_key [:submission_job_id], :submission_jobs, :name=>:log_messages_submission_job_id_fkey, :key=>[:id]
     end
-
-    alter_table :submission_jobs do
-      add_foreign_key :pod_version_id, :pod_versions
-      add_foreign_key :owner_id, :owners
-    end
-
-    alter_table :log_messages do
-      add_foreign_key :submission_job_id, :submission_jobs
-    end
-
-    alter_table :sessions do
-      add_foreign_key :owner_id, :owners
-    end
-
-    create_table :owners_pods do
-      foreign_key :owner_id, :owners
-      foreign_key :pod_id, :pods
+    
+    alter_table(:pod_versions) do
+      add_foreign_key [:published_by_submission_job_id], :submission_jobs, :name=>:pod_versions_published_by_submission_job_id_fkey, :key=>[:id]
     end
   end
 end
