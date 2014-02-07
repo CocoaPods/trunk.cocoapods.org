@@ -43,7 +43,7 @@ module Pod::TrunkApp
     end
 
     it "creates only a new session on subsequent registrations" do
-      owner = Owner.create(:email => @email)
+      owner = Owner.create(:email => @email, :name => @name)
       owner.add_session({})
       lambda {
         lambda {

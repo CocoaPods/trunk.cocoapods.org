@@ -32,7 +32,7 @@ module Pod::TrunkApp
 
       it "normalizes the email address when assigning the email address" do
         email = 'janny@example.com'
-        owner = Owner.create(:email => " #{email.upcase} ")
+        owner = Owner.new(:email => " #{email.upcase} ")
         owner.email.should == email
       end
     end
