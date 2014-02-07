@@ -21,19 +21,19 @@ module Pod::TrunkApp
       last_response.status.should == 415
     end
     
-    it "silently fails with data other than a push payload" do
+    it "fails with data other than a push payload" do
       header 'Content-Type', 'application/x-www-form-urlencoded'
       post '/github-post-receive/', something: 'else'
       last_response.status.should == 422
     end
     
-    it "silently fails with a payload other than serialized push data" do
+    it "fails with a payload other than serialized push data" do
       header 'Content-Type', 'application/x-www-form-urlencoded'
       post '/github-post-receive/', payload: 'not-push-data'
       last_response.status.should == 415
     end
     
-    it "processes a payload of serialized push data" do
+    it "succeeds processing a payload of serialized push data" do
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_data.raw')
       post '/github-post-receive/', payload
