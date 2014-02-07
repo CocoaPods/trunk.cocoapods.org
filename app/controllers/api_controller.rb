@@ -124,44 +124,6 @@ module Pod
         end
       end
       
-      # --- Post Receive Hook -------------------------------------------------------------------
-      
-      # TODO Return good errors.
-      #
-      post "/post-receive-hook/#{ENV['HOOK_PATH']}" do
-        push_data = nil
-        
-        begin
-          push_data = JSON.parse(request.body.read)
-        rescue JSON::ParserError
-          return
-        end
-        
-        payload = push_data['payload']
-        
-        return unless payload.respond_to?(:to_h)
-        
-        manual_commits = payload['commits'].select { |commit| commit['message'] !~ /\A\[Add\]/ }
-        
-        manual_commits.each do |manual_commit|
-          commit_sha = manual_commit['id']
-          manual_commit['modified'].each do |modified_file|
-            # github = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
-            
-            # data_url_template = "https://raw.github.com/#{ENV['GH_REPO']}/%s/%s"
-            data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/%s"
-            data_url = data_url_template % [commit_sha, modified_file] if commit_sha
-            
-            puts
-            puts data_url
-            
-            # TODO Get the data from data_url here and update the database.
-          end
-        end
-        
-        200
-      end
-      
     end
   end
 end

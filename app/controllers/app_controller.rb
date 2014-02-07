@@ -23,6 +23,7 @@ end
 # Now load subclass controllers.
 require 'app/controllers/api/pods_controller'
 require 'app/controllers/api/sessions_controller'
+require 'app/controllers/hook_controller'
 require 'app/controllers/manage_controller'
 require 'app/controllers/claim_controller'
 
@@ -34,6 +35,7 @@ module Pod
       '/api/v1/sessions' => SessionsController,
       '/manage'          => ManageController,
       '/claim'           => ClaimController,
+      '/hooks' => HookController
     )
   end
 end
