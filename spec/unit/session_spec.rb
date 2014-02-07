@@ -3,9 +3,13 @@ require 'app/models/session'
 
 module Pod::TrunkApp
   describe Session do
+    before do
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+    end
+
     describe "when initializing" do
       it "is not verified yet" do
-        Session.create.verified.should == false
+        Session.new.verified.should == false
       end
 
       it "automatically creates a token and a verification token for itself" do
@@ -21,11 +25,57 @@ module Pod::TrunkApp
     end
 
     describe "concerning validations" do
-      %w{ token verification_token }.each do |attr|
-        it "raises if for whatever reason a duplicate #{attr} gets inserted into the DB" do
-          Session.create(attr => 'secret')
-          should.raise Sequel::UniqueConstraintViolation do
-            Session.create(attr => 'secret')
+      before do
+        @session = Session.new(:owner => @owner)
+      end
+
+      it "needs a owner" do
+        @session.should.not.validate_with(:owner_id, nil)
+        @session.should.validate_with(:owner_id, 42)
+      end
+
+      describe "at the DB level" do
+        it "raises if an empty token gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @session.token = nil
+            @session.save(:validate => false)
+          end
+        end
+
+        it "raises if an empty verification_token gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @session.verification_token = nil
+            @session.save(:validate => false)
+          end
+        end
+
+        it "raises if an empty owner_id gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @session.owner_id = nil
+            @session.save(:validate => false)
+          end
+        end
+
+        it "raises if an empty verified gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @session.verified = nil
+            @session.save(:validate => false)
+          end
+        end
+
+        it "raises if an empty valid_until gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @session.valid_until = nil
+            @session.save(:validate => false)
+          end
+        end
+
+        %w{ token verification_token }.each do |attr|
+          it "raises if a duplicate #{attr} gets inserted" do
+            Session.create(attr => 'secret', :owner => @owner)
+            should.raise Sequel::UniqueConstraintViolation do
+              Session.create(attr => 'secret', :owner => @owner)
+            end
           end
         end
       end
@@ -33,7 +83,9 @@ module Pod::TrunkApp
 
     describe "finders" do
       before do
-        @session = Session.create(:verified => true)
+        @session = Session.new(:owner => @owner)
+        @session.verified = true
+        @session.save
       end
 
       it "finds nothing for a blank token" do
@@ -74,17 +126,17 @@ module Pod::TrunkApp
     end
 
     it "extends the validity" do
-      session = Session.create
+      session = Session.create(:owner => @owner)
       session.update(:valid_until => 10.seconds.from_now, :verified => true)
       session.prolong!
       session.reload.valid_until.should > 10.seconds.from_now
     end
 
     it "does not extend the validity of an invalid session" do
-      session = Session.create
+      session = Session.create(:owner => @owner)
       session.update(:valid_until => 10.seconds.ago, :verified => true)
       lambda { session.prolong! }.should.raise
-      session = Session.create
+      session = Session.create(:owner => @owner)
       session.update(:valid_until => 10.seconds.from_now, :verified => false)
       lambda { session.prolong! }.should.raise
     end

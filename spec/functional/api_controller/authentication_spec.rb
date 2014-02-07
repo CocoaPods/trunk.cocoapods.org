@@ -75,14 +75,14 @@ module Pod::TrunkApp
     end
 
     it "verifies a session" do
-      session = Session.create
+      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
       get "/sessions/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
     end
 
     it "does not verify an invalid session" do
-      session = Session.create
+      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
       session.update(:valid_until => 1.second.ago)
       get "/sessions/verify/#{session.verification_token}"
       last_response.status.should == 404
