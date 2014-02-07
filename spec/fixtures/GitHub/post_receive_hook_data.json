@@ -1,0 +1,2105 @@
+{
+    "payload": {
+        "after": "8ffa67b766a6dd40ce4630ca3ef9003d63ff10d7",
+        "before": "f4723b263443b01b9d61da83be64f5763300a313",
+        "commits": [
+            {
+                "added": [
+                    "JSONModel@thehtb/0.9.2/JSONModel@thehtb.podspec"
+                ],
+                "author": {
+                    "email": "mark@aufflick.com",
+                    "name": "Mark Aufflick",
+                    "username": "aufflick"
+                },
+                "committer": {
+                    "email": "mark@aufflick.com",
+                    "name": "Mark Aufflick",
+                    "username": "aufflick"
+                },
+                "distinct": true,
+                "id": "832504f408d9c7a31482ca496d6644e1b6e319b6",
+                "message": "[Update] JSONModel@thehtb (0.9.2)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-04T20:19:57-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/832504f408d9c7a31482ca496d6644e1b6e319b6"
+            },
+            {
+                "added": [
+                    "SFRoundProgressCounterView/0.0.2/SFRoundProgressCounterView.podspec"
+                ],
+                "author": {
+                    "email": "thomas.winkler@starseeders.net",
+                    "name": "Thomas Winkler",
+                    "username": "tomgong"
+                },
+                "committer": {
+                    "email": "thomas.winkler@starseeders.net",
+                    "name": "Thomas Winkler",
+                    "username": "tomgong"
+                },
+                "distinct": true,
+                "id": "3517905f77feb79c78345b0efb71c6c043cde334",
+                "message": "add version 0.0.2 of SFRoundProgressCounterView",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-05T00:52:44-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3517905f77feb79c78345b0efb71c6c043cde334"
+            },
+            {
+                "added": [
+                    "iRate/1.9.3/iRate.podspec"
+                ],
+                "author": {
+                    "email": "nick@charcoaldesign.co.uk",
+                    "name": "Nick Lockwood",
+                    "username": "nicklockwood"
+                },
+                "committer": {
+                    "email": "nick@charcoaldesign.co.uk",
+                    "name": "Nick Lockwood",
+                    "username": "nicklockwood"
+                },
+                "distinct": true,
+                "id": "d0e980b412ed5b84f9980500d459855333a61e2a",
+                "message": "Added iRate 1.9.3",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-05T04:04:29-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/d0e980b412ed5b84f9980500d459855333a61e2a"
+            },
+            {
+                "added": [
+                    "DCHideableSectionViewController/0.1/DCHideableSectionViewController.podspec"
+                ],
+                "author": {
+                    "email": "dacohn@gmail.com",
+                    "name": "Dan Cohn"
+                },
+                "committer": {
+                    "email": "dacohn@gmail.com",
+                    "name": "Dan Cohn"
+                },
+                "distinct": true,
+                "id": "8a72e6b81f27e34e927724b5c9f5cffc6e3d8f56",
+                "message": "Added spec for DCHideableSectionViewController 0.1",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T07:33:52-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/8a72e6b81f27e34e927724b5c9f5cffc6e3d8f56"
+            },
+            {
+                "added": [
+                    "DCHideableSectionViewController/0.1/DCHideableSectionViewController.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "5e5fabc49d00749ea2214d0c6faa5de78913edc7",
+                "message": "Merge pull request #7716 from dacohn/master\n\nAdded spec for DCHideableSectionViewController 0.1",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T07:48:03-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/5e5fabc49d00749ea2214d0c6faa5de78913edc7"
+            },
+            {
+                "added": [
+                    "MKSlidingTableViewCell/0.6/MKSlidingTableViewCell.podspec"
+                ],
+                "author": {
+                    "email": "michael.kirk@kroger.com",
+                    "name": "Michael Kirk"
+                },
+                "committer": {
+                    "email": "michael.kirk@kroger.com",
+                    "name": "Michael Kirk"
+                },
+                "distinct": true,
+                "id": "494cf3810c0aed2182fbfb97e8b2641d45f15af1",
+                "message": "Added MKSlidingTableViewCell 0.6",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T07:56:02-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/494cf3810c0aed2182fbfb97e8b2641d45f15af1"
+            },
+            {
+                "added": [
+                    "MKSlidingTableViewCell/0.6/MKSlidingTableViewCell.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "5ddf651b7f0775d6c9d2c92e95967e8811a12378",
+                "message": "Merge pull request #7717 from PublicStaticVoidMain/master\n\nAdded MKSlidingTableViewCell 0.6",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T08:04:05-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/5ddf651b7f0775d6c9d2c92e95967e8811a12378"
+            },
+            {
+                "added": [
+                    "IAMenuController/0.2.3/IAMenuController.podspec"
+                ],
+                "author": {
+                    "email": "gordon@thoughtbot.com",
+                    "name": "Gordon Fontenot",
+                    "username": "gfontenot"
+                },
+                "committer": {
+                    "email": "gordon@thoughtbot.com",
+                    "name": "Gordon Fontenot",
+                    "username": "gfontenot"
+                },
+                "distinct": true,
+                "id": "44ccbbcf5c405012da52d8af38b8cfdab68d1218",
+                "message": "[Update] IAMenuController (0.2.3)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T08:15:05-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/44ccbbcf5c405012da52d8af38b8cfdab68d1218"
+            },
+            {
+                "added": [
+                    "ClearBlade-iOS-API/0.9.2.3/ClearBlade-iOS-API.podspec"
+                ],
+                "author": {
+                    "email": "tldodge@ncsu.edu",
+                    "name": "Tyler Dodge",
+                    "username": "tyler-dodge"
+                },
+                "committer": {
+                    "email": "tldodge@ncsu.edu",
+                    "name": "Tyler Dodge",
+                    "username": "tyler-dodge"
+                },
+                "distinct": true,
+                "id": "f928997c73b9949ae7a6bcd4a8409b683ddcac87",
+                "message": "Updated ClearBlade-iOS-API to v0.9.2.3",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T08:55:28-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/f928997c73b9949ae7a6bcd4a8409b683ddcac87"
+            },
+            {
+                "added": [
+                    "MYBlurIntroductionView/1.0.3/MYBlurIntroductionView.podspec"
+                ],
+                "author": {
+                    "email": "myork@cs.ua.edu",
+                    "name": "Matt York",
+                    "username": "MatthewYork"
+                },
+                "committer": {
+                    "email": "myork@cs.ua.edu",
+                    "name": "Matt York",
+                    "username": "MatthewYork"
+                },
+                "distinct": true,
+                "id": "7b8121d220d4da77045b4f611e9a78f3670c6985",
+                "message": "- Added 1.0.3 update",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T09:47:27-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/7b8121d220d4da77045b4f611e9a78f3670c6985"
+            },
+            {
+                "added": [
+                    "IAMenuController/0.2.3/IAMenuController.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "3732f6054a25daa1b5efb4ce14a482c4841b62f9",
+                "message": "Merge pull request #7718 from gfontenot/master\n\n[Update] IAMenuController (0.2.3)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T10:06:46-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3732f6054a25daa1b5efb4ce14a482c4841b62f9"
+            },
+            {
+                "added": [
+                    "ClearBlade-iOS-API/0.9.2.3/ClearBlade-iOS-API.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "52dbb75eae1d1e3e7e7807457c5786db91dd82ac",
+                "message": "Merge pull request #7719 from ClearBlade/master\n\nUpdated ClearBlade-iOS-API to v0.9.2.3",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T10:07:17-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/52dbb75eae1d1e3e7e7807457c5786db91dd82ac"
+            },
+            {
+                "added": [
+                    "MYBlurIntroductionView/1.0.3/MYBlurIntroductionView.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "275fea825f1687e7feb8519f85c02986288ac998",
+                "message": "Merge pull request #7720 from MatthewYork/master\n\n- Added 1.0.3 update",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T10:07:28-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/275fea825f1687e7feb8519f85c02986288ac998"
+            },
+            {
+                "added": [
+                    "RestKit-InExtensions/0.1.0/RestKit-InExtensions.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "6864d23738171ca1b1038405a612da421625ca02",
+                "message": "Merge pull request #7721 from hernangonzalez/master\n\nIncluded RestKit-InExtensions v0.1.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T11:02:14-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/6864d23738171ca1b1038405a612da421625ca02"
+            },
+            {
+                "added": [
+                    "FCPostOffice/1.0.0/FCPostOffice.podspec"
+                ],
+                "author": {
+                    "email": "almer.lucke@gmail.com",
+                    "name": "Almer Lucke",
+                    "username": "lickylick"
+                },
+                "committer": {
+                    "email": "almer.lucke@gmail.com",
+                    "name": "Almer Lucke",
+                    "username": "lickylick"
+                },
+                "distinct": true,
+                "id": "3c9c6a86cfb8212bd23de009efde56cee6ab0635",
+                "message": "Version 1.0.0 of FCPostOffice",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T11:27:10-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3c9c6a86cfb8212bd23de009efde56cee6ab0635"
+            },
+            {
+                "added": [
+                    "FCPostOffice/1.0.0/FCPostOffice.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "010179db2f0d2239f4e2519cddd6d644f7f5b6be",
+                "message": "Merge pull request #7722 from lickylick/master\n\nVersion 1.0.0 of FCPostOffice",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T11:34:45-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/010179db2f0d2239f4e2519cddd6d644f7f5b6be"
+            },
+            {
+                "added": [
+                    "ABFullScrollViewController/1.0/ABFullScrollViewController.podspec"
+                ],
+                "author": {
+                    "email": "andresbrunmoreno@gmail.com",
+                    "name": "andresbrun",
+                    "username": "andresbrun"
+                },
+                "committer": {
+                    "email": "andresbrunmoreno@gmail.com",
+                    "name": "andresbrun",
+                    "username": "andresbrun"
+                },
+                "distinct": true,
+                "id": "de6281a95660ba164b2acdcc8fd7d1265b9b3f80",
+                "message": "Added ABFullScrollViewController component",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T11:44:14-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/de6281a95660ba164b2acdcc8fd7d1265b9b3f80"
+            },
+            {
+                "added": [],
+                "author": {
+                    "email": "andresbrunmoreno@gmail.com",
+                    "name": "andresbrun",
+                    "username": "andresbrun"
+                },
+                "committer": {
+                    "email": "andresbrunmoreno@gmail.com",
+                    "name": "andresbrun",
+                    "username": "andresbrun"
+                },
+                "distinct": true,
+                "id": "f63c16e1a62178e0e980b187cd95aedc05330213",
+                "message": "[FIX] Added min version",
+                "modified": [
+                    "ABFullScrollViewController/1.0/ABFullScrollViewController.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-06T12:23:53-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/f63c16e1a62178e0e980b187cd95aedc05330213"
+            },
+            {
+                "added": [
+                    "WTATagStringBuilder/0.0.2/WTATagStringBuilder.podspec"
+                ],
+                "author": {
+                    "email": "matthewjones1988@gmail.com",
+                    "name": "mrketchup",
+                    "username": "mrketchup"
+                },
+                "committer": {
+                    "email": "matthewjones1988@gmail.com",
+                    "name": "mrketchup",
+                    "username": "mrketchup"
+                },
+                "distinct": true,
+                "id": "a7788cda9b34bdf49478de6fed8efb4e43f2b10d",
+                "message": "updated WTATagStringBuilder to 0.0.2",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T12:31:44-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/a7788cda9b34bdf49478de6fed8efb4e43f2b10d"
+            },
+            {
+                "added": [
+                    "WTATagStringBuilder/0.0.2/WTATagStringBuilder.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "3ea7ecc7526d9753cfd69a57c648048afa7a5f41",
+                "message": "Merge pull request #7724 from mrketchup/master\n\nupdated WTATagStringBuilder to 0.0.2",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T13:06:06-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3ea7ecc7526d9753cfd69a57c648048afa7a5f41"
+            },
+            {
+                "added": [
+                    "JustType/1.0.0/JustType.podspec"
+                ],
+                "author": {
+                    "email": "tonqa@gmx.de",
+                    "name": "Alexander Koglin",
+                    "username": "tonqa"
+                },
+                "committer": {
+                    "email": "tonqa@gmx.de",
+                    "name": "Alexander Koglin",
+                    "username": "tonqa"
+                },
+                "distinct": true,
+                "id": "5007e1df825d6ddad0d78ac86992d2923a2a174c",
+                "message": "bumped podspec to 1.0.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T13:32:44-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/5007e1df825d6ddad0d78ac86992d2923a2a174c"
+            },
+            {
+                "added": [
+                    "DBCamera/0.3/DBCamera.podspec"
+                ],
+                "author": {
+                    "email": "bogodaniele83@gmail.com",
+                    "name": "danielebogo",
+                    "username": "danielebogo"
+                },
+                "committer": {
+                    "email": "bogodaniele83@gmail.com",
+                    "name": "danielebogo",
+                    "username": "danielebogo"
+                },
+                "distinct": true,
+                "id": "b01e7fe7ff3f141c6ebaffe22c53c5c232112bfe",
+                "message": "Ffix critical bug and create new version of DBCamera",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T14:09:09-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/b01e7fe7ff3f141c6ebaffe22c53c5c232112bfe"
+            },
+            {
+                "added": [
+                    "JBChartView/1.1.4/JBChartView.podspec"
+                ],
+                "author": {
+                    "email": "tworona@jawbone.com",
+                    "name": "Terry Worona"
+                },
+                "committer": {
+                    "email": "tworona@jawbone.com",
+                    "name": "Terry Worona"
+                },
+                "distinct": true,
+                "id": "cc44609161c556915fff142e2afa9e0baf5e54dd",
+                "message": "Added JBChartView version 1.1.4",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T14:26:44-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/cc44609161c556915fff142e2afa9e0baf5e54dd"
+            },
+            {
+                "added": [
+                    "Sqwiggle/0.1.0/Sqwiggle.podspec"
+                ],
+                "author": {
+                    "email": "cwebb02@gmail.com",
+                    "name": "Cameron Webb",
+                    "username": "cameronwebbable"
+                },
+                "committer": {
+                    "email": "cwebb02@gmail.com",
+                    "name": "Cameron Webb",
+                    "username": "cameronwebbable"
+                },
+                "distinct": true,
+                "id": "b2ea0b18a25953c0fac78f3638bbd29d1aa02b60",
+                "message": "added Sqwiggle 0.1.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T15:10:59-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/b2ea0b18a25953c0fac78f3638bbd29d1aa02b60"
+            },
+            {
+                "added": [
+                    "JustType/1.0.0/JustType.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "1590ae22b219d9cc97232a52f91b96bba99b7055",
+                "message": "Merge pull request #7726 from tonqa/master\n\nbumped podspec to 1.0.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T16:35:40-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/1590ae22b219d9cc97232a52f91b96bba99b7055"
+            },
+            {
+                "added": [
+                    "DBCamera/0.3/DBCamera.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "27e324a9331ac00847d6d0d38995a9bea8b06fb1",
+                "message": "Merge pull request #7727 from danielebogo/master\n\nFfix critical bug and create new version of DBCamera",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T16:35:52-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/27e324a9331ac00847d6d0d38995a9bea8b06fb1"
+            },
+            {
+                "added": [
+                    "JBChartView/1.1.4/JBChartView.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "2b040b093a6f7d6de819fc4be5bd11ebdd1a30f6",
+                "message": "Merge pull request #7728 from Jawbone/master\n\nAdded JBChartView version 1.1.4",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T16:36:04-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/2b040b093a6f7d6de819fc4be5bd11ebdd1a30f6"
+            },
+            {
+                "added": [
+                    "Sqwiggle/0.1.0/Sqwiggle.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "f5900f640bdce959652db5ab982f854f0e59825e",
+                "message": "Merge pull request #7729 from cameronwebbable/master\n\nadding Sqwiggle 0.1.0 to Cocoapods",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T16:36:17-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/f5900f640bdce959652db5ab982f854f0e59825e"
+            },
+            {
+                "added": [
+                    "ABFullScrollViewController/1.0/ABFullScrollViewController.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "076fd4664d8fe54ee2a3c30606dacb86900d2730",
+                "message": "Merge pull request #7723 from andresbrun/master\n\nAdded ABFullScrollViewController component",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T16:36:24-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/076fd4664d8fe54ee2a3c30606dacb86900d2730"
+            },
+            {
+                "added": [
+                    "Playnomics/1.5.2/Playnomics.podspec"
+                ],
+                "author": {
+                    "email": "shiraz@playnomics.com",
+                    "name": "Shiraz",
+                    "username": "sfkhan311"
+                },
+                "committer": {
+                    "email": "shiraz@playnomics.com",
+                    "name": "Shiraz",
+                    "username": "sfkhan311"
+                },
+                "distinct": true,
+                "id": "87727993c49aa551d798771ef828d16a028b5a78",
+                "message": "Added new version",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T16:52:50-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/87727993c49aa551d798771ef828d16a028b5a78"
+            },
+            {
+                "added": [
+                    "Playnomics/1.5.2/Playnomics.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "ba42bc2ab305474b35887d038902161f6975ccef",
+                "message": "Merge pull request #7730 from playnomics/master\n\nAdded new version",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T17:01:29-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/ba42bc2ab305474b35887d038902161f6975ccef"
+            },
+            {
+                "added": [
+                    "AdBrixSDK/3.1.1/AdBrixSDK.podspec"
+                ],
+                "author": {
+                    "email": "dnjswp95@gmail.com",
+                    "name": "wonje,song",
+                    "username": "swj11"
+                },
+                "committer": {
+                    "email": "dnjswp95@gmail.com",
+                    "name": "wonje,song",
+                    "username": "swj11"
+                },
+                "distinct": true,
+                "id": "622d234df7cb180659e3f89cb58563f53f41a828",
+                "message": "Adding podspec for AdBrixSDK 3.1.1",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T17:18:11-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/622d234df7cb180659e3f89cb58563f53f41a828"
+            },
+            {
+                "added": [
+                    "GoogleAnalytics-iOS-SDK/3.0.3a/GoogleAnalytics-iOS-SDK.podspec"
+                ],
+                "author": {
+                    "email": "nishibayashi@fenrir.co.jp",
+                    "name": "Takuji Nishibayashi",
+                    "username": "takuji31"
+                },
+                "committer": {
+                    "email": "nishibayashi@fenrir.co.jp",
+                    "name": "Takuji Nishibayashi",
+                    "username": "takuji31"
+                },
+                "distinct": true,
+                "id": "107ab4a186dbe4345f958476a9542498b0132f13",
+                "message": "add GoogleAnalytics-iOS-SDK 3.03a",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T17:36:34-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/107ab4a186dbe4345f958476a9542498b0132f13"
+            },
+            {
+                "added": [],
+                "author": {
+                    "email": "dnjswp95@gmail.com",
+                    "name": "wonje,song",
+                    "username": "swj11"
+                },
+                "committer": {
+                    "email": "dnjswp95@gmail.com",
+                    "name": "wonje,song",
+                    "username": "swj11"
+                },
+                "distinct": true,
+                "id": "da10b8066d8b4da29ed1f0af53b36f4b28079a1e",
+                "message": "Adding podspec for AdBrixSDK 3.1.1\n(void)setAppleAdvertisingIdentifier:isAppleAdvertisingTrackingEnabled: \ucd94\uac00\n\uad11\uace0 \ubaa9\uc801\uc774 \uc544\ub2cc \uacbd\uc6b0, Apple AdvertisingIdentifier\ub97c \uc0ac\uc6a9\ud558\uba74, app reject \uc0ac\uc720\uac00 \ub418\uae30 \ub54c\ubb38\uc5d0, iAd(AdSupport.framework)\ub97c \uc0ac\uc6a9\ud558\uc9c0 \uc54a\ub294\ub2e4\uba74 \uac12\uc744 \uc804\uc1a1\ud558\uc9c0 \uc54a\ub294\ub2e4.\nAdBrix\uc5d0\uc11c\ub294 \uc804\ub2ec\ubc1b\uc740 Apple AdvertisingIdentifier \uac12\uc774 \uc5c6\ub294\uacbd\uc6b0, identifierForVendor \uac12\uc744 identifier\ub85c \uc0ac\uc6a9\ud55c\ub2e4.",
+                "modified": [
+                    "AdBrixSDK/3.1.1/AdBrixSDK.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-06T17:54:44-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/da10b8066d8b4da29ed1f0af53b36f4b28079a1e"
+            },
+            {
+                "added": [
+                    "RTAlertView/0.0.5/RTAlertView.podspec"
+                ],
+                "author": {
+                    "email": "roland_tecson@hotmail.com",
+                    "name": "Roland Tecson",
+                    "username": "rtecson"
+                },
+                "committer": {
+                    "email": "roland_tecson@hotmail.com",
+                    "name": "Roland Tecson",
+                    "username": "rtecson"
+                },
+                "distinct": true,
+                "id": "ff14a622e488285700a7fb32d7b168397890b470",
+                "message": "RTAlertView podspec for r0.0.5",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T18:04:47-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/ff14a622e488285700a7fb32d7b168397890b470"
+            },
+            {
+                "added": [
+                    "AdBrixSDK/3.1.1/AdBrixSDK.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "d134c6799326d9d06be5574dff8efc140f56b8b3",
+                "message": "Merge pull request #7732 from igaworks/master\n\nAdding podspec for AdBrixSDK 3.1.1",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T18:10:42-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/d134c6799326d9d06be5574dff8efc140f56b8b3"
+            },
+            {
+                "added": [
+                    "GoogleAnalytics-iOS-SDK/3.0.3a/GoogleAnalytics-iOS-SDK.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "3ae8ba0c6884d5aa89c0571b9387bc95501960ba",
+                "message": "Merge pull request #7733 from takuji31/add_google_analytics_3.03a\n\nadd GoogleAnalytics-iOS-SDK 3.03a",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T18:11:03-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3ae8ba0c6884d5aa89c0571b9387bc95501960ba"
+            },
+            {
+                "added": [
+                    "RTAlertView/0.0.5/RTAlertView.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "aa517bc3e9d61bccd0c3d16e8a42edd67357f377",
+                "message": "Merge pull request #7734 from rtecson/master\n\nRTAlertView podspec for r0.0.5",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T18:13:34-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/aa517bc3e9d61bccd0c3d16e8a42edd67357f377"
+            },
+            {
+                "added": [
+                    "iOS-WebP/0.3/iOS-WebP.podspec"
+                ],
+                "author": {
+                    "email": "sean.ooi87@gmail.com",
+                    "name": "Sean"
+                },
+                "committer": {
+                    "email": "sean.ooi87@gmail.com",
+                    "name": "Sean"
+                },
+                "distinct": true,
+                "id": "157d72dd1e247c3d933ad2deb044724607d30e73",
+                "message": "iOS-WebP v0.3",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T18:35:02-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/157d72dd1e247c3d933ad2deb044724607d30e73"
+            },
+            {
+                "added": [
+                    "iOS-WebP/0.3/iOS-WebP.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "8f77fd1069b5be860aa8565e2ccadb3e3d5abc30",
+                "message": "Merge pull request #7735 from seanooi/master\n\niOS-WebP v0.3",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T19:14:35-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/8f77fd1069b5be860aa8565e2ccadb3e3d5abc30"
+            },
+            {
+                "added": [
+                    "JSONModel@thehtb/0.9.2/JSONModel@thehtb.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "eca2233e7a0f96dfa1f41af512144226752d7d5c",
+                "message": "Merge pull request #7736 from aufflick/master\n\n[Update] JSONModel@thehtb (0.9.2)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T19:56:41-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/eca2233e7a0f96dfa1f41af512144226752d7d5c"
+            },
+            {
+                "added": [
+                    "SAMCoreImageView/0.1.0/SAMCoreImageView.podspec"
+                ],
+                "author": {
+                    "email": "sam@soff.es",
+                    "name": "Sam Soffes",
+                    "username": "soffes"
+                },
+                "committer": {
+                    "email": "sam@soff.es",
+                    "name": "Sam Soffes",
+                    "username": "soffes"
+                },
+                "distinct": true,
+                "id": "781e182131a549591e5b50698fc5859631c40ea8",
+                "message": "SAMCoreImageView 0.1.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T20:10:38-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/781e182131a549591e5b50698fc5859631c40ea8"
+            },
+            {
+                "added": [
+                    "SAMCoreImageView/0.1.0/SAMCoreImageView.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "1b2c5eadd32310ffb0f377f8af216ee906f286e7",
+                "message": "Merge pull request #7737 from soffes/SAMCoreImageView-v0.1.0\n\nSAMCoreImageView 0.1.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T20:15:27-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/1b2c5eadd32310ffb0f377f8af216ee906f286e7"
+            },
+            {
+                "added": [
+                    "Google-Maps-iOS-SDK/1.7.0/Google-Maps-iOS-SDK.podspec"
+                ],
+                "author": {
+                    "email": "brett.morgan@gmail.com",
+                    "name": "Brett Morgan",
+                    "username": "domesticmouse"
+                },
+                "committer": {
+                    "email": "brett.morgan@gmail.com",
+                    "name": "Brett Morgan",
+                    "username": "domesticmouse"
+                },
+                "distinct": true,
+                "id": "26a38046f61e94f96a3904b5f07e47878747f1cd",
+                "message": "Google Maps SDK for iOS 1.7.0 release",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T20:47:45-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/26a38046f61e94f96a3904b5f07e47878747f1cd"
+            },
+            {
+                "added": [
+                    "Google-Maps-iOS-SDK/1.7.0/Google-Maps-iOS-SDK.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "4d7e0b92b9b1a7666d6b648d77f746b4915a857d",
+                "message": "Merge pull request #7738 from domesticmouse/master\n\nGoogle Maps SDK for iOS 1.7.0 release",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T20:53:21-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/4d7e0b92b9b1a7666d6b648d77f746b4915a857d"
+            },
+            {
+                "added": [
+                    "AVOSCloud/2.3.0/AVOSCloud.podspec"
+                ],
+                "author": {
+                    "email": "travis@avos.com",
+                    "name": "Travis"
+                },
+                "committer": {
+                    "email": "travis@avos.com",
+                    "name": "Travis"
+                },
+                "distinct": true,
+                "id": "5448658012c2c81f91117718d1a19e44f8689e86",
+                "message": "release 2.3.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T22:47:32-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/5448658012c2c81f91117718d1a19e44f8689e86"
+            },
+            {
+                "added": [
+                    "Localytics-iOS-Client/2.21.1/Localytics-iOS-Client.podspec"
+                ],
+                "author": {
+                    "email": "joel@republicofapps.com",
+                    "name": "RepublicOfApps, LLC",
+                    "username": "RepublicOfAppsLLC"
+                },
+                "committer": {
+                    "email": "joel@republicofapps.com",
+                    "name": "RepublicOfApps, LLC",
+                    "username": "RepublicOfAppsLLC"
+                },
+                "distinct": true,
+                "id": "849d7651af3ab373d88bad9bfb93e6137a113ce6",
+                "message": "Updated to reference Localytics version 2.21.1; no other changes",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-06T22:59:27-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/849d7651af3ab373d88bad9bfb93e6137a113ce6"
+            },
+            {
+                "added": [
+                    "Calabash/0.9.166/Calabash.podspec"
+                ],
+                "author": {
+                    "email": "tom.quist@immonet.de",
+                    "name": "Tom Quist",
+                    "username": "tomquist"
+                },
+                "committer": {
+                    "email": "tom.quist@immonet.de",
+                    "name": "Tom Quist",
+                    "username": "tomquist"
+                },
+                "distinct": true,
+                "id": "8ef57ad7f696da998ce1c5536a763ab2749fd197",
+                "message": "Added calabash-cucumber 0.9.166",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T00:40:06-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/8ef57ad7f696da998ce1c5536a763ab2749fd197"
+            },
+            {
+                "added": [],
+                "author": {
+                    "email": "tom.quist@immonet.de",
+                    "name": "Tom Quist",
+                    "username": "tomquist"
+                },
+                "committer": {
+                    "email": "tom.quist@immonet.de",
+                    "name": "Tom Quist",
+                    "username": "tomquist"
+                },
+                "distinct": true,
+                "id": "e16bed5a0f3db1b4135819b29143b256cb5ab6d0",
+                "message": "Fixed version name",
+                "modified": [
+                    "Calabash/0.9.166/Calabash.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-07T00:48:52-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/e16bed5a0f3db1b4135819b29143b256cb5ab6d0"
+            },
+            {
+                "added": [
+                    "Base64nl/1.2/Base64nl.podspec"
+                ],
+                "author": {
+                    "email": "nick@charcoaldesign.co.uk",
+                    "name": "Nick Lockwood",
+                    "username": "nicklockwood"
+                },
+                "committer": {
+                    "email": "nick@charcoaldesign.co.uk",
+                    "name": "Nick Lockwood",
+                    "username": "nicklockwood"
+                },
+                "distinct": true,
+                "id": "6073e73cdbc6c0adc439ef64c925886abee9a04d",
+                "message": "Added Base64 1.2",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T04:02:03-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/6073e73cdbc6c0adc439ef64c925886abee9a04d"
+            },
+            {
+                "added": [
+                    "PXAlertView/0.1.0/PXAlertView.podspec"
+                ],
+                "author": {
+                    "email": "alex@panaxiom.co.uk",
+                    "name": "Alex Jarvis",
+                    "username": "alexanderjarvis"
+                },
+                "committer": {
+                    "email": "alex@panaxiom.co.uk",
+                    "name": "Alex Jarvis",
+                    "username": "alexanderjarvis"
+                },
+                "distinct": true,
+                "id": "b2a9c1cc5a6b66ebe4b79b2ac0e35d67bc452aee",
+                "message": "[Update] PXAlertView to 0.1.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T04:11:09-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/b2a9c1cc5a6b66ebe4b79b2ac0e35d67bc452aee"
+            },
+            {
+                "added": [
+                    "RuntimeHelpers/0.0.4/RuntimeHelpers.podspec"
+                ],
+                "author": {
+                    "email": "Fernando.Mazzon@rga.com",
+                    "name": "Fernando Mazzon"
+                },
+                "committer": {
+                    "email": "Fernando.Mazzon@rga.com",
+                    "name": "Fernando Mazzon"
+                },
+                "distinct": true,
+                "id": "5b32a2199c7ad77abe4dc2b2f5ba53ab93929ac2",
+                "message": "Added podspec for RuntimeHelpers v0.0.4",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:24:36-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/5b32a2199c7ad77abe4dc2b2f5ba53ab93929ac2"
+            },
+            {
+                "added": [
+                    "AVOSCloud/2.3.0/AVOSCloud.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "5b7067c3759cd381c9432831c16bb7fbf1c2241c",
+                "message": "Merge pull request #7740 from trawor/fork\n\nrelease 2.3.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:27:24-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/5b7067c3759cd381c9432831c16bb7fbf1c2241c"
+            },
+            {
+                "added": [
+                    "Localytics-iOS-Client/2.21.1/Localytics-iOS-Client.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "db3362c366a0a60577daa6675bf055b32e186768",
+                "message": "Merge pull request #7741 from iosdev-republicofapps/master\n\nUpdated to reference Localytics version 2.21.1; no other changes",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:27:45-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/db3362c366a0a60577daa6675bf055b32e186768"
+            },
+            {
+                "added": [
+                    "Calabash/0.9.166/Calabash.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "075e0c17b1e78483875ffe99ae00cd3699c9703b",
+                "message": "Merge pull request #7742 from tomquist/calabash-cucumber-0.9.166\n\nAdded calabash-cucumber 0.9.166",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:27:55-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/075e0c17b1e78483875ffe99ae00cd3699c9703b"
+            },
+            {
+                "added": [
+                    "SFRoundProgressCounterView/0.0.2/SFRoundProgressCounterView.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "c559c1898f0e7082eb43fdf5d2e4d8280c4347f5",
+                "message": "Merge pull request #7744 from simpliflow/master\n\nadd version 0.0.2 of SFRoundProgressCounterView",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:28:16-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/c559c1898f0e7082eb43fdf5d2e4d8280c4347f5"
+            },
+            {
+                "added": [
+                    "Base64nl/1.2/Base64nl.podspec",
+                    "iRate/1.9.3/iRate.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "65792270f30bc093691d9b25ddea4593428520c8",
+                "message": "Merge pull request #7745 from nicklockwood/master\n\nAdded iRate 1.9.3 and Base64 1.2",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:28:21-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/65792270f30bc093691d9b25ddea4593428520c8"
+            },
+            {
+                "added": [
+                    "PXAlertView/0.1.0/PXAlertView.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "e254e875e5421bcea1bc7cb30de643aa367249dd",
+                "message": "Merge pull request #7746 from alexanderjarvis/master\n\n[Update] PXAlertView to 0.1.0",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:28:30-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/e254e875e5421bcea1bc7cb30de643aa367249dd"
+            },
+            {
+                "added": [
+                    "RuntimeHelpers/0.0.4/RuntimeHelpers.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "cb46874876ee8f941bfb7814244ff404f442a26b",
+                "message": "Merge pull request #7747 from fer662/master\n\nAdded podspec for RuntimeHelpers v0.0.4",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:30:53-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/cb46874876ee8f941bfb7814244ff404f442a26b"
+            },
+            {
+                "added": [
+                    "BDKAutomatic/0.1.0/BDKAutomatic.podspec"
+                ],
+                "author": {
+                    "email": "ben@kree.gr",
+                    "name": "Ben Kreeger",
+                    "username": "kreeger"
+                },
+                "committer": {
+                    "email": "ben@kree.gr",
+                    "name": "Ben Kreeger",
+                    "username": "kreeger"
+                },
+                "distinct": true,
+                "id": "e24ad654a2cfb9a9a922aefa0aea1884a11406f5",
+                "message": "Adding podspec for BDKAutomatic.",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:33:10-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/e24ad654a2cfb9a9a922aefa0aea1884a11406f5"
+            },
+            {
+                "added": [
+                    "DBCamera/0.4/DBCamera.podspec"
+                ],
+                "author": {
+                    "email": "bogodaniele83@gmail.com",
+                    "name": "danielebogo",
+                    "username": "danielebogo"
+                },
+                "committer": {
+                    "email": "bogodaniele83@gmail.com",
+                    "name": "danielebogo",
+                    "username": "danielebogo"
+                },
+                "distinct": true,
+                "id": "26f58297918829a270a99f4257c2015a411d2ca5",
+                "message": "Update version and bug fix",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:38:18-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/26f58297918829a270a99f4257c2015a411d2ca5"
+            },
+            {
+                "added": [
+                    "CoreTextLabel/1.5.4/CoreTextLabel.podspec"
+                ],
+                "author": {
+                    "email": "d.kuhnke@appfarms.com",
+                    "name": "Daniel Kuhnke",
+                    "username": "dkuhnke"
+                },
+                "committer": {
+                    "email": "d.kuhnke@appfarms.com",
+                    "name": "Daniel Kuhnke",
+                    "username": "dkuhnke"
+                },
+                "distinct": true,
+                "id": "65206f73a0f8ce8a914e724fdd99a400ac21273c",
+                "message": "1.5.4",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:42:10-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/65206f73a0f8ce8a914e724fdd99a400ac21273c"
+            },
+            {
+                "added": [
+                    "APLCollectionViewDataSource/0.1.0/APLCollectionViewDataSource.podspec"
+                ],
+                "author": {
+                    "email": "github@tobias-conradi.de",
+                    "name": "Tobias Conradi",
+                    "username": "toco"
+                },
+                "committer": {
+                    "email": "github@tobias-conradi.de",
+                    "name": "Tobias Conradi",
+                    "username": "toco"
+                },
+                "distinct": true,
+                "id": "d7f8282bc42a62bd2fa9e3337f71c355e472f296",
+                "message": "[Add] APLCollectionViewDataSource (0.1.0)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T05:49:02-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/d7f8282bc42a62bd2fa9e3337f71c355e472f296"
+            },
+            {
+                "added": [
+                    "UNNetPGP/0.8.1/UNNetPGP.podspec"
+                ],
+                "author": {
+                    "email": "marcin.krzyzanowski@gmail.com",
+                    "name": "Marcin Krzyzanowski",
+                    "username": "krzak"
+                },
+                "committer": {
+                    "email": "marcin.krzyzanowski@gmail.com",
+                    "name": "Marcin Krzyzanowski",
+                    "username": "krzak"
+                },
+                "distinct": true,
+                "id": "266c6907497ee114f3583f7b4abea1fe699ad7b4",
+                "message": "Update UNNetPGP",
+                "modified": [
+                    "UNNetPGP/0.8/UNNetPGP.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-07T06:08:20-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/266c6907497ee114f3583f7b4abea1fe699ad7b4"
+            },
+            {
+                "added": [
+                    "UITableViewHelper/0.0.1/UITableViewHelper.podspec"
+                ],
+                "author": {
+                    "email": "fer662@gmail.com",
+                    "name": "Fernando Mazzon",
+                    "username": "fer662"
+                },
+                "committer": {
+                    "email": "fer662@gmail.com",
+                    "name": "Fernando Mazzon",
+                    "username": "fer662"
+                },
+                "distinct": true,
+                "id": "0c0929951e2d8ce0dd01100dc1684532e2c85a99",
+                "message": "Added podspec for UITableViewHelper v0.0.1",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:13:02-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/0c0929951e2d8ce0dd01100dc1684532e2c85a99"
+            },
+            {
+                "added": [
+                    "BLEKit/0.5.0/BLEKit.podspec"
+                ],
+                "author": {
+                    "email": "marcin.krzyzanowski@gmail.com",
+                    "name": "Marcin Krzyzanowski",
+                    "username": "krzak"
+                },
+                "committer": {
+                    "email": "marcin.krzyzanowski@gmail.com",
+                    "name": "Marcin Krzyzanowski",
+                    "username": "krzak"
+                },
+                "distinct": true,
+                "id": "49c5a1f0d6f9cc44cea7716defb35a1b4e0b3012",
+                "message": "Initial BLEKit.podspec",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:14:39-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/49c5a1f0d6f9cc44cea7716defb35a1b4e0b3012"
+            },
+            {
+                "added": [
+                    "BDKAutomatic/0.1.0/BDKAutomatic.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "d955434762754d078b187e895a043b3e1a67fe81",
+                "message": "Merge pull request #7748 from kreeger/bdkautomatic\n\nAdding podspec for BDKAutomatic v0.1.0.",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:17:08-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/d955434762754d078b187e895a043b3e1a67fe81"
+            },
+            {
+                "added": [
+                    "DBCamera/0.4/DBCamera.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "86b1c28f7e044060b744bb71ed637ec84eed479f",
+                "message": "Merge pull request #7749 from danielebogo/master\n\nUpdate version and bug fix",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:17:29-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/86b1c28f7e044060b744bb71ed637ec84eed479f"
+            },
+            {
+                "added": [
+                    "CoreTextLabel/1.5.4/CoreTextLabel.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "f871f3d3e4db5e95468a7449c2bd2aa19434b79c",
+                "message": "Merge pull request #7750 from dkuhnke/master\n\n1.5.4",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:17:45-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/f871f3d3e4db5e95468a7449c2bd2aa19434b79c"
+            },
+            {
+                "added": [
+                    "APLCollectionViewDataSource/0.1.0/APLCollectionViewDataSource.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "f1b5e5c889ba6f69a5bc33eeec80b3784866c438",
+                "message": "Merge pull request #7751 from toco/master\n\n[Add] APLCollectionViewDataSource (0.1.0)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:17:56-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/f1b5e5c889ba6f69a5bc33eeec80b3784866c438"
+            },
+            {
+                "added": [
+                    "RestKit-InExtensions/0.1.1/RestKit-InExtensions.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "b25d94eea28d45208aa2c9ac39f94a7f93e4e503",
+                "message": "Merge pull request #7752 from hernangonzalez/master\n\nUpdated version to include framework dependency fixes.",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:18:13-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/b25d94eea28d45208aa2c9ac39f94a7f93e4e503"
+            },
+            {
+                "added": [
+                    "UITableViewHelper/0.0.1/UITableViewHelper.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "3dd0c5c6a4466d2647b94349daf7b3c6029fe0f5",
+                "message": "Merge pull request #7755 from fer662/master\n\nAdded podspec for UITableViewHelper v0.0.1",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T06:18:30-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3dd0c5c6a4466d2647b94349daf7b3c6029fe0f5"
+            },
+            {
+                "added": [],
+                "author": {
+                    "email": "marcin.krzyzanowski@gmail.com",
+                    "name": "Marcin Krzyzanowski",
+                    "username": "krzak"
+                },
+                "committer": {
+                    "email": "marcin.krzyzanowski@gmail.com",
+                    "name": "Marcin Krzyzanowski",
+                    "username": "krzak"
+                },
+                "distinct": true,
+                "id": "90ba219758e9f3d4fc909995e63baecfdfd26538",
+                "message": "Revert UNNetPGP dependency to OpenSSL\nFix BLEKit.podspec",
+                "modified": [
+                    "BLEKit/0.5.0/BLEKit.podspec",
+                    "UNNetPGP/0.8.1/UNNetPGP.podspec",
+                    "UNNetPGP/0.8/UNNetPGP.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-07T06:44:35-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/90ba219758e9f3d4fc909995e63baecfdfd26538"
+            },
+            {
+                "added": [
+                    "iOSWebserviceTemplate/1.0.0/iOSWebserviceTemplate.podspec"
+                ],
+                "author": {
+                    "email": "myork@cs.ua.edu",
+                    "name": "Matthew York",
+                    "username": "MatthewYork"
+                },
+                "committer": {
+                    "email": "myork@cs.ua.edu",
+                    "name": "Matthew York",
+                    "username": "MatthewYork"
+                },
+                "distinct": true,
+                "id": "8bb27dd1977292a8830d4de3ac65e4d159aa4172",
+                "message": "- Added iOSWebservice 1.0.0 spec",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:01:52-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/8bb27dd1977292a8830d4de3ac65e4d159aa4172"
+            },
+            {
+                "added": [
+                    "TMTumblrSDK/1.0.6/TMTumblrSDK.podspec"
+                ],
+                "author": {
+                    "email": "bryan.irace@gmail.com",
+                    "name": "Bryan Irace",
+                    "username": "irace"
+                },
+                "committer": {
+                    "email": "bryan.irace@gmail.com",
+                    "name": "Bryan Irace",
+                    "username": "irace"
+                },
+                "distinct": true,
+                "id": "4ad02e77749528382e2b54f3453212cc269460b8",
+                "message": "Add Tumblr spec version 1.0.6",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:04:07-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/4ad02e77749528382e2b54f3453212cc269460b8"
+            },
+            {
+                "added": [
+                    "TMTumblrSDK/CHANGELOG.md"
+                ],
+                "author": {
+                    "email": "bryan.irace@gmail.com",
+                    "name": "Bryan Irace",
+                    "username": "irace"
+                },
+                "committer": {
+                    "email": "bryan.irace@gmail.com",
+                    "name": "Bryan Irace",
+                    "username": "irace"
+                },
+                "distinct": true,
+                "id": "a24783d2b314a763175bdbff76af6cd801374315",
+                "message": "Add a changelog",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:10:06-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/a24783d2b314a763175bdbff76af6cd801374315"
+            },
+            {
+                "added": [
+                    "iOSWebserviceTemplate/1.0.0/iOSWebserviceTemplate.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "8a649cb4c1f9af789d3b253557eeecdbc79bae7d",
+                "message": "Merge pull request #7756 from uacaps/master\n\n- Added iOSWebserviceTemplate 1.0.0 spec",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:11:13-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/8a649cb4c1f9af789d3b253557eeecdbc79bae7d"
+            },
+            {
+                "added": [
+                    "BLEKit/0.5.0/BLEKit.podspec",
+                    "UNNetPGP/0.8.1/UNNetPGP.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "0228fb1e45c735dfe8814807fba71de182997f0f",
+                "message": "Merge pull request #7753 from krzak/master\n\nUpdate UNNetPGP",
+                "modified": [
+                    "UNNetPGP/0.8/UNNetPGP.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-07T07:11:26-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/0228fb1e45c735dfe8814807fba71de182997f0f"
+            },
+            {
+                "added": [
+                    "BrightCenterSDK/1.2.2/BrightCenterSDK.podspec"
+                ],
+                "author": {
+                    "email": "rickslot@live.nl",
+                    "name": "Rick Slot",
+                    "username": "RickSlot"
+                },
+                "committer": {
+                    "email": "rickslot@live.nl",
+                    "name": "Rick Slot",
+                    "username": "RickSlot"
+                },
+                "distinct": true,
+                "id": "8ecfb568baf80308119942119a7acbd7640a71f7",
+                "message": "Create BrightCenterSDK.podspec",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:19:09-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/8ecfb568baf80308119942119a7acbd7640a71f7"
+            },
+            {
+                "added": [
+                    "PubNub/3.5.6/PubNub.podspec"
+                ],
+                "author": {
+                    "email": "vosovets@micro-b.net",
+                    "name": "Vadim Osovets"
+                },
+                "committer": {
+                    "email": "vosovets@micro-b.net",
+                    "name": "Vadim Osovets"
+                },
+                "distinct": true,
+                "id": "e88de2547fc3896d076cf0a6f503cbeb5e4211ae",
+                "message": "Update PubNub to 3.5.6",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:19:52-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/e88de2547fc3896d076cf0a6f503cbeb5e4211ae"
+            },
+            {
+                "added": [],
+                "author": {
+                    "email": "rickslot@live.nl",
+                    "name": "Rick Slot",
+                    "username": "RickSlot"
+                },
+                "committer": {
+                    "email": "rickslot@live.nl",
+                    "name": "Rick Slot",
+                    "username": "RickSlot"
+                },
+                "distinct": true,
+                "id": "58f72c431b5ae39e24d36a2e0c0588cc824e83ff",
+                "message": "Added new podspec",
+                "modified": [
+                    "BrightCenterSDK/1.2.2/BrightCenterSDK.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-07T07:20:27-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/58f72c431b5ae39e24d36a2e0c0588cc824e83ff"
+            },
+            {
+                "added": [
+                    "BrightCenterSDK/1.2.2/BrightCenterSDK.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "9849b970be503c5d0c49b7fbd7ceb4b2659353f7",
+                "message": "Merge pull request #7759 from RickSlot/master\n\nAdded a new podspec in 1.2.2",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:30:37-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/9849b970be503c5d0c49b7fbd7ceb4b2659353f7"
+            },
+            {
+                "added": [
+                    "PubNub/3.5.6/PubNub.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "4befa498970444f9deccf7e7faa6922f01a73e84",
+                "message": "Merge pull request #7758 from vosovets/master\n\nUpdate PubNub to 3.5.6",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:30:55-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/4befa498970444f9deccf7e7faa6922f01a73e84"
+            },
+            {
+                "added": [
+                    "TMTumblrSDK/1.0.6/TMTumblrSDK.podspec",
+                    "TMTumblrSDK/CHANGELOG.md"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "88830dbf68b7d85baad390a3f5a4f27763c1539c",
+                "message": "Merge pull request #7757 from irace/master\n\nAdd Tumblr spec version 1.0.6",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:31:10-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/88830dbf68b7d85baad390a3f5a4f27763c1539c"
+            },
+            {
+                "added": [
+                    "UITableViewHelper/0.0.2/UITableViewHelper.podspec"
+                ],
+                "author": {
+                    "email": "fer662@gmail.com",
+                    "name": "Fernando Mazzon",
+                    "username": "fer662"
+                },
+                "committer": {
+                    "email": "fer662@gmail.com",
+                    "name": "Fernando Mazzon",
+                    "username": "fer662"
+                },
+                "distinct": true,
+                "id": "1e5bee453fc47c44279699c761199a61bbff88c9",
+                "message": "Added podspec for UITableViewHelper v0.0.2",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:44:25-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/1e5bee453fc47c44279699c761199a61bbff88c9"
+            },
+            {
+                "added": [
+                    "APLPageViewControllerDataSource/0.1.0/APLPageViewControllerDataSource.podspec"
+                ],
+                "author": {
+                    "email": "tconradi@apploft.de",
+                    "name": "Tobias Conradi",
+                    "username": "toco"
+                },
+                "committer": {
+                    "email": "tconradi@apploft.de",
+                    "name": "Tobias Conradi",
+                    "username": "toco"
+                },
+                "distinct": true,
+                "id": "773f8013fa94f5738031f512359494ccfa39bf2d",
+                "message": "[Add] APLPageViewControllerDataSource (0.1.0)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:48:37-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/773f8013fa94f5738031f512359494ccfa39bf2d"
+            },
+            {
+                "added": [
+                    "UITableViewHelper/0.0.2/UITableViewHelper.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "b2f453e4a2c0ddd999c9e3d7e39ea93d9e0e6083",
+                "message": "Merge pull request #7761 from fer662/master\n\nAdded podspec for UITableViewHelper v0.0.2",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:52:22-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/b2f453e4a2c0ddd999c9e3d7e39ea93d9e0e6083"
+            },
+            {
+                "added": [
+                    "APLPageViewControllerDataSource/0.1.0/APLPageViewControllerDataSource.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "1d2c466995a816382a22be654ed560758e2cb444",
+                "message": "Merge pull request #7762 from toco/master\n\n[Add] APLPageViewControllerDataSource (0.1.0)",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T07:58:46-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/1d2c466995a816382a22be654ed560758e2cb444"
+            },
+            {
+                "added": [
+                    "MBContactPicker/0.1.4/MBContactPicker.podspec"
+                ],
+                "author": {
+                    "email": "mbowman@citrrus.com",
+                    "name": "Matt Bowman",
+                    "username": "MattCBowman"
+                },
+                "committer": {
+                    "email": "mbowman@citrrus.com",
+                    "name": "Matt Bowman",
+                    "username": "MattCBowman"
+                },
+                "distinct": true,
+                "id": "3484e3a7ab343edbf79ce665405dc54c805416f8",
+                "message": "Add 0.1.4 MBContactPicker podspec",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T08:06:19-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3484e3a7ab343edbf79ce665405dc54c805416f8"
+            },
+            {
+                "added": [
+                    "MBContactPicker/0.1.4/MBContactPicker.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "49b82103d86962d21e7bd41c261acaabe2d5f4a1",
+                "message": "Merge pull request #7763 from MattCBowman/master\n\nAdd 0.1.4 MBContactPicker podspec",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T08:13:38-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/49b82103d86962d21e7bd41c261acaabe2d5f4a1"
+            },
+            {
+                "added": [],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "2f19e7ff05c3350ef4bc94db6df196902e0a6e1c",
+                "message": "Merge pull request #7760 from hernangonzalez/master\n\nAdded missing includes to pod spec",
+                "modified": [
+                    "RestKit-InExtensions/0.1.1/RestKit-InExtensions.podspec"
+                ],
+                "removed": [],
+                "timestamp": "2014-02-07T08:27:17-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/2f19e7ff05c3350ef4bc94db6df196902e0a6e1c"
+            },
+            {
+                "added": [
+                    "DZNPhotoPickerController/1.0.9/DZNPhotoPickerController.podspec"
+                ],
+                "author": {
+                    "email": "iromero@dzen.cl",
+                    "name": "dzenbot",
+                    "username": "dzenbot"
+                },
+                "committer": {
+                    "email": "iromero@dzen.cl",
+                    "name": "dzenbot",
+                    "username": "dzenbot"
+                },
+                "distinct": true,
+                "id": "3aa3e1b6e9f63c748de0900398106147bb4805b2",
+                "message": "Added DZNPhotoPickerController version 1.0.9",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T08:51:22-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/3aa3e1b6e9f63c748de0900398106147bb4805b2"
+            },
+            {
+                "added": [
+                    "DZNPhotoPickerController/1.0.9/DZNPhotoPickerController.podspec"
+                ],
+                "author": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "committer": {
+                    "email": "keithbsmiley@gmail.com",
+                    "name": "Keith Smiley",
+                    "username": "Keithbsmiley"
+                },
+                "distinct": true,
+                "id": "8ffa67b766a6dd40ce4630ca3ef9003d63ff10d7",
+                "message": "Merge pull request #7764 from dzenbot/master\n\nAdded DZNPhotoPickerController version 1.0.9",
+                "modified": [],
+                "removed": [],
+                "timestamp": "2014-02-07T08:52:05-08:00",
+                "url": "https://github.com/CocoaPods/Specs/commit/8ffa67b766a6dd40ce4630ca3ef9003d63ff10d7"
+            }
+        ],
+        "compare": "https://github.com/CocoaPods/Specs/compare/f4723b263443...8ffa67b766a6",
+        "created": false,
+        "deleted": false,
+        "forced": false,
+        "head_commit": {
+            "added": [
+                "DZNPhotoPickerController/1.0.9/DZNPhotoPickerController.podspec"
+            ],
+            "author": {
+                "email": "keithbsmiley@gmail.com",
+                "name": "Keith Smiley",
+                "username": "Keithbsmiley"
+            },
+            "committer": {
+                "email": "keithbsmiley@gmail.com",
+                "name": "Keith Smiley",
+                "username": "Keithbsmiley"
+            },
+            "distinct": true,
+            "id": "8ffa67b766a6dd40ce4630ca3ef9003d63ff10d7",
+            "message": "Merge pull request #7764 from dzenbot/master\n\nAdded DZNPhotoPickerController version 1.0.9",
+            "modified": [],
+            "removed": [],
+            "timestamp": "2014-02-07T08:52:05-08:00",
+            "url": "https://github.com/CocoaPods/Specs/commit/8ffa67b766a6dd40ce4630ca3ef9003d63ff10d7"
+        },
+        "pusher": {
+            "name": "none"
+        },
+        "ref": "refs/heads/master",
+        "repository": {
+            "created_at": 1315748830,
+            "description": "A repository of CocoaPods (cocoapods.org) specifications.",
+            "fork": false,
+            "forks": 2884,
+            "has_downloads": true,
+            "has_issues": true,
+            "has_wiki": true,
+            "homepage": "http://guides.cocoapods.org/making/specs-and-specs-repo.html",
+            "id": 2365549,
+            "language": "Ruby",
+            "master_branch": "master",
+            "name": "Specs",
+            "open_issues": 6,
+            "organization": "CocoaPods",
+            "owner": {
+                "email": null,
+                "name": "CocoaPods"
+            },
+            "private": false,
+            "pushed_at": 1391791926,
+            "size": 248998,
+            "stargazers": 1427,
+            "url": "https://github.com/CocoaPods/Specs",
+            "watchers": 1427
+        }
+    }
+}

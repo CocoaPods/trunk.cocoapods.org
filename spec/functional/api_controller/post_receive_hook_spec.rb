@@ -24,60 +24,7 @@ module Pod::TrunkApp
     
     it "processes a payload of serialized push data" do
       header 'Content-Type', 'application/json'
-      payload = {
-        :payload => {
-          :before     => 'before',
-          :after      => 'after',
-          :ref        => 'ref',
-          :commits    => [{
-            :id        => 'fc2d273fca03aceaf7f0d3843c06165a106dcd13',
-            :message   => '[Add] BendingSpoons-iOSKit 0.0.94',
-            :timestamp => '',
-            :url       => '',
-            :added     => [],
-            :removed   => [],
-            :modified  => ['Specs/BendingSpoons-iOSKit/0.0.94/BendingSpoons-iOSKit.podspec.json'],
-            :author    => {
-              :name  => 'Eloy Durán',
-              :email => 'alloy@cocoapods.org'
-            },
-            :committer => {
-              :name => 'CocoaPods Bot',
-              :email => 'bot@cocoapods.org'
-            }
-          },{
-            :id        => '24a5a403e1f1fadd17ebe8e43d0c6dc6e66c81ba',
-            :message   => 'Update Analytics 0.9.5',
-            :timestamp => 'commit.committed_date.xmlschema',
-            :url       => 'commit_url',
-            :added     => [],
-            :removed   => [],
-            :modified  => ['Specs/Analytics/0.9.5/Analytics.podspec.json'],
-            :author    => {
-              :name  => 'Eloy Durán',
-              :email => 'alloy@cocoapods.org'
-            },
-            :committer => {
-              :name => 'Keith Smiley',
-              :email => 'smiles@cocoapods.org'
-            }
-          }],
-          :repository => {
-            :name        => 'Specs',
-            :url         => 'https://github.com/CocoaPods/Specs',
-            :pledgie     => '',
-            :description => 'A repository of CocoaPods (cocoapods.org) specifications.',
-            :homepage    => 'http://docs.cocoapods.org/guides/contributing_to_the_master_repo.html',
-            :watchers    => 170,
-            :forks       => 2787,
-            :private     => false,
-            :owner => {
-              :name  => 'CocoaPods',
-              :email => 'owner@cocoapods.org'
-            }
-          }
-        }
-      }.to_json
+      payload = fixture_read('GitHub/post_receive_hook_data.raw')
       post '/post-receive-hook/', payload
       last_response.status.should == 200
     end
