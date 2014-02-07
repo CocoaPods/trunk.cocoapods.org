@@ -48,8 +48,10 @@ module Pod::TrunkApp
       
       last_response.status.should == 200
       
-      # TODO Continue adding tests here.
+      # TODO Add meaningful tests.
       #
+      pod = Pod.find(name: 'MobileAppTracker')
+      pod.should.not == nil
     end
     
   end

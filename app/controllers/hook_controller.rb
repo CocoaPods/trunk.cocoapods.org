@@ -68,11 +68,24 @@ module Pod
             
             # Gets the data from data_url.
             #
-            podspec = REST.send(:get, data_url)
+            specification = REST.send(:get, data_url)
             
-            # TODO Update the database after extracting the relevant data from the podspec.
+            # Update the database after extracting the relevant data from the podspec.
             #
-            
+            pod = Pod.find(name: specification.name)
+            pod = if pod
+              # The pod exists.
+              #
+              # TODO Possibly add a new version.
+              #
+              
+            else
+              # The pod does not exist.
+              #
+              # TODO Who is an owner?
+              #
+              Pod.create(:name => specification.name)
+            end
           end
         end
         
