@@ -1,10 +1,12 @@
 require 'app/models/submission_job'
+require 'app/concerns/git_commit_sha_validator'
 
 module Pod
   module TrunkApp
     class PodVersion < Sequel::Model
+      include Concerns::GitCommitSHAValidator
+
       DATA_URL = "https://raw.github.com/#{ENV['GH_REPO']}/%s/%s"
-      GIT_COMMIT_SHA_LENGTH = 40
 
       self.dataset = :pod_versions
 
@@ -45,10 +47,11 @@ module Pod
 
       def validate
         super
+        validates_presence :pod_id
         validates_presence :name
         validates_unique [:pod_id, :name]
         validates_presence :published
-        validates_format /[0-9a-f]{#{GIT_COMMIT_SHA_LENGTH}}/, :commit_sha, :allow_nil => true
+        validates_git_commit_sha :commit_sha
       end
     end
   end

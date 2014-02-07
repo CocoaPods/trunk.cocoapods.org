@@ -9,6 +9,11 @@ module Pod::TrunkApp
         @version = PodVersion.new(:pod => @pod, :name => '1.2.0')
       end
 
+      it "needs a pod" do
+        @version.should.not.validate_with(:pod_id, nil)
+        @version.should.validate_with(:pod_id, @pod.id)
+      end
+
       it "needs a valid name" do
         @version.should.not.validate_with(:name, nil)
         @version.should.not.validate_with(:name, '')
@@ -38,6 +43,13 @@ module Pod::TrunkApp
       end
 
       describe "at the DB level" do
+        it "raises if an empty `pod_id' gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @version.pod_id = nil
+            @version.save(:validate => false)
+          end
+        end
+
         it "raises if an empty `name' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @version.name = nil

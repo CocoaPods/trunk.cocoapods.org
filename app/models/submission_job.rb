@@ -3,12 +3,17 @@ require 'app/models/log_message'
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/pod_version'
+require 'app/concerns/git_commit_sha_validator'
 
 module Pod
   module TrunkApp
     class SubmissionJob < Sequel::Model
+      include Concerns::GitCommitSHAValidator
+
       self.dataset = :submission_jobs
+
       plugin :timestamps
+      plugin :validation_helpers
 
       many_to_one :pod_version
       many_to_one :owner
@@ -46,6 +51,14 @@ module Pod
       end
 
       protected
+
+      def validate
+        super
+        validates_presence :pod_version_id
+        validates_presence :owner_id
+        validates_presence :specification_data
+        validates_git_commit_sha :commit_sha
+      end
 
       def self.github
         @github ||= GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')

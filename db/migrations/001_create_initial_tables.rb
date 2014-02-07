@@ -1,5 +1,6 @@
 # TODO
 # * Add NOT NULL constraints to all timestamp fields.
+# * Normalize: sequel -d DB_URL > db/migrations/001_create_initial_tables.rb
 Sequel.migration do
   change do
     create_table :pods do
