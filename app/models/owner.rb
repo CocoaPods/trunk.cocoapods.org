@@ -2,12 +2,15 @@ require 'app/models/pod'
 require 'app/models/session'
 
 require 'erb'
+require 'rfc822'
 
 module Pod
   module TrunkApp
     class Owner < Sequel::Model
       self.dataset = :owners
+
       plugin :timestamps
+      plugin :validation_helpers
 
       one_to_many :sessions
       many_to_many :pods
@@ -53,6 +56,14 @@ module Pod
         mail.deliver!
 
         session
+      end
+
+      protected
+
+      def validate
+        super
+        validates_presence :name
+        validates_format RFC822::EMAIL, :email
       end
     end
   end
