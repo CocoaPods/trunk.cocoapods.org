@@ -6,7 +6,7 @@ Sequel.migration do
     create_table :pods do
       primary_key :id
 
-      column :name,               :varchar,  #:null => false
+      column :name,               :varchar
       column :created_at,         :timestamp
       column :updated_at,         :timestamp
 
@@ -16,7 +16,7 @@ Sequel.migration do
     create_table :pod_versions do
       primary_key :id
 
-      column :name,               :varchar,  #:null => false
+      column :name,               :varchar
       column :published,          :boolean,  :default => false
       column :commit_sha,         :varchar
       column :created_at,         :timestamp
@@ -36,7 +36,7 @@ Sequel.migration do
     create_table :log_messages do
       primary_key :id
 
-      column :message,            :text,     #:null => false
+      column :message,            :text
       column :created_at,         :timestamp
       column :updated_at,         :timestamp
     end
@@ -44,8 +44,8 @@ Sequel.migration do
     create_table :owners do
       primary_key :id
 
-      column :email,              :varchar,  #:null => false
-      column :name,               :varchar,  #:null => false
+      column :email,              :varchar
+      column :name,               :varchar
       column :created_at,         :timestamp
       column :updated_at,         :timestamp
 
@@ -55,8 +55,8 @@ Sequel.migration do
     create_table :sessions do
       primary_key :id
 
-      column :token,              :varchar,  #:null => false
-      column :verification_token, :varchar,  #:null => false
+      column :token,              :varchar
+      column :verification_token, :varchar
       column :verified,           :boolean,  :default => false
       column :valid_until,        :timestamp
       column :created_at,         :timestamp
