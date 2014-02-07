@@ -1,18 +1,6 @@
 require File.expand_path('../../spec_helper', __FILE__)
 require 'app/models/pod'
 
-module Bacon
-  class Context
-    def validate_with(attr, value)
-      lambda do |subject|
-        subject.send("#{attr}=", value)
-        subject.valid?
-        subject.errors[attr] == nil
-      end
-    end
-  end
-end
-
 module Pod::TrunkApp
   describe Pod do
     describe "concerning validations" do
@@ -21,15 +9,15 @@ module Pod::TrunkApp
       end
 
       it "needs a valid name" do
-        @pod.should.not validate_with(:name, nil)
-        @pod.should.not validate_with(:name, '')
-        @pod.should.not validate_with(:name, ' ')
-        @pod.should validate_with(:name, 'AFNetworking')
+        @pod.should.not.validate_with(:name, nil)
+        @pod.should.not.validate_with(:name, '')
+        @pod.should.not.validate_with(:name, ' ')
+        @pod.should.validate_with(:name, 'AFNetworking')
       end
 
       it "needs a unique name" do
         Pod.create(:name => 'AFNetworking')
-        @pod.should.not validate_with(:name, 'AFNetworking')
+        @pod.should.not.validate_with(:name, 'AFNetworking')
       end
 
       describe "at the DB level" do

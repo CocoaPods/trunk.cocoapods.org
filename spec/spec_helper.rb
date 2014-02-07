@@ -23,6 +23,10 @@ Dir.glob(File.join(ROOT, 'spec/spec_helper/**/*.rb')).each do |filename|
   require File.join('spec_helper', File.basename(filename, '.rb'))
 end
 
+class Should
+  include SpecHelpers::ModelAssertions
+end
+
 module Bacon
   module BacktraceFilter
     def handle_summary
