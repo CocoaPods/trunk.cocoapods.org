@@ -34,10 +34,22 @@ module Pod::TrunkApp
     end
     
     it "succeeds processing a payload of serialized push data" do
+      # Capture the args so we can assert on them after the call.
+      #
+      # TODO Replace the old-school podspec with a JSON style one.
+      #
+      REST.stubs(:get).with do |url, body, headers, auth|
+        args = [url, body, headers, auth]
+      end.returns(fixture_specification('GitHub/MobileAppTracker.podspec'))
+      
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_data.raw')
       post '/github-post-receive/', payload
+      
       last_response.status.should == 200
+      
+      # TODO Continue adding tests here.
+      #
     end
     
   end

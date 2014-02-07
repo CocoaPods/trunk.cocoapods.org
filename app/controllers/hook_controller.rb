@@ -11,7 +11,8 @@ module Pod
       
       # --- Post Receive Hook -------------------------------------------------------------------
       
-      # TODO Return good errors.
+      # TODO Package most of this action's content neatly into
+      # a class specific to loading podspec data.
       #
       post "/github-post-receive/#{ENV['HOOK_PATH']}" do
         halt 415 unless request.media_type == 'application/x-www-form-urlencoded'
@@ -35,21 +36,43 @@ module Pod
         #
         return 422 unless payload.respond_to?(:to_h)
         
+        # Select commits not made by ourselves.
+        #
         manual_commits = payload['commits'].select { |commit| commit['message'] !~ /\A\[Add\]/ }
         
+        # Go through each of the commits and get the commit data.
+        #
         manual_commits.each do |manual_commit|
           commit_sha = manual_commit['id']
-          manual_commit['modified'].each do |modified_file|
-            # github = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+          
+          # Get all changed (added + modified) files.
+          #
+          # TODO What to do with deleted podspecs?
+          #
+          changed_files = manual_commit['added'] + manual_commit['modified']
+          
+          # For each changed file, get its data (if it's a podspec).
+          #
+          # TODO Only get the latest version of a file.
+          #
+          changed_files.each do |changed_file|
+            next unless changed_file =~ /\.podspec\z/ # TODO Use existing CP code for this.
             
-            # data_url_template = "https://raw.github.com/#{ENV['GH_REPO']}/%s/%s"
-            data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/%s"
-            data_url = data_url_template % [commit_sha, modified_file] if commit_sha
+            # Get the data from the Specs repo.
+            #
+            # TODO Move the template to a special class.
+            # TODO Spec this so the test does not use the network.
+            #
+            data_url_template = "https://raw.github.com/CocoaPods/Specs/%s/%s"
+            data_url = data_url_template % [commit_sha, changed_file] if commit_sha
             
-            puts
-            puts data_url
+            # Gets the data from data_url.
+            #
+            podspec = REST.send(:get, data_url)
             
-            # TODO Get the data from data_url here and update the database.
+            # TODO Update the database after extracting the relevant data from the podspec.
+            #
+            
           end
         end
         
