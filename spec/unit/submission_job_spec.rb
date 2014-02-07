@@ -6,7 +6,7 @@ module Pod::TrunkApp
     public :perform_work
   end
 
-  describe "SubmissionJob" do
+  describe SubmissionJob do
     before do
       @pod = Pod.create(:name => 'AFNetworking')
       @version = @pod.add_version(:name => '1.2.0')
