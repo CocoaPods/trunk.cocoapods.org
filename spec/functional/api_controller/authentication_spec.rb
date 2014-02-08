@@ -11,12 +11,10 @@ module Pod::TrunkApp
       header 'Content-Type', 'application/json; charset=utf-8'
     end
 
-    it "sees a useful error message when posting blank owner data" do
-      post '/register'
-      last_response.status.should == 422
-      json = json_response
-      json.keys.should == %w(error)
-      json['error'].should == "Please send the owner email address and name in the body of your post."
+    it "sees a useful error message when posting invalid JSON data" do
+      post '/register', '{'
+      last_response.status.should == 400
+      json_response['error'].should == "Invalid JSON data provided."
     end
 
     it "creates a new owner on first registration" do
@@ -40,6 +38,14 @@ module Pod::TrunkApp
       json_response['token'].should == session.token
       json_response['valid_until'].should == session.valid_until.to_s
       json_response['verified'].should == false
+    end
+
+    it "shows validation errors if creating an owner fails" do
+      lambda {
+        post '/register', { 'email' => nil, 'name' => nil }.to_json
+      }.should.not.change { Owner.count + Session.count }
+      last_response.status.should == 422
+      json_response['error'].keys.sort.should == %w(email name)
     end
 
     it "does not create a new owner or session in case emailing raises an error" do

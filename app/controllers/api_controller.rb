@@ -13,7 +13,8 @@ module Pod
   module TrunkApp
     class APIController < AppController
       require 'app/controllers/api_controller/json_request_response'
-      require 'app/controllers/api_controller/authentication'
+
+      # --- Errors --------------------------------------------------------------------------------
 
       error JSON::ParserError do
         json_error(400, 'Invalid JSON data provided.')
@@ -30,6 +31,9 @@ module Pod
         json_error(500, 'An internal server error occurred. Please try again later.')
       end
 
+      # --- Authentication ------------------------------------------------------------------------
+
+      require 'app/controllers/api_controller/authentication'
       find_authenticated_owner '/me', '/sessions', '/pods', '/pods/:name/owners'
 
       # --- Sessions ------------------------------------------------------------------------------
@@ -41,28 +45,18 @@ module Pod
       end
 
       post '/register' do
-        owner_params = nil
-        begin
-          owner_params = JSON.parse(request.body.read)
-        rescue JSON::ParserError
-          # TODO report error?
-        end
-        if !owner_params.kind_of?(Hash) || owner_params.empty?
-          json_error(422, 'Please send the owner email address and name in the body of your post.')
-        else
-          begin
-            # Savepoint is needed in testing, because tests already run in a
-            # transaction, which means the transaction would be re-used and we
-            # can't test whether or the transaction has been rolled back.
-            DB.transaction(:savepoint => (settings.environment == :test)) do
-              owner = Owner.find_by_email(owner_params['email']) || Owner.create(owner_params.slice('email', 'name'))
-              session = owner.create_session!(url('/sessions/verify/%s'))
-              json_message(201, session)
-            end
-          rescue Object => e
-            # TODO report error!
-            json_error(500, 'Unable to create a session due to an internal server error. Please try again later.')
+        owner_params = JSON.parse(request.body.read)
+        # Savepoint is needed in testing, because tests already run in a
+        # transaction, which means the transaction would be re-used and we
+        # can't test whether or the transaction has been rolled back.
+        DB.transaction(:savepoint => (settings.environment == :test)) do
+          if owner = Owner.find_by_email(owner_params['email'])
+            # TODO update name
+          else
+            owner = Owner.create(owner_params.slice('email', 'name'))
           end
+          session = owner.create_session!(url('/sessions/verify/%s'))
+          json_message(201, session)
         end
       end
 
