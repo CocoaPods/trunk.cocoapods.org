@@ -12,8 +12,7 @@ gem 'rake'
 gem 'sequel'
 gem 'sinatra'
 gem 'sinatra-twitter-bootstrap'
-
-
+gem 'slim', '< 2.0'
 
 group :development, :production do
   gem 'foreman'
@@ -28,6 +27,8 @@ group :development do
   gem 'kicker', :git => 'https://github.com/alloy/kicker.git', :branch => '3.0.0'
   gem 'saga'
   gem 'terminal-table'
+  
+  gem 'sinatra-contrib'
 end
 
 group :test do

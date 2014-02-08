@@ -1,5 +1,8 @@
 
 require 'sinatra/twitter-bootstrap'
+require 'sinatra/reloader'
+require 'slim'
+
 
 module Pod
   module TrunkApp
@@ -9,10 +12,8 @@ module Pod
         set :views, settings.root + '/app/views/claims'
       end
 
-      register Sinatra::Twitter::Bootstrap::Assets
-
       get '' do
-        erb :'show'
+        slim :'show'
       end
 
     end
