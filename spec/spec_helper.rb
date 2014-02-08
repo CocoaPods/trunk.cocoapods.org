@@ -119,6 +119,17 @@ module Net
   end
 end
 
+require 'rfc822'
+module RFC822
+  def self.mx_records(address)
+    if address.split('@').last == 'example.com'
+      [MXRecord.new(20, 'mail.example.com')]
+    else
+      []
+    end
+  end
+end
+
 # Used in GitHub fixtures
 DESTINATION_PATH = 'AFNetworking/1.2.0/AFNetworking.podspec.yaml'
 MESSAGE = '[Add] AFNetworking 1.2.0'

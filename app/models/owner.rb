@@ -63,7 +63,14 @@ module Pod
       def validate
         super
         validates_presence :name
-        validates_format RFC822::EMAIL, :email
+        validates_format RFC822::EMAIL, :email, :message => 'invalid format'
+        validates_mx_records :email
+      end
+
+      def validates_mx_records(attr)
+        if RFC822.mx_records(send(attr)).empty?
+          errors.add(:email, 'unverifiable domain')
+        end
       end
     end
   end
