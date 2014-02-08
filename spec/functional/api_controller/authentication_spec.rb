@@ -61,10 +61,17 @@ module Pod::TrunkApp
       owner.add_session({})
       lambda {
         lambda {
-          post '/register', { 'email' => @email, 'name' => @name }.to_json
+          post '/register', { 'email' => @email, 'name' => nil }.to_json
         }.should.not.change { Owner.count }
       }.should.change { Session.count }
       owner.reload.sessions.size.should == 2
+      owner.name.should == @name
+    end
+
+    it "updates the owner's name in case it is specified on subsequent registrations" do
+      owner = Owner.create(:email => @email, :name => @name)
+      post '/register', { 'email' => @email, 'name' => 'Changed' }.to_json
+      owner.reload.name.should == 'Changed'
     end
 
     it "does not create a new session in case emailing raises an error" do

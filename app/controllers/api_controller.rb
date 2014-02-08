@@ -51,7 +51,7 @@ module Pod
         # can't test whether or the transaction has been rolled back.
         DB.transaction(:savepoint => (settings.environment == :test)) do
           if owner = Owner.find_by_email(owner_params['email'])
-            # TODO update name
+            owner.update(:name => owner_params['name']) if owner_params['name']
           else
             owner = Owner.create(owner_params.slice('email', 'name'))
           end
