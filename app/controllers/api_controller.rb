@@ -7,11 +7,28 @@ require 'app/models/specification_wrapper'
 
 require 'active_support/core_ext/hash/slice'
 
+require 'newrelic_rpm'
+
 module Pod
   module TrunkApp
     class APIController < AppController
       require 'app/controllers/api_controller/json_request_response'
       require 'app/controllers/api_controller/authentication'
+
+      error JSON::ParserError do
+        json_error(400, 'Invalid JSON data provided.')
+      end
+
+      error Sequel::ValidationFailed do |error|
+        json_error(422, error.errors)
+      end
+
+      error 500 do |error|
+        NewRelic::Agent.notice_error(error, :uri => request.path,
+                                            :referer => request.referrer.to_s,
+                                            :request_params => request.params)
+        json_error(500, 'An internal server error occurred. Please try again later.')
+      end
 
       find_authenticated_owner '/me', '/sessions', '/pods', '/pods/:name/owners'
 
