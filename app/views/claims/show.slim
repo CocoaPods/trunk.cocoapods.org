@@ -1,1 +1,103 @@
-hi
+css:
+  #trunk-content {
+    background-color:#d1c4c0;
+    margin-top: -260px;
+    margin-bottom: 64px;
+    color:white;
+    padding:32px;
+  }
+
+  @media (max-width:768px){
+    #trunk-content {
+        margin-top: -240px;
+    }
+  }
+  
+  #trunk-content h1 {
+    font-weight:normal;
+  }
+  
+  label {
+    text-transform:uppercase;
+  }
+  
+  .tt-dropdown-menu {
+    background-color:white;
+        color:black;
+  }
+  
+  .tt-suggestion p {
+    margin: 12px;
+  }
+  
+  #selected-pods input {
+    width:100%;
+    
+  }
+  span.twitter-typeahead {
+    width:100%;
+  }
+  
+script src="http://guides.cocoapods.org/javascripts/application.js"  
+script src="/claim/javascript/typeahead.bundle.min.js"
+
+.headline
+  section.container
+    .row
+      header.col-md-12.headline.index
+      
+#content-wrapper
+  section.container
+    .row
+      article#trunk-content.col-md-12
+      
+        h1 Claim your Pod
+      
+        p Over the next several days, we are allowing you to claim all the pods you have already published to be registered as being ‘owned’ by you. During this period you can not yet push new versions of your pods, because we will need time to allow for dealing with claim disputes. 
+        p The exact number of transition days depends completely on the number of disputes.
+
+        form.form-horizontal role="form"
+          .form-group
+            label.col-sm-3.control-label for="email" Email: 
+            .col-sm-6
+              input.form-control id="email" type="email" autofocus="autofocus" require="required" placeholder=""
+
+          .form-group
+            label.col-sm-3.control-label for="pod" Pod Search:
+            .col-sm-6
+              input.form-control.col-md-4 id="pod" type="email" autofocus="autofocus" require="required"
+
+          .form-group#selected-pods
+            label.col-sm-3.control-label for="pod" Claimed Pods:
+            .col-sm-6
+            
+          .form-group
+            .col-md-offset-3.col-sm-4
+              input.btn.btn-default type="submit" name="button" id="button" value="SEND"
+
+
+javascript:
+  var cocoapods = function(query, cb) {
+    if(query){
+      $.getJSON("http://search.cocoapods.org/api/v1/pods.flat.hash.json?query=name:" + query, cb);
+    }
+  };
+ 
+  $('#pod').typeahead(null, {
+    displayKey: 'id',
+    minLength: 2,
+    source: cocoapods
+  });
+  
+  $("#pod").on("typeahead:selected", function(obj, suggestion, name) {
+      $("#selected-pods .col-sm-6").append("<input class='col-md-4' type='text' readonly='readonly' value='" + suggestion["id"] + "'>")
+      $("#pod").val("")
+  });
+  
+  $('#pod').keypress(function (e) {
+    if (e.which == 13) {
+        $("")
+        e.preventDefault();
+    } 
+  });
+  
