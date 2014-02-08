@@ -11,12 +11,10 @@ module Pod::TrunkApp
       header 'Content-Type', 'application/json; charset=utf-8'
     end
 
-    it "sees a useful error message when posting blank owner data" do
-      post '/register'
-      last_response.status.should == 422
-      json = json_response
-      json.keys.should == %w(error)
-      json['error'].should == "Please send the owner email address in the body of your post."
+    it "sees a useful error message when posting invalid JSON data" do
+      post '/register', '{'
+      last_response.status.should == 400
+      json_response['error'].should == "Invalid JSON data provided."
     end
 
     it "creates a new owner on first registration" do
@@ -42,15 +40,49 @@ module Pod::TrunkApp
       json_response['verified'].should == false
     end
 
+    it "shows validation errors if creating an owner fails" do
+      lambda {
+        post '/register', { 'email' => nil, 'name' => nil }.to_json
+      }.should.not.change { Owner.count + Session.count }
+      last_response.status.should == 422
+      json_response['error'].keys.sort.should == %w(email name)
+    end
+
+    it "does not create a new owner or session in case emailing raises an error" do
+      Mail::Message.any_instance.stubs(:deliver).raises
+      lambda {
+        should.raise do
+          post '/register', { 'email' => @email, 'name' => @name }.to_json
+        end
+      }.should.not.change { Owner.count + Session.count }
+    end
+
     it "creates only a new session on subsequent registrations" do
-      owner = Owner.create(:email => @email)
+      owner = Owner.create(:email => @email, :name => @name)
       owner.add_session({})
       lambda {
         lambda {
-          post '/register', { 'email' => @email, 'name' => @name }.to_json
+          post '/register', { 'email' => @email, 'name' => nil }.to_json
         }.should.not.change { Owner.count }
       }.should.change { Session.count }
       owner.reload.sessions.size.should == 2
+      owner.name.should == @name
+    end
+
+    it "updates the owner's name in case it is specified on subsequent registrations" do
+      owner = Owner.create(:email => @email, :name => @name)
+      post '/register', { 'email' => @email, 'name' => 'Changed' }.to_json
+      owner.reload.name.should == 'Changed'
+    end
+
+    it "does not create a new session in case emailing raises an error" do
+      owner = Owner.create(:email => @email, :name => @name)
+      Mail::Message.any_instance.stubs(:deliver).raises
+      lambda {
+        should.raise do
+          post '/register', { 'email' => @email, 'name' => @name }.to_json
+        end
+      }.should.not.change { Session.count }
     end
 
     it "sends an email with the session verification link" do
@@ -75,14 +107,14 @@ module Pod::TrunkApp
     end
 
     it "verifies a session" do
-      session = Session.create
+      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
       get "/sessions/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
     end
 
     it "does not verify an invalid session" do
-      session = Session.create
+      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
       session.update(:valid_until => 1.second.ago)
       get "/sessions/verify/#{session.verification_token}"
       last_response.status.should == 404

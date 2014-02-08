@@ -10,6 +10,7 @@ module Pod
 
       self.dataset = :sessions
       plugin :timestamps
+      plugin :validation_helpers
       plugin :after_initialize
 
       many_to_one :owner
@@ -20,9 +21,10 @@ module Pod
       def after_initialize
         super
         if new?
-          self.valid_for = VALIDITY_LENGTH
-          self.token = Token.generate(TOKEN_LENGTH) { |t| Session.find(:token => t) }
-          self.verification_token = Token.generate(VERIFICATION_TOKEN_LENGTH) { |t| Session.find(:verification_token => t) }
+          self.verified = false
+          self.valid_for = VALIDITY_LENGTH unless self.valid_until
+          self.token ||= Token.generate(TOKEN_LENGTH) { |t| Session.find(:token => t) }
+          self.verification_token ||= Token.generate(VERIFICATION_TOKEN_LENGTH) { |t| Session.find(:verification_token => t) }
         end
       end
 
@@ -51,6 +53,13 @@ module Pod
       def self.with_verification_token(token)
         return if token.nil?
         valid.where(:verification_token => token).first
+      end
+
+      protected
+
+      def validate
+        super
+        validates_presence :owner_id
       end
     end
   end

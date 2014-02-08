@@ -1,9 +1,59 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
-  describe "Owner" do
+  describe Owner do
     before do
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
+    end
+
+    describe "concerning validations" do
+      it "needs a valid name" do
+        @owner.should.not.validate_with(:name, nil)
+        @owner.should.not.validate_with(:name, '')
+        @owner.should.not.validate_with(:name, ' ')
+        @owner.should.validate_with(:name, 'Jenny')
+      end
+
+      it "needs a valid formatted email" do
+        @owner.should.not.validate_with(:email, nil)
+        @owner.errors.on(:email).should.include('invalid format')
+        @owner.should.not.validate_with(:email, '')
+        @owner.errors.on(:email).should.include('invalid format')
+        @owner.should.not.validate_with(:email, ' ')
+        @owner.errors.on(:email).should.include('invalid format')
+        @owner.should.not.validate_with(:email, 'jenny')
+        @owner.errors.on(:email).should.include('invalid format')
+        @owner.should.validate_with(:email, 'jenny@example.com')
+      end
+
+      it "needs a valid email domain" do
+        @owner.should.not.validate_with(:email, 'jenny@example')
+        @owner.errors.on(:email).should.include('unverifiable domain')
+        @owner.should.validate_with(:email, 'jenny@example.com')
+      end
+
+      describe "at the DB level" do
+        it "raises if an empty name gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @owner.name = nil
+            @owner.save(:validate => false)
+          end
+        end
+
+        it "raises if an empty email gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            Owner.stubs(:normalize_email).returns(nil)
+            @owner.email = nil
+            @owner.save(:validate => false)
+          end
+        end
+
+        it "raises if a duplicate email gets inserted" do
+          should.raise Sequel::UniqueConstraintViolation do
+            Owner.create(:email => 'jenny@example.com', :name => 'Penny')
+          end
+        end
+      end
     end
 
     describe "in general" do
@@ -24,7 +74,7 @@ module Pod::TrunkApp
 
       it "normalizes the email address when assigning the email address" do
         email = 'janny@example.com'
-        owner = Owner.create(:email => " #{email.upcase} ")
+        owner = Owner.new(:email => " #{email.upcase} ")
         owner.email.should == email
       end
     end

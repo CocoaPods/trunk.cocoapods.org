@@ -18,7 +18,9 @@ module SpecHelpers::APIController
     @pod = Pod::TrunkApp::Pod.create(:name => spec.name)
     @pod.add_owner(@owner) if @owner
     @version = @pod.add_version(:name => spec.version.to_s)
-    @job = @version.add_submission_job(:specification_data => spec.to_json)
+    @job = @version.add_submission_job(
+      :specification_data => spec.to_json,
+      :owner => @owner || Pod::TrunkApp::Owner.create(:email => 'jenny@example.com', :name => 'Jenny'))
   end
 end
 
@@ -97,17 +99,10 @@ module Pod::TrunkApp
       job.specification_data.should == JSON.pretty_generate(spec)
     end
 
-    it "does not redirect to the pod version if submitting to GitHub fails" do
-      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(false)
-      post '/pods', spec.to_json
-      last_response.status.should == 500
-      last_response.location.should == nil
-    end
-
     it "does not allow a push for an existing pod version while a job is in progress" do
       version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:succeeded => false)
-      version.add_submission_job(:succeeded => nil)
+      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
+      version.add_submission_job(:succeeded => nil, :owner => @owner, :specification_data => 'data')
       lambda {
         post '/pods', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
@@ -117,8 +112,8 @@ module Pod::TrunkApp
 
     it "does allow a push for an existing pod version if the previous jobs have failed" do
       version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:succeeded => false)
-      version.add_submission_job(:succeeded => false)
+      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
+      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
       lambda {
         lambda {
           post '/pods', spec.to_json
@@ -191,6 +186,7 @@ module Pod::TrunkApp
     extend SpecHelpers::APIController
 
     before do
+      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
       sign_in!
     end
 
@@ -204,7 +200,7 @@ module Pod::TrunkApp
     end
 
     it "does not allow a push for an existing pod not owned by the authenticated owner" do
-      other_owner = Owner.create(:email => 'jenny@example.com')
+      other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
       other_owner.add_pod(:name => spec.name)
       lambda {
         lambda {
@@ -223,7 +219,7 @@ module Pod::TrunkApp
     end
 
     it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
-      other_owner = Owner.create(:email => 'jenny@example.com')
+      other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
       pod = other_owner.add_pod(:name => spec.name)
       patch '/pods/AFNetworking/owners', { 'email' => @owner.email }.to_json
       last_response.status.should == 403

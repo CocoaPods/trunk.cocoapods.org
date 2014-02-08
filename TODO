@@ -1,11 +1,5 @@
-* Use JSON instead of YAML? While YAML is aesthetically nicer than JSON, JSON ensures there will never be Ruby YAML vulnerabilities and browsers have native support for this, which means it's at least more portable to one big platform.
-
-* Why is the session token length configurable? E.g. token_length
+* Don't unnecessarily catch errors, but let them bubble up to central handlers.
+* Look at the NewRelic development stuff.
+* Rename JSON 'error' to 'errors'?
 * Manfred sez don't show all the tokens themselves on GET /sessions, but why exactly?
-
-* Add validations to all models.
-  - Session: verify token uniqueness.
-  - Owner: verify email address.
 * Render HTML when confirming a session.
-* generate branch names according to https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
-* API error handling

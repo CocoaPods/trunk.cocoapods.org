@@ -23,6 +23,10 @@ Dir.glob(File.join(ROOT, 'spec/spec_helper/**/*.rb')).each do |filename|
   require File.join('spec_helper', File.basename(filename, '.rb'))
 end
 
+class Should
+  include SpecHelpers::ModelAssertions
+end
+
 module Bacon
   module BacktraceFilter
     def handle_summary
@@ -111,6 +115,17 @@ module Net
     class TryingToMakeHTTPConnectionException < StandardError; end
     def connect
       raise TryingToMakeHTTPConnectionException, "Please mock your HTTP calls so you don't do any HTTP requests."
+    end
+  end
+end
+
+require 'rfc822'
+module RFC822
+  def self.mx_records(address)
+    if address.split('@').last == 'example.com'
+      [MXRecord.new(20, 'mail.example.com')]
+    else
+      []
     end
   end
 end

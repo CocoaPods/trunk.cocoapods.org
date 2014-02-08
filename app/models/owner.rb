@@ -2,12 +2,15 @@ require 'app/models/pod'
 require 'app/models/session'
 
 require 'erb'
+require 'rfc822'
 
 module Pod
   module TrunkApp
     class Owner < Sequel::Model
       self.dataset = :owners
+
       plugin :timestamps
+      plugin :validation_helpers
 
       one_to_many :sessions
       many_to_many :pods
@@ -50,9 +53,24 @@ module Pod
         mail.to      = email
         mail.subject = @was_created ? '[CocoaPods] Confirm your registration.' : '[CocoaPods] Confirm your session.'
         mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/create_session.erb'))).result(binding)
-        mail.deliver!
+        mail.deliver
 
         session
+      end
+
+      protected
+
+      def validate
+        super
+        validates_presence :name
+        validates_format RFC822::EMAIL, :email, :message => 'invalid format'
+        validates_mx_records :email
+      end
+
+      def validates_mx_records(attr)
+        if RFC822.mx_records(send(attr)).empty?
+          errors.add(:email, 'unverifiable domain')
+        end
       end
     end
   end

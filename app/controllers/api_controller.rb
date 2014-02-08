@@ -7,12 +7,42 @@ require 'app/models/specification_wrapper'
 
 require 'active_support/core_ext/hash/slice'
 
+require 'newrelic_rpm'
+
 module Pod
   module TrunkApp
     class APIController < AppController
       require 'app/controllers/api_controller/json_request_response'
-      require 'app/controllers/api_controller/authentication'
 
+      # --- Errors --------------------------------------------------------------------------------
+
+      error JSON::ParserError do
+        json_error(400, 'Invalid JSON data provided.')
+      end
+
+      error Sequel::ValidationFailed do |error|
+        json_error(422, error.errors)
+      end
+
+      def catch_unexpected_errors?
+        settings.environment != :test
+      end
+      private :catch_unexpected_errors?
+
+      error 500 do |error|
+        if catch_unexpected_errors?
+          NewRelic::Agent.notice_error(error, :uri => request.path,
+                                              :referer => request.referrer.to_s,
+                                              :request_params => request.params)
+          json_error(500, 'An internal server error occurred. Please try again later.')
+        else
+          raise error
+        end
+      end
+
+      # --- Authentication ------------------------------------------------------------------------
+
+      require 'app/controllers/api_controller/authentication'
       find_authenticated_owner '/me', '/sessions', '/pods', '/pods/:name/owners'
 
       # --- Sessions ------------------------------------------------------------------------------
@@ -24,16 +54,16 @@ module Pod
       end
 
       post '/register' do
-        owner_params = nil
-        begin
-          owner_params = JSON.parse(request.body.read)
-        rescue JSON::ParserError
-          # TODO report error?
-        end
-        if !owner_params.kind_of?(Hash) || owner_params.empty?
-          json_error(422, 'Please send the owner email address in the body of your post.')
-        else
-          owner = Owner.find_by_email(owner_params['email']) || Owner.create(owner_params.slice('email', 'name'))
+        owner_params = JSON.parse(request.body.read)
+        # Savepoint is needed in testing, because tests already run in a
+        # transaction, which means the transaction would be re-used and we
+        # can't test whether or the transaction has been rolled back.
+        DB.transaction(:savepoint => (settings.environment == :test)) do
+          if owner = Owner.find_by_email(owner_params['email'])
+            owner.update(:name => owner_params['name']) if owner_params['name']
+          else
+            owner = Owner.create(owner_params.slice('email', 'name'))
+          end
           session = owner.create_session!(url('/sessions/verify/%s'))
           json_message(201, session)
         end
@@ -118,12 +148,8 @@ module Pod
           end
 
           job = version.add_submission_job(:specification_data => JSON.pretty_generate(specification), :owner => @owner)
-          if job.submit_specification_data!
-            redirect url(version.resource_path)
-          else
-            json_error(500, 'Failed to publish. In case this keeps failing, please open a ticket ' \
-                            'including the name and version at https://github.com/CocoaPods/Specs/issues/new.')
-          end
+          job.submit_specification_data!
+          redirect url(version.resource_path)
         end
       end
 

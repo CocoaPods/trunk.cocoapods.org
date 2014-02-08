@@ -4,7 +4,9 @@ module Pod
   module TrunkApp
     class Pod < Sequel::Model
       self.dataset = :pods
+
       plugin :timestamps
+      plugin :validation_helpers
 
       one_to_many :versions, :class => 'Pod::TrunkApp::PodVersion'
       many_to_many :owners
@@ -23,6 +25,14 @@ module Pod
           end
         end
         nil
+      end
+
+      protected
+
+      def validate
+        super
+        validates_presence :name
+        validates_unique :name
       end
     end
   end
