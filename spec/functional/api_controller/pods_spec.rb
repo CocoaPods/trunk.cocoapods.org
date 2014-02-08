@@ -99,13 +99,6 @@ module Pod::TrunkApp
       job.specification_data.should == JSON.pretty_generate(spec)
     end
 
-    it "does not redirect to the pod version if submitting to GitHub fails" do
-      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(false)
-      post '/pods', spec.to_json
-      last_response.status.should == 500
-      last_response.location.should == nil
-    end
-
     it "does not allow a push for an existing pod version while a job is in progress" do
       version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
       version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
@@ -193,6 +186,7 @@ module Pod::TrunkApp
     extend SpecHelpers::APIController
 
     before do
+      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
       sign_in!
     end
 

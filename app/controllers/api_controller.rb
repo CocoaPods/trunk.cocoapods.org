@@ -24,11 +24,20 @@ module Pod
         json_error(422, error.errors)
       end
 
+      def catch_unexpected_errors?
+        settings.environment != :test
+      end
+      private :catch_unexpected_errors?
+
       error 500 do |error|
-        NewRelic::Agent.notice_error(error, :uri => request.path,
-                                            :referer => request.referrer.to_s,
-                                            :request_params => request.params)
-        json_error(500, 'An internal server error occurred. Please try again later.')
+        if catch_unexpected_errors?
+          NewRelic::Agent.notice_error(error, :uri => request.path,
+                                              :referer => request.referrer.to_s,
+                                              :request_params => request.params)
+          json_error(500, 'An internal server error occurred. Please try again later.')
+        else
+          raise error
+        end
       end
 
       # --- Authentication ------------------------------------------------------------------------
@@ -139,12 +148,8 @@ module Pod
           end
 
           job = version.add_submission_job(:specification_data => JSON.pretty_generate(specification), :owner => @owner)
-          if job.submit_specification_data!
-            redirect url(version.resource_path)
-          else
-            json_error(500, 'Failed to publish. In case this keeps failing, please open a ticket ' \
-                            'including the name and version at https://github.com/CocoaPods/Specs/issues/new.')
-          end
+          job.submit_specification_data!
+          redirect url(version.resource_path)
         end
       end
 

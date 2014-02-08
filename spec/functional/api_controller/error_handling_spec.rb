@@ -40,6 +40,10 @@ module Pod::TrunkApp
     #it "catches constraint errors" do
     #end
 
+    before do
+      APIController.any_instance.stubs(:catch_unexpected_errors?).returns(true)
+    end
+
     it "catches all other unexpected errors" do
       APIController.any_instance.stubs(:raise_test_error).raises
       get '/raise_test_error'

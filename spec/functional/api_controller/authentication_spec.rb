@@ -51,9 +51,10 @@ module Pod::TrunkApp
     it "does not create a new owner or session in case emailing raises an error" do
       Mail::Message.any_instance.stubs(:deliver).raises
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_json
+        should.raise do
+          post '/register', { 'email' => @email, 'name' => @name }.to_json
+        end
       }.should.not.change { Owner.count + Session.count }
-      last_response.status.should == 500
     end
 
     it "creates only a new session on subsequent registrations" do
@@ -78,9 +79,10 @@ module Pod::TrunkApp
       owner = Owner.create(:email => @email, :name => @name)
       Mail::Message.any_instance.stubs(:deliver).raises
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_json
+        should.raise do
+          post '/register', { 'email' => @email, 'name' => @name }.to_json
+        end
       }.should.not.change { Session.count }
-      last_response.status.should == 500
     end
 
     it "sends an email with the session verification link" do
