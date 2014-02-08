@@ -24,8 +24,8 @@ module Pod::TrunkApp
       it "needs a unique name" do
         @version.save
         other_version = PodVersion.new(:pod => @pod, :name => '1.2.0')
-        other_version.should.not.validate_with(:name, '1.2.0', [:pod_id, :name])
-        other_version.should.validate_with(:name, '1.2.1', [:pod_id, :name])
+        other_version.should.not.validate_with(:name, '1.2.0')
+        other_version.should.validate_with(:name, '1.2.1')
       end
 
       it "needs a published status" do
