@@ -76,11 +76,8 @@ module Pod
         add_log_message(:message => message)
         if error = self.class.perform_work(&block)
           update(:succeeded => false)
-          # TODO report full error to error reporting service
           add_log_message(:message => "Failed with error: #{error.message}")
-          false
-        else
-          true
+          raise error
         end
       end
     end

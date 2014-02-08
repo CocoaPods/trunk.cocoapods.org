@@ -94,25 +94,29 @@ module Pod::TrunkApp
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
-        result = @job.perform_work 'A failing task' do
-          @job.update(:commit_sha => '3ca23060197547eef92983f15590b5a87270615f')
-          raise "oh noes!"
+        should.raise do
+          @job.perform_work 'A failing task' do
+            @job.update(:commit_sha => '3ca23060197547eef92983f15590b5a87270615f')
+            raise "oh noes!"
+          end
         end
-        result.should == false
-        @job.log_messages.last(2).map(&:message).should == ["A failing task", "Failed with error: oh noes!"]
-        @job.reload.commit_sha.should == nil
+        @job.reload.log_messages.last(2).map(&:message).should == ["A failing task", "Failed with error: oh noes!"]
+        @job.commit_sha.should == nil
 
-        result = @job.perform_work 'A succeeding task' do
-          @job.update(:commit_sha => '3ca23060197547eef92983f15590b5a87270615f')
+        should.not.raise do
+          @job.perform_work 'A succeeding task' do
+            @job.update(:commit_sha => '3ca23060197547eef92983f15590b5a87270615f')
+          end
         end
-        result.should == true
-        @job.log_messages.last.message.should == "A succeeding task"
-        @job.reload.commit_sha.should == '3ca23060197547eef92983f15590b5a87270615f'
+        @job.reload.log_messages.last.message.should == "A succeeding task"
+        @job.commit_sha.should == '3ca23060197547eef92983f15590b5a87270615f'
       end
 
       it "reports it failed" do
         @github.stubs(:create_new_commit).raises
-        @job.submit_specification_data!.should == false
+        should.raise do
+          @job.submit_specification_data!
+        end
         @job.reload.should.be.failed
         @job.should.not.be.completed
       end
@@ -126,7 +130,7 @@ module Pod::TrunkApp
       end
 
       it "creates a new commit" do
-        @job.submit_specification_data!.should == true
+        @job.submit_specification_data!
         @job.reload.commit_sha.should == fixture_new_commit_sha
         @job.reload.should.be.completed
         @job.should.not.be.failed
