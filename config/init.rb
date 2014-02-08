@@ -16,6 +16,9 @@ if !defined?(IRB) && ENV['RACK_ENV'] == 'production'
   require 'newrelic_rpm'
 end
 
+#require 'new_relic/rack/developer_mode'
+#use NewRelic::Rack::DeveloperMode
+
 # -- Logging ------------------------------------------------------------------
 
 require 'logger'
