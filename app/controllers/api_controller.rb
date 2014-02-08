@@ -31,11 +31,21 @@ module Pod
           # TODO report error?
         end
         if !owner_params.kind_of?(Hash) || owner_params.empty?
-          json_error(422, 'Please send the owner email address in the body of your post.')
+          json_error(422, 'Please send the owner email address and name in the body of your post.')
         else
-          owner = Owner.find_by_email(owner_params['email']) || Owner.create(owner_params.slice('email', 'name'))
-          session = owner.create_session!(url('/sessions/verify/%s'))
-          json_message(201, session)
+          begin
+            # Savepoint is needed in testing, because tests already run in a
+            # transaction, which means the transaction would be re-used and we
+            # can't test whether or the transaction has been rolled back.
+            DB.transaction(:savepoint => (settings.environment == :test)) do
+              owner = Owner.find_by_email(owner_params['email']) || Owner.create(owner_params.slice('email', 'name'))
+              session = owner.create_session!(url('/sessions/verify/%s'))
+              json_message(201, session)
+            end
+          rescue Object => e
+            # TODO report error!
+            json_error(500, 'Unable to create a session due to an internal server error. Please try again later.')
+          end
         end
       end
 

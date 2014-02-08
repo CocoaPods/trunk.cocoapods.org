@@ -16,7 +16,7 @@ module Pod::TrunkApp
       last_response.status.should == 422
       json = json_response
       json.keys.should == %w(error)
-      json['error'].should == "Please send the owner email address in the body of your post."
+      json['error'].should == "Please send the owner email address and name in the body of your post."
     end
 
     it "creates a new owner on first registration" do
@@ -42,6 +42,14 @@ module Pod::TrunkApp
       json_response['verified'].should == false
     end
 
+    it "does not create a new owner or session in case emailing raises an error" do
+      Mail::Message.any_instance.stubs(:deliver).raises
+      lambda {
+        post '/register', { 'email' => @email, 'name' => @name }.to_json
+      }.should.not.change { Owner.count + Session.count }
+      last_response.status.should == 500
+    end
+
     it "creates only a new session on subsequent registrations" do
       owner = Owner.create(:email => @email, :name => @name)
       owner.add_session({})
@@ -51,6 +59,15 @@ module Pod::TrunkApp
         }.should.not.change { Owner.count }
       }.should.change { Session.count }
       owner.reload.sessions.size.should == 2
+    end
+
+    it "does not create a new session in case emailing raises an error" do
+      owner = Owner.create(:email => @email, :name => @name)
+      Mail::Message.any_instance.stubs(:deliver).raises
+      lambda {
+        post '/register', { 'email' => @email, 'name' => @name }.to_json
+      }.should.not.change { Session.count }
+      last_response.status.should == 500
     end
 
     it "sends an email with the session verification link" do
