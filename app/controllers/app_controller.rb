@@ -21,7 +21,8 @@ module Pod
 end
 
 # Now load subclass controllers.
-require 'app/controllers/api_controller'
+require 'app/controllers/api/pods_controller'
+require 'app/controllers/api/sessions_controller'
 require 'app/controllers/manage_controller'
 require 'app/controllers/claim_controller'
 
@@ -29,9 +30,10 @@ require 'app/controllers/claim_controller'
 module Pod
   module TrunkApp
     App = Rack::URLMap.new(
-      '/api/v1' => APIController,
-      '/manage' => ManageController,
-      '/claim' => ClaimController,
+      '/api/v1/pods'     => PodsController,
+      '/api/v1/sessions' => SessionsController,
+      '/manage'          => ManageController,
+      '/claim'           => ClaimController,
     )
   end
 end

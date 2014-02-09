@@ -29,7 +29,7 @@ module Pod
       end
 
       def public_attributes
-        { 'created_at' => created_at, 'valid_until' => valid_until, 'token' => token, 'verified' => verified }
+        { 'created_at' => created_at, 'valid_until' => valid_until, 'verified' => verified }
       end
 
       def to_json(*a)

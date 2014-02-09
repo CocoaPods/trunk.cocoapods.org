@@ -1,6 +1,7 @@
 require File.expand_path('../../../spec_helper', __FILE__)
+require 'app/controllers/api/pods_controller'
 
-module SpecHelpers::APIController
+module SpecHelpers::PodsController
   def self.extended(context)
     context.send(:extend, SpecHelpers::Authentication)
     context.send(:extend, SpecHelpers::Response)
@@ -25,8 +26,8 @@ module SpecHelpers::APIController
 end
 
 module Pod::TrunkApp
-  describe APIController, "when POSTing pod versions with an authenticated owner" do
-    extend SpecHelpers::APIController
+  describe PodsController, "when POSTing pod versions with an authenticated owner" do
+    extend SpecHelpers::PodsController
 
     before do
       SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
@@ -35,18 +36,18 @@ module Pod::TrunkApp
 
     it "only accepts JSON" do
       header 'Content-Type', 'text/yaml'
-      post '/pods', {}, { 'HTTPS' => 'on' }
+      post '/', {}, { 'HTTPS' => 'on' }
       last_response.status.should == 415
     end
 
     it "fails with data other than serialized spec data" do
       lambda {
-        post '/pods', ''
+        post '/', ''
       }.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 400
 
       lambda {
-        post '/pods', '{"something":"else"}'
+        post '/', '{"something":"else"}'
       }.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 422
     end
@@ -57,7 +58,7 @@ module Pod::TrunkApp
       spec.license = nil
 
       lambda {
-        post '/pods', spec.to_json
+        post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
 
       last_response.status.should == 422
@@ -72,7 +73,7 @@ module Pod::TrunkApp
     it "does not allow a push for an existing pod version if it's published" do
       @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
       lambda {
-        post '/pods', spec.to_json
+        post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 409
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
@@ -81,7 +82,7 @@ module Pod::TrunkApp
     it "creates new pod and version records" do
       lambda {
         lambda {
-          post '/pods', spec.to_json
+          post '/', spec.to_json
         }.should.change { Pod.count }
       }.should.change { PodVersion.count }
       last_response.status.should == 302
@@ -92,7 +93,7 @@ module Pod::TrunkApp
     it "creates a submission job and log message once a new pod version is created" do
       SubmissionJob.any_instance.expects(:submit_specification_data!).returns(true)
       lambda {
-        post '/pods', spec.to_json
+        post '/', spec.to_json
       }.should.change { SubmissionJob.count }
       job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
       job.owner.should == @owner
@@ -104,7 +105,7 @@ module Pod::TrunkApp
       version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
       version.add_submission_job(:succeeded => nil, :owner => @owner, :specification_data => 'data')
       lambda {
-        post '/pods', spec.to_json
+        post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 409
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
@@ -116,7 +117,7 @@ module Pod::TrunkApp
       version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
       lambda {
         lambda {
-          post '/pods', spec.to_json
+          post '/', spec.to_json
         }.should.not.change { PodVersion.count }
       }.should.change { SubmissionJob.count }
       last_response.status.should == 302
@@ -124,13 +125,13 @@ module Pod::TrunkApp
     end
   end
 
-  describe APIController, "with an unauthenticated consumer" do
-    extend SpecHelpers::APIController
+  describe PodsController, "with an unauthenticated consumer" do
+    extend SpecHelpers::PodsController
 
     it "is not allowed to post a new pod" do
       lambda {
         lambda {
-          post '/pods', spec.to_json
+          post '/', spec.to_json
         }.should.not.change { Pod.count }
       }.should.not.change { PodVersion.count }
       last_response.status.should == 401
@@ -141,14 +142,14 @@ module Pod::TrunkApp
     end
 
     it "returns a 404 when a pod or version can't be found" do
-      get '/pods/FANetworking/versions/1.2.0'
+      get '/FANetworking/versions/1.2.0'
       last_response.status.should == 404
-      get '/pods/AFNetworking/versions/0.2.1'
+      get '/AFNetworking/versions/0.2.1'
       last_response.status.should == 404
     end
 
     it "considers a pod non-existant if no version is published yet" do
-      get '/pods/AFNetworking'
+      get '/AFNetworking'
       last_response.status.should == 404
       last_response.body.should == { 'error' => 'No pod found with the specified name.' }.to_json
     end
@@ -158,7 +159,7 @@ module Pod::TrunkApp
       @pod.add_owner(@owner)
       @pod.add_version(:name => '0.2.1', :published => false)
       @version.update(:published => true)
-      get '/pods/AFNetworking'
+      get '/AFNetworking'
       last_response.body.should == {
         'versions' => [@version.public_attributes],
         'owners' => [@owner.public_attributes],
@@ -166,14 +167,14 @@ module Pod::TrunkApp
     end
 
     it "considers a pod version non-existant if it's not yet published" do
-      get '/pods/AFNetworking/versions/1.2.0'
+      get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 404
       last_response.body.should == { 'error' => 'No pod found with the specified version.' }.to_json
     end
 
     it "returns an overview of a published pod version" do
       @version.update(:published => true)
-      get '/pods/AFNetworking/versions/1.2.0'
+      get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
       last_response.body.should == {
         'messages' => @job.log_messages.map(&:public_attributes),
@@ -182,8 +183,8 @@ module Pod::TrunkApp
     end
   end
 
-  describe APIController, "concerning authorization" do
-    extend SpecHelpers::APIController
+  describe PodsController, "concerning authorization" do
+    extend SpecHelpers::PodsController
 
     before do
       SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
@@ -194,7 +195,7 @@ module Pod::TrunkApp
       @owner.add_pod(:name => spec.name)
       lambda {
         lambda {
-          post '/pods', spec.to_json
+          post '/', spec.to_json
         }.should.not.change { Pod.count }
       }.should.change { PodVersion.count }
     end
@@ -204,7 +205,7 @@ module Pod::TrunkApp
       other_owner.add_pod(:name => spec.name)
       lambda {
         lambda {
-          post '/pods', spec.to_json
+          post '/', spec.to_json
         }.should.not.change { Pod.count }
       }.should.not.change { PodVersion.count }
       last_response.status.should == 403
@@ -213,7 +214,7 @@ module Pod::TrunkApp
     it "adds an owner to the pod's owners" do
       pod = @owner.add_pod(:name => spec.name)
       other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
-      patch '/pods/AFNetworking/owners', { 'email' => other_owner.email }.to_json
+      patch '/AFNetworking/owners', { 'email' => other_owner.email }.to_json
       last_response.status.should == 200
       pod.owners.should == [@owner, other_owner]
     end
@@ -221,7 +222,7 @@ module Pod::TrunkApp
     it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
       other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
       pod = other_owner.add_pod(:name => spec.name)
-      patch '/pods/AFNetworking/owners', { 'email' => @owner.email }.to_json
+      patch '/AFNetworking/owners', { 'email' => @owner.email }.to_json
       last_response.status.should == 403
       pod.owners.should == [other_owner]
     end

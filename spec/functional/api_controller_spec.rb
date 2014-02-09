@@ -1,11 +1,12 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../spec_helper', __FILE__)
+require 'app/controllers/api_controller'
 
 module Pod::TrunkApp
   class APIController
     def raise_test_error
     end
 
-    get '/raise_test_error' do
+    get '/raise_test_error', :requires_owner => false do
       raise_test_error
     end
   end
@@ -37,9 +38,6 @@ module Pod::TrunkApp
       json_response['error'].should == { 'name' => ['invalid'] }
     end
 
-    #it "catches constraint errors" do
-    #end
-
     before do
       APIController.any_instance.stubs(:catch_unexpected_errors?).returns(true)
     end
@@ -60,4 +58,46 @@ module Pod::TrunkApp
       get '/raise_test_error', { 'key' => 'value' }, { 'HTTP_REFERER' => 'http://example.com' }
     end
   end
+
+  class APIController
+    get '/owner_required', :requires_owner => true do
+    end
+  end
+
+  describe APIController, "concerning authentication" do
+    extend SpecHelpers::Response
+    extend SpecHelpers::Authentication
+
+    before do
+      header 'Content-Type', 'application/json; charset=utf-8'
+    end
+
+    it "allows access with a valid verified session belonging to an owner" do
+      session = create_session_with_owner
+      get '/owner_required', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
+      last_response.status.should == 200
+    end
+
+    it "does not allow access when no authentication token is supplied" do
+      get '/owner_required'
+      last_response.status.should == 401
+      json_response['error'].should == "Please supply an authentication token."
+    end
+
+    it "does not allow access when an invalid authentication token is supplied" do
+      get '/owner_required', nil, { 'HTTP_AUTHORIZATION' => 'Token invalid' }
+      last_response.status.should == 401
+      json_response['error'].should == "Authentication token is invalid or unverified."
+    end
+
+    it "does not allow access when an unverified authentication token is supplied" do
+      session = create_session_with_owner
+      session.update(:verified => false)
+      get '/owner_required', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
+      last_response.status.should == 401
+      json_response['error'].should == "Authentication token is invalid or unverified."
+    end
+  end
+
 end
+

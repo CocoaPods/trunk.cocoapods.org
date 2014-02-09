@@ -1,7 +1,8 @@
 require File.expand_path('../../../spec_helper', __FILE__)
+require 'app/controllers/api/sessions_controller'
 
 module Pod::TrunkApp
-  describe APIController, "concerning registration" do
+  describe SessionsController, "concerning registration" do
     extend SpecHelpers::Authentication
     extend SpecHelpers::Response
 
@@ -12,14 +13,14 @@ module Pod::TrunkApp
     end
 
     it "sees a useful error message when posting invalid JSON data" do
-      post '/register', '{'
+      post '/', '{'
       last_response.status.should == 400
       json_response['error'].should == "Invalid JSON data provided."
     end
 
     it "creates a new owner on first registration" do
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_json
+        post '/', { 'email' => @email, 'name' => @name }.to_json
       }.should.change { Owner.count }
       last_response.status.should == 201
 
@@ -30,7 +31,7 @@ module Pod::TrunkApp
 
     it "creates a new session on first registration" do
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_json
+        post '/', { 'email' => @email, 'name' => @name }.to_json
       }.should.change { Session.count }
       last_response.status.should == 201
 
@@ -42,7 +43,7 @@ module Pod::TrunkApp
 
     it "shows validation errors if creating an owner fails" do
       lambda {
-        post '/register', { 'email' => nil, 'name' => nil }.to_json
+        post '/', { 'email' => nil, 'name' => nil }.to_json
       }.should.not.change { Owner.count + Session.count }
       last_response.status.should == 422
       json_response['error'].keys.sort.should == %w(email name)
@@ -52,7 +53,7 @@ module Pod::TrunkApp
       Mail::Message.any_instance.stubs(:deliver).raises
       lambda {
         should.raise do
-          post '/register', { 'email' => @email, 'name' => @name }.to_json
+          post '/', { 'email' => @email, 'name' => @name }.to_json
         end
       }.should.not.change { Owner.count + Session.count }
     end
@@ -62,7 +63,7 @@ module Pod::TrunkApp
       owner.add_session({})
       lambda {
         lambda {
-          post '/register', { 'email' => @email, 'name' => nil }.to_json
+          post '/', { 'email' => @email, 'name' => nil }.to_json
         }.should.not.change { Owner.count }
       }.should.change { Session.count }
       owner.reload.sessions.size.should == 2
@@ -71,7 +72,7 @@ module Pod::TrunkApp
 
     it "updates the owner's name in case it is specified on subsequent registrations" do
       owner = Owner.create(:email => @email, :name => @name)
-      post '/register', { 'email' => @email, 'name' => 'Changed' }.to_json
+      post '/', { 'email' => @email, 'name' => 'Changed' }.to_json
       owner.reload.name.should == 'Changed'
     end
 
@@ -80,14 +81,14 @@ module Pod::TrunkApp
       Mail::Message.any_instance.stubs(:deliver).raises
       lambda {
         should.raise do
-          post '/register', { 'email' => @email, 'name' => @name }.to_json
+          post '/', { 'email' => @email, 'name' => @name }.to_json
         end
       }.should.not.change { Session.count }
     end
 
     it "sends an email with the session verification link" do
       lambda {
-        post '/register', { 'email' => @email, 'name' => @name }.to_json
+        post '/', { 'email' => @email, 'name' => @name }.to_json
       }.should.change { Mail::TestMailer.deliveries.size }
       last_response.status.should == 201
 
@@ -98,7 +99,7 @@ module Pod::TrunkApp
     end
   end
 
-  describe APIController, "concerning sessions" do
+  describe SessionsController, "concerning sessions" do
     extend SpecHelpers::Response
     extend SpecHelpers::Authentication
 
@@ -108,7 +109,7 @@ module Pod::TrunkApp
 
     it "verifies a session" do
       session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
-      get "/sessions/verify/#{session.verification_token}"
+      get "/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
     end
@@ -116,13 +117,13 @@ module Pod::TrunkApp
     it "does not verify an invalid session" do
       session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
       session.update(:valid_until => 1.second.ago)
-      get "/sessions/verify/#{session.verification_token}"
+      get "/verify/#{session.verification_token}"
       last_response.status.should == 404
       session.reload.verified.should == false
     end
 
     it "does not verify an unexisting session" do
-      get "/sessions/verify/doesnotexist"
+      get "/verify/doesnotexist"
       last_response.status.should == 404
     end
 
@@ -135,9 +136,10 @@ module Pod::TrunkApp
       owner = session.owner
       owner.add_session({})
 
-      get '/sessions'
+      get '/'
       last_response.status.should == 200
-      json_response.should == JSON.parse(owner.sessions.map(&:public_attributes).to_json)
+      attributes = owner.public_attributes.merge('sessions' => owner.sessions.map(&:public_attributes))
+      json_response.should == JSON.parse(attributes.to_json)
     end
 
     it "clears all active sessions except the currently used one" do
@@ -145,7 +147,7 @@ module Pod::TrunkApp
       owner = session.owner
       owner.add_session({})
       lambda {
-        delete '/sessions'
+        delete '/'
       }.should.change { Session.count }
       last_response.status.should == 200
 
@@ -156,44 +158,10 @@ module Pod::TrunkApp
     it "prolongs a session each time it's required" do
       session = sign_in!
       session.update(:valid_until => 10.seconds.from_now)
-      get '/me'
+      get '/'
       session.reload.valid_until.should > 10.seconds.from_now
     end
   end
 
-  describe APIController, "concerning authentication" do
-    extend SpecHelpers::Response
-    extend SpecHelpers::Authentication
-
-    before do
-      header 'Content-Type', 'application/json; charset=utf-8'
-    end
-
-    it "allows access with a valid verified session belonging to an owner" do
-      session = create_session_with_owner
-      get '/me', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
-      last_response.status.should == 200
-    end
-
-    it "does not allow access when no authentication token is supplied" do
-      get '/me'
-      last_response.status.should == 401
-      json_response['error'].should == "Please supply an authentication token."
-    end
-
-    it "does not allow access when an invalid authentication token is supplied" do
-      get '/me', nil, { 'HTTP_AUTHORIZATION' => 'Token invalid' }
-      last_response.status.should == 401
-      json_response['error'].should == "Authentication token is invalid or unverified."
-    end
-
-    it "does not allow access when an unverified authentication token is supplied" do
-      session = create_session_with_owner
-      session.update(:verified => false)
-      get '/me', nil, { 'HTTP_AUTHORIZATION' => "Token #{session.token}"}
-      last_response.status.should == 401
-      json_response['error'].should == "Authentication token is invalid or unverified."
-    end
-  end
 end
 

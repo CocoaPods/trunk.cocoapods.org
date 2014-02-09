@@ -1,18 +1,31 @@
 require 'app/controllers/app_controller'
-
-require 'app/models/owner'
-require 'app/models/pod'
 require 'app/models/session'
-require 'app/models/specification_wrapper'
-
-require 'active_support/core_ext/hash/slice'
 
 require 'newrelic_rpm'
 
 module Pod
   module TrunkApp
     class APIController < AppController
-      require 'app/controllers/api_controller/json_request_response'
+
+      private
+
+      # --- Request / Response --------------------------------------------------------------------
+
+      before do
+        type = content_type(:json)
+        if (request.post? || request.put?) && request.media_type != 'application/json'
+          json_error(415, "Unable to accept input with Content-Type `#{request.media_type}`, " \
+                          "must be `application/json`.")
+        end
+      end
+
+      def json_error(status, message)
+        error(status, { 'error' => message }.to_json)
+      end
+
+      def json_message(status, content)
+        halt(status, content.to_json)
+      end
 
       # --- Errors --------------------------------------------------------------------------------
 
@@ -27,7 +40,6 @@ module Pod
       def catch_unexpected_errors?
         settings.environment != :test
       end
-      private :catch_unexpected_errors?
 
       error 500 do |error|
         if catch_unexpected_errors?
@@ -42,139 +54,76 @@ module Pod
 
       # --- Authentication ------------------------------------------------------------------------
 
-      require 'app/controllers/api_controller/authentication'
-      find_authenticated_owner '/me', '/sessions', '/pods', '/pods/:name/owners'
-
-      # --- Sessions ------------------------------------------------------------------------------
-
-      get '/me' do
-        if owner?
-          json_message(200, @owner)
+      # Always try to find the owner and prolong the session.
+      #
+      before do
+        if @session = Session.with_token(authentication_token)
+          @owner = @session.owner
+          @session.prolong!
         end
       end
 
-      post '/register' do
-        owner_params = JSON.parse(request.body.read)
-        # Savepoint is needed in testing, because tests already run in a
-        # transaction, which means the transaction would be re-used and we
-        # can't test whether or the transaction has been rolled back.
-        DB.transaction(:savepoint => (settings.environment == :test)) do
-          if owner = Owner.find_by_email(owner_params['email'])
-            owner.update(:name => owner_params['name']) if owner_params['name']
-          else
-            owner = Owner.create(owner_params.slice('email', 'name'))
-          end
-          session = owner.create_session!(url('/sessions/verify/%s'))
-          json_message(201, session)
-        end
-      end
-
-      # TODO render HTML
-      get '/sessions/verify/:token' do
-        if session = Session.with_verification_token(params[:token])
-          session.update(:verified => true)
-          json_message(200, session)
-        else
-          json_error(404, 'Session not found.')
-        end
-      end
-
-      get '/sessions' do
-        if owner?
-          json_message(200, @owner.sessions.map(&:public_attributes))
-        end
-      end
-
-      delete '/sessions' do
-        if owner?
-          @owner.sessions.each do |session|
-            session.destroy unless session == @session
-          end
-          json_message(200, @session)
-        end
-      end
-
-      # --- Pods ----------------------------------------------------------------------------------
-
-      get '/pods/:name' do
-        if pod = Pod.find(:name => params[:name])
-          versions = pod.versions_dataset.where(:published => true).to_a
-          unless versions.empty?
-            json_message(200, 'versions' => versions.map(&:public_attributes),
-                              'owners'   => pod.owners.map(&:public_attributes))
-          end
-        end
-        json_error(404, 'No pod found with the specified name.')
-      end
-
-      get '/pods/:name/versions/:version' do
-        if pod = Pod.find(:name => params[:name])
-          if version = pod.versions_dataset.where(:name => params[:version]).first
-            if version.published?
-              job = version.submission_jobs.last
-              json_message(200, 'messages' => job.log_messages.map(&:public_attributes),
-                                'data_url' => version.data_url)
+      # Returns if there is an authenticated owner or throws an error in case there isn't.
+      #
+      set :requires_owner do |required|
+        condition do
+          if required && @owner.nil?
+            if authentication_token.blank?
+              json_error(401, 'Please supply an authentication token.')
+            else
+              json_error(401, 'Authentication token is invalid or unverified.')
             end
           end
         end
-        json_error(404, 'No pod found with the specified version.')
       end
 
-      post '/pods' do
-        if owner?
-          specification = SpecificationWrapper.from_json(request.body.read)
-          if specification.nil?
-            json_error(400, 'Unable to load a Pod Specification from the provided input.')
-          end
-          unless specification.valid?
-            json_error(422, specification.validation_errors)
-          end
-
-          pod = Pod.find_by_name_and_owner(specification.name, @owner) do
-            json_error(403, 'You are not allowed to push new versions for this pod.')
-          end
-          unless pod
-            pod = Pod.create(:name => specification.name)
-          end
-
-          # TODO use a unique index in the DB for this instead?
-          if version = pod.versions_dataset.where(:name => specification.version).first
-            if version.published? || version.submission_jobs_dataset.where(:succeeded => nil).first
-              headers 'Location' => url(version.resource_path)
-              json_error(409, "Unable to accept duplicate entry for: #{specification}")
+      class << self
+        # Override all the route methods to ensure an ACL rule is specified.
+        #
+        [:get, :post, :put, :patch, :delete].each do |verb|
+          class_eval <<-EOS
+            def #{verb}(route, options, &block)
+              unless options.has_key?(:requires_owner)
+                raise "Must specify a ACL rule for #{name} #{verb.to_s.upcase} " << route
+              end
+              super
             end
-          else
-            version = pod.add_version(:name => specification.version)
-          end
-
-          job = version.add_submission_job(:specification_data => JSON.pretty_generate(specification), :owner => @owner)
-          job.submit_specification_data!
-          redirect url(version.resource_path)
+          EOS
         end
       end
 
-      patch '/pods/:name/owners' do
-        if owner?
-          pod = Pod.find_by_name_and_owner(params[:name], @owner) do
-            json_error(403, 'You are not allowed to add owners to this pod.')
+      # Returns the Authorization header if the value of the header starts with ‘Token’.
+      #
+      def authorization_header
+        authorization = env['HTTP_AUTHORIZATION'].to_s.strip
+        unless authorization == ''
+          if authorization.start_with?('Token')
+            authorization
           end
-          unless pod
-            json_error(404, 'No pod found with the specified name.')
-          end
-
-          owner_params = JSON.parse(request.body.read)
-          if !owner_params.kind_of?(Hash) || owner_params.empty?
-            json_error(422, 'Please send the owner email address in the body of your post.')
-          end
-
-          unless other_owner = Owner.find_by_email(owner_params['email'])
-            json_error(404, 'No owner found with the specified email address.')
-          end
-
-          pod.add_owner(other_owner)
-          json_message(200, pod.owners.map(&:public_attributes))
         end
       end
+
+      # Returns the token value from the Authorization header if the header starts with ‘Token’.
+      #
+      def token_from_authorization_header
+        if authorization = authorization_header
+          authorization.split(' ', 2)[-1]
+        end
+      end
+
+      # Returns the authentication token from any possible location.
+      #
+      # Currently supported is the Authorization header.
+      #
+      #   Authorization: Token 34jk45df98
+      #
+      def authentication_token
+        if token = token_from_authorization_header
+          logger.debug("Got authentication token: #{token}")
+          token
+        end
+      end
+
     end
   end
 end
