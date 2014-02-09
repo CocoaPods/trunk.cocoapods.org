@@ -53,6 +53,7 @@ end
 class Bacon::Context
   def test_controller!(app)
     extend Rack::Test::Methods
+    extend SpecHelpers::Access
     self.singleton_class.send(:define_method, :app) { app }
   end
 

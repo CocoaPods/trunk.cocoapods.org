@@ -155,7 +155,7 @@ module Pod::TrunkApp
       json_response.should == JSON.parse(session.public_attributes.to_json)
     end
 
-    it "prolongs a session each time it's required" do
+    it "prolongs a session each time it's used" do
       session = sign_in!
       session.update(:valid_until => 10.seconds.from_now)
       get '/'

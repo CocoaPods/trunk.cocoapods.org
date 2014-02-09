@@ -128,17 +128,14 @@ module Pod::TrunkApp
   describe PodsController, "with an unauthenticated consumer" do
     extend SpecHelpers::PodsController
 
-    it "is not allowed to post a new pod" do
-      lambda {
-        lambda {
-          post '/', spec.to_json
-        }.should.not.change { Pod.count }
-      }.should.not.change { PodVersion.count }
-      last_response.status.should == 401
-    end
+    should_require_login.post('/') { spec.to_json }
 
     before do
       create_pod_version!
+    end
+
+    should_require_login.patch('/AFNetworking/owners') do
+      { 'email' => 'other@example.com' }.to_json
     end
 
     it "returns a 404 when a pod or version can't be found" do
@@ -200,31 +197,30 @@ module Pod::TrunkApp
       }.should.change { PodVersion.count }
     end
 
-    it "does not allow a push for an existing pod not owned by the authenticated owner" do
-      other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
-      other_owner.add_pod(:name => spec.name)
-      lambda {
-        lambda {
-          post '/', spec.to_json
-        }.should.not.change { Pod.count }
-      }.should.not.change { PodVersion.count }
-      last_response.status.should == 403
+    before do
+      @other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
     end
 
     it "adds an owner to the pod's owners" do
       pod = @owner.add_pod(:name => spec.name)
-      other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
-      patch '/AFNetworking/owners', { 'email' => other_owner.email }.to_json
+      patch '/AFNetworking/owners', { 'email' => @other_owner.email }.to_json
       last_response.status.should == 200
-      pod.owners.should == [@owner, other_owner]
+      pod.owners.should == [@owner, @other_owner]
     end
 
+    before do
+      @other_pod = @other_owner.add_pod(:name => spec.name)
+    end
+
+    # TODO see if changes (or the lack of) can be detected from the macro, besides just count.
     it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
-      other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
-      pod = other_owner.add_pod(:name => spec.name)
       patch '/AFNetworking/owners', { 'email' => @owner.email }.to_json
-      last_response.status.should == 403
-      pod.owners.should == [other_owner]
+      @other_pod.owners.should == [@other_owner]
+    end
+
+    should_disallow.post('/') { spec.to_json }
+    should_disallow.patch('/AFNetworking/owners') do
+      { 'email' => @owner.email }.to_json
     end
   end
 end
