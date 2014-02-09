@@ -1,5 +1,6 @@
 desc 'Install the dependencies'
 task :bootstrap do
+  sh 'git submodule update --init'
   sh 'bundle install'
 end
 
