@@ -7,9 +7,9 @@ require 'app/models/specification_wrapper'
 
 module Pod
   module TrunkApp
-    class HookController < AppController
+    class HooksController < AppController
       
-      # --- Post Receive Hook -------------------------------------------------------------------
+      # --- Post Receive Hook ---------------------------------------------------------------------
       
       # TODO Package most of this action's content neatly into
       # a class specific to loading podspec data.

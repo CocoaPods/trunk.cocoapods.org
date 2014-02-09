@@ -1,12 +1,12 @@
+require 'app/controllers/app_controller'
 
 require 'sinatra/twitter-bootstrap'
-require 'sinatra/reloader'
+#require 'sinatra/reloader'
 require 'slim'
-
 
 module Pod
   module TrunkApp
-    class ClaimController < AppController
+    class ClaimsController < AppController
 
       configure do
         set :views, settings.root + '/app/views/claims'

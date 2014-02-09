@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
   
-  describe HookController, "when receiving push updates from the repository" do
+  describe HooksController, "when receiving push updates from the repository" do
     
     before do
       header 'X-Github-Delivery', '37ac017e-902c-11e3-8115-655d22cdc2ab'
