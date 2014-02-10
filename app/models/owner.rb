@@ -15,6 +15,19 @@ module Pod
       one_to_many :sessions
       many_to_many :pods
 
+      UNCLAIMED_OWNER_EMAIL = 'unclaimed-pods@cocoapods.org'
+
+      # This is the owner that was initially assigned to all imported pods when we switched to the
+      # use of the trunk app.
+      #
+      def self.unclaimed
+        first(:email => UNCLAIMED_OWNER_EMAIL)
+      end
+
+      def self.find_by_email(email)
+        first(:email => normalize_email(email))
+      end
+
       def public_attributes
         attributes = { 'created_at' => created_at, 'email' => email }
         attributes['name'] = name if name
@@ -27,10 +40,6 @@ module Pod
 
       def self.normalize_email(email)
         email.to_s.strip.downcase
-      end
-
-      def self.find_by_email(email)
-        first(:email => normalize_email(email))
       end
 
       def email=(email)
