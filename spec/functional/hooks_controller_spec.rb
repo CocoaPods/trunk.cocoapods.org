@@ -47,7 +47,7 @@ module Pod::TrunkApp
       Pod.find(name: 'MobileAppTracker').should == nil
     end
     
-    it "processes payload data and does create a new pod version (if it does not exist)" do
+    it "processes payload data and does not do anything (if it does not exist)" do
       # Create existing pod.
       #
       existing_spec = fixture_specification('AFNetworking.podspec')
@@ -64,10 +64,10 @@ module Pod::TrunkApp
     
       last_response.status.should == 200
     
-      Pod.find(name: 'AFNetworking').versions.map(&:name).should == ['1.2.0', '1.2.1']
+      Pod.find(name: 'AFNetworking').versions.last.submission_jobs.last.should == nil
     end
     
-    it "processes payload data and does not create a new pod version (because it exists)" do
+    it "processes payload data and creates a new submission job (because it exists)" do
       # Create existing pod.
       #
       existing_spec = fixture_specification('AFNetworking.podspec')
@@ -84,7 +84,7 @@ module Pod::TrunkApp
     
       last_response.status.should == 200
     
-      Pod.find(name: 'AFNetworking').versions.map(&:name).should == ['1.2.0']
+      Pod.find(name: 'AFNetworking').versions.last.submission_jobs.last.should == nil
     end
     
   end

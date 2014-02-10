@@ -43,7 +43,9 @@ module Pod
         # Go through each of the commits and get the commit data.
         #
         manual_commits.each do |manual_commit|
-          commit_sha = manual_commit['id']
+          commit_sha   = manual_commit['id']
+          author_email = manual_commit['author']['email']
+          author_name  = manual_commit['author']['name']
           
           # Get all changed (added + modified) files.
           #
@@ -60,12 +62,12 @@ module Pod
             
             # Get the data from the Specs repo.
             #
-            # TODO Move the template to a special class.
-            #
             data_url_template = "https://raw.github.com/CocoaPods/Specs/%s/%s"
             data_url = data_url_template % [commit_sha, changed_file] if commit_sha
             
             # Gets the data from data_url.
+            #
+            # TODO Change this to the JSON spec.
             #
             specification = REST.get(data_url)
             
@@ -75,17 +77,20 @@ module Pod
             
             # Add a new version.
             #
-            # Note: We ignore any new pods coming in
-            # through a manual merge.
+            # Note: We ignore any new pod versions coming in through a manual merge.
             #
             if pod
-              # TODO We should refactor specification.version.version
-              # to specification.version.name!
-              #
-              begin
-                PodVersion.create(:pod => pod, :name => specification.version.version)
-              rescue Sequel::ValidationFailed
-                # We ignore the manual merge if the pod version already exists.
+              version = PodVersion.find(:pod => pod, :name => specification.version.version)
+              if version
+                submission_job = version.add_submission_job(
+                  :specification_data => JSON.pretty_generate(specification),
+                  :owner => Owner.find_or_create_by_email_and_update_name(author_email, author_name)
+                )
+                version.update(
+                  published: true,
+                  commit_sha: commit_sha,
+                  published_by_submission_job_id: submission_job.id
+                )
               end
             end
           end
