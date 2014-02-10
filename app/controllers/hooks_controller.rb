@@ -67,7 +67,7 @@ module Pod
             
             # Gets the data from data_url.
             #
-            specification = REST.send(:get, data_url)
+            specification = REST.get(data_url)
             
             # Update the database after extracting the relevant data from the podspec.
             #
