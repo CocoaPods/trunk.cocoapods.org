@@ -32,6 +32,10 @@ module Pod
       end
 
       post '/', :requires_owner => true do
+        unless ENV['TRUNK_APP_PUSH_ALLOWED'] == 'true'
+          json_error(503, 'Push access is currently disabled.')
+        end
+
         specification = SpecificationWrapper.from_json(request.body.read)
         if specification.nil?
           json_error(400, 'Unable to load a Pod Specification from the provided input.')

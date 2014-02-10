@@ -40,6 +40,21 @@ module Pod::TrunkApp
       last_response.status.should == 415
     end
 
+    it "does not accept a push unless explicitely enabled" do
+      begin
+        [nil, '', 'false'].each do |value|
+          ENV['TRUNK_APP_PUSH_ALLOWED'] = value
+          lambda {
+            post '/', spec.to_json
+          }.should.not.change { Pod.count + PodVersion.count }
+          last_response.status.should == 503
+          json_response['error'].should == 'Push access is currently disabled.'
+        end
+      ensure
+        ENV['TRUNK_APP_PUSH_ALLOWED'] = 'true'
+      end
+    end
+
     it "fails with data other than serialized spec data" do
       lambda {
         post '/', ''
