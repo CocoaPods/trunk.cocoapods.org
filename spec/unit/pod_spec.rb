@@ -52,11 +52,6 @@ module Pod::TrunkApp
         Pod.find_by_name_and_owner('CocoaLumberjack', @owner).should == nil
       end
 
-      it "returns an existing pod if it's owned by nobody yet" do
-        pod = Pod.create(:name => 'AFNetworking')
-        Pod.find_by_name_and_owner('AFNetworking', @owner).should == pod
-      end
-
       it "returns an existing pod if it's owned by the specified owner" do
         pod = @owner.add_pod(:name => 'AFNetworking')
         Pod.find_by_name_and_owner('AFNetworking', @owner).should == pod
