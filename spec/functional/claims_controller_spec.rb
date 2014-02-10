@@ -17,8 +17,8 @@ module Pod::TrunkApp
       }.should.not.change { Owner.count }
       last_response.status.should == 200
       form = Nokogiri::HTML(last_response.body).css('form').first
-      form.css('input[name="person[email]"]').first['value'].should == 'appie@example.com'
-      form.css('input[name="person[name]"]').first['value'].should == 'Appie Duran'
+      form.css('input[name="owner[email]"]').first['value'].should == 'appie@example.com'
+      form.css('input[name="owner[name]"]').first['value'].should == 'Appie Duran'
     end
 
     before do

@@ -39,7 +39,7 @@ css:
   }
   
 script src="http://guides.cocoapods.org/javascripts/application.js"  
-script src="/claim/javascript/typeahead.bundle.min.js"
+script src="/claims/javascript/typeahead.bundle.min.js"
 
 .headline
   section.container
@@ -60,12 +60,12 @@ script src="/claim/javascript/typeahead.bundle.min.js"
           .form-group
             label.col-sm-3.control-label for="email" Email:
             .col-sm-6
-              input.form-control id="email" type="email" name="person[email]" value="#{params[:owner]['email'] if params[:owner]}" autofocus="autofocus" require="required" placeholder=""
+              input.form-control id="email" type="email" name="owner[email]" value="#{params[:owner]['email'] if params[:owner]}" autofocus="autofocus" require="required" placeholder=""
 
           .form-group
             label.col-sm-3.control-label for="name" Owner name:
             .col-sm-6
-              input.form-control.col-md-4 id="name" type="textfield" name="person[name]" value="#{params[:owner]['name'] if params[:owner]}" require="required"
+              input.form-control.col-md-4 id="name" type="textfield" name="owner[name]" value="#{params[:owner]['name'] if params[:owner]}" require="required"
 
           .form-group
             label.col-sm-3.control-label for="pod" Pod Search:
@@ -95,7 +95,7 @@ javascript:
   });
   
   $("#pod").on("typeahead:selected", function(obj, suggestion, name) {
-      $("#selected-pods .col-sm-6").append("<input class='col-md-4' type='text' readonly='readonly' value='" + suggestion["id"] + "'>")
+      $("#selected-pods .col-sm-6").append("<input class='col-md-4' type='text' readonly='readonly' name='pods[]' value='" + suggestion["id"] + "'>")
       $("#pod").val("")
   });
   
