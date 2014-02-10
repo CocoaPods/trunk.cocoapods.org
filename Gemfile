@@ -36,4 +36,5 @@ group :test do
   gem 'bacon'
   gem 'mocha-on-bacon'
   gem 'rack-test'
+  gem 'nokogiri'
 end

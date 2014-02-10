@@ -46,6 +46,7 @@ GEM
       treetop (~> 1.4.8)
     metaclass (0.0.1)
     mime-types (1.25.1)
+    mini_portile (0.5.2)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     mocha-on-bacon (0.2.2)
@@ -53,6 +54,8 @@ GEM
     multi_json (1.8.2)
     nap (0.6.0)
     newrelic_rpm (3.7.1.180)
+    nokogiri (1.6.1)
+      mini_portile (~> 0.5.0)
     notify (0.5.2)
     pg (0.17.1)
     polyglot (0.3.3)
@@ -115,6 +118,7 @@ DEPENDENCIES
   mocha-on-bacon
   nap (>= 0.6)
   newrelic_rpm
+  nokogiri
   pg
   rack-ssl
   rack-test

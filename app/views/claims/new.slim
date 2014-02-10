@@ -56,16 +56,21 @@ script src="/claim/javascript/typeahead.bundle.min.js"
         p Over the next several days, we are allowing you to claim all the pods you have already published to be registered as being ‘owned’ by you. During this period you can not yet push new versions of your pods, because we will need time to allow for dealing with claim disputes. 
         p The exact number of transition days depends completely on the number of disputes.
 
-        form.form-horizontal role="form"
+        form.form-horizontal role="form" action="/claims"
           .form-group
-            label.col-sm-3.control-label for="email" Email: 
+            label.col-sm-3.control-label for="email" Email:
             .col-sm-6
-              input.form-control id="email" type="email" autofocus="autofocus" require="required" placeholder=""
+              input.form-control id="email" type="email" name="person[email]" value="#{params[:owner]['email'] if params[:owner]}" autofocus="autofocus" require="required" placeholder=""
+
+          .form-group
+            label.col-sm-3.control-label for="name" Owner name:
+            .col-sm-6
+              input.form-control.col-md-4 id="name" type="textfield" name="person[name]" value="#{params[:owner]['name'] if params[:owner]}" require="required"
 
           .form-group
             label.col-sm-3.control-label for="pod" Pod Search:
             .col-sm-6
-              input.form-control.col-md-4 id="pod" type="email" autofocus="autofocus" require="required"
+              input.form-control.col-md-4 id="pod" type="textfield" require="required"
 
           .form-group#selected-pods
             label.col-sm-3.control-label for="pod" Claimed Pods:

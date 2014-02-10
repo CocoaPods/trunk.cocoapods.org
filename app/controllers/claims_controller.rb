@@ -12,8 +12,27 @@ module Pod
         set :views, settings.root + '/app/views/claims'
       end
 
-      get '' do
-        slim :'show'
+      get '/new' do
+        slim :'new'
+      end
+
+      post '/' do
+        if params[:pods].blank?
+          slim :'new'
+        else
+          if owner = Owner.find_by_email(params[:owner]['email'])
+            if (name = params[:owner]['name']) && !name.blank?
+              owner.update(:name => params[:owner]['name'])
+            end
+          else
+            owner = Owner.create(params[:owner].slice('email', 'name'))
+          end
+          params[:pods].each do |pod_name|
+            pod = Pod.find(:name => pod_name)
+            owner.add_pod(pod)
+          end
+          redirect to('/thanks')
+        end
       end
 
     end
