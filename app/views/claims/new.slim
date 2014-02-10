@@ -56,7 +56,7 @@ script src="/claim/javascript/typeahead.bundle.min.js"
         p Over the next several days, we are allowing you to claim all the pods you have already published to be registered as being ‘owned’ by you. During this period you can not yet push new versions of your pods, because we will need time to allow for dealing with claim disputes. 
         p The exact number of transition days depends completely on the number of disputes.
 
-        form.form-horizontal role="form" action="/claims"
+        form.form-horizontal role="form" action="/claims" method="POST"
           .form-group
             label.col-sm-3.control-label for="email" Email:
             .col-sm-6

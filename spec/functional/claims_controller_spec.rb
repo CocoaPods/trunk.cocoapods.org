@@ -6,8 +6,9 @@ module Pod::TrunkApp
     it "renders a new claim form" do
       get '/new'
       last_response.status.should == 200
-      last_response.body.should.include '<form action="/claims"'
-      Nokogiri::HTML(last_response.body).css('form').first['action'].should == '/claims'
+      form = Nokogiri::HTML(last_response.body).css('form').first
+      form['action'].should == '/claims'
+      form['method'].should == 'POST'
     end
 
     it "does not create an owner if no pods are specified" do
@@ -16,7 +17,6 @@ module Pod::TrunkApp
       }.should.not.change { Owner.count }
       last_response.status.should == 200
       form = Nokogiri::HTML(last_response.body).css('form').first
-      form['action'].should == '/claims'
       form.css('input[name="person[email]"]').first['value'].should == 'appie@example.com'
       form.css('input[name="person[name]"]').first['value'].should == 'Appie Duran'
     end
