@@ -79,7 +79,14 @@ module Pod
             # through a manual merge.
             #
             if pod
-              # TODO Add a new version?
+              # TODO We should refactor specification.version.version
+              # to specification.version.name!
+              #
+              begin
+                PodVersion.create(:pod => pod, :name => specification.version.version)
+              rescue Sequel::ValidationFailed
+                # We ignore the manual merge if the pod version already exists.
+              end
             end
           end
         end

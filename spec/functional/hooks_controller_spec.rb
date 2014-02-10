@@ -33,25 +33,58 @@ module Pod::TrunkApp
       last_response.status.should == 415
     end
     
-    it "succeeds processing a payload of serialized push data" do
-      # Capture the args so we can assert on them after the call.
-      #
+    it "processes payload data but does not create a new pod (if one does not exist)" do
       # TODO Replace the old-school podspec with a JSON style one.
       #
-      REST.stubs(:get).with do |url, body, headers, auth|
-        args = [url, body, headers, auth]
-      end.returns(fixture_specification('GitHub/MobileAppTracker.podspec'))
-      
+      REST.stubs(:get).returns(fixture_specification('GitHub/MobileAppTracker.podspec'))
+    
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_data.raw')
       post '/github-post-receive/', payload
-      
+    
       last_response.status.should == 200
-      
-      # TODO Add meaningful tests.
+    
+      Pod.find(name: 'MobileAppTracker').should == nil
+    end
+    
+    it "processes payload data and does create a new pod version (if it does not exist)" do
+      # Create existing pod.
       #
-      pod = Pod.find(name: 'MobileAppTracker')
-      pod.should.not == nil
+      existing_spec = fixture_specification('AFNetworking.podspec')
+      existing_pod = Pod.create(:name => existing_spec.name)
+      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      
+      # TODO Replace the old-school podspec with a JSON style one.
+      #
+      REST.stubs(:get).returns(fixture_specification('GitHub/AFNetworking.podspec'))
+    
+      header 'Content-Type', 'application/x-www-form-urlencoded'
+      payload = fixture_read('GitHub/post_receive_hook_data.raw')
+      post '/github-post-receive/', payload
+    
+      last_response.status.should == 200
+    
+      Pod.find(name: 'AFNetworking').versions.map(&:name).should == ['1.2.0', '1.2.1']
+    end
+    
+    it "processes payload data and does not create a new pod version (because it exists)" do
+      # Create existing pod.
+      #
+      existing_spec = fixture_specification('AFNetworking.podspec')
+      existing_pod = Pod.create(:name => existing_spec.name)
+      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      
+      # TODO Replace the old-school podspec with a JSON style one.
+      #
+      REST.stubs(:get).returns(existing_spec)
+    
+      header 'Content-Type', 'application/x-www-form-urlencoded'
+      payload = fixture_read('GitHub/post_receive_hook_data.raw')
+      post '/github-post-receive/', payload
+    
+      last_response.status.should == 200
+    
+      Pod.find(name: 'AFNetworking').versions.map(&:name).should == ['1.2.0']
     end
     
   end
