@@ -58,7 +58,9 @@ module Pod
           # TODO Only get the latest version of a file.
           #
           changed_files.each do |changed_file|
-            next unless changed_file =~ /\.podspec\z/ # TODO Use existing CP code for this.
+            # TODO Use existing CP code for this.
+            #
+            next unless changed_file =~ /\.podspec\z/
             
             # Get the data from the Specs repo.
             #
