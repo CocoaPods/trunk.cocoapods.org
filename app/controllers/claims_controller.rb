@@ -20,10 +20,7 @@ module Pod
         if params[:pods].blank?
           slim :'new'
         else
-          # Savepoint is needed in testing, because tests already run in a
-          # transaction, which means the transaction would be re-used and we
-          # can't test whether or the transaction has been rolled back.
-          DB.transaction(:savepoint => (settings.environment == :test)) do
+          DB.test_safe_transaction do
             if owner = Owner.find_by_email(params[:owner]['email'])
               if (name = params[:owner]['name']) && !name.blank?
                 owner.update(:name => params[:owner]['name'])

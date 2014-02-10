@@ -1,7 +1,9 @@
 require 'bacon'
-require 'mocha-on-bacon'
 require 'rack/test'
 require 'digest'
+
+require 'mocha-on-bacon'
+Mocha::Configuration.prevent(:stubbing_non_existent_method)
 
 require 'cocoapods-core'
 
@@ -19,7 +21,9 @@ $:.unshift File.expand_path('../../', __FILE__)
 require 'config/init'
 require 'app/controllers/app_controller'
 
-Mocha::Configuration.prevent(:stubbing_non_existent_method)
+def DB.test_safe_transaction(&block)
+  DB.transaction(:savepoint => true, &block)
+end
 
 $:.unshift(ROOT, 'spec')
 Dir.glob(File.join(ROOT, 'spec/spec_helper/**/*.rb')).each do |filename|

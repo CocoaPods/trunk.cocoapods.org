@@ -47,6 +47,15 @@ db_loggers << TRUNK_APP_LOGGER # TODO For now also enable DB logger in productio
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 Sequel.extension :core_extensions, :migration
 
+class << DB
+  # Savepoint is needed in testing, because tests already run in a transaction,
+  # which means the transaction would be re-used and we can't test whether or
+  # the transaction has been rolled back.
+  #
+  # This is overriden in tests to do add a savepoint.
+  alias_method :test_safe_transaction, :transaction
+end
+
 # -- Email --------------------------------------------------------------------
 
 require 'mail'

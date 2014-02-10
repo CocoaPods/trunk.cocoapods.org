@@ -10,10 +10,7 @@ module Pod
 
       post '/', :requires_owner => false do
         owner_params = JSON.parse(request.body.read)
-        # Savepoint is needed in testing, because tests already run in a
-        # transaction, which means the transaction would be re-used and we
-        # can't test whether or the transaction has been rolled back.
-        DB.transaction(:savepoint => (settings.environment == :test)) do
+        DB.test_safe_transaction do
           if owner = Owner.find_by_email(owner_params['email'])
             owner.update(:name => owner_params['name']) if owner_params['name']
           else
