@@ -67,23 +67,22 @@ module Pod
             
             # Gets the data from data_url.
             #
-            # TODO Change this to the JSON spec.
-            #
-            specification = REST.get(data_url)
+            spec_hash = JSON.parse REST.get(data_url)
             
             # Update the database after extracting the relevant data from the podspec.
             #
-            pod = Pod.find(name: specification.name)
+            pod = Pod.find(name: spec_hash['name'])
             
-            # Add a new version.
-            #
-            # Note: We ignore any new pod versions coming in through a manual merge.
-            #
             if pod
-              version = PodVersion.find(:pod => pod, :name => specification.version.version)
+              version = PodVersion.find(:pod => pod, :name => spec_hash['version'])
+              
+              # We ignore any new pod versions coming in through a manual merge.
+              #
               if version
+                # Add a new submission job to the existing version.
+                #
                 submission_job = version.add_submission_job(
-                  :specification_data => JSON.pretty_generate(specification),
+                  :specification_data => JSON.pretty_generate(spec_hash),
                   :owner => Owner.find_or_create_by_email_and_update_name(author_email, author_name)
                 )
                 version.update(

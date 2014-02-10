@@ -7,8 +7,8 @@
                 "MobileAppTracker/3.0.1/MobileAppTracker.podspec"
             ],
             "author": {
-                "email": "harshal.ogale@hasoffers.com",
-                "name": "Harshal Ogale",
+                "email": "test.user@cocoapods.org",
+                "name": "Test User",
                 "username": "harshal-hasoffers"
             },
             "committer": {
@@ -29,8 +29,8 @@
                 "MobileAppTracker/3.0.1/MobileAppTracker.podspec"
             ],
             "author": {
-                "email": "keithbsmiley@gmail.com",
-                "name": "Keith Smiley",
+                "email": "test.user@cocoapods.org",
+                "name": "Test User",
                 "username": "Keithbsmiley"
             },
             "committer": {
@@ -56,8 +56,8 @@
             "MobileAppTracker/3.0.1/MobileAppTracker.podspec"
         ],
         "author": {
-            "email": "keithbsmiley@gmail.com",
-            "name": "Keith Smiley",
+            "email": "test.user@cocoapods.org",
+            "name": "Test User",
             "username": "Keithbsmiley"
         },
         "committer": {
