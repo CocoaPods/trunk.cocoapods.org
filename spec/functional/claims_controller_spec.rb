@@ -71,6 +71,12 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [Owner.unclaimed]
     end
 
+    it "lists unknown pods" do
+    end
+
+    it "lists already claimed pods" do
+    end
+
     it "redirects to the thanks page after successfully assigning pods" do
       post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking']
       last_response.location.should == 'https://example.org/thanks'
