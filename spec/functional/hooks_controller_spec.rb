@@ -64,7 +64,9 @@ module Pod::TrunkApp
     
       last_response.status.should == 200
     
-      Pod.find(name: 'AFNetworking').versions.last.submission_jobs.last.should == nil
+      # Did not add a version.
+      #
+      Pod.find(name: 'AFNetworking').versions.map(&:name).should == ['1.2.0']
     end
     
     it "processes payload data and creates a new submission job (because it exists)" do
@@ -83,8 +85,10 @@ module Pod::TrunkApp
       post '/github-post-receive/', payload
     
       last_response.status.should == 200
-    
-      Pod.find(name: 'AFNetworking').versions.last.submission_jobs.last.should == nil
+      
+      # Did not add a new version.
+      #
+      # Pod.find(name: 'AFNetworking').versions.last.submission_job.
     end
     
   end
