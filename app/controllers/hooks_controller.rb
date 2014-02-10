@@ -47,7 +47,7 @@ module Pod
           
           # Get all changed (added + modified) files.
           #
-          # TODO What to do with deleted podspecs?
+          # Note: We ignore deleted specs.
           #
           changed_files = manual_commit['added'] + manual_commit['modified']
           
@@ -61,7 +61,6 @@ module Pod
             # Get the data from the Specs repo.
             #
             # TODO Move the template to a special class.
-            # TODO Spec this so the test does not use the network.
             #
             data_url_template = "https://raw.github.com/CocoaPods/Specs/%s/%s"
             data_url = data_url_template % [commit_sha, changed_file] if commit_sha
@@ -73,18 +72,14 @@ module Pod
             # Update the database after extracting the relevant data from the podspec.
             #
             pod = Pod.find(name: specification.name)
-            pod = if pod
-              # The pod exists.
-              #
-              # TODO Possibly add a new version.
-              #
-              
-            else
-              # The pod does not exist.
-              #
-              # TODO Who is an owner?
-              #
-              Pod.create(:name => specification.name)
+            
+            # Add a new version.
+            #
+            # Note: We ignore any new pods coming in
+            # through a manual merge.
+            #
+            if pod
+              # TODO Add a new version?
             end
           end
         end
