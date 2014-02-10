@@ -2,8 +2,32 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
   describe Owner do
+    it "creates an owner" do
+      owner = nil
+      lambda {
+        owner = Owner.find_or_create_by_email_and_update_name(' appie@example.com ', ' Appie ')
+      }.should.change { Owner.count }
+      owner.email.should == 'appie@example.com'
+      owner.name.should == 'Appie'
+    end
+
     before do
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
+    end
+
+    it "finds an existing owner by email" do
+      lambda {
+        Owner.find_or_create_by_email_and_update_name(@owner.email, '').should == @owner
+      }.should.not.change { Owner.count }
+    end
+
+    it "updates an owner's name if specified" do
+      Owner.find_or_create_by_email_and_update_name(@owner.email, nil)
+      @owner.reload.name.should == 'Jenny'
+      Owner.find_or_create_by_email_and_update_name(@owner.email, ' ')
+      @owner.reload.name.should == 'Jenny'
+      Owner.find_or_create_by_email_and_update_name(@owner.email, ' Penny ')
+      @owner.reload.name.should == 'Penny'
     end
 
     describe "concerning validations" do

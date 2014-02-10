@@ -28,6 +28,15 @@ module Pod
         first(:email => normalize_email(email))
       end
 
+      def self.find_or_create_by_email_and_update_name(email, name)
+        if owner = Owner.find_by_email(email)
+          owner.update(:name => name) unless name.blank?
+          owner
+        else
+          Owner.create(:email => email, :name => name)
+        end
+      end
+
       def public_attributes
         attributes = { 'created_at' => created_at, 'email' => email }
         attributes['name'] = name if name
@@ -44,6 +53,10 @@ module Pod
 
       def email=(email)
         super(self.class.normalize_email(email))
+      end
+
+      def name=(name)
+        super(name ? name.strip : nil)
       end
 
       def after_create

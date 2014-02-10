@@ -21,13 +21,8 @@ module Pod
           slim :'new'
         else
           DB.test_safe_transaction do
-            if owner = Owner.find_by_email(params[:owner]['email'])
-              if (name = params[:owner]['name']) && !name.blank?
-                owner.update(:name => params[:owner]['name'])
-              end
-            else
-              owner = Owner.create(params[:owner].slice('email', 'name'))
-            end
+            owner_email, owner_name = params[:owner].values_at('email', 'name')
+            owner = Owner.find_or_create_by_email_and_update_name(owner_email, owner_name)
             unclaimed_owner = Owner.unclaimed
             params[:pods].each do |pod_name|
               pod = Pod.find(:name => pod_name)

@@ -11,11 +11,8 @@ module Pod
       post '/', :requires_owner => false do
         owner_params = JSON.parse(request.body.read)
         DB.test_safe_transaction do
-          if owner = Owner.find_by_email(owner_params['email'])
-            owner.update(:name => owner_params['name']) if owner_params['name']
-          else
-            owner = Owner.create(owner_params.slice('email', 'name'))
-          end
+          owner_email, owner_name = owner_params.values_at('email', 'name')
+          owner = Owner.find_or_create_by_email_and_update_name(owner_email, owner_name)
           session = owner.create_session!(url('/sessions/verify/%s'))
           session_attributes = session.public_attributes
           session_attributes['token'] = session.token
