@@ -3,16 +3,45 @@ require 'sinatra/base'
 
 require 'config/init'
 
-# First define the base controller class.
 module Pod
   module TrunkApp
+    # Our custom request logger for development purposes.
+    class RequestLogger < Rack::CommonLogger
+      class AppendLogger
+        def initialize(logger, message)
+          @logger, @message = logger, message
+        end
+
+        def write(msg)
+          @logger.write(msg)
+          @logger.write(@message)
+        end
+      end
+
+      # Temporarily inject a proxy logger that we append our message to.
+      def log(env, status, header, began_at)
+        logger_before = env['rack.errors']
+        params = env['rack.request.query_hash']
+        params = params.merge(env['rack.request.form_hash']) if env['rack.request.form_hash']
+        env['rack.errors'] = AppendLogger.new(logger_before, "#{params.inspect}\n")
+        super(env, status, header, began_at)
+      ensure
+        env['rack.errors'] = logger_before
+      end
+    end
+
+    # First define the base controller class.
     class AppController < Sinatra::Base
       configure do
         set :root, ROOT
       end
 
-      configure :development, :production do
+      configure :production do
         enable :logging
+      end
+
+      configure :development do
+        use RequestLogger
       end
 
       use Rack::SSL unless ENV['RACK_ENV'] == 'development'
