@@ -1,10 +1,10 @@
 {
-    "after": "55b1560df628e79c7ec5beab1291449880314cc3",
+    "after": "3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f",
     "before": "e557c5274e6cc4b58d04eac8112565b37fa23db0",
     "commits": [
         {
             "added": [
-                "MobileAppTracker/3.0.1/MobileAppTracker.podspec"
+                "KFData/1.0.1/KFData.podspec.json"
             ],
             "author": {
                 "email": "test.user@cocoapods.org",
@@ -17,16 +17,16 @@
                 "username": "harshal-hasoffers"
             },
             "distinct": true,
-            "id": "0b3f0a1d859879c1f794372c918e2a4ba0ad8f8a",
+            "id": "3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f",
             "message": "Updated podspec for MAT iOS SDK 3.0.1",
             "modified": [],
             "removed": [],
             "timestamp": "2014-02-06T20:08:45-08:00",
-            "url": "https://github.com/CocoaPods/Specs/commit/0b3f0a1d859879c1f794372c918e2a4ba0ad8f8a"
+            "url": "https://github.com/alloy/trunk.cocoapods.org-test/commit/3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f"
         },
         {
             "added": [
-                "MobileAppTracker/3.0.1/MobileAppTracker.podspec"
+                "KFData/1.0.1/KFData.podspec.json"
             ],
             "author": {
                 "email": "test.user@cocoapods.org",
@@ -39,21 +39,21 @@
                 "username": "Keithbsmiley"
             },
             "distinct": true,
-            "id": "55b1560df628e79c7ec5beab1291449880314cc3",
+            "id": "3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f",
             "message": "Merge pull request #7739 from MobileAppTracking/master\n\nUpdated podspec for MAT iOS SDK 3.0.1",
             "modified": [],
             "removed": [],
             "timestamp": "2014-02-07T11:15:32-08:00",
-            "url": "https://github.com/CocoaPods/Specs/commit/55b1560df628e79c7ec5beab1291449880314cc3"
+            "url": "https://github.com/alloy/trunk.cocoapods.org-test/commit/3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f"
         }
     ],
-    "compare": "https://github.com/CocoaPods/Specs/compare/e557c5274e6c...55b1560df628",
+    "compare": "https://github.com/alloy/trunk.cocoapods.org-test/compare/e557c5274e6c...55b1560df628",
     "created": false,
     "deleted": false,
     "forced": false,
     "head_commit": {
         "added": [
-            "MobileAppTracker/3.0.1/MobileAppTracker.podspec"
+            "KFData/1.0.1/KFData.podspec.json"
         ],
         "author": {
             "email": "test.user@cocoapods.org",
@@ -66,12 +66,12 @@
             "username": "Keithbsmiley"
         },
         "distinct": true,
-        "id": "55b1560df628e79c7ec5beab1291449880314cc3",
+        "id": "3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f",
         "message": "Merge pull request #7739 from MobileAppTracking/master\n\nUpdated podspec for MAT iOS SDK 3.0.1",
         "modified": [],
         "removed": [],
         "timestamp": "2014-02-07T11:15:32-08:00",
-        "url": "https://github.com/CocoaPods/Specs/commit/55b1560df628e79c7ec5beab1291449880314cc3"
+        "url": "https://github.com/alloy/trunk.cocoapods.org-test/commit/3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f"
     },
     "pusher": {
         "email": "keithbsmiley@gmail.com",
@@ -101,7 +101,7 @@
         "pushed_at": 1391800533,
         "size": 248998,
         "stargazers": 1427,
-        "url": "https://github.com/CocoaPods/Specs",
+        "url": "https://github.com/alloy/trunk.cocoapods.org-test",
         "watchers": 1427
     }
 }
