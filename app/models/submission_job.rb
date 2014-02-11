@@ -43,7 +43,7 @@ module Pod
                                                             message,
                                                             owner.name,
                                                             owner.email)
-          update(:succeeded => true, :commit_sha => commit_sha, :succeeded => true)
+          update(:commit_sha => commit_sha, :succeeded => true)
           pod_version.update(:published => true, :published_by_submission_job => self, :commit_sha => commit_sha)
           pod_version.pod.add_owner(owner) if pod_version.pod.owners.empty?
           add_log_message(:message => 'Published.')
