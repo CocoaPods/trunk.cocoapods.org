@@ -58,18 +58,20 @@ module Pod
           # TODO Only get the latest version of a file.
           #
           changed_files.each do |changed_file|
-            # TODO Use existing CP code for this.
+            # TODO Use existing CP code for this?
             #
-            next unless changed_file =~ /\.podspec\z/
+            next unless changed_file =~ /\.podspec.json\z/
             
             # Get the data from the Specs repo.
             #
-            data_url_template = "https://raw.github.com/CocoaPods/Specs/%s/%s"
+            # TODO Update to the right repo.
+            #
+            data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s"
             data_url = data_url_template % [commit_sha, changed_file] if commit_sha
             
             # Gets the data from data_url.
             #
-            spec_hash = JSON.parse REST.get(data_url)
+            spec_hash = JSON.parse REST.get(data_url).body
             
             # Update the database after extracting the relevant data from the podspec.
             #
@@ -83,15 +85,13 @@ module Pod
               if version
                 # Add a new submission job to the existing version.
                 #
-                submission_job = version.add_submission_job(
+                job = version.add_submission_job(
+                  :succeeded => true,
+                  :commit_sha => commit_sha,
                   :specification_data => JSON.pretty_generate(spec_hash),
                   :owner => Owner.find_or_create_by_email_and_update_name(author_email, author_name)
                 )
-                version.update(
-                  published: true,
-                  commit_sha: commit_sha,
-                  published_by_submission_job_id: submission_job.id
-                )
+                version.update(:published => true, :published_by_submission_job => job, :commit_sha => commit_sha)
               end
             end
           end
