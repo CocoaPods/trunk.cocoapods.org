@@ -33,8 +33,10 @@ module Pod::TrunkApp
       last_response.status.should == 415
     end
     
+    rest_response = Struct.new(:body)
+    
     it "processes payload data but does not create a new pod (if one does not exist)" do
-      REST.stubs(:get).returns(fixture_read('GitHub/ABContactHelper.podspec.json'))
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
     
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_data.raw')
@@ -48,7 +50,7 @@ module Pod::TrunkApp
     it "processes payload data and does not do anything (if the pod version does not exist)" do
       # Create existing pod.
       #
-      existing_spec = fixture_specification('PSPDFKit.podspec')
+      existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
       
@@ -56,7 +58,7 @@ module Pod::TrunkApp
       #
       RFC822.stubs(:mx_records).returns ['all good! :D']
       
-      REST.stubs(:get).returns(fixture_read('GitHub/PSPDFKit.podspec.new.json'))
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
     
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_data.raw')
@@ -64,21 +66,21 @@ module Pod::TrunkApp
     
       last_response.status.should == 200
       
-      pod = Pod.find(name: 'PSPDFKit')
+      pod = Pod.find(name: 'KFData')
       
       # Did not add a version.
       #
-      pod.versions.map(&:name).should == ['3.5.0']
+      pod.versions.map(&:name).should == ['1.0.1']
       
       # Did not add a new submission job.
       #
-      pod.versions.find { |version| version.name == '3.5.0' }.submission_jobs.should == []
+      pod.versions.find { |version| version.name == '1.0.1' }.submission_jobs.should == []
     end
     
     it "processes payload data and creates a new submission job (because the version exists)" do
       # Create existing pod.
       #
-      existing_spec = fixture_specification('PSPDFKit.podspec')
+      existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
       
@@ -86,7 +88,7 @@ module Pod::TrunkApp
       #
       RFC822.stubs(:mx_records).returns ['all good! :D']
       
-      REST.stubs(:get).returns(fixture_read('GitHub/PSPDFKit.podspec.json'))
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
     
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_data.raw')
@@ -94,22 +96,22 @@ module Pod::TrunkApp
     
       last_response.status.should == 200
       
-      pod = Pod.find(name: 'PSPDFKit')
+      pod = Pod.find(name: 'KFData')
       
       # Did not add a new version.
       #
-      pod.versions.map(&:name).should == ['3.5.0']
+      pod.versions.map(&:name).should == ['1.0.1']
       
       # Did add a new submission job.
       #
-      submission_job = pod.versions.find { |version| version.name == '3.5.0' }.submission_jobs.last
-      submission_job.specification_data.should == fixture_read('GitHub/PSPDFKit.podspec.json')
+      submission_job = pod.versions.find { |version| version.name == '1.0.1' }.submission_jobs.last
+      submission_job.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
       
       # Updated the version correctly.
       #
       version = pod.versions.last
       version.published.should == true
-      version.commit_sha.should == '55b1560df628e79c7ec5beab1291449880314cc3'
+      version.commit_sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       version.published_by_submission_job_id.should == submission_job.id
     end
     
