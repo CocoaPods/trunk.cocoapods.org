@@ -40,19 +40,19 @@ module Pod::TrunkApp
 
       it "needs a valid formatted email" do
         @owner.should.not.validate_with(:email, nil)
-        @owner.errors.on(:email).should.include('invalid format')
+        @owner.errors.on(:email).should.include('has invalid format')
         @owner.should.not.validate_with(:email, '')
-        @owner.errors.on(:email).should.include('invalid format')
+        @owner.errors.on(:email).should.include('has invalid format')
         @owner.should.not.validate_with(:email, ' ')
-        @owner.errors.on(:email).should.include('invalid format')
+        @owner.errors.on(:email).should.include('has invalid format')
         @owner.should.not.validate_with(:email, 'jenny')
-        @owner.errors.on(:email).should.include('invalid format')
+        @owner.errors.on(:email).should.include('has invalid format')
         @owner.should.validate_with(:email, 'jenny@example.com')
       end
 
       it "needs a valid email domain" do
         @owner.should.not.validate_with(:email, 'jenny@example')
-        @owner.errors.on(:email).should.include('unverifiable domain')
+        @owner.errors.on(:email).should.include('has unverifiable domain')
         @owner.should.validate_with(:email, 'jenny@example.com')
       end
 

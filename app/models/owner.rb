@@ -28,13 +28,19 @@ module Pod
         first(:email => normalize_email(email))
       end
 
-      def self.find_or_create_by_email_and_update_name(email, name)
+      def self.find_or_initialize_by_email_and_update_name(email, name)
         if owner = Owner.find_by_email(email)
-          owner.update(:name => name) unless name.blank?
+          owner.name = name unless name.blank?
           owner
         else
-          Owner.create(:email => email, :name => name)
+          Owner.new(:email => email, :name => name)
         end
+      end
+
+      def self.find_or_create_by_email_and_update_name(email, name)
+        owner = find_or_initialize_by_email_and_update_name(email, name)
+        owner.save_changes(:raise_on_save_failure => true)
+        owner
       end
 
       def public_attributes
@@ -85,13 +91,13 @@ module Pod
       def validate
         super
         validates_presence :name
-        validates_format RFC822::EMAIL, :email, :message => 'invalid format'
+        validates_format RFC822::EMAIL, :email, :message => 'has invalid format'
         validates_mx_records :email
       end
 
       def validates_mx_records(attr)
         if RFC822.mx_records(send(attr)).empty?
-          errors.add(:email, 'unverifiable domain')
+          errors.add(:email, 'has unverifiable domain')
         end
       end
     end

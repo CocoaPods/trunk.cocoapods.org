@@ -3,10 +3,14 @@ require 'nokogiri'
 
 module Pod::TrunkApp
   describe ClaimsController, "when claiming pods" do
+    def response_doc
+      Nokogiri::HTML(last_response.body)
+    end
+
     it "renders a new claim form" do
       get '/new'
       last_response.status.should == 200
-      form = Nokogiri::HTML(last_response.body).css('form').first
+      form = response_doc.css('form').first
       form['action'].should == '/claims'
       form['method'].should == 'POST'
     end
@@ -16,7 +20,7 @@ module Pod::TrunkApp
         post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => []
       }.should.not.change { Owner.count }
       last_response.status.should == 200
-      form = Nokogiri::HTML(last_response.body).css('form').first
+      form = response_doc.css('form').first
       form.css('input[name="owner[email]"]').first['value'].should == 'appie@example.com'
       form.css('input[name="owner[name]"]').first['value'].should == 'Appie Duran'
     end
@@ -61,7 +65,7 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [other_owner]
     end
 
-    it "rollsback in case of an error" do
+    it "rolls back in case of an error" do
       Pod.any_instance.stubs(:remove_owner).raises
       lambda {
         should.raise do
@@ -71,7 +75,13 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [Owner.unclaimed]
     end
 
-    it "lists unknown pods" do
+    it "shows validation errors" do
+      post '/', :owner => { :email => 'appie@example.com', :name => '' }, :pods => ['AFNetworking', 'EYFNetworking', 'JAYSONKit']
+      last_response.status.should == 200
+      @pod.reload.owners.should == [Owner.unclaimed]
+      errors = response_doc.css('.errors li')
+      errors.first.text.should == 'Owner name is not present.'
+      errors.last.text.should == 'Unknown Pods EYFNetworking and JAYSONKit.'
     end
 
     it "lists already claimed pods" do

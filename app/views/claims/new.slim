@@ -56,26 +56,34 @@ script src="/claims/javascript/typeahead.bundle.min.js"
         p Over the next several days, we are allowing you to claim all the pods you have already published to be registered as being ‘owned’ by you. During this period you can not yet push new versions of your pods, because we will need time to allow for dealing with claim disputes. 
         p The exact number of transition days depends completely on the number of disputes.
 
-        form.form-horizontal role="form" action="/claims" method="POST"
-          .form-group
-            label.col-sm-3.control-label for="email" Email:
-            .col-sm-6
-              input.form-control id="email" type="email" name="owner[email]" value="#{params[:owner]['email'] if params[:owner]}" autofocus="autofocus" require="required" placeholder=""
+        - unless @errors.blank?
+          .errors
+            ul
+              - for message in @errors
+                li = message
 
+        form.form-horizontal role="form" action="/claims" method="POST"
           .form-group
             label.col-sm-3.control-label for="name" Owner name:
             .col-sm-6
-              input.form-control.col-md-4 id="name" type="textfield" name="owner[name]" value="#{params[:owner]['name'] if params[:owner]}" require="required"
+              input.form-control.col-md-4 id="name" type="textfield" name="owner[name]" value="#{@owner.name}" autofocus="autofocus" require="required"
 
           .form-group
-            label.col-sm-3.control-label for="pod" Pod Search:
+            label.col-sm-3.control-label for="email" Owner Email:
             .col-sm-6
-              input.form-control.col-md-4 id="pod" type="textfield" require="required"
+              input.form-control id="email" type="email" name="owner[email]" value="#{@owner.email}" require="required" placeholder=""
+
+          .form-group
+            label.col-sm-3.control-label for="pod" Claim Pod:
+            .col-sm-6
+              input.form-control.col-md-4 id="pod" type="textfield" name="pods[]" require="required"
 
           .form-group#selected-pods
-            label.col-sm-3.control-label for="pod" Claimed Pods:
+            .col-sm-3
             .col-sm-6
-            
+              - for pod in @pods
+                input.col-md-4 type="text" readonly="readonly" name="pods[]" value="#{pod.name}"
+
           .form-group
             .col-sm-offset-3.col-sm-4
               input.btn.btn-default type="submit" name="button" id="button" value="SEND"
