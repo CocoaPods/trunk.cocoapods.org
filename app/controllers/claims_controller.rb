@@ -1,5 +1,6 @@
 require 'app/controllers/app_controller'
 
+require 'active_support/core_ext/object/to_query'
 require 'sinatra/twitter-bootstrap'
 #require 'sinatra/reloader'
 require 'slim'
@@ -23,7 +24,11 @@ module Pod
         find_pods
         if @owner.valid? && !@pods.empty? && @invalid_pods.empty?
           change_ownership
-          redirect to('/thanks')
+          if @already_claimed_pods.empty?
+            redirect to('/thanks')
+          else
+            redirect to("/dispute?#{{ 'owner[email]' => @owner.email, 'pods' => @already_claimed_pods }.to_query}")
+          end
         else
           prepare_errors
           slim :'new'
@@ -62,6 +67,7 @@ module Pod
       end
 
       def change_ownership
+        @already_claimed_pods = []
         DB.test_safe_transaction do
           @owner.save_changes(:raise_on_save_failure => true)
           unclaimed_owner = Owner.unclaimed
@@ -69,6 +75,8 @@ module Pod
             if pod.owners == [unclaimed_owner]
               @owner.add_pod(pod)
               pod.remove_owner(unclaimed_owner)
+            else
+              @already_claimed_pods << pod.name
             end
           end
         end

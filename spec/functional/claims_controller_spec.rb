@@ -39,6 +39,7 @@ module Pod::TrunkApp
       owner = Owner.find_by_email('appie@example.com')
       owner.name.should == 'Appie Duran'
       @pod.reload.owners.should == [owner]
+      last_response.location.should == 'https://example.org/thanks'
     end
 
     it "finds an existing owner and assigns it to the claimed pods" do
@@ -47,6 +48,7 @@ module Pod::TrunkApp
         post '/', :owner => { :email => 'appie@example.com' }, :pods => ['AFNetworking']
       }.should.not.change { Owner.count }
       @pod.reload.owners.should == [owner]
+      last_response.location.should == 'https://example.org/thanks'
     end
 
     it "finds an existing owner and updates its name if specified" do
@@ -58,11 +60,15 @@ module Pod::TrunkApp
     end
 
     it "does not assign a pod that has already been claimed" do
+      other_pod = Pod.create(:name => 'ObjectiveSugar')
       other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
-      other_owner.add_pod(@pod)
-      @pod.remove_owner(Owner.unclaimed)
-      post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking']
-      @pod.reload.owners.should == [other_owner]
+      other_owner.add_pod(other_pod)
+      post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking', 'ObjectiveSugar']
+      owner = Owner.find_by_email('appie@example.com')
+      @pod.reload.owners.should == [owner]
+      other_pod.reload.owners.should == [other_owner]
+      last_response.status.should == 302
+      last_response.location.should == "https://example.org/dispute?#{{ 'owner[email]' => owner.email, 'pods' => ['ObjectiveSugar'] }.to_query}"
     end
 
     it "rolls back in case of an error" do
@@ -85,11 +91,6 @@ module Pod::TrunkApp
     end
 
     it "lists already claimed pods" do
-    end
-
-    it "redirects to the thanks page after successfully assigning pods" do
-      post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking']
-      last_response.location.should == 'https://example.org/thanks'
     end
   end
 end
