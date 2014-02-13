@@ -32,8 +32,7 @@ module Pod::TrunkApp
 
     describe "in general" do
       before do
-        @commit = Commit.create(:pushed => false,
-                                :pod_version => @version,
+        @commit = Commit.create(:pod_version => @version,
                                 :specification_data => fixture_read('GitHub/KFData.podspec.json'))
         @job.commit = @commit
         @job.save
@@ -46,7 +45,7 @@ module Pod::TrunkApp
       end
 
       it "returns the duration in seconds relative till the latest update once finished" do
-        @job.commit = @commit
+        @commit.update(:pushed => false)
         @job.save
         now = 41.seconds.from_now
         Time.stubs(:now).returns(now)

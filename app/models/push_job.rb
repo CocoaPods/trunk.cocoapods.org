@@ -17,9 +17,9 @@ module Pod
       many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
-      def self.push! pod_version, owner, specification_data
-        job = create(:owner => owner)
-        job.push! pod_version, specification_data
+      def self.build pod_version, owner, specification_data
+        commit = Commit.create(:specification_data => specification_data)
+        commit.push_jobs << create(:owner => owner)
       end
 
       def self.succeeded
@@ -53,7 +53,7 @@ module Pod
       end
       
       def succeeded
-        commit.pushed
+        commit && commit.succeeded
       end
       
       def duration
@@ -64,24 +64,27 @@ module Pod
         commit.sha
       end
       
+      def pod_version
+        commit.pod_version
+      end
+      
       def specification_data
         commit.specification_data
       end
 
-      # TODO Refactor this whole method.
+      # TODO Refactor this whole method. Especially how pod_version is needed.
       #
       def push!
         perform_work 'Submitting specification data to GitHub' do
-          specification_data = JSON.pretty_generate(specification_data)
-          commit_sha =  self.class.github.create_new_commit(pod_version.destination_path,
-                                                            specification_data,
-                                                            pod_version.message,
-                                                            owner.name,
-                                                            owner.email)
+          commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
+                                                           specification_data,
+                                                           pod_version.message,
+                                                           owner.name,
+                                                           owner.email)
           pod_version.add_commit(
             :pushed => true,
             :sha => commit_sha,
-            :specification_data => specification_data
+            :specification_data => JSON.pretty_generate(specification_data)
           )
           pod_version.pod.add_owner(owner) if pod_version.pod.owners.empty?
           add_log_message(:message => 'Published.')
@@ -110,7 +113,7 @@ module Pod
       def perform_work(message, &block)
         add_log_message(:message => message)
         if error = self.class.perform_work(&block)
-          update(:succeeded => false)
+          commit.update(:pushed => false)
           add_log_message(:message => "Failed with error: #{error.message}")
           raise error
         end
