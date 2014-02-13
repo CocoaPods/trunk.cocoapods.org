@@ -19,7 +19,7 @@ module Pod
       one_to_many :push_jobs, :order => Sequel.desc(:updated_at)
       
       alias_method :pushed?, :pushed
-
+      
       def in_progress?
         succeeded.nil?
       end

@@ -17,37 +17,26 @@ module Pod
       many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
-      def self.build pod_version, owner, specification_data
-        commit = Commit.create(:specification_data => specification_data)
-        commit.push_jobs << create(:owner => owner)
-      end
-
       def self.succeeded
-        where(:succeeded => true) # TODO
+        commit_dataset.where(:pushed => true) # TODO
       end
       
       def self.failed
-        where(:succeeded => false) # TODO
+        commit_dataset.where(:pushed => false) # TODO
       end
       
       def self.in_progress
-        where(:succeeded => nil) # TODO
+        commit_dataset.where(:pushed => nil) # TODO
       end
     
-      # TODO If a commit hasn't been "pushed" (pushed is nil), this one is in_progress.
-      #
       def in_progress?
         succeeded.nil?
       end
       
-      # TODO If a commit has been successfully pushed (is true).
-      #
       def completed?
         !succeeded.nil? && succeeded
       end
 
-      # TODO If a commit hasn't been successfully pushed (is false).
-      #
       def failed?
         !succeeded.nil? && !succeeded
       end
