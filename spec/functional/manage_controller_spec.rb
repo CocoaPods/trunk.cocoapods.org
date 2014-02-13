@@ -6,7 +6,8 @@ module Pod::TrunkApp
       @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @pod = Pod.create(:name => 'AFNetworking')
       @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
-      @job = @version.add_submission_job(:specification_data => fixture_read('AFNetworking.podspec'), :owner => @owner)
+      @commit = Commit.create(:pod_version => @version, :specification_data => fixture_read('AFNetworking.podspec'))
+      @job = PushJob.new(:commit => @commit, :owner => @owner)
     end
 
     it "disallows access without authentication" do
@@ -24,21 +25,21 @@ module Pod::TrunkApp
     end
 
     it "shows a list of current submission jobs" do
-      @job.update(:succeeded => nil)
+      @job.commit.update(:pushed => nil)
       get '/jobs'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
     end
 
     it "shows a list of failed submission jobs" do
-      @job.update(:succeeded => false)
+      @job.commit.update(:pushed => false)
       get '/jobs', :scope => 'failed'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
     end
 
     it "shows a list of succeeded submission jobs" do
-      @job.update(:succeeded => true)
+      @job.commit.update(:pushed => true)
       get '/jobs', :scope => 'succeeded'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
@@ -46,7 +47,7 @@ module Pod::TrunkApp
 
     it "shows a list of all submission jobs" do
       [nil, false, true].each do |scope|
-        @job.update(:succeeded => scope)
+        @job.commit.update(:pushed => scope)
         get '/jobs', :scope => 'all'
         last_response.should.be.ok
         last_response.body.should.include @pod.name
@@ -54,14 +55,14 @@ module Pod::TrunkApp
     end
 
     it "shows an overview of an individual submission job" do
-      @job.update(:succeeded => true)
+      @job.commit.update(:pushed => true)
       get "/jobs/#{@job.id}"
       last_response.should.be.ok
       last_response.body.should.include @pod.name
     end
 
     it "redirects to an overview with a progress bar if the job is in progress" do
-      @job.update(:succeeded => nil)
+      @job.commit.update(:pushed => nil)
       get "/jobs/#{@job.id}"
       last_response.should.be.redirect
       last_response.location.should.end_with "/jobs/#{@job.id}?progress=true"
