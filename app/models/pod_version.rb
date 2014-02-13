@@ -1,4 +1,4 @@
-require 'app/models/submission_job'
+require 'app/models/push_job'
 require 'app/concerns/git_commit_sha_validator'
 
 module Pod
@@ -19,12 +19,20 @@ module Pod
       one_to_many :commits, :order => Sequel.desc(:updated_at)
 
       alias_method :published?, :published
+      
+      def published?
+        commits.any?(&:pushed?)
+      end
+      
+      def commit_sha
+        commits.find?(&:pushed?)
+      end
 
       def after_initialize
         super
-        if new?
-          self.published = false if published.nil?
-        end
+        # if new?
+        #   self.published = false if published.nil?
+        # end
       end
 
       def public_attributes
@@ -51,8 +59,8 @@ module Pod
         super
         validates_presence :pod_id
         validates_presence :name
-        validates_presence :published
-        validates_git_commit_sha :commit_sha
+        # validates_presence :published
+        # validates_git_commit_sha :commit_sha
 
         validates_unique UNIQUE_VERSION
         # Sequel adds the error with the column tuple as the key, but for the
