@@ -9,7 +9,7 @@ module Pod
 
       get '/:name', :requires_owner => false do
         if pod = Pod.find(:name => params[:name])
-          versions = pod.versions_dataset.where(:published => true).to_a
+          versions = pod.versions.select(&:published?)
           unless versions.empty?
             json_message(200, 'versions' => versions.map(&:public_attributes),
                               'owners'   => pod.owners.map(&:public_attributes))
@@ -53,7 +53,7 @@ module Pod
 
         # TODO use a unique index in the DB for this instead?
         if version = pod.versions_dataset.where(:name => specification.version).first
-          if version.published? || version.submission_jobs_dataset.where(:succeeded => nil).first
+          if version.published? # TODO || version.push_jobs_dataset.where(:succeeded => nil).first
             headers 'Location' => url(version.resource_path)
             json_error(409, "Unable to accept duplicate entry for: #{specification}")
           end
