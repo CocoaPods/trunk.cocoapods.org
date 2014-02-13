@@ -72,9 +72,9 @@ module Pod::TrunkApp
       #
       pod.versions.map(&:name).should == ['1.0.1']
       
-      # Did not add a new submission job.
+      # Did not add a new commit.
       #
-      pod.versions.find { |version| version.name == '1.0.1' }.submission_jobs.should == []
+      pod.versions.find { |version| version.name == '1.0.1' }.commits.should == []
     end
     
     it "processes payload data and creates a new submission job (because the version exists)" do
