@@ -81,7 +81,7 @@ Sequel.migration do
       # String :commit_sha, :size=>255
       DateTime :created_at
       DateTime :updated_at
-      foreign_key :commit_id, :pod_versions, :null=>false, :key=>[:id]
+      foreign_key :commit_id, :commits, :key=>[:id]
       foreign_key :owner_id, :owners, :null=>false, :key=>[:id] # We need to know who initiated the push.
     end
     
