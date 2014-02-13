@@ -17,16 +17,21 @@ module Pod
       many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
+      def self.push! pod_version, owner, specification_data
+        job = create(:owner => owner)
+        job.push! pod_version, specification_data
+      end
+
       def self.succeeded
-        where(:succeeded => true)
+        where(:succeeded => true) # TODO
       end
       
       def self.failed
-        where(:succeeded => false)
+        where(:succeeded => false) # TODO
       end
       
       def self.in_progress
-        where(:succeeded => nil)
+        where(:succeeded => nil) # TODO
       end
     
       # TODO If a commit hasn't been "pushed" (pushed is nil), this one is in_progress.
@@ -46,7 +51,11 @@ module Pod
       def failed?
         !succeeded.nil? && !succeeded
       end
-
+      
+      def succeeded
+        commit.pushed
+      end
+      
       def duration
         ((in_progress? ? Time.now : updated_at) - created_at).ceil
       end
@@ -61,20 +70,20 @@ module Pod
 
       # TODO Refactor this whole method.
       #
-      def submit_specification_data!
+      def push!
         perform_work 'Submitting specification data to GitHub' do
-          message = "[Add] #{pod_version.pod.name} #{pod_version.name}"
+          specification_data = JSON.pretty_generate(specification_data)
           commit_sha =  self.class.github.create_new_commit(pod_version.destination_path,
                                                             specification_data,
-                                                            message,
+                                                            pod_version.message,
                                                             owner.name,
                                                             owner.email)
-          # TODO What to do here? Create a new commit and set it to pushed?
-          update(:commit_sha => commit_sha, :succeeded => true)
-          # TODO Propagate this differently.
-          #
-          commit.pod_version.update(:published => true, :published_by_submission_job => self, :commit_sha => commit_sha)
-          commit.pod_version.pod.add_owner(owner) if commit.pod_version.pod.owners.empty?
+          pod_version.add_commit(
+            :pushed => true,
+            :sha => commit_sha,
+            :specification_data => specification_data
+          )
+          pod_version.pod.add_owner(owner) if pod_version.pod.owners.empty?
           add_log_message(:message => 'Published.')
         end
       end
@@ -83,7 +92,6 @@ module Pod
 
       def validate
         super
-        validates_presence :commit_id
         validates_presence :owner_id
       end
 
