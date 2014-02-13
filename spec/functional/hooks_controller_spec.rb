@@ -102,17 +102,18 @@ module Pod::TrunkApp
       #
       pod.versions.map(&:name).should == ['1.0.1']
       
-      # Did add a new submission job.
+      # Did add a new commit.
       #
-      submission_job = pod.versions.find { |version| version.name == '1.0.1' }.submission_jobs.last
-      submission_job.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
+      commit = pod.versions.last.commits.last
+      commit.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
+      commit.should.be.pushed
       
       # Updated the version correctly.
       #
       version = pod.versions.last
-      version.published.should == true
+      version.should.be.published
       version.commit_sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
-      version.published_by_submission_job_id.should == submission_job.id
+      version.published_by.should == nil # TODO Who should it be published by if it's a manual merge?
     end
     
   end
