@@ -17,6 +17,18 @@ module Pod
       many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
+      def self.succeeded
+        where(:succeeded => true)
+      end
+      
+      def self.failed
+        where(:succeeded => false)
+      end
+      
+      def self.in_progress
+        where(:succeeded => nil)
+      end
+    
       # TODO If a commit hasn't been "pushed" (pushed is nil), this one is in_progress.
       #
       def in_progress?
