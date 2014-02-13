@@ -47,7 +47,7 @@ Sequel.migration do
       String :message, :text=>true, :null=>false
       DateTime :created_at
       DateTime :updated_at
-      Integer :submission_job_id # If this ID is null, it is a global log message.
+      Integer :push_job_id # If this ID is null, it is a global log message.
     end
     
     create_table(:pod_versions, :ignore_index_errors=>true) do
@@ -89,8 +89,8 @@ Sequel.migration do
       add_foreign_key [:push_job_id], :push_jobs, :name=>:log_messages_push_job_id_fkey, :key=>[:id]
     end
     
-    alter_table(:pod_versions) do
-      add_foreign_key [:published_by_submission_job_id], :submission_jobs, :name=>:pod_versions_published_by_submission_job_id_fkey, :key=>[:id]
-    end
+    # alter_table(:pod_versions) do
+    #   add_foreign_key [:published_by_submission_job_id], :submission_jobs, :name=>:pod_versions_published_by_submission_job_id_fkey, :key=>[:id]
+    # end
   end
 end
