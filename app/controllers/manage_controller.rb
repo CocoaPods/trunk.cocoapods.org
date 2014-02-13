@@ -24,17 +24,16 @@ module Pod
       register Sinatra::Twitter::Bootstrap::Assets
 
       get '/jobs' do
-        @jobs = PushJob.order(Sequel.desc(:id))
         case params[:scope]
         when 'all'
           # no-op
         when 'failed'
-          @jobs = @jobs.failed
+          @jobs = PushJob.failed
         when 'succeeded'
-          @jobs = @jobs.succeeded
+          @jobs = PushJob.succeeded
         else
           params[:scope] = 'current'
-          @jobs = @jobs.in_progress
+          @jobs = PushJob.in_progress
         end
 
         @refresh_automatically = params[:scope] == 'current'
