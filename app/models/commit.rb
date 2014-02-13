@@ -22,13 +22,13 @@ module Pod
         succeeded.nil?
       end
       
-      # All state is tied to the sha.
+      # All state is tied to the pushed state.
       #  * nil: In progress.
       #  * true: Successfully pushed.
       #  * false: Unsuccessfully pushed.
       #
       def succeeded
-        sha
+        pushed
       end
 
       protected

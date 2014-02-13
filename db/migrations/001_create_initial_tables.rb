@@ -66,7 +66,8 @@ Sequel.migration do
     create_table(:commits) do
       primary_key :id
       String :specification_data, :text=>true, :null=>false
-      String :sha, :size=>255 # This can be null. The single point of "has it been pushed"?
+      TrueClass :pushed # The single point of "has it been pushed"?
+      String :sha, :size=>255 # This can be null if it hasn't been pushed yet.
       DateTime :created_at
       DateTime :updated_at
       foreign_key :pod_version_id, :pod_versions, :null=>false, :key=>[:id]
