@@ -18,12 +18,17 @@ module Pod
       many_to_one :pod_version
       # one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
+      def in_progress?
+        pushed.nil?
+      end
+
       protected
 
       def validate
         super
         validates_presence :pod_version_id
-        validates_git_commit_sha :sha
+        validates_presence :specification_data
+        validates_git_commit_sha :sha # TODO Allow empty sha?
       end
     end
   end
