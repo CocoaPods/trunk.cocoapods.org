@@ -16,7 +16,9 @@ module Pod
       plugin :validation_helpers
 
       many_to_one :pod_version
-      # one_to_many :log_messages, :order => Sequel.asc(:created_at)
+      one_to_many :push_jobs, :order => Sequel.desc(:updated_at)
+      
+      alias_method :pushed?, :pushed
 
       def in_progress?
         succeeded.nil?

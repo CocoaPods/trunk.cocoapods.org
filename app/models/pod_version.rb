@@ -21,8 +21,12 @@ module Pod
         commits.any?(&:pushed?)
       end
       
+      def published_by
+        commits.find(&:pushed?).push_jobs.last
+      end
+      
       def commit_sha
-        commits.find?(&:pushed?)
+        commits.last.sha
       end
 
       def after_initialize

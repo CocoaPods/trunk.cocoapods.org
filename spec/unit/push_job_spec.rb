@@ -111,7 +111,7 @@ module Pod::TrunkApp
       it "publishes the pod version once the commit has been created" do
         @job.push!
         @version.should.be.published
-        @version.published_by_submission_job.should == @job
+        @version.published_by.should == @job
         @version.commit_sha.should == fixture_new_commit_sha
         @job.log_messages.last.message.should == "Published."
       end

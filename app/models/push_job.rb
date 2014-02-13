@@ -77,15 +77,11 @@ module Pod
       def push!
         perform_work 'Submitting specification data to GitHub' do
           commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
-                                                           specification_data,
+                                                           specification_data, # Re-add JSON.pretty_generate.
                                                            pod_version.message,
                                                            owner.name,
                                                            owner.email)
-          pod_version.add_commit(
-            :pushed => true,
-            :sha => commit_sha,
-            :specification_data => JSON.pretty_generate(specification_data)
-          )
+          commit.update(:pushed => true, :sha => commit_sha)
           pod_version.pod.add_owner(owner) if pod_version.pod.owners.empty?
           add_log_message(:message => 'Published.')
         end
