@@ -68,7 +68,10 @@ begin
     task :bootstrap do
       Rake::Task['db:drop'].invoke
       Rake::Task['db:create'].invoke
-      Rake::Task['db:migrate'].invoke
+      %w{test development production}.each do |env|
+        ENV['RACK_ENV'] = env
+        Rake::Task['db:migrate'].invoke
+      end
     end
   end
 
