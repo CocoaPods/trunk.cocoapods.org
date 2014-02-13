@@ -1,4 +1,4 @@
-require 'app/models/submission_job'
+require 'app/models/push_job'
 
 module Pod
   module TrunkApp
@@ -8,7 +8,7 @@ module Pod
       plugin :timestamps
       plugin :validation_helpers
 
-      many_to_one :submission_job
+      many_to_one :push_job
 
       def public_attributes
         { created_at => message }
@@ -18,7 +18,7 @@ module Pod
 
       def validate
         super
-        validates_presence :submission_job_id
+        validates_presence :push_job_id
         validates_presence :message
       end
     end
