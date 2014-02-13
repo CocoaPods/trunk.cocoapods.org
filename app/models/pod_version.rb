@@ -15,7 +15,6 @@ module Pod
       plugin :after_initialize
 
       many_to_one :pod
-      # many_to_one :published_by_submission_job, :class => 'Pod::TrunkApp::SubmissionJob' # TODO Get through pushed commit.
       one_to_many :commits, :order => Sequel.desc(:updated_at)
 
       alias_method :published?, :published
@@ -41,6 +40,10 @@ module Pod
 
       def destination_path
         File.join('Specs', pod.name, name, "#{pod.name}.podspec.json")
+      end
+      
+      def message
+        "[Add] #{pod.name} #{name}"
       end
 
       def data_url
