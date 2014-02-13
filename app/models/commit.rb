@@ -19,7 +19,16 @@ module Pod
       # one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
       def in_progress?
-        pushed.nil?
+        succeeded.nil?
+      end
+      
+      # All state is tied to the sha.
+      #  * nil: In progress.
+      #  * true: Successfully pushed.
+      #  * false: Unsuccessfully pushed.
+      #
+      def succeeded
+        sha
       end
 
       protected
@@ -28,7 +37,7 @@ module Pod
         super
         validates_presence :pod_version_id
         validates_presence :specification_data
-        validates_git_commit_sha :sha # TODO Allow empty sha?
+        validates_git_commit_sha :sha
       end
     end
   end
