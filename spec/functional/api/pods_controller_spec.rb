@@ -86,7 +86,9 @@ module Pod::TrunkApp
     end
 
     it "does not allow a push for an existing pod version if it's published" do
-      @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      @owner.add_pod(:name => spec.name)
+            .add_version(:name => spec.version.to_s)
+            .add_commit(:pushed => true, :specification_data => 'data')
       lambda {
         post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
@@ -110,15 +112,17 @@ module Pod::TrunkApp
       lambda {
         post '/', spec.to_json
       }.should.change { PushJob.count }
-      job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
+      job = Pod.first(:name => spec.name).versions.first.commits.last.push_jobs.last
       job.owner.should == @owner
       job.specification_data.should == JSON.pretty_generate(spec)
     end
 
     it "does not allow a push for an existing pod version while a job is in progress" do
       version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
-      version.add_submission_job(:succeeded => nil, :owner => @owner, :specification_data => 'data')
+      commit = version.add_commit(:pushed => nil, :specification_data => 'data')
+      commit.add_push_job(:owner => @owner)
+      commit.add_push_job(:owner => @owner)
+      commit.update(:pushed => false)
       lambda {
         post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
@@ -128,8 +132,11 @@ module Pod::TrunkApp
 
     it "does allow a push for an existing pod version if the previous jobs have failed" do
       version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
-      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
+      commit = version.add_commit(:pushed => nil, :specification_data => 'data')
+      commit.add_push_job(:owner => @owner)
+      commit.update(:pushed => false)
+      commit.add_push_job(:owner => @owner)
+      commit.update(:pushed => false)
       lambda {
         lambda {
           post '/', spec.to_json
@@ -169,8 +176,8 @@ module Pod::TrunkApp
     it "returns an overview of a pod including only the published versions" do
       create_session_with_owner
       @pod.add_owner(@owner)
-      @pod.add_version(:name => '0.2.1', :published => false)
-      @version.update(:published => true)
+      @pod.add_version(:name => '0.2.1')
+      @version.add_commit(:pushed => true, :specification_data => 'data')
       get '/AFNetworking'
       last_response.body.should == {
         'versions' => [@version.public_attributes],
@@ -185,7 +192,7 @@ module Pod::TrunkApp
     end
 
     it "returns an overview of a published pod version" do
-      @version.update(:published => true)
+      @version.add_commit(:pushed => true, :specification_data => 'data')
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
       last_response.body.should == {
