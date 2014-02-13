@@ -16,7 +16,7 @@ module Pod
 
       many_to_one :pod
       many_to_one :published_by_submission_job, :class => 'Pod::TrunkApp::SubmissionJob'
-      one_to_many :submission_jobs, :order => Sequel.asc(:id)
+      one_to_many :commits, :order => Sequel.desc(:updated_at)
 
       alias_method :published?, :published
 

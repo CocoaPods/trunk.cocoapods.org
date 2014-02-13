@@ -47,31 +47,42 @@ Sequel.migration do
       String :message, :text=>true, :null=>false
       DateTime :created_at
       DateTime :updated_at
-      Integer :submission_job_id, :null=>false
+      Integer :submission_job_id, :null=>false # TODO Make agnostic as to the logged thing?
     end
     
     create_table(:pod_versions, :ignore_index_errors=>true) do
       primary_key :id
       String :name, :size=>255, :null=>false
-      TrueClass :published, :default=>false, :null=>false
-      String :commit_sha, :size=>255
+      # TrueClass :published, :default=>false, :null=>false # Replaced by: commit.any?(:pushed)
+      # String :commit_sha, :size=>255
       DateTime :created_at
       DateTime :updated_at
       foreign_key :pod_id, :pods, :null=>false, :key=>[:id]
-      Integer :published_by_submission_job_id
+      # Integer :published_by_submission_job_id
       
       index [:pod_id, :name], :unique=>true
     end
     
-    create_table(:submission_jobs) do
+    create_table(:commits) do
       primary_key :id
       String :specification_data, :text=>true, :null=>false
-      TrueClass :succeeded
-      String :commit_sha, :size=>255
+      TrueClass :pushed # The single point of "has it been pushed"?
+      String :sha, :size=>255
       DateTime :created_at
       DateTime :updated_at
       foreign_key :pod_version_id, :pod_versions, :null=>false, :key=>[:id]
-      foreign_key :owner_id, :owners, :null=>false, :key=>[:id]
+      # foreign_key :owner_id, :owners, :null=>false, :key=>[:id]
+    end
+
+    create_table(:push_jobs) do
+      primary_key :id
+      # String :specification_data, :text=>true, :null=>false
+      # TrueClass :succeeded # Replaced by: commit.pushed?
+      # String :commit_sha, :size=>255
+      DateTime :created_at
+      DateTime :updated_at
+      foreign_key :commit_id, :pod_versions, :null=>false, :key=>[:id]
+      foreign_key :owner_id, :owners, :null=>false, :key=>[:id] # TODO Why do we need an owner here?
     end
     
     alter_table(:log_messages) do
