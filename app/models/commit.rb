@@ -18,10 +18,6 @@ module Pod
       many_to_one :pod_version
       # one_to_many :log_messages, :order => Sequel.asc(:created_at)
 
-      def push
-        # TODO
-      end
-
       protected
 
       def validate
