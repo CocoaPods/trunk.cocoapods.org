@@ -28,19 +28,14 @@ module Pod::TrunkApp
         other_version.should.validate_with(:name, '1.2.1')
       end
 
-      it "needs a published status" do
-        @version.should.not.validate_with(:published, nil)
-        @version.should.not.validate_with(:published, '')
-        @version.should.validate_with(:published, false)
-        @version.should.validate_with(:published, true)
-      end
-
-      it "needs a valid commit sha" do
-        @version.should.not.validate_with(:commit_sha, '')
-        @version.should.not.validate_with(:commit_sha, '3ca23060')
-        @version.should.not.validate_with(:commit_sha, 'g' * 40) # hex only
-        @version.should.validate_with(:commit_sha, '3ca23060197547eef92983f15590b5a87270615f')
-      end
+      # TODO Does it need a commit?
+      #
+      # it "needs a valid commit sha" do
+      #   @version.should.not.validate_with(:commit_sha, '')
+      #   @version.should.not.validate_with(:commit_sha, '3ca23060')
+      #   @version.should.not.validate_with(:commit_sha, 'g' * 40) # hex only
+      #   @version.should.validate_with(:commit_sha, '3ca23060197547eef92983f15590b5a87270615f')
+      # end
 
       describe "at the DB level" do
         it "raises if an empty `pod_id' gets inserted" do
@@ -53,13 +48,6 @@ module Pod::TrunkApp
         it "raises if an empty `name' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @version.name = nil
-            @version.save(:validate => false)
-          end
-        end
-
-        it "raises if an empty `published' gets inserted" do
-          should.raise Sequel::NotNullConstraintViolation do
-            @version.published = nil
             @version.save(:validate => false)
           end
         end
@@ -98,7 +86,7 @@ module Pod::TrunkApp
       end
 
       it "returns a URL from where the spec data can be retrieved" do
-        @version.commit_sha = 'commit-sha'
+        @version.commits << Commit.new(:sha => 'commit-sha')
         @version.data_url.should == "https://raw.github.com/CocoaPods/Specs/commit-sha/#{@version.destination_path}"
       end
 
