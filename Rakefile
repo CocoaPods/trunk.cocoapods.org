@@ -49,6 +49,27 @@ begin
       version = ENV['VERSION'].to_i if ENV['VERSION']
       Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'), :target => version)
     end
+    
+    desc 'Drop all DBs'
+    task :drop do
+      `dropdb trunk_cocoapods_org_test`
+      `dropdb trunk_cocoapods_org_development`
+      `dropdb trunk_cocoapods_org_production`
+    end
+    
+    desc 'Create all DBs'
+    task :create do
+      `createdb -h localhost trunk_cocoapods_org_test -E UTF8`
+      `createdb -h localhost trunk_cocoapods_org_development -E UTF8`
+      `createdb -h localhost trunk_cocoapods_org_production -E UTF8`
+    end
+    
+    desc 'Create all DBs'
+    task :bootstrap do
+      Rake::Task['db:drop'].invoke
+      Rake::Task['db:create'].invoke
+      Rake::Task['db:migrate'].invoke
+    end
   end
 
   desc 'Starts a interactive console with the model env loaded'
