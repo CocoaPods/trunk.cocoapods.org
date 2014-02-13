@@ -19,8 +19,8 @@ module SpecHelpers::PodsController
     @pod = Pod::TrunkApp::Pod.create(:name => spec.name)
     @pod.add_owner(@owner) if @owner
     @version = @pod.add_version(:name => spec.version.to_s)
-    @job = @version.add_submission_job(
-      :specification_data => spec.to_json,
+    @commit = @version.add_commit(:specification_data => spec.to_json)
+    @job = @commit.add_push_job(
       :owner => @owner || Pod::TrunkApp::Owner.create(:email => 'jenny@example.com', :name => 'Jenny'))
   end
 end
@@ -30,7 +30,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
+      PushJob.any_instance.stubs(:push!).returns(true)
       sign_in!
     end
 
