@@ -5,7 +5,7 @@ module Pod::TrunkApp
   describe LogMessage do
     describe "concerning validations" do
       before do
-        @message = LogMessage.new(:message => 'yay', :submission_job_id => 42)
+        @message = LogMessage.new(:message => 'yay', :push_job_id => 42)
       end
 
       it "needs a message" do
@@ -15,8 +15,8 @@ module Pod::TrunkApp
       end
 
       it "needs a submission job" do
-        @message.should.not.validate_with(:submission_job_id, nil)
-        @message.should.validate_with(:submission_job_id, 42)
+        @message.should.not.validate_with(:push_job_id, nil)
+        @message.should.validate_with(:push_job_id, 42)
       end
 
       describe "at the DB level" do
@@ -27,9 +27,9 @@ module Pod::TrunkApp
           end
         end
 
-        it "raises if an empty `submission_job_id' gets inserted" do
-          should.raise Sequel::NotNullConstraintViolation do
-            @message.submission_job_id = nil
+        it "does not raise if an empty `submission_job_id' gets inserted" do
+          should.not.raise Sequel::NotNullConstraintViolation do
+            @message.push_job_id = nil
             @message.save(:validate => false)
           end
         end
