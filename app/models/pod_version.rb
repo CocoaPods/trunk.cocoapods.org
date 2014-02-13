@@ -1,4 +1,4 @@
-require 'app/models/push_job'
+require 'app/models/commit'
 require 'app/concerns/git_commit_sha_validator'
 
 module Pod
@@ -16,8 +16,6 @@ module Pod
 
       many_to_one :pod
       one_to_many :commits, :order => Sequel.desc(:updated_at)
-
-      alias_method :published?, :published
       
       def published?
         commits.any?(&:pushed?)
