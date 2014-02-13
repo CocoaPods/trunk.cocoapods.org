@@ -106,10 +106,10 @@ module Pod::TrunkApp
     end
 
     it "creates a submission job and log message once a new pod version is created" do
-      SubmissionJob.any_instance.expects(:submit_specification_data!).returns(true)
+      PushJob.any_instance.expects(:push!).returns(true)
       lambda {
         post '/', spec.to_json
-      }.should.change { SubmissionJob.count }
+      }.should.change { PushJob.count }
       job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
       job.owner.should == @owner
       job.specification_data.should == JSON.pretty_generate(spec)
@@ -134,7 +134,7 @@ module Pod::TrunkApp
         lambda {
           post '/', spec.to_json
         }.should.not.change { PodVersion.count }
-      }.should.change { SubmissionJob.count }
+      }.should.change { PushJob.count }
       last_response.status.should == 302
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
@@ -199,7 +199,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
+      PushJob.any_instance.stubs(:push!).returns(true)
       sign_in!
     end
 

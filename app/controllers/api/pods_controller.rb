@@ -22,7 +22,7 @@ module Pod
         if pod = Pod.find(:name => params[:name])
           if version = pod.versions_dataset.where(:name => params[:version]).first
             if version.published?
-              job = version.submission_jobs.last
+              job = version.published_by
               json_message(200, 'messages' => job.log_messages.map(&:public_attributes),
                                 'data_url' => version.data_url)
             end
