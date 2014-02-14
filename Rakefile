@@ -68,6 +68,8 @@ begin
     task :bootstrap do
       Rake::Task['db:drop'].invoke
       Rake::Task['db:create'].invoke
+      # TODO This actually does not work.
+      #
       %w{test development production}.each do |env|
         ENV['RACK_ENV'] = env
         Rake::Task['db:migrate'].invoke
