@@ -20,6 +20,10 @@ module Pod
       
       alias_method :pushed?, :pushed
       
+      def pushed_by
+        push_jobs.last
+      end
+      
       # TODO Tests.
       #
       def self.succeeded
