@@ -86,7 +86,7 @@ module Pod::TrunkApp
       end
 
       it "returns a URL from where the spec data can be retrieved" do
-        @version.commits << Commit.new(:sha => 'commit-sha')
+        @version.add_commit(:sha => 'commit-sha')
         @version.data_url.should == "https://raw.github.com/CocoaPods/Specs/commit-sha/#{@version.destination_path}"
       end
 
