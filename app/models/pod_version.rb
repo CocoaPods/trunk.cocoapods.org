@@ -68,12 +68,10 @@ module Pod
         super
         validates_presence :pod_id
         validates_presence :name
-        # validates_presence :published
-        # validates_git_commit_sha :commit_sha
 
         validates_unique UNIQUE_VERSION
         # Sequel adds the error with the column tuple as the key, but for the
-        # user just uing `name' as the key is more semantic.
+        # user just using `name' as the key is more meaningful.
         if error = errors.delete(UNIQUE_VERSION)
           errors.add(:name, error.first)
         end
