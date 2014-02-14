@@ -23,7 +23,7 @@ module Pod
           if version = pod.versions_dataset.where(:name => params[:version]).first
             if version.published?
               commit = version.last_published_by
-              job = commit.published_by
+              job = commit.pushed_by
               json_message(200, 'messages' => job.log_messages.map(&:public_attributes),
                                 'data_url' => version.data_url)
             end
