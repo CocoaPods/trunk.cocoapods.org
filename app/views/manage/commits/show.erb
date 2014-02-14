@@ -18,22 +18,20 @@
   <dt>Id</dt>
   <dd><%= @commit.id %></dd>
   <dt>SHA</dt>
-  <dd><%= @commit.sha %><dd>
-  <dt>Specification Data</dt>
-  <!-- TODO Don't show it all. Make either expandable or link to another controller action. -->
-  <dd><%= @commit.specification_data %></dd>
+  <dd><%= @commit.sha || 'not yet pushed' %><dd>
 </dl>
 
 <hr>
 
+<h3>Push jobs</h3>
 <% @commit.push_jobs.each do |job| %>
-  <% if params[:progress] == 'true' %>
-    <h3><%= job.tasks_completed %> out of <%= Pod::TrunkApp::PushJob.tasks.size %> tasks completed</h3>
-    <div class="progress progress-striped <%= 'active' if job.in_progress? %>">
-      <div class="bar" style="width: <%= (100.0 / Pod::TrunkApp::PushJob.tasks.size) * job.tasks_completed %>%;"></div>
-    </div>
-    <hr>
-  <% end%>
+  <!-- TODO Extract into partial. -->
+  <dl class="dl-horizontal">
+    <dt>Owner</dt>
+    <dd><%= job.owner.name %> &lt;<%= job.owner.email %>&gt;</dd>
+    <dt>Duration</dt>
+    <dd><%= formatted_duration job.duration %><dd>
+  </dl>
 <% end %>
 
 <hr>
