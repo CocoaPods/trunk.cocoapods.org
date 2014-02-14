@@ -17,24 +17,22 @@ module Pod
       many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
     
+      # TODO Perhaps remove?
+      #
       def in_progress?
         succeeded.nil?
       end
-      
-      def completed?
-        !succeeded.nil? && succeeded
-      end
 
-      def failed?
-        !succeeded.nil? && !succeeded
-      end
-      
+      # TODO Perhaps remove?
+      #
       def succeeded
         commit && commit.succeeded
       end
       
+      # TODO Perhaps remove?
+      #
       def duration
-        ((in_progress? ? Time.now : updated_at) - created_at).ceil
+        ((in_progress? ? Time.now : (updated_at || commit.updated_at)) - created_at).ceil
       end
       
       def commit_sha
@@ -49,8 +47,6 @@ module Pod
         commit.specification_data
       end
 
-      # TODO Refactor this whole method. Especially how pod_version is needed.
-      #
       def push!
         perform_work 'Submitting specification data to GitHub' do
           commit_sha = self.class.github.create_new_commit(pod_version.destination_path,

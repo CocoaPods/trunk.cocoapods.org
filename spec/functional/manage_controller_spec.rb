@@ -61,62 +61,6 @@ module Pod::TrunkApp
       last_response.body.should.include @commit.pod_version.name
     end
 
-    # TODO Progress bar for commits? What would that include? Probably doesn't make sense.
-    #
-    # it "redirects to an overview with a progress bar if the job is in progress" do
-    #   @job.commit.update(:pushed => nil)
-    #   get "/jobs/#{@job.id}"
-    #   last_response.should.be.redirect
-    #   last_response.location.should.end_with "/jobs/#{@job.id}?progress=true"
-    # end
-
-    # TODO Don't have an overview of jobs, but refer to /commits at the moment.
-    #
-    # it "shows a list of current submission jobs" do
-    #   @job.commit.update(:pushed => nil)
-    #   get '/jobs'
-    #   last_response.should.be.ok
-    #   last_response.body.should.include @pod.name
-    # end
-    # 
-    # it "shows a list of failed submission jobs" do
-    #   @job.commit.update(:pushed => false)
-    #   get '/jobs', :scope => 'failed'
-    #   last_response.should.be.ok
-    #   last_response.body.should.include @pod.name
-    # end
-    # 
-    # it "shows a list of succeeded submission jobs" do
-    #   @job.commit.update(:pushed => true)
-    #   get '/jobs', :scope => 'succeeded'
-    #   last_response.should.be.ok
-    #   last_response.body.should.include @pod.name
-    # end
-    # 
-    # it "shows a list of all submission jobs" do
-    #   [nil, false, true].each do |scope|
-    #     @job.commit.update(:pushed => scope)
-    #     get '/jobs', :scope => 'all'
-    #     last_response.should.be.ok
-    #     last_response.body.should.include @pod.name
-    #   end
-    # end
-
-    it "shows an overview of an individual submission job" do
-      @job.save # TODO This sets updated_at - should it not already be set from the create?
-      @job.commit.update(:pushed => true)
-      get "/jobs/#{@job.id}"
-      last_response.should.be.ok
-      last_response.body.should.include @pod.name
-    end
-
-    it "redirects to an overview with a progress bar if the job is in progress" do
-      @job.commit.update(:pushed => nil)
-      get "/jobs/#{@job.id}"
-      last_response.should.be.redirect
-      last_response.location.should.end_with "/jobs/#{@job.id}?progress=true"
-    end
-
     it "shows a list of all pod versions" do
       get '/versions'
       last_response.should.be.ok

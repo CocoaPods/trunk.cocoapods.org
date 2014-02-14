@@ -83,15 +83,6 @@ module Pod::TrunkApp
         @job.commit_sha.should == '3ca23060197547eef92983f15590b5a87270615f'
       end
 
-      it "reports it failed" do
-        @github.stubs(:create_new_commit).raises
-        should.raise do
-          @job.push!
-        end
-        @job.reload.should.be.failed
-        @job.should.not.be.completed
-      end
-
       before do
         @github.stubs(:create_new_commit).with(@version.destination_path,
                                                @job.specification_data,
@@ -103,8 +94,6 @@ module Pod::TrunkApp
       it "creates a new commit" do
         @job.push!
         @job.reload.commit_sha.should == fixture_new_commit_sha
-        @job.reload.should.be.completed
-        @job.should.not.be.failed
         @job.log_messages.first.message.should == 'Submitting specification data to GitHub'
       end
 
