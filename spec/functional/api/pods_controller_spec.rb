@@ -192,7 +192,7 @@ module Pod::TrunkApp
     end
 
     it "returns an overview of a published pod version" do
-      @version.add_commit(:pushed => true, :specification_data => 'data')
+      @commit.update(:pushed => true)
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
       last_response.body.should == {
