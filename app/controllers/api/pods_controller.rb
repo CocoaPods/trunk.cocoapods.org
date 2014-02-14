@@ -54,7 +54,7 @@ module Pod
 
         # TODO use a unique index in the DB for this instead?
         if version = pod.versions_dataset.where(:name => specification.version).first
-          if version.published? # TODO || version.push_jobs_dataset.where(:succeeded => nil).first
+          if version.published? || version.commits.any?(&:in_progress?)
             headers 'Location' => url(version.resource_path)
             json_error(409, "Unable to accept duplicate entry for: #{specification}")
           end

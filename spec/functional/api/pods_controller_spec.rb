@@ -119,10 +119,10 @@ module Pod::TrunkApp
 
     it "does not allow a push for an existing pod version while a job is in progress" do
       version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      commit = version.add_commit(:pushed => nil, :specification_data => 'data')
+      commit = version.add_commit(:pushed => false, :specification_data => 'data')
       commit.add_push_job(:owner => @owner)
       commit.add_push_job(:owner => @owner)
-      commit.update(:pushed => false)
+      commit.update(:pushed => nil)
       lambda {
         post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
