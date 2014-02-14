@@ -16,18 +16,6 @@ module Pod
       many_to_one :commit
       many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
-
-      def self.succeeded
-        commit_dataset.where(:pushed => true) # TODO
-      end
-      
-      def self.failed
-        commit_dataset.where(:pushed => false) # TODO
-      end
-      
-      def self.in_progress
-        commit_dataset.where(:pushed => nil) # TODO
-      end
     
       def in_progress?
         succeeded.nil?

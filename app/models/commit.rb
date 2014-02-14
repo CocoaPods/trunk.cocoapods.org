@@ -20,6 +20,24 @@ module Pod
       
       alias_method :pushed?, :pushed
       
+      # TODO Tests.
+      #
+      def self.succeeded
+        where(:pushed => true)
+      end
+      
+      # TODO Tests.
+      #
+      def self.failed
+        where(:pushed => false)
+      end
+      
+      # TODO Tests.
+      #
+      def self.in_progress
+        where(:pushed => nil)
+      end
+      
       def in_progress?
         succeeded.nil?
       end
