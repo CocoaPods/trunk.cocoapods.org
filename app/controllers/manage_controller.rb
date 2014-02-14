@@ -43,7 +43,7 @@ module Pod
       get '/commits/:id' do
         @commit = Commit.find(:id => params[:id])
         if @commit.in_progress? && params[:progress] != 'true'
-          redirect to("/commits/#{@job.id}?progress=true")
+          redirect to("/commits/#{@commit.id}?progress=true")
         else
           @refresh_automatically = @commit.in_progress?
           erb :'commits/show'
