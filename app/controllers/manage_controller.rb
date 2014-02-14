@@ -52,7 +52,7 @@ module Pod
       
       get '/jobs/:id' do
         @job = PushJob.find(:id => params[:id])
-        if @ob.in_progress? && params[:progress] != 'true'
+        if @job.in_progress? && params[:progress] != 'true'
           redirect to("/jobs/#{@job.id}?progress=true")
         else
           @refresh_automatically = @job.in_progress?

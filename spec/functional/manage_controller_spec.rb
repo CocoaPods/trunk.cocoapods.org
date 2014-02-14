@@ -7,7 +7,7 @@ module Pod::TrunkApp
       @pod = Pod.create(:name => 'AFNetworking')
       @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
       @commit = Commit.create(:pod_version => @version, :specification_data => fixture_read('AFNetworking.podspec'))
-      @job = PushJob.new(:commit => @commit, :owner => @owner)
+      @job = PushJob.create(:commit => @commit, :owner => @owner)
     end
 
     it "disallows access without authentication" do
@@ -103,6 +103,7 @@ module Pod::TrunkApp
     # end
 
     it "shows an overview of an individual submission job" do
+      @job.save # TODO This sets updated_at - should it not already be set from the create?
       @job.commit.update(:pushed => true)
       get "/jobs/#{@job.id}"
       last_response.should.be.ok
