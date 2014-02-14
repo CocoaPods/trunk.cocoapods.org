@@ -113,7 +113,7 @@ module Pod::TrunkApp
       version = pod.versions.last
       version.should.be.published
       version.commit_sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
-      version.published_by.should == nil # TODO Who should it be published by if it's a manual merge?
+      version.pushed_by.should == nil # TODO Who should it be published by if it's a manual merge?
     end
     
   end

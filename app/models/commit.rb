@@ -20,7 +20,7 @@ module Pod
       
       alias_method :pushed?, :pushed
       
-      def pushed_by
+      def published_by
         push_jobs.last
       end
       

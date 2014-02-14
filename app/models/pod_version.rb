@@ -21,15 +21,15 @@ module Pod
         commits.any?(&:pushed?)
       end
       
-      def last_pushed_by
-        pushed_by.last
-      end
-      
-      def pushed_by
-        commits.select(&:pushed?)
+      def last_published_by
+        published_by.last
       end
       
       def published_by
+        commits.select(&:pushed?)
+      end
+      
+      def pushed_by
         commits.find(&:pushed?).push_jobs.last
       end
       
