@@ -20,26 +20,20 @@ module Pod
       
       alias_method :pushed?, :pushed
       
-      def published_by
-        push_jobs.last
-      end
-      
-      # TODO Tests.
-      #
       def self.succeeded
-        where(:pushed => true)
+        where(:pushed => true).all
       end
       
-      # TODO Tests.
-      #
       def self.failed
-        where(:pushed => false)
+        where(:pushed => false).all
       end
       
-      # TODO Tests.
-      #
       def self.in_progress
-        where(:pushed => nil)
+        where(:pushed => nil).all
+      end
+      
+      def pushed_by
+        push_jobs.last
       end
       
       def in_progress?

@@ -56,5 +56,25 @@ module Pod::TrunkApp
         @commit.should.be.in_progress
       end
     end
+    
+    describe "class methods" do
+      before do
+        @in_progress = Commit.create(:pod_version => @version, :pushed => nil, :specification_data => 'DATA')
+        @succeeded   = Commit.create(:pod_version => @version, :pushed => true, :specification_data => 'DATA')
+        @failed      = Commit.create(:pod_version => @version, :pushed => false, :specification_data => 'DATA')
+      end
+      
+      it "returns commits in progress" do
+        Commit.in_progress.should == [@in_progress]
+      end
+      
+      it "returns successful commits" do
+        Commit.succeeded.should == [@succeeded]
+      end
+      
+      it "returns failed commits" do
+        Commit.failed.should == [@failed]
+      end
+    end
   end
 end
