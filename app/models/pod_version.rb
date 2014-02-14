@@ -15,26 +15,22 @@ module Pod
       plugin :after_initialize
 
       many_to_one :pod
-      one_to_many :commits, :order => Sequel.desc(:updated_at)
+      one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
       
       def published?
         commits.any?(&:pushed?)
-      end
-      
-      def last_published_by
-        published_by.last
       end
       
       def published_by
         commits.select(&:pushed?)
       end
       
-      def pushed_by
-        commits.find(&:pushed?).push_jobs.last
+      def last_published_by
+        published_by.last
       end
       
       def commit_sha
-        commits.last.sha
+        last_published_by.sha
       end
 
       def after_initialize
