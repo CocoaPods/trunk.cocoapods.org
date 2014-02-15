@@ -72,22 +72,24 @@ module Pod::TrunkApp
       #
       pod.versions.map(&:name).should == ['1.0.1']
       
-      # Did not add a new submission job.
+      # Did not add a new commit.
       #
-      pod.versions.find { |version| version.name == '1.0.1' }.submission_jobs.should == []
+      pod.versions.find { |version| version.name == '1.0.1' }.commits.should == []
     end
     
     it "processes payload data and creates a new submission job (because the version exists)" do
+      # Don't check email records.
+      #
+      RFC822.stubs(:mx_records).returns ['all good! :D']
+
+      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
-      
-      # Don't check email records.
-      #
-      RFC822.stubs(:mx_records).returns ['all good! :D']
-      
+
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
     
       header 'Content-Type', 'application/x-www-form-urlencoded'
@@ -102,17 +104,18 @@ module Pod::TrunkApp
       #
       pod.versions.map(&:name).should == ['1.0.1']
       
-      # Did add a new submission job.
+      # Did add a new commit.
       #
-      submission_job = pod.versions.find { |version| version.name == '1.0.1' }.submission_jobs.last
-      submission_job.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
+      commit = pod.versions.last.commits.last
+      commit.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
+      commit.should.be.pushed
       
       # Updated the version correctly.
       #
       version = pod.versions.last
-      version.published.should == true
+      version.should.be.published
       version.commit_sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
-      version.published_by_submission_job_id.should == submission_job.id
+      version.last_published_by.should == commit
     end
     
   end

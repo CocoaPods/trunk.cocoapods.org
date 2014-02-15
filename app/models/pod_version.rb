@@ -1,4 +1,4 @@
-require 'app/models/submission_job'
+require 'app/models/commit'
 require 'app/concerns/git_commit_sha_validator'
 
 module Pod
@@ -15,16 +15,29 @@ module Pod
       plugin :after_initialize
 
       many_to_one :pod
-      many_to_one :published_by_submission_job, :class => 'Pod::TrunkApp::SubmissionJob'
-      one_to_many :submission_jobs, :order => Sequel.asc(:id)
-
-      alias_method :published?, :published
+      one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
+      
+      def published?
+        commits.any?(&:pushed?)
+      end
+      
+      def published_by
+        commits.select(&:pushed?)
+      end
+      
+      def last_published_by
+        published_by.last
+      end
+      
+      def commit_sha
+        last_published_by.sha
+      end
 
       def after_initialize
         super
-        if new?
-          self.published = false if published.nil?
-        end
+        # if new?
+        #   self.published = false if published.nil?
+        # end
       end
 
       def public_attributes
@@ -33,6 +46,10 @@ module Pod
 
       def destination_path
         File.join('Specs', pod.name, name, "#{pod.name}.podspec.json")
+      end
+      
+      def message
+        "[Add] #{pod.name} #{name}"
       end
 
       def data_url
@@ -51,12 +68,10 @@ module Pod
         super
         validates_presence :pod_id
         validates_presence :name
-        validates_presence :published
-        validates_git_commit_sha :commit_sha
 
         validates_unique UNIQUE_VERSION
         # Sequel adds the error with the column tuple as the key, but for the
-        # user just uing `name' as the key is more semantic.
+        # user just using `name' as the key is more meaningful.
         if error = errors.delete(UNIQUE_VERSION)
           errors.add(:name, error.first)
         end

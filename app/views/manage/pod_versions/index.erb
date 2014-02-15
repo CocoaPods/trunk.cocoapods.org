@@ -21,9 +21,9 @@
   </thead>
   <tbody>
     <% @versions.each do |version| %>
-      <tr class="<%= version.published? ? 'success' : ('error' if version.submission_jobs.all?(&:failed?)) %>">
+      <tr class="<%= version.published? ? 'success' : ('error' unless version.commits.any?(&:pushed?)) %>">
         <% href = url("/versions/#{version.id}") %>
-        <% [version.id, version.pod.name, version.name, version.submission_jobs_dataset.count, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
+        <% [version.id, version.pod.name, version.name, version.commits_dataset.count, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
           <td><a href="<%= href %>"><%= value || 'n/a' %></a></td>
         <% end %>
       </tr>

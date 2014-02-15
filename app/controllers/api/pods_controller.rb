@@ -9,7 +9,7 @@ module Pod
 
       get '/:name', :requires_owner => false do
         if pod = Pod.find(:name => params[:name])
-          versions = pod.versions_dataset.where(:published => true).to_a
+          versions = pod.versions.select(&:published?)
           unless versions.empty?
             json_message(200, 'versions' => versions.map(&:public_attributes),
                               'owners'   => pod.owners.map(&:public_attributes))
@@ -22,7 +22,8 @@ module Pod
         if pod = Pod.find(:name => params[:name])
           if version = pod.versions_dataset.where(:name => params[:version]).first
             if version.published?
-              job = version.submission_jobs.last
+              commit = version.last_published_by
+              job = commit.pushed_by
               json_message(200, 'messages' => job.log_messages.map(&:public_attributes),
                                 'data_url' => version.data_url)
             end
@@ -53,7 +54,7 @@ module Pod
 
         # TODO use a unique index in the DB for this instead?
         if version = pod.versions_dataset.where(:name => specification.version).first
-          if version.published? || version.submission_jobs_dataset.where(:succeeded => nil).first
+          if version.published? || version.commits.any?(&:in_progress?)
             headers 'Location' => url(version.resource_path)
             json_error(409, "Unable to accept duplicate entry for: #{specification}")
           end
@@ -61,8 +62,9 @@ module Pod
           version = pod.add_version(:name => specification.version)
         end
 
-        job = version.add_submission_job(:specification_data => JSON.pretty_generate(specification), :owner => @owner)
-        job.submit_specification_data!
+        commit = version.add_commit(:committer => @owner, :specification_data => JSON.pretty_generate(specification))
+        job = commit.add_push_job({})
+        job.push!
         redirect url(version.resource_path)
       end
 

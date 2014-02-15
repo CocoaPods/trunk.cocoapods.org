@@ -23,31 +23,30 @@ module Pod
 
       register Sinatra::Twitter::Bootstrap::Assets
 
-      get '/jobs' do
-        @jobs = SubmissionJob.order(Sequel.desc(:id))
-        case params[:scope]
+      get '/commits' do
+        @commits = case params[:scope]
         when 'all'
-          # no-op
+          Commit.all
         when 'failed'
-          @jobs = @jobs.where(:succeeded => false)
+          Commit.failed
         when 'succeeded'
-          @jobs = @jobs.where(:succeeded => true)
+          Commit.succeeded
         else
           params[:scope] = 'current'
-          @jobs = @jobs.where(:succeeded => nil)
+          Commit.in_progress
         end
 
         @refresh_automatically = params[:scope] == 'current'
-        erb :'jobs/index'
+        erb :'commits/index'
       end
 
-      get '/jobs/:id' do
-        @job = SubmissionJob.find(:id => params[:id])
-        if @job.in_progress? && params[:progress] != 'true'
-          redirect to("/jobs/#{@job.id}?progress=true")
+      get '/commits/:id' do
+        @commit = Commit.find(:id => params[:id])
+        if @commit.in_progress? && params[:progress] != 'true'
+          redirect to("/commits/#{@commit.id}?progress=true")
         else
-          @refresh_automatically = @job.in_progress?
-          erb :'jobs/show'
+          @refresh_automatically = @commit.in_progress?
+          erb :'commits/show'
         end
       end
 
