@@ -68,6 +68,7 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
       foreign_key :pod_version_id, :pod_versions, :null=>false, :key=>[:id]
+      foreign_key :committer_id, :owners, :null=>false, :key=>[:id] # We need to know who created the commit.
     end
 
     create_table(:push_jobs) do
@@ -75,7 +76,6 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
       foreign_key :commit_id, :commits, :key=>[:id]
-      foreign_key :owner_id, :owners, :null=>false, :key=>[:id] # We need to know who initiated the push.
     end
     
     alter_table(:log_messages) do
