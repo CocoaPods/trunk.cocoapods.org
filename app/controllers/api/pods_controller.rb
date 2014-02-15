@@ -62,8 +62,8 @@ module Pod
           version = pod.add_version(:name => specification.version)
         end
 
-        commit = version.add_commit(:specification_data => JSON.pretty_generate(specification))
-        job = commit.add_push_job(:owner => @owner)
+        commit = version.add_commit(:committer => @owner, :specification_data => JSON.pretty_generate(specification))
+        job = commit.add_push_job({})
         job.push!
         redirect url(version.resource_path)
       end

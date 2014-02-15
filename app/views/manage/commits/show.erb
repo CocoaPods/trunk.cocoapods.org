@@ -27,8 +27,8 @@
 <% @commit.push_jobs.each do |job| %>
   <!-- TODO Extract into partial. -->
   <dl class="dl-horizontal">
-    <dt>Owner</dt>
-    <dd><%= job.owner.name %> &lt;<%= job.owner.email %>&gt;</dd>
+    <dt>Committer</dt>
+    <dd><%= job.commit.committer.name %> &lt;<%= job.commit.committer.email %>&gt;</dd>
     <dt>Duration</dt>
     <dd><%= formatted_duration job.duration %><dd>
   </dl>

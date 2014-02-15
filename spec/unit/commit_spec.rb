@@ -6,7 +6,8 @@ module Pod::TrunkApp
     before do
       @pod = Pod.create(:name => 'AFNetworking')
       @version = @pod.add_version(:name => '1.2.0')
-      @commit = Commit.new(:pod_version => @version, :specification_data => fixture_read('AFNetworking.podspec'))
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
+      @commit = Commit.new(:committer => @owner, :pod_version => @version, :specification_data => fixture_read('AFNetworking.podspec'))
     end
 
     describe "concerning validations" do
@@ -30,7 +31,19 @@ module Pod::TrunkApp
         @commit.should.validate_with(:sha, '3ca23060197547eef92983f15590b5a87270615f')
       end
 
+      it "needs a committer" do
+        @commit.should.not.validate_with(:committer_id, nil)
+        @commit.should.validate_with(:committer_id, @owner.id)
+      end
+
       describe "at the DB level" do
+        it "raises if an empty `committer_id' gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @commit.committer_id = nil
+            @commit.save(:validate => false)
+          end
+        end
+
         it "raises if an empty `pod_version_id' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @commit.pod_version_id = nil
@@ -59,9 +72,9 @@ module Pod::TrunkApp
     
     describe "class methods" do
       before do
-        @in_progress = Commit.create(:pod_version => @version, :pushed => nil, :specification_data => 'DATA')
-        @succeeded   = Commit.create(:pod_version => @version, :pushed => true, :specification_data => 'DATA')
-        @failed      = Commit.create(:pod_version => @version, :pushed => false, :specification_data => 'DATA')
+        @in_progress = Commit.create(:committer => @owner, :pod_version => @version, :pushed => nil, :specification_data => 'DATA')
+        @succeeded   = Commit.create(:committer => @owner, :pod_version => @version, :pushed => true, :specification_data => 'DATA')
+        @failed      = Commit.create(:committer => @owner, :pod_version => @version, :pushed => false, :specification_data => 'DATA')
       end
       
       it "returns commits in progress" do

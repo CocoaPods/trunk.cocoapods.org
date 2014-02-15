@@ -6,8 +6,8 @@ module Pod::TrunkApp
       @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @pod = Pod.create(:name => 'AFNetworking')
       @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
-      @commit = Commit.create(:pod_version => @version, :specification_data => fixture_read('AFNetworking.podspec'))
-      @job = PushJob.create(:commit => @commit, :owner => @owner)
+      @commit = Commit.create(:committer => @owner, :pod_version => @version, :specification_data => fixture_read('AFNetworking.podspec'))
+      @job = PushJob.create(:commit => @commit)
     end
 
     it "disallows access without authentication" do

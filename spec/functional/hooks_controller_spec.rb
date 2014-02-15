@@ -78,16 +78,18 @@ module Pod::TrunkApp
     end
     
     it "processes payload data and creates a new submission job (because the version exists)" do
+      # Don't check email records.
+      #
+      RFC822.stubs(:mx_records).returns ['all good! :D']
+
+      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
-      
-      # Don't check email records.
-      #
-      RFC822.stubs(:mx_records).returns ['all good! :D']
-      
+
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
     
       header 'Content-Type', 'application/x-www-form-urlencoded'

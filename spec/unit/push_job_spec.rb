@@ -7,34 +7,15 @@ module Pod::TrunkApp
   end
 
   describe PushJob do
-    before do
-      @pod = Pod.create(:name => 'AFNetworking')
-      @version = @pod.add_version(:name => '1.2.0')
-      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
-      @job = PushJob.new(:owner => @owner)
-    end
-
-    describe "concerning validations" do
-      it "needs an owner" do
-        @job.should.not.validate_with(:owner_id, nil)
-        @job.should.validate_with(:owner_id, @owner.id)
-      end
-
-      describe "at the DB level" do
-        it "raises if an empty `owner_id' gets inserted" do
-          should.raise Sequel::NotNullConstraintViolation do
-            @job.owner_id = nil
-            @job.save(:validate => false)
-          end
-        end
-      end
-    end
-
     describe "in general" do
       before do
-        @commit = Commit.create(:pod_version => @version,
+        @pod = Pod.create(:name => 'AFNetworking')
+        @version = @pod.add_version(:name => '1.2.0')
+        @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
+        @commit = Commit.create(:committer => @owner,
+                                :pod_version => @version,
                                 :specification_data => fixture_read('GitHub/KFData.podspec.json'))
-        @job.commit = @commit
+        @job = PushJob.new(:commit => @commit)
         @job.save
       end
 
@@ -105,7 +86,7 @@ module Pod::TrunkApp
         @job.log_messages.last.message.should == "Published."
       end
 
-      it "adds the submitter as the owner of the pod if the pod has no owners yet" do
+      it "adds the committer as the owner of the pod if the pod has no owners yet" do
         @job.push!
         @pod.reload.owners.should == [@owner]
       end

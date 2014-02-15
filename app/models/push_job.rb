@@ -14,9 +14,8 @@ module Pod
       plugin :validation_helpers
 
       many_to_one :commit
-      many_to_one :owner
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
-    
+
       # TODO Perhaps remove?
       #
       def in_progress?
@@ -28,44 +27,40 @@ module Pod
       def succeeded
         commit && commit.succeeded
       end
-      
+
       # TODO Perhaps remove?
       #
       def duration
         ((in_progress? ? Time.now : (updated_at || commit.updated_at)) - created_at).ceil
       end
-      
+
       def commit_sha
         commit.sha
       end
-      
+
       def pod_version
         commit.pod_version
       end
-      
+
       def specification_data
         commit.specification_data
       end
 
       def push!
         perform_work 'Submitting specification data to GitHub' do
+          committer = commit.committer
           commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
                                                            specification_data, # Re-add JSON.pretty_generate.
                                                            pod_version.message,
-                                                           owner.name,
-                                                           owner.email)
+                                                           committer.name,
+                                                           committer.email)
           commit.update(:pushed => true, :sha => commit_sha)
-          pod_version.pod.add_owner(owner) if pod_version.pod.owners.empty?
+          pod_version.pod.add_owner(committer) if pod_version.pod.owners.empty?
           add_log_message(:message => 'Published.')
         end
       end
 
       protected
-
-      def validate
-        super
-        validates_presence :owner_id
-      end
 
       def self.github
         @github ||= GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')

@@ -88,8 +88,9 @@ module Pod
                 version.add_commit(
                   :pushed => true,
                   :sha => commit_sha,
-                  :specification_data => JSON.pretty_generate(spec_hash)
-                  # TODO What about an owner?
+                  :specification_data => JSON.pretty_generate(spec_hash),
+                  # TODO Add real committer
+                  :committer => Owner.unclaimed,
                 )
               end
             end
