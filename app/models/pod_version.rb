@@ -48,9 +48,9 @@ module Pod
         File.join('Specs', pod.name, name, "#{pod.name}.podspec.json")
       end
       
-      def message
-        "[Add] #{pod.name} #{name}"
-      end
+      #def message
+        #"[Add] #{pod.name} #{name}"
+      #end
 
       def data_url
         DATA_URL % [commit_sha, destination_path] if commit_sha
@@ -58,6 +58,18 @@ module Pod
 
       def resource_path
         URI.escape("/pods/#{pod.name}/versions/#{name}")
+      end
+
+      def push!(committer, specification_data)
+        job = PushJob.new(self, committer, specification_data)
+        if job.push!
+          # TODO remove pushed field
+          add_commit(:committer => committer, :sha => job.commit_sha, :specification_data => specification_data, :pushed => true)
+          pod.add_owner(committer) if pod.owners.empty?
+          true
+        else
+          false
+        end
       end
 
       protected

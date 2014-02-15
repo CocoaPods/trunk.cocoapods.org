@@ -7,80 +7,71 @@ require 'app/concerns/git_commit_sha_validator'
 
 module Pod
   module TrunkApp
-    class PushJob < Sequel::Model
-      self.dataset = :push_jobs
+    class PushJob
+      attr_reader :pod_version, :committer, :specification_data, :commit_sha, :duration
 
-      plugin :timestamps
-      plugin :validation_helpers
-
-      many_to_one :commit
-      one_to_many :log_messages, :order => Sequel.asc(:created_at)
-
-      # TODO Perhaps remove?
-      #
-      def in_progress?
-        succeeded.nil?
+      def initialize(pod_version, committer, specification_data)
+        @pod_version, @committer, @specification_data = pod_version, comitter, specification_data
       end
 
-      # TODO Perhaps remove?
-      #
-      def succeeded
-        commit && commit.succeeded
+      def pod_version_description
+        "#{pod_version.pod.name} #{pod_version.name}"
       end
 
-      # TODO Perhaps remove?
-      #
-      def duration
-        ((in_progress? ? Time.now : (updated_at || commit.updated_at)) - created_at).ceil
-      end
-
-      def commit_sha
-        commit.sha
-      end
-
-      def pod_version
-        commit.pod_version
-      end
-
-      def specification_data
-        commit.specification_data
+      def commit_message
+        "[Add] #{pod_version_description}"
       end
 
       def push!
-        perform_work 'Submitting specification data to GitHub' do
-          committer = commit.committer
-          commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
-                                                           specification_data, # Re-add JSON.pretty_generate.
-                                                           pod_version.message,
-                                                           committer.name,
-                                                           committer.email)
-          commit.update(:pushed => true, :sha => commit_sha)
-          pod_version.pod.add_owner(committer) if pod_version.pod.owners.empty?
-          add_log_message(:message => 'Published.')
+        log(:info, "initiated by: #{committer.name} <#{committer.email}>.", specification_data)
+        perform_work do
+          # TODO Make the GitHub class return the real response object *and* the extracted data. Possibly just monkey-patch REST::Response?
+          # E.g.
+          #
+          #   response = self.class.github.create_new_commit(...)
+          #   if response.success?
+          #     @commit_sha = response.extracted_value
+          #   else
+          #     log(:error, "failed with HTTP status: #{response}")
+          #   end
+          #
+          @commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
+                                                            specification_data, # Re-add JSON.pretty_generate.
+                                                            commit_message,
+                                                            committer.name,
+                                                            committer.email)
+          log(:info, "has been pushed.")
         end
+        true
       end
 
       protected
+
+      def log(level, message, data = nil)
+        # TODO add level and data to LogMessage
+        #pod_version.add_log_message(:level => level, :message => "Push for `#{pod_version_description}' with temporary ID `#{object_id}' #{message}", :data => data)
+        pod_version.add_log_message(:message => "Push for `#{pod_version_description}' with temporary ID `#{object_id}' #{message}")
+      end
 
       def self.github
         @github ||= GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
       end
 
-      def self.perform_work(&block)
+      def perform_work(&block)
+        if error = perform_work_and_rescue(&block)
+          log(:error, "failed with error: #{error.message}.", error.backtrace.join("\n\t\t"))
+          raise error
+        end
+      end
+
+      def perform_work_and_rescue(&block)
+        start = Time.now
         db.transaction(:savepoint => true, &block)
         return nil
       rescue Object => error
-        TRUNK_APP_LOGGER.error "#{error.message}\n\t\t#{error.backtrace.join("\n\t\t")}"
         return error
-      end
-
-      def perform_work(message, &block)
-        add_log_message(:message => message)
-        if error = self.class.perform_work(&block)
-          commit.update(:pushed => false)
-          add_log_message(:message => "Failed with error: #{error.message}")
-          raise error
-        end
+      ensure
+        @duration = (Time.now - start).ceil
       end
     end
   end
