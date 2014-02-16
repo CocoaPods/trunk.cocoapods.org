@@ -73,22 +73,9 @@ module Pod::TrunkApp
       end
 
       it "creates a new commit" do
-        @job.push!
-        @job.reload.commit_sha.should == fixture_new_commit_sha
-        @job.log_messages.first.message.should == 'Submitting specification data to GitHub'
-      end
-
-      it "publishes the pod version once the commit has been created" do
-        @job.push!
-        @version.should.be.published
-        @version.last_published_by.pushed_by.should == @job
-        @version.commit_sha.should == fixture_new_commit_sha
-        @job.log_messages.last.message.should == "Published."
-      end
-
-      it "adds the committer as the owner of the pod if the pod has no owners yet" do
-        @job.push!
-        @pod.reload.owners.should == [@owner]
+        @job.push!.should == fixture_new_commit_sha
+        @version.reload.log_messages.first.message.match(%r{initiated by: Appie <appie@example.com>.}).should.not == nil
+        @version.reload.log_messages.last.message.match(%r{has been pushed}).should.not == nil
       end
     end
   end

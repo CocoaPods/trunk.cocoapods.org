@@ -3,23 +3,18 @@ require 'app/models/log_message'
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/pod_version'
-require 'app/concerns/git_commit_sha_validator'
 
 module Pod
   module TrunkApp
     class PushJob
-      attr_reader :pod_version, :committer, :specification_data, :commit_sha, :duration
+      attr_reader :pod_version, :committer, :specification_data, :duration
 
       def initialize(pod_version, committer, specification_data)
-        @pod_version, @committer, @specification_data = pod_version, comitter, specification_data
-      end
-
-      def pod_version_description
-        "#{pod_version.pod.name} #{pod_version.name}"
+        @pod_version, @committer, @specification_data = pod_version, committer, specification_data
       end
 
       def commit_message
-        "[Add] #{pod_version_description}"
+        "[Add] #{pod_version.description}"
       end
 
       def push!
@@ -35,14 +30,15 @@ module Pod
           #     log(:error, "failed with HTTP status: #{response}")
           #   end
           #
-          @commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
-                                                            specification_data, # Re-add JSON.pretty_generate.
-                                                            commit_message,
-                                                            committer.name,
-                                                            committer.email)
+          commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
+                                                           specification_data, # Re-add JSON.pretty_generate.
+                                                           commit_message,
+                                                           committer.name,
+                                                           committer.email)
           log(:info, "has been pushed.")
+          return commit_sha
         end
-        true
+        nil
       end
 
       protected
@@ -50,7 +46,7 @@ module Pod
       def log(level, message, data = nil)
         # TODO add level and data to LogMessage
         #pod_version.add_log_message(:level => level, :message => "Push for `#{pod_version_description}' with temporary ID `#{object_id}' #{message}", :data => data)
-        pod_version.add_log_message(:message => "Push for `#{pod_version_description}' with temporary ID `#{object_id}' #{message}")
+        pod_version.add_log_message(:message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}")
       end
 
       def self.github
@@ -65,13 +61,10 @@ module Pod
       end
 
       def perform_work_and_rescue(&block)
-        start = Time.now
-        db.transaction(:savepoint => true, &block)
+        block.call
         return nil
       rescue Object => error
         return error
-      ensure
-        @duration = (Time.now - start).ceil
       end
     end
   end
