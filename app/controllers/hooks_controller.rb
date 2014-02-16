@@ -44,8 +44,7 @@ module Pod
         #
         manual_commits.each do |manual_commit|
           commit_sha   = manual_commit['id']
-          author_email = manual_commit['author']['email']
-          author_name  = manual_commit['author']['name']
+          committer_email = manual_commit['committer']['email']
           
           # Get all changed (added + modified) files.
           #
@@ -83,15 +82,13 @@ module Pod
               # We ignore any new pod versions coming in through a manual merge.
               #
               if version
-                # Add a new submission job to the existing version.
+                # Add a new commit to the existing version.
                 #
-                job = version.add_submission_job(
-                  :succeeded => true,
-                  :commit_sha => commit_sha,
+                version.add_commit(
+                  :sha => commit_sha,
                   :specification_data => JSON.pretty_generate(spec_hash),
-                  :owner => Owner.find_or_create_by_email_and_update_name(author_email, author_name)
+                  :committer => pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed,
                 )
-                version.update(:published => true, :published_by_submission_job => job, :commit_sha => commit_sha)
               end
             end
           end

@@ -15,13 +15,14 @@ module SpecHelpers::PodsController
     @spec ||= fixture_specification('AFNetworking.podspec')
   end
 
+  def valid_commit_attrs
+    { :committer => @owner, :specification_data => 'DATA' }
+  end
+
   def create_pod_version!
     @pod = Pod::TrunkApp::Pod.create(:name => spec.name)
     @pod.add_owner(@owner) if @owner
     @version = @pod.add_version(:name => spec.version.to_s)
-    @job = @version.add_submission_job(
-      :specification_data => spec.to_json,
-      :owner => @owner || Pod::TrunkApp::Owner.create(:email => 'jenny@example.com', :name => 'Jenny'))
   end
 end
 
@@ -30,7 +31,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
+      PushJob.any_instance.stubs(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
       sign_in!
     end
 
@@ -86,7 +87,9 @@ module Pod::TrunkApp
     end
 
     it "does not allow a push for an existing pod version if it's published" do
-      @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s, :published => true)
+      @owner.add_pod(:name => spec.name)
+            .add_version(:name => spec.version.to_s)
+            .add_commit(valid_commit_attrs)
       lambda {
         post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
@@ -94,7 +97,7 @@ module Pod::TrunkApp
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
-    it "creates new pod and version records" do
+    it "creates new pod and version records, then redirects" do
       lambda {
         lambda {
           post '/', spec.to_json
@@ -105,39 +108,31 @@ module Pod::TrunkApp
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
-    it "creates a submission job and log message once a new pod version is created" do
-      SubmissionJob.any_instance.expects(:submit_specification_data!).returns(true)
+    it "creates a commit once a push succeeds" do
+      PushJob.any_instance.expects(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
       lambda {
         post '/', spec.to_json
-      }.should.change { SubmissionJob.count }
-      job = Pod.first(:name => spec.name).versions.first.submission_jobs.last
-      job.owner.should == @owner
-      job.specification_data.should == JSON.pretty_generate(spec)
+      }.should.change { Commit.count }
+      commit = Commit.first
+      commit.committer.should == @owner
+      commit.specification_data.should == JSON.pretty_generate(spec)
     end
-
-    it "does not allow a push for an existing pod version while a job is in progress" do
-      version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
-      version.add_submission_job(:succeeded => nil, :owner => @owner, :specification_data => 'data')
+    
+    it "does not create a commit if a push fails" do
+      PushJob.any_instance.expects(:push!).returns(nil)
       lambda {
         post '/', spec.to_json
-      }.should.not.change { Pod.count + PodVersion.count }
-      last_response.status.should == 409
-      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
+      }.should.not.change { Commit.count }
     end
-
-    it "does allow a push for an existing pod version if the previous jobs have failed" do
-      version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
-      version.add_submission_job(:succeeded => false, :owner => @owner, :specification_data => 'data')
-      lambda {
-        lambda {
-          post '/', spec.to_json
-        }.should.not.change { PodVersion.count }
-      }.should.change { SubmissionJob.count }
-      last_response.status.should == 302
-      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
-    end
+    
+    # TODO
+    #
+    # it "does not create a commit or redirects if a push fails" do
+    #   PushJob.any_instance.expects(:push!).raises('Oh noes!')
+    #   lambda {
+    #     post '/', spec.to_json
+    #   }
+    # end
   end
 
   describe PodsController, "with an unauthenticated consumer" do
@@ -169,8 +164,8 @@ module Pod::TrunkApp
     it "returns an overview of a pod including only the published versions" do
       create_session_with_owner
       @pod.add_owner(@owner)
-      @pod.add_version(:name => '0.2.1', :published => false)
-      @version.update(:published => true)
+      @pod.add_version(:name => '0.2.1')
+      @version.add_commit(valid_commit_attrs)
       get '/AFNetworking'
       last_response.body.should == {
         'versions' => [@version.public_attributes],
@@ -185,11 +180,12 @@ module Pod::TrunkApp
     end
 
     it "returns an overview of a published pod version" do
-      @version.update(:published => true)
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
+      @version.add_commit(valid_commit_attrs)
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
       last_response.body.should == {
-        'messages' => @job.log_messages.map(&:public_attributes),
+        'messages' => @version.log_messages.map(&:public_attributes),
         'data_url' => @version.data_url
       }.to_json
     end
@@ -199,7 +195,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      SubmissionJob.any_instance.stubs(:submit_specification_data!).returns(true)
+      PushJob.any_instance.stubs(:push!).returns(true)
       sign_in!
     end
 

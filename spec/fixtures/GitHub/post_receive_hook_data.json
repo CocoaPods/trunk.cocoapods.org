@@ -7,7 +7,7 @@
                 "KFData/1.0.1/KFData.podspec.json"
             ],
             "author": {
-                "email": "test.user@cocoapods.org",
+                "email": "test.user@example.com",
                 "name": "Test User",
                 "username": "harshal-hasoffers"
             },
@@ -29,7 +29,7 @@
                 "KFData/1.0.1/KFData.podspec.json"
             ],
             "author": {
-                "email": "test.user@cocoapods.org",
+                "email": "test.user@example.com",
                 "name": "Test User",
                 "username": "Keithbsmiley"
             },
@@ -56,7 +56,7 @@
             "KFData/1.0.1/KFData.podspec.json"
         ],
         "author": {
-            "email": "test.user@cocoapods.org",
+            "email": "test.user@example.com",
             "name": "Test User",
             "username": "Keithbsmiley"
         },

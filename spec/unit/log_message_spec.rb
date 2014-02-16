@@ -5,7 +5,16 @@ module Pod::TrunkApp
   describe LogMessage do
     describe "concerning validations" do
       before do
-        @message = LogMessage.new(:message => 'yay', :submission_job_id => 42)
+        @message = LogMessage.new(:level => :info, :message => 'yay', :pod_version_id => 42)
+      end
+
+      it "needs a valid level" do
+        @message.should.not.validate_with(:level, nil)
+        @message.should.not.validate_with(:level, ' ')
+        @message.should.not.validate_with(:level, :warn)
+        @message.should.validate_with(:level, :info)
+        @message.should.validate_with(:level, :warning)
+        @message.should.validate_with(:level, :error)
       end
 
       it "needs a message" do
@@ -14,12 +23,19 @@ module Pod::TrunkApp
         @message.should.validate_with(:message, 'yay')
       end
 
-      it "needs a submission job" do
-        @message.should.not.validate_with(:submission_job_id, nil)
-        @message.should.validate_with(:submission_job_id, 42)
+      it "needs a pod version" do
+        @message.should.not.validate_with(:pod_version_id, nil)
+        @message.should.validate_with(:pod_version_id, 42)
       end
 
       describe "at the DB level" do
+        it "raises if an empty `level' gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @message.level = nil
+            @message.save(:validate => false)
+          end
+        end
+
         it "raises if an empty `message' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @message.message = nil
@@ -27,9 +43,9 @@ module Pod::TrunkApp
           end
         end
 
-        it "raises if an empty `submission_job_id' gets inserted" do
-          should.raise Sequel::NotNullConstraintViolation do
-            @message.submission_job_id = nil
+        it "does not raise if an empty `submission_job_id' gets inserted" do
+          should.not.raise Sequel::NotNullConstraintViolation do
+            @message.pod_version_id = nil
             @message.save(:validate => false)
           end
         end

@@ -28,20 +28,6 @@ module Pod::TrunkApp
         other_version.should.validate_with(:name, '1.2.1')
       end
 
-      it "needs a published status" do
-        @version.should.not.validate_with(:published, nil)
-        @version.should.not.validate_with(:published, '')
-        @version.should.validate_with(:published, false)
-        @version.should.validate_with(:published, true)
-      end
-
-      it "needs a valid commit sha" do
-        @version.should.not.validate_with(:commit_sha, '')
-        @version.should.not.validate_with(:commit_sha, '3ca23060')
-        @version.should.not.validate_with(:commit_sha, 'g' * 40) # hex only
-        @version.should.validate_with(:commit_sha, '3ca23060197547eef92983f15590b5a87270615f')
-      end
-
       describe "at the DB level" do
         it "raises if an empty `pod_id' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
@@ -53,13 +39,6 @@ module Pod::TrunkApp
         it "raises if an empty `name' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @version.name = nil
-            @version.save(:validate => false)
-          end
-        end
-
-        it "raises if an empty `published' gets inserted" do
-          should.raise Sequel::NotNullConstraintViolation do
-            @version.published = nil
             @version.save(:validate => false)
           end
         end
@@ -87,6 +66,8 @@ module Pod::TrunkApp
       before do
         @pod = Pod.create(:name => 'AFNetworking')
         @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+        @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+        @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
       end
 
       it "initializes with an unpublished state" do
@@ -98,12 +79,99 @@ module Pod::TrunkApp
       end
 
       it "returns a URL from where the spec data can be retrieved" do
-        @version.commit_sha = 'commit-sha'
-        @version.data_url.should == "https://raw.github.com/CocoaPods/Specs/commit-sha/#{@version.destination_path}"
+        @version.add_commit(@valid_commit_attrs.merge(:sha => '3ca23060197547eef92983f15590b5a87270615f'))
+        @version.data_url.should == "https://raw.github.com/CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
       end
 
       it "returns the resource path for this version" do
         @version.resource_path.should == '/pods/AFNetworking/versions/1.2.0'
+      end
+
+      it "is published if it has commits" do
+        @version.add_commit(@valid_commit_attrs)
+        @version.should.be.published
+      end
+    end
+    
+    describe "concerning its methods" do
+      before do
+        @pod = Pod.create(:name => 'AFNetworking')
+        @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+        @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+        @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
+      end
+      
+      it "has a description" do
+        @version.description.should == "AFNetworking 1.2.0"
+      end
+    end
+
+    describe "concerning who did what on the version" do
+      before do
+        @pod = Pod.create(:name => 'AFNetworking')
+        @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+        @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+        @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
+      end
+
+      it "has been last published by the last pushed commit" do
+        @version.add_commit(@valid_commit_attrs)
+        last_commit = @version.add_commit(@valid_commit_attrs)
+        @version.last_published_by.should == last_commit
+      end
+      
+      it "has the same sha as the last pushed commit" do
+        @version.add_commit(@valid_commit_attrs.merge(:sha => '4ca23060197547eef92983f15590b5a87270615f'))
+        last_commit = @version.add_commit(@valid_commit_attrs.merge(:sha => '3ca23060197547eef92983f15590b5a87270615f'))
+        @version.commit_sha.should == last_commit.sha
+      end
+    end
+    
+    describe "#push!" do
+      before do
+        @pod = Pod.create(:name => 'AFNetworking')
+        @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+        @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+      end
+      
+      before do
+        PushJob.any_instance.stubs(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
+      end
+      
+      it "adds the committer as the owner of the pod if the pod has no owners yet" do
+        @pod.reload.owners.should == []
+        @version.push! @committer, 'DATA'
+        @pod.reload.owners.should == [@committer]
+      end
+      it "adds a commit" do
+        @version.commits.should == []
+        @version.push! @committer, 'DATA'
+        @version.commits.size.should == 1
+        @version.commits.last.sha.should == '3ca23060197547eef92983f15590b5a87270615f'
+      end
+      it "returns truthy" do
+        @version.push!(@committer, 'DATA').should == @version.commits.last
+      end
+      
+      before do
+        PushJob.any_instance.stubs(:push!).returns(nil)
+      end
+      
+      it "does not add the committer as the owner of the pod if the pod pushing fails" do
+        @pod.reload.owners.should == []
+        @version.push! @committer, 'DATA'
+        @pod.reload.owners.should == []
+      end
+      it "does not add a commit" do
+        PushJob.any_instance.stubs(:push!).returns
+        
+        @version.commits.should == []
+        @version.push! @committer, 'DATA'
+        @version.commits.should == []
+      end
+      
+      it "returns falsy" do
+        @version.push!(@committer, 'DATA').should == nil
       end
     end
   end

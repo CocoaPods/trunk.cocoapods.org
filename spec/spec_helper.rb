@@ -130,7 +130,7 @@ end
 require 'rfc822'
 module RFC822
   def self.mx_records(address)
-    if address.split('@').last == 'example.com'
+    if address == Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL || address.split('@').last == 'example.com'
       [MXRecord.new(20, 'mail.example.com')]
     else
       []

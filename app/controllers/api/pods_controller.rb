@@ -9,7 +9,7 @@ module Pod
 
       get '/:name', :requires_owner => false do
         if pod = Pod.find(:name => params[:name])
-          versions = pod.versions_dataset.where(:published => true).to_a
+          versions = pod.versions.select(&:published?)
           unless versions.empty?
             json_message(200, 'versions' => versions.map(&:public_attributes),
                               'owners'   => pod.owners.map(&:public_attributes))
@@ -22,8 +22,7 @@ module Pod
         if pod = Pod.find(:name => params[:name])
           if version = pod.versions_dataset.where(:name => params[:version]).first
             if version.published?
-              job = version.submission_jobs.last
-              json_message(200, 'messages' => job.log_messages.map(&:public_attributes),
+              json_message(200, 'messages' => version.log_messages.map(&:public_attributes),
                                 'data_url' => version.data_url)
             end
           end
@@ -51,9 +50,8 @@ module Pod
           pod = Pod.create(:name => specification.name)
         end
 
-        # TODO use a unique index in the DB for this instead?
         if version = pod.versions_dataset.where(:name => specification.version).first
-          if version.published? || version.submission_jobs_dataset.where(:succeeded => nil).first
+          if version.published?
             headers 'Location' => url(version.resource_path)
             json_error(409, "Unable to accept duplicate entry for: #{specification}")
           end
@@ -61,9 +59,9 @@ module Pod
           version = pod.add_version(:name => specification.version)
         end
 
-        job = version.add_submission_job(:specification_data => JSON.pretty_generate(specification), :owner => @owner)
-        job.submit_specification_data!
-        redirect url(version.resource_path)
+        if version.push!(@owner, JSON.pretty_generate(specification))
+          redirect url(version.resource_path)
+        end
       end
 
       patch '/:name/owners', :requires_owner => true do

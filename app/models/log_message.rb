@@ -1,25 +1,33 @@
-require 'app/models/submission_job'
+require 'app/models/push_job'
 
 module Pod
   module TrunkApp
     class LogMessage < Sequel::Model
+      LEVELS = [:info, :warning, :error].freeze
+
       self.dataset = :log_messages
 
       plugin :timestamps
       plugin :validation_helpers
 
-      many_to_one :submission_job
+      many_to_one :pod_version
 
       def public_attributes
         { created_at => message }
+      end
+
+      def level
+        value = super
+        value.to_sym if value
       end
 
       protected
 
       def validate
         super
-        validates_presence :submission_job_id
+        validates_presence :pod_version_id
         validates_presence :message
+        validates_includes LEVELS, :level
       end
     end
   end

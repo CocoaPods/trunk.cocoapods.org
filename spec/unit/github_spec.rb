@@ -19,11 +19,13 @@ module Pod::TrunkApp
         args = [url, body, headers, auth]
       end.returns(fixture_response('create_new_commit'))
 
-      @github.create_new_commit(DESTINATION_PATH,
-                                fixture_read('AFNetworking.podspec'),
-                                '[Add] AFNetworking 1.2.0',
-                                'Eloy Durán',
-                                'eloy@example.com').should == fixture_new_commit_sha
+      response = @github.create_new_commit(DESTINATION_PATH,
+                                           fixture_read('AFNetworking.podspec'),
+                                           '[Add] AFNetworking 1.2.0',
+                                           'Eloy Durán',
+                                           'eloy@example.com')
+      response.should.be.success
+      response.commit_sha.should == fixture_new_commit_sha
 
       url, body, headers, auth = args
 
