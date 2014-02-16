@@ -3,6 +3,8 @@ require 'app/models/push_job'
 module Pod
   module TrunkApp
     class LogMessage < Sequel::Model
+      LEVELS = [:info, :warning, :error].freeze
+
       self.dataset = :log_messages
 
       plugin :timestamps
@@ -14,13 +16,18 @@ module Pod
         { created_at => message }
       end
 
+      def level
+        value = super
+        value.to_sym if value
+      end
+
       protected
 
       def validate
         super
         validates_presence :pod_version_id
-        validates_presence :level
         validates_presence :message
+        validates_includes LEVELS, :level
       end
     end
   end

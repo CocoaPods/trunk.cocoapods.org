@@ -8,9 +8,10 @@ module Pod::TrunkApp
         @message = LogMessage.new(:level => :info, :message => 'yay', :pod_version_id => 42)
       end
 
-      it "needs a non-empty level" do
+      it "needs a valid level" do
         @message.should.not.validate_with(:level, nil)
         @message.should.not.validate_with(:level, ' ')
+        @message.should.not.validate_with(:level, :warn)
         @message.should.validate_with(:level, :info)
         @message.should.validate_with(:level, :warning)
         @message.should.validate_with(:level, :error)
