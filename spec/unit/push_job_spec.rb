@@ -12,25 +12,7 @@ module Pod::TrunkApp
         @pod = Pod.create(:name => 'AFNetworking')
         @version = @pod.add_version(:name => '1.2.0')
         @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
-        @commit = Commit.create(:committer => @owner,
-                                :pod_version => @version,
-                                :specification_data => fixture_read('GitHub/KFData.podspec.json'))
-        @job = PushJob.new(:commit => @commit)
-        @job.save
-      end
-
-      it "returns the duration in seconds relative to now" do
-        now = 41.seconds.from_now
-        Time.stubs(:now).returns(now)
-        @job.duration.should == 42
-      end
-
-      it "returns the duration in seconds relative till the latest update once finished" do
-        @commit.update(:pushed => false)
-        @job.save
-        now = 41.seconds.from_now
-        Time.stubs(:now).returns(now)
-        @job.duration.should == 1
+        @job = PushJob.new(@version, @owner, fixture_read('GitHub/KFData.podspec.json'))
       end
 
       before do
@@ -41,27 +23,13 @@ module Pod::TrunkApp
         @github.basic_auth.should == { :username => 'secret', :password => 'x-oauth-basic' }
       end
 
-      it "initializes with a new state" do
-        @job.should.be.in_progress
-      end
-
       it "creates log messages before anything else and gets persisted regardless of further errors" do
         should.raise do
-          @job.perform_work 'A failing task' do
-            @job.commit.update(:sha => '3ca23060197547eef92983f15590b5a87270615f')
+          @job.perform_work do
             raise "oh noes!"
           end
         end
-        @job.reload.log_messages.last(2).map(&:message).should == ["A failing task", "Failed with error: oh noes!"]
-        @job.commit_sha.should == nil
-
-        should.not.raise do
-          @job.perform_work 'A succeeding task' do
-            @job.commit.update(:sha => '3ca23060197547eef92983f15590b5a87270615f')
-          end
-        end
-        @job.reload.log_messages.last.message.should == "A succeeding task"
-        @job.commit_sha.should == '3ca23060197547eef92983f15590b5a87270615f'
+        @version.reload.log_messages.last.message.match(%r{failed with error: oh noes!\.}).should.not == nil
       end
 
       before do
