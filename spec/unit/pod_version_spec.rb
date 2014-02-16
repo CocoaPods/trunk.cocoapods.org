@@ -149,6 +149,9 @@ module Pod::TrunkApp
         @version.commits.size.should == 1
         @version.commits.last.sha.should == '3ca23060197547eef92983f15590b5a87270615f'
       end
+      it "returns truthy" do
+        @version.push!(@committer, 'DATA').should == @version.commits.last
+      end
       
       before do
         PushJob.any_instance.stubs(:push!).returns(nil)
@@ -160,11 +163,15 @@ module Pod::TrunkApp
         @pod.reload.owners.should == []
       end
       it "does not add a commit" do
-        PushJob.any_instance.stubs(:push!).returns()
+        PushJob.any_instance.stubs(:push!).returns
         
         @version.commits.should == []
         @version.push! @committer, 'DATA'
         @version.commits.should == []
+      end
+      
+      it "returns falsy" do
+        @version.push!(@committer, 'DATA').should == nil
       end
     end
   end

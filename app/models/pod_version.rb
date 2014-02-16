@@ -53,8 +53,9 @@ module Pod
       def push!(committer, specification_data)
         job = PushJob.new(self, committer, specification_data)
         if commit_sha = job.push!
-          add_commit(:committer => committer, :sha => commit_sha, :specification_data => specification_data)
+          commit = add_commit(:committer => committer, :sha => commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
+          commit
         end
       end
 
