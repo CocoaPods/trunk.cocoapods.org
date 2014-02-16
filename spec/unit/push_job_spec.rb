@@ -2,10 +2,6 @@ require File.expand_path('../../spec_helper', __FILE__)
 require 'app/models/push_job'
 
 module Pod::TrunkApp
-  class PushJob
-    public :perform_work
-  end
-
   describe PushJob do
     describe "in general" do
       before do
@@ -24,10 +20,9 @@ module Pod::TrunkApp
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
+        @github.stubs(:create_new_commit).raises 'oh noes!'
         should.raise do
-          @job.perform_work do
-            raise "oh noes!"
-          end
+          @job.push!
         end
         @version.reload.log_messages.last.message.match(%r{failed with error: oh noes!\.}).should.not == nil
       end
