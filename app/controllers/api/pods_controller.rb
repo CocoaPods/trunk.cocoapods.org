@@ -61,6 +61,9 @@ module Pod
 
         if version.push!(@owner, JSON.pretty_generate(specification))
           redirect url(version.resource_path)
+        else
+          # TODO add test
+          json_error(500, 'An internal server error occurred. Please try again later.')
         end
       end
 

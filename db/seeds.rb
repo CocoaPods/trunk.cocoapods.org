@@ -48,7 +48,12 @@ module Pod
         unless last_response.status == expected_status
           raise "[#{app.name.split('::').last}][#{method.to_s.upcase} #{route}][#{last_response.status}] Failed to perform with: #{data.inspect}.\nResponse: #{last_response.inspect}"
         end
-        JSON.parse(last_response.body) unless last_response.body.blank?
+        unless last_response.body.blank?
+          begin
+            JSON.parse(last_response.body)
+          rescue JSON::ParserError
+          end
+        end
       end
     end
 
@@ -83,6 +88,7 @@ module Pod
         end
 
         def create_from_name(pod_name)
+          @push_count = 0
           source = ::Pod::Source.new(File.expand_path('~/.cocoapods/repos/master'))
           set = source.set(pod_name)
           set.versions.each do |version|
@@ -92,6 +98,7 @@ module Pod
               set.required_by(::Pod::Dependency.new(pod_name, "< #{version}"), 'Seeds')
             end
           end
+          @push_count = nil
         end
 
         def create_from_spec(spec)
@@ -103,8 +110,15 @@ module Pod
           if commit_sha.blank?
             raise "Unable to determine commit sha!"
           end
-          REST.mock_response(201, {}, { :commit => { :sha => commit_sha } }.to_json)
-          perform(:post, '/', 302, spec)
+          # Every 4th push fails
+          if @push_count && (@push_count % 4) == 3
+            REST.mock_response([422, 500][rand(2)], {}, { :error => 'Oh noes!' }.to_json)
+            perform(:post, '/', 500, spec)
+          else
+            REST.mock_response(201, {}, { :commit => { :sha => commit_sha } }.to_json)
+            perform(:post, '/', 302, spec)
+          end
+          @push_count += 1 if @push_count
         end
       end
 
