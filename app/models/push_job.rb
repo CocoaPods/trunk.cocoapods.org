@@ -20,24 +20,23 @@ module Pod
       def push!
         log(:info, "initiated by: #{committer.name} <#{committer.email}>.", specification_data)
         perform_work do
-          # TODO Make the GitHub class return the real response object *and* the extracted data. Possibly just monkey-patch REST::Response?
-          # E.g.
-          #
-          #   response = self.class.github.create_new_commit(...)
-          #   if response.success?
-          #     @commit_sha = response.extracted_value
-          #   else
-          #     log(:error, "failed with HTTP status: #{response}")
-          #   end
-          #
           response = self.class.github.create_new_commit(pod_version.destination_path,
                                                          specification_data,
                                                          commit_message,
                                                          committer.name,
                                                          committer.email)
-          commit_sha = response.commit_sha
-          log(:info, "has been pushed.")
-          return commit_sha
+          case response.status_code
+          when 200...400
+            commit_sha = response.commit_sha
+            log(:info, "has been pushed.")
+            return commit_sha
+          when 400...500
+            log(:error, "failed with HTTP error `#{response.status_code}' on our side.")
+          when 500...600
+            log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side.")
+          else
+            raise "Unexpected HTTP response: #{response.inspect}"
+          end
         end
         nil
       end
