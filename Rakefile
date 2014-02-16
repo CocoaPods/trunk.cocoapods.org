@@ -49,21 +49,26 @@ begin
       version = ENV['VERSION'].to_i if ENV['VERSION']
       Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'), :target => version)
     end
-    
+
     desc 'Drop all DBs'
     task :drop do
       `dropdb trunk_cocoapods_org_test`
       `dropdb trunk_cocoapods_org_development`
       `dropdb trunk_cocoapods_org_production`
     end
-    
+
     desc 'Create all DBs'
     task :create do
       `createdb -h localhost trunk_cocoapods_org_test -E UTF8`
       `createdb -h localhost trunk_cocoapods_org_development -E UTF8`
       `createdb -h localhost trunk_cocoapods_org_production -E UTF8`
     end
-    
+
+    desc 'Seed DB'
+    task :seed do
+      sh "bundle exec ruby db/seeds.rb"
+    end
+
     desc 'Create all DBs'
     task :bootstrap do
       Rake::Task['db:drop'].invoke
@@ -71,19 +76,7 @@ begin
       %w{test development production}.each do |env|
         sh "env RACK_ENV=#{env} rake db:migrate"
       end
-    end
-    
-    namespace :seed do
-      desc 'Seed the database with simple data (will destroy existing data)'
-      task :simple => :env do
-        require 'app/controllers/app_controller'
-        Pod::TrunkApp::Pod.create(:name => 'ADTestPod').add_version(:name => '1.0.0')
-          .add_commit(
-            :owner => Pod::TrunkApp::Owner.create(:name => 'Test User', :email => 'test.user@example.com'),
-            :sha => '3ca23060197547eef92983f15590b5a87270615f',
-            :specification_data => '{"SPEC":"DATA"}'
-          )
-      end
+      Rake::Task['db:seed'].invoke
     end
   end
 
