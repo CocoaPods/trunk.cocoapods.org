@@ -59,9 +59,9 @@ module Pod
           version = pod.add_version(:name => specification.version)
         end
 
-        # TODO PodVersion#push! should return true/false and only redirect if successful.
-        version.push!(@owner, JSON.pretty_generate(specification))
-        redirect url(version.resource_path)
+        if version.push!(@owner, JSON.pretty_generate(specification))
+          redirect url(version.resource_path)
+        end
       end
 
       patch '/:name/owners', :requires_owner => true do

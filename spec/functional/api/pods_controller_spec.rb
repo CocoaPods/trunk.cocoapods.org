@@ -97,7 +97,7 @@ module Pod::TrunkApp
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
-    it "creates new pod and version records" do
+    it "creates new pod and version records, then redirects" do
       lambda {
         lambda {
           post '/', spec.to_json
@@ -118,12 +118,21 @@ module Pod::TrunkApp
       commit.specification_data.should == JSON.pretty_generate(spec)
     end
     
-    it "does not create commit if a push fails" do
+    it "does not create a commit if a push fails" do
       PushJob.any_instance.expects(:push!).returns(nil)
       lambda {
         post '/', spec.to_json
       }.should.not.change { Commit.count }
     end
+    
+    # TODO
+    #
+    # it "does not create a commit or redirects if a push fails" do
+    #   PushJob.any_instance.expects(:push!).raises('Oh noes!')
+    #   lambda {
+    #     post '/', spec.to_json
+    #   }
+    # end
   end
 
   describe PodsController, "with an unauthenticated consumer" do
