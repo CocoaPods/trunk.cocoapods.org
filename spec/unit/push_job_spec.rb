@@ -33,11 +33,13 @@ module Pod::TrunkApp
       end
 
       before do
+        response = REST::Response.new(201, {}, { :commit => { :sha => fixture_new_commit_sha } }.to_json)
+        response.extend(GitHub::CommitResponseExt)
         @github.stubs(:create_new_commit).with(@version.destination_path,
                                                @job.specification_data,
                                                MESSAGE,
                                                'Appie',
-                                               'appie@example.com').returns(fixture_new_commit_sha)
+                                               'appie@example.com').returns(response)
       end
 
       it "creates a new commit" do

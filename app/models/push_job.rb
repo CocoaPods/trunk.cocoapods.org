@@ -30,11 +30,12 @@ module Pod
           #     log(:error, "failed with HTTP status: #{response}")
           #   end
           #
-          commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
-                                                           specification_data,
-                                                           commit_message,
-                                                           committer.name,
-                                                           committer.email)
+          response = self.class.github.create_new_commit(pod_version.destination_path,
+                                                         specification_data,
+                                                         commit_message,
+                                                         committer.name,
+                                                         committer.email)
+          commit_sha = response.commit_sha
           log(:info, "has been pushed.")
           return commit_sha
         end
