@@ -171,11 +171,12 @@ module Pod::TrunkApp
     end
 
     it "returns an overview of a published pod version" do
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @version.add_commit(valid_commit_attrs)
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
       last_response.body.should == {
-        'messages' => @job.log_messages.map(&:public_attributes),
+        'messages' => @version.log_messages.map(&:public_attributes),
         'data_url' => @version.data_url
       }.to_json
     end
