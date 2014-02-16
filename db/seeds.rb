@@ -78,14 +78,18 @@ module Pod
           super()
         end
 
-        def create_from_name(name)
+        def add_owner(pod_name, email)
+          perform(:patch, "/#{pod_name}/owners", 200, :email => email)
+        end
+
+        def create_from_name(pod_name)
           source = ::Pod::Source.new(File.expand_path('~/.cocoapods/repos/master'))
-          set = source.set(name)
+          set = source.set(pod_name)
           set.versions.each do |version|
             spec = set.specification
             create_from_spec(spec)
             unless set.acceptable_versions.size == 1
-              set.required_by(::Pod::Dependency.new(set.name, "< #{version}"), 'Seeds')
+              set.required_by(::Pod::Dependency.new(pod_name, "< #{version}"), 'Seeds')
             end
           end
         end
@@ -115,7 +119,15 @@ sessions = Pod::TrunkApp::SeedAPI::Sessions.new
 # Create unclaimed pods and owner
 token = sessions.create(:email => Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
 pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
+# Add an unclaimed pod by Orta
 pods.create_from_name('ORStackView')
+
+# Import work by Orta
+token = sessions.create(:email => 'orta@example.com', :name => 'Orta')
+pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
+pods.create_from_name('ARAnalytics')
+# Adding second owner
+sessions.create(:email => 'artsy@example.com', :name => 'Artsy')
 
 # Import work by Mattt Thompson
 token = sessions.create(:email => 'mattt@example.com', :name => 'Mattt Thompson')
