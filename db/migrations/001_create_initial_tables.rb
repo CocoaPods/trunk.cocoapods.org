@@ -64,11 +64,11 @@ Sequel.migration do
     create_table(:commits) do
       primary_key :id
       String :specification_data, :text=>true, :null=>false
-      String :sha, :size=>255 # This can be null if it hasn't been pushed yet.
+      String :sha, :size=>255
       DateTime :created_at
       DateTime :updated_at
       foreign_key :pod_version_id, :pod_versions, :null=>false, :key=>[:id]
-      foreign_key :committer_id, :owners, :null=>false, :key=>[:id] # We need to know who created the commit.
+      foreign_key :committer_id, :owners, :null=>false, :key=>[:id]
     end
     
     alter_table(:log_messages) do
