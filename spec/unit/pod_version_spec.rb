@@ -149,9 +149,6 @@ module Pod::TrunkApp
         @version.commits.size.should == 1
         @version.commits.last.sha.should == '3ca23060197547eef92983f15590b5a87270615f'
       end
-      it "returns true" do
-        @version.push!(@committer, 'DATA').should == true
-      end
       
       before do
         PushJob.any_instance.stubs(:push!).returns(nil)
@@ -168,9 +165,6 @@ module Pod::TrunkApp
         @version.commits.should == []
         @version.push! @committer, 'DATA'
         @version.commits.should == []
-      end
-      it "returns false" do
-        @version.push!(@committer, 'DATA').should == false
       end
     end
   end
