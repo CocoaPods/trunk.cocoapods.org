@@ -16,7 +16,7 @@ module Pod
 
       many_to_one :pod
       one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
-      # one_to_many :log_messages, :order => Sequel.desc([:updated_at, :created_at])
+      one_to_many :log_messages, :order => Sequel.asc([:updated_at, :created_at])
       
       def published?
         commits.any?
