@@ -31,7 +31,7 @@ module Pod
           #   end
           #
           commit_sha = self.class.github.create_new_commit(pod_version.destination_path,
-                                                           specification_data, # Re-add JSON.pretty_generate.
+                                                           specification_data,
                                                            commit_message,
                                                            committer.name,
                                                            committer.email)

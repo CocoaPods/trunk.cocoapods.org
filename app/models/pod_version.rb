@@ -50,17 +50,11 @@ module Pod
         "#{pod.name} #{name}"
       end
 
-      # TODO Log duration.
-      # TODO Florian: I'd suggest moving all logging/rescuing here (from PushJob).
-      #
       def push!(committer, specification_data)
         job = PushJob.new(self, committer, specification_data)
         if commit_sha = job.push!
           add_commit(:committer => committer, :sha => commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
-          true
-        else
-          false
         end
       end
 
