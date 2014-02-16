@@ -28,6 +28,11 @@ module Pod::TrunkApp
         @message.should.validate_with(:pod_version_id, 42)
       end
 
+      it "does not need an owner" do
+        @message.should.validate_with(:owner, nil)
+        @message.should.validate_with(:owner, Owner.unclaimed)
+      end
+
       describe "at the DB level" do
         it "raises if an empty `level' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do

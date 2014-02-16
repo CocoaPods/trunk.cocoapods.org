@@ -18,7 +18,7 @@ module Pod
       end
 
       def push!
-        log(:info, "initiated by: #{committer.name} <#{committer.email}>.", specification_data)
+        log(:info, "initiated.", committer, specification_data)
         response = self.class.github.create_new_commit(pod_version.destination_path,
                                                        specification_data,
                                                        commit_message,
@@ -30,25 +30,26 @@ module Pod
           log(:info, "has been pushed.")
           return commit_sha
         when 400...500
-          log(:error, "failed with HTTP error `#{response.status_code}' on our side.", response.body)
+          log(:error, "failed with HTTP error `#{response.status_code}' on our side.", committer, response.body)
         when 500...600
-          log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side.", response.body)
+          log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side.", committer, response.body)
         else
           raise "Unexpected HTTP response: #{response.inspect}"
         end
         nil
       rescue Object => error
-        log(:error, "failed with error: #{error.message}.", error.backtrace.join("\n\t\t"))
+        log(:error, "failed with error: #{error.message}.", committer, error.backtrace.join("\n\t\t"))
         raise
       end
 
       protected
 
-      def log(level, message, data = nil)
+      def log(level, message, committer = nil, data = nil)
         pod_version.add_log_message(
           :level => level,
-          :data => data,
-          :message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}"
+          :message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}",
+          :owner => committer,
+          :data => data
         )
       end
 

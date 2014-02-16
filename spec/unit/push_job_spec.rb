@@ -24,7 +24,9 @@ module Pod::TrunkApp
         should.raise do
           @job.push!
         end
-        @version.reload.log_messages.first.message.match(%r{initiated by: Appie <appie@example.com>.}).should.not == nil
+        @version.reload
+        @version.log_messages.first.owner.should == @owner
+        @version.log_messages.first.message.match(%r{initiated.}).should.not == nil
         @version.log_messages.first.data.should == @job.specification_data
         @version.log_messages.last.message.match(%r{failed with error: oh noes!\.}).should.not == nil
       end
