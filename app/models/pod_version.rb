@@ -16,6 +16,7 @@ module Pod
 
       many_to_one :pod
       one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
+      # one_to_many :log_messages, :order => Sequel.desc([:updated_at, :created_at])
       
       def published?
         commits.any?
@@ -43,6 +44,10 @@ module Pod
 
       def resource_path
         URI.escape("/pods/#{pod.name}/versions/#{name}")
+      end
+      
+      def description
+        "#{pod.name} #{name}"
       end
 
       # TODO Store duration.

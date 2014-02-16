@@ -92,6 +92,19 @@ module Pod::TrunkApp
         @version.should.be.published
       end
     end
+    
+    describe "concerning its methods" do
+      before do
+        @pod = Pod.create(:name => 'AFNetworking')
+        @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+        @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+        @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
+      end
+      
+      it "has a description" do
+        @version.description.should == "AFNetworking 1.2.0"
+      end
+    end
 
     describe "concerning who did what on the version" do
       before do
