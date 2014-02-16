@@ -50,51 +50,67 @@ module Pod
           #
           # Note: We ignore deleted specs.
           #
-          changed_files = manual_commit['added'] + manual_commit['modified']
-          
-          # For each changed file, get its data (if it's a podspec).
-          #
-          # TODO Only get the latest version of a file.
-          #
-          changed_files.each do |changed_file|
-            # TODO Use existing CP code for this?
-            #
-            next unless changed_file =~ /\.podspec.json\z/
+          {
+            :added => manual_commit['added'] || [],
+            :modified => manual_commit['modified'] || []
+          }.each do |type, files|
             
-            # Get the data from the Specs repo.
+            # For each changed file, get its data (if it's a podspec).
             #
-            # TODO Update to the right repo.
+            # TODO Only get the latest version of a file.
             #
-            data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s"
-            data_url = data_url_template % [commit_sha, changed_file] if commit_sha
-            
-            # Gets the data from data_url.
-            #
-            spec_hash = JSON.parse REST.get(data_url).body
-            
-            # Update the database after extracting the relevant data from the podspec.
-            #
-            pod = Pod.find(name: spec_hash['name'])
-            
-            if pod
-              version = PodVersion.find(:pod => pod, :name => spec_hash['version'])
-              
-              # We ignore any new pod versions coming in through a manual merge.
+            files.each do |file|
+              # TODO Use existing CP code for this?
               #
-              if version
-                # Add a new commit to the existing version.
-                #
-                version.add_commit(
-                  :sha => commit_sha,
-                  :specification_data => JSON.pretty_generate(spec_hash),
-                  :committer => pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed,
-                )
-              end
+              next unless file =~ /\.podspec.json\z/
+              
+              send :"handle_#{type}", file, commit_sha, committer_email
             end
           end
         end
         
         200
+      end
+      
+      # We get the JSON podspec and add a commit to the pod's version.
+      #
+      def handle_modified file, commit_sha, committer_email
+        # Get the data from the Specs repo.
+        #
+        # TODO Update to the right repo.
+        #
+        data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s"
+        data_url = data_url_template % [commit_sha, file] if commit_sha
+        
+        # Gets the data from data_url.
+        #
+        spec_hash = JSON.parse REST.get(data_url).body
+        
+        # Update the database after extracting the relevant data from the podspec.
+        #
+        pod = Pod.find(name: spec_hash['name'])
+        
+        if pod
+          version = PodVersion.find(:pod => pod, :name => spec_hash['version'])
+          
+          # We ignore any new pod versions coming in through a manual merge.
+          #
+          if version
+            # Add a new commit to the existing version.
+            #
+            version.add_commit(
+              :sha => commit_sha,
+              :specification_data => JSON.pretty_generate(spec_hash),
+              :committer => pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed,
+            )
+          end
+        end
+      end
+      
+      # We only check if we have it, and if not, add it.
+      #
+      def handle_added file, commit_sha, committer_email
+        
       end
       
     end
