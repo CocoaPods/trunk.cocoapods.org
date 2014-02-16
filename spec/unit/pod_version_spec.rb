@@ -67,7 +67,11 @@ module Pod::TrunkApp
         @pod = Pod.create(:name => 'AFNetworking')
         @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
         @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
-        @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
+        @valid_commit_attrs = {
+          :committer => @committer,
+          :sha => '3ca23060197547eef92983f15590b5a87270615f',
+          :specification_data => 'DATA'
+        }
       end
 
       it "initializes with an unpublished state" do
@@ -79,7 +83,7 @@ module Pod::TrunkApp
       end
 
       it "returns a URL from where the spec data can be retrieved" do
-        @version.add_commit(@valid_commit_attrs.merge(:sha => '3ca23060197547eef92983f15590b5a87270615f'))
+        @version.add_commit(@valid_commit_attrs)
         @version.data_url.should == "https://raw.github.com/CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
       end
 
@@ -98,7 +102,11 @@ module Pod::TrunkApp
         @pod = Pod.create(:name => 'AFNetworking')
         @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
         @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
-        @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
+        @valid_commit_attrs = {
+          :committer => @committer,
+          :sha => '3ca23060197547eef92983f15590b5a87270615f',
+          :specification_data => 'DATA'
+        }
       end
       
       it "has a description" do
@@ -111,7 +119,11 @@ module Pod::TrunkApp
         @pod = Pod.create(:name => 'AFNetworking')
         @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
         @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
-        @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
+        @valid_commit_attrs = {
+          :committer => @committer,
+          :sha => '3ca23060197547eef92983f15590b5a87270615f',
+          :specification_data => 'DATA'
+        }
       end
 
       it "has been last published by the last pushed commit" do
@@ -121,8 +133,8 @@ module Pod::TrunkApp
       end
       
       it "has the same sha as the last pushed commit" do
-        @version.add_commit(@valid_commit_attrs.merge(:sha => '4ca23060197547eef92983f15590b5a87270615f'))
-        last_commit = @version.add_commit(@valid_commit_attrs.merge(:sha => '3ca23060197547eef92983f15590b5a87270615f'))
+        @version.add_commit(@valid_commit_attrs)
+        last_commit = @version.add_commit(@valid_commit_attrs)
         @version.commit_sha.should == last_commit.sha
       end
     end

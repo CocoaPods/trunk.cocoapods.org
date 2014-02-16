@@ -16,7 +16,11 @@ module SpecHelpers::PodsController
   end
 
   def valid_commit_attrs
-    { :committer => @owner, :specification_data => 'DATA' }
+    {
+      :committer => @owner,
+      :sha => '3ca23060197547eef92983f15590b5a87270615f',
+      :specification_data => 'DATA'
+    }
   end
 
   def create_pod_version!
