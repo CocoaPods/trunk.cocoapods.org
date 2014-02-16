@@ -87,7 +87,7 @@ module Pod
                 version.add_commit(
                   :sha => commit_sha,
                   :specification_data => JSON.pretty_generate(spec_hash),
-                  :committer => Owner.find(:email => committer_email) || Owner.unclaimed,
+                  :committer => pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed,
                 )
               end
             end

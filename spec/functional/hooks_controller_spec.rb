@@ -116,14 +116,15 @@ module Pod::TrunkApp
     end
     
     it "adds the right committer to the commit" do
-      test_user = Owner.create(:email => 'test.user@cocoapods.org', :name => 'Test User')
-      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
-
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+
+      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+      test_user = Owner.create(:email => 'test.user@cocoapods.org', :name => 'Test User')
+      test_user.add_pod(existing_pod)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
     
@@ -139,16 +140,16 @@ module Pod::TrunkApp
       
       commit.committer.should == test_user
     end
-    
-    it "adds the right committer to the commit" do
-      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
 
+    it "adds the right committer to the commit" do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
 
+      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+      
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
     
       header 'Content-Type', 'application/x-www-form-urlencoded'
