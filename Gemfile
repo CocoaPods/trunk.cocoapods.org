@@ -6,6 +6,7 @@ gem 'cocoapods-core', :git => 'git://github.com/CocoaPods/Core.git'
 gem 'json', '~> 1.8'
 gem 'mail'
 gem 'nap', '>= 0.6'
+gem 'newrelic_rpm'
 gem 'pg'
 gem 'rack-ssl'
 gem 'rake'
@@ -18,10 +19,6 @@ gem 'slim', '< 2.0'
 group :development, :production do
   gem 'foreman'
   gem 'thin'
-end
-
-group :production do
-  gem 'newrelic_rpm'
 end
 
 group :development do
