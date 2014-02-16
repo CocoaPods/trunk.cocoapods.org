@@ -50,9 +50,8 @@ module Pod
           pod = Pod.create(:name => specification.name)
         end
 
-        # TODO use a unique index in the DB for this instead?
         if version = pod.versions_dataset.where(:name => specification.version).first
-          if version.published? || version.commits.any?(&:in_progress?)
+          if version.published?
             headers 'Location' => url(version.resource_path)
             json_error(409, "Unable to accept duplicate entry for: #{specification}")
           end
@@ -60,6 +59,7 @@ module Pod
           version = pod.add_version(:name => specification.version)
         end
 
+        # TODO PodVersion#push! should return true/false and only redirect if successful.
         version.push!(@owner, JSON.pretty_generate(specification))
         redirect url(version.resource_path)
       end
