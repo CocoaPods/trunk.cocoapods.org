@@ -30,9 +30,9 @@ module Pod
           log(:info, "has been pushed.")
           return commit_sha
         when 400...500
-          log(:error, "failed with HTTP error `#{response.status_code}' on our side.")
+          log(:error, "failed with HTTP error `#{response.status_code}' on our side.", response.body)
         when 500...600
-          log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side.")
+          log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side.", response.body)
         else
           raise "Unexpected HTTP response: #{response.inspect}"
         end
@@ -45,9 +45,11 @@ module Pod
       protected
 
       def log(level, message, data = nil)
-        # TODO add data to LogMessage
-        #
-        pod_version.add_log_message(:level => level, :message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}") # :data => data
+        pod_version.add_log_message(
+          :level => level,
+          :data => data,
+          :message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}"
+        )
       end
 
       def self.github

@@ -48,23 +48,21 @@ module Pod::TrunkApp
         end
 
         it "logs an error on our side in case the response has a 4xx status" do
-          # TODO add data
-          @github.stubs(:create_new_commit).returns(REST::Response.new(422)) # {}, 'DATA')
+          @github.stubs(:create_new_commit).returns(REST::Response.new(422, {}, 'DATA'))
           @job.push!
           log = @version.reload.log_messages.last
           log.level.should == :error
           log.message.should.end_with "failed with HTTP error `422' on our side."
-          #log.data.should == 'DATA'
+          log.data.should == 'DATA'
         end
 
         it "logs a warning on their (GitHub) side in case the response has a 5xx status" do
-          # TODO add data
-          @github.stubs(:create_new_commit).returns(REST::Response.new(503)) # {}, 'DATA')
+          @github.stubs(:create_new_commit).returns(REST::Response.new(503, {}, 'DATA'))
           @job.push!
           log = @version.reload.log_messages.last
           log.level.should == :warning
           log.message.should.end_with "failed with HTTP error `503' on GitHub’s side."
-          #log.data.should == 'DATA'
+          log.data.should == 'DATA'
         end
 
         it "raises in case of a complete unexpected response" do
