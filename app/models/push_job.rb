@@ -44,9 +44,9 @@ module Pod
       protected
 
       def log(level, message, data = nil)
-        # TODO add level and data to LogMessage
-        #pod_version.add_log_message(:level => level, :message => "Push for `#{pod_version_description}' with temporary ID `#{object_id}' #{message}", :data => data)
-        pod_version.add_log_message(:message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}")
+        # TODO add data to LogMessage
+        #
+        pod_version.add_log_message(:level => level, :message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}") # :data => data
       end
 
       def self.github
