@@ -24,30 +24,13 @@ module Pod
       register Sinatra::Twitter::Bootstrap::Assets
 
       get '/commits' do
-        @commits = case params[:scope]
-        when 'all'
-          Commit.all
-        when 'failed'
-          Commit.failed
-        when 'succeeded'
-          Commit.succeeded
-        else
-          params[:scope] = 'current'
-          Commit.in_progress
-        end
-
-        @refresh_automatically = params[:scope] == 'current'
+        @commits = Commit.all
         erb :'commits/index'
       end
 
       get '/commits/:id' do
         @commit = Commit.find(:id => params[:id])
-        if @commit.in_progress? && params[:progress] != 'true'
-          redirect to("/commits/#{@commit.id}?progress=true")
-        else
-          @refresh_automatically = @commit.in_progress?
-          erb :'commits/show'
-        end
+        erb :'commits/show'
       end
 
       get '/versions' do
