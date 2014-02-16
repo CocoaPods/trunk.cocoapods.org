@@ -128,6 +128,7 @@ pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 pods.create_from_name('ARAnalytics')
 # Adding second owner
 sessions.create(:email => 'artsy@example.com', :name => 'Artsy')
+pods.add_owner('ARAnalytics', 'artsy@example.com')
 
 # Import work by Mattt Thompson
 token = sessions.create(:email => 'mattt@example.com', :name => 'Mattt Thompson')
