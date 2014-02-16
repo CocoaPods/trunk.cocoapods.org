@@ -8,7 +8,9 @@
   <dt>Id</dt>
   <dd><%= @commit.id %></dd>
   <dt>SHA</dt>
-  <dd><%= @commit.sha || 'not yet pushed' %><dd>
+  <dd><%= @commit.sha %><dd>
+  <dt>Committer</dt>
+  <dd><%= @commit.committer.public_attributes %></dd>
 </dl>
 
 <hr>

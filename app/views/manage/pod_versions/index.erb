@@ -1,12 +1,6 @@
 <% @title = 'Pod Versions' %>
 
-<ul class="nav nav-tabs">
-  <% ['unpublished', 'published', 'all'].each do |scope| %>
-    <li<%= ' class="active"' if params[:scope] == scope %>>
-      <a href="<%= url("/versions?scope=#{scope}") %>"><%= scope.capitalize %></a>
-    </li>
-  <% end %>
-</ul>
+<h2>Versions</h2>
 
 <table class="table table-bordered table-hover">
   <thead>
@@ -14,17 +8,16 @@
       <th>ID</th>
       <th>Pod</th>
       <th>Version</th>
-      <th>Jobs</th>
+      <th>Commits</th>
       <th>Created At</th>
       <th>Updated At</th>
     </tr>
   </thead>
   <tbody>
     <% @versions.each do |version| %>
-      <tr class="<%= version.published? ? 'success' : ('error' unless version.commits.any?(&:pushed?)) %>">
-        <% href = url("/versions/#{version.id}") %>
+      <tr>
         <% [version.id, version.pod.name, version.name, version.commits_dataset.count, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
-          <td><a href="<%= href %>"><%= value || 'n/a' %></a></td>
+          <td><%= value || 'n/a' %></td>
         <% end %>
       </tr>
     <% end %>
