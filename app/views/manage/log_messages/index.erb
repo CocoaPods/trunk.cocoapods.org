@@ -15,8 +15,8 @@
   </thead>
   <tbody>
     <% @log_messages.each do |message| %>
-      <tr>
-        <!-- TODO Colorize level. Rename message.message to message.text. -->
+      <tr class="<%= message.level %>">
+        <!-- TODO Rename message.message to message.text. -->
         <% [message.id, message.created_at.to_formatted_s(:rfc822), message.level, message.message, message.pod_version.pod.name, message.pod_version.name].each do |value| %>
           <td><%= value || 'n/a' %></td>
         <% end %>
