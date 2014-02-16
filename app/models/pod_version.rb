@@ -50,7 +50,8 @@ module Pod
         "#{pod.name} #{name}"
       end
 
-      # TODO Log duration. Florian: I'd suggest moving all logging here (from PushJob).
+      # TODO Log duration.
+      # TODO Florian: I'd suggest moving all logging/rescuing here (from PushJob).
       #
       def push!(committer, specification_data)
         job = PushJob.new(self, committer, specification_data)
