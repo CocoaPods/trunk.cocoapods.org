@@ -44,8 +44,7 @@ module Pod
         #
         manual_commits.each do |manual_commit|
           commit_sha   = manual_commit['id']
-          author_email = manual_commit['author']['email']
-          author_name  = manual_commit['author']['name']
+          committer_email = manual_commit['committer']['email']
           
           # Get all changed (added + modified) files.
           #
@@ -86,11 +85,9 @@ module Pod
                 # Add a new commit to the existing version.
                 #
                 version.add_commit(
-                  :pushed => true,
                   :sha => commit_sha,
                   :specification_data => JSON.pretty_generate(spec_hash),
-                  # TODO Add real committer
-                  :committer => Owner.unclaimed,
+                  :committer => Owner.find(:email => committer_email) || Owner.unclaimed,
                 )
               end
             end

@@ -47,16 +47,16 @@ module Pod::TrunkApp
       Pod.find(name: 'MobileAppTracker').should == nil
     end
     
+    before do
+      RFC822.stubs(:mx_records).returns ['all good! :D']
+    end
+    
     it "processes payload data and does not do anything (if the pod version does not exist)" do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
-      
-      # Don't check email records.
-      #
-      RFC822.stubs(:mx_records).returns ['all good! :D']
       
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
     
@@ -78,10 +78,6 @@ module Pod::TrunkApp
     end
     
     it "processes payload data and creates a new submission job (because the version exists)" do
-      # Don't check email records.
-      #
-      RFC822.stubs(:mx_records).returns ['all good! :D']
-
       Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
 
       # Create existing pod.
@@ -107,8 +103,9 @@ module Pod::TrunkApp
       # Did add a new commit.
       #
       commit = pod.versions.last.commits.last
+      commit.committer.should == Owner.unclaimed
+      commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       commit.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
-      commit.should.be.pushed
       
       # Updated the version correctly.
       #
@@ -116,6 +113,55 @@ module Pod::TrunkApp
       version.should.be.published
       version.commit_sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       version.last_published_by.should == commit
+    end
+    
+    it "adds the right committer to the commit" do
+      test_user = Owner.create(:email => 'test.user@cocoapods.org', :name => 'Test User')
+      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+
+      # Create existing pod.
+      #
+      existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
+      existing_pod = Pod.create(:name => existing_spec.name)
+      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+    
+      header 'Content-Type', 'application/x-www-form-urlencoded'
+      payload = fixture_read('GitHub/post_receive_hook_data.raw')
+      post '/github-post-receive/', payload
+    
+      last_response.status.should == 200
+      
+      pod = Pod.find(name: 'KFData')
+      
+      commit = pod.versions.last.last_published_by
+      
+      commit.committer.should == test_user
+    end
+    
+    it "adds the right committer to the commit" do
+      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+
+      # Create existing pod.
+      #
+      existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
+      existing_pod = Pod.create(:name => existing_spec.name)
+      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+    
+      header 'Content-Type', 'application/x-www-form-urlencoded'
+      payload = fixture_read('GitHub/post_receive_hook_data.raw')
+      post '/github-post-receive/', payload
+    
+      last_response.status.should == 200
+      
+      pod = Pod.find(name: 'KFData')
+      
+      commit = pod.versions.last.last_published_by
+      
+      commit.committer.should == Owner.unclaimed
     end
     
   end
