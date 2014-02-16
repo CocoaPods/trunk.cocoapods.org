@@ -23,11 +23,6 @@ module SpecHelpers::PodsController
     @pod = Pod::TrunkApp::Pod.create(:name => spec.name)
     @pod.add_owner(@owner) if @owner
     @version = @pod.add_version(:name => spec.version.to_s)
-    @commit = @version.add_commit(
-      :specification_data => spec.to_json,
-      :committer => @owner || Pod::TrunkApp::Owner.create(:email => 'jenny@example.com', :name => 'Jenny'),
-    )
-    @job = Pod::TrunkApp::PushJob.new(:commit => @commit)
   end
 end
 
@@ -36,7 +31,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      PushJob.any_instance.stubs(:push!).returns(true)
+      PushJob.any_instance.stubs(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
       sign_in!
     end
 
@@ -94,7 +89,7 @@ module Pod::TrunkApp
     it "does not allow a push for an existing pod version if it's published" do
       @owner.add_pod(:name => spec.name)
             .add_version(:name => spec.version.to_s)
-            .add_commit(valid_commit_attrs.merge(:pushed => true))
+            .add_commit(valid_commit_attrs)
       lambda {
         post '/', spec.to_json
       }.should.not.change { Pod.count + PodVersion.count }
@@ -113,43 +108,21 @@ module Pod::TrunkApp
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
-    it "creates a submission job and log message once a new pod version is created" do
-      PushJob.any_instance.expects(:push!).returns(true)
+    it "creates a commit once a push succeeds" do
+      PushJob.any_instance.expects(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
       lambda {
         post '/', spec.to_json
-      }.should.change { PushJob.count }
-      job = Pod.first(:name => spec.name).versions.first.commits.last.push_jobs.last
-      job.commit.committer.should == @owner
-      job.specification_data.should == JSON.pretty_generate(spec)
+      }.should.change { Commit.count }
+      commit = Commit.first
+      commit.committer.should == @owner
+      commit.specification_data.should == JSON.pretty_generate(spec)
     end
-
-    it "does not allow a push for an existing pod version while a job is in progress" do
-      version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      commit = version.add_commit(valid_commit_attrs.merge(:pushed => false))
-      commit.add_push_job({})
-      commit.add_push_job({})
-      commit.update(:pushed => nil)
+    
+    it "does not create commit if a push fails" do
+      PushJob.any_instance.expects(:push!).returns(nil)
       lambda {
         post '/', spec.to_json
-      }.should.not.change { Pod.count + PodVersion.count }
-      last_response.status.should == 409
-      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
-    end
-
-    it "does allow a push for an existing pod version if the previous jobs have failed" do
-      version = @owner.add_pod(:name => spec.name).add_version(:name => spec.version.to_s)
-      commit = version.add_commit(valid_commit_attrs.merge(:pushed => nil))
-      commit.add_push_job({})
-      commit.update(:pushed => false)
-      commit.add_push_job({})
-      commit.update(:pushed => false)
-      lambda {
-        lambda {
-          post '/', spec.to_json
-        }.should.not.change { PodVersion.count }
-      }.should.change { PushJob.count }
-      last_response.status.should == 302
-      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
+      }.should.not.change { Commit.count }
     end
   end
 
@@ -183,7 +156,7 @@ module Pod::TrunkApp
       create_session_with_owner
       @pod.add_owner(@owner)
       @pod.add_version(:name => '0.2.1')
-      @version.add_commit(valid_commit_attrs.merge(:pushed => true))
+      @version.add_commit(valid_commit_attrs)
       get '/AFNetworking'
       last_response.body.should == {
         'versions' => [@version.public_attributes],
@@ -198,8 +171,7 @@ module Pod::TrunkApp
     end
 
     it "returns an overview of a published pod version" do
-      @commit.update(:pushed => true)
-      @job.save
+      @version.add_commit(valid_commit_attrs)
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
       last_response.body.should == {
