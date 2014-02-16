@@ -38,11 +38,13 @@ module Pod
         
         # Select commits not made by ourselves.
         #
-        manual_commits = payload['commits'].select { |commit| commit['message'] !~ /\A\[Add\]/ }
+        # No, we even look at our own commits.
+        #
+        # manual_commits = payload['commits'].select { |commit| commit['message'] !~ /\A\[Add\]/ }
         
         # Go through each of the commits and get the commit data.
         #
-        manual_commits.each do |manual_commit|
+        payload['commits'].each do |manual_commit|
           commit_sha   = manual_commit['id']
           committer_email = manual_commit['committer']['email']
           
@@ -64,7 +66,22 @@ module Pod
               #
               next unless file =~ /\.podspec.json\z/
               
-              send :"handle_#{type}", file, commit_sha, committer_email
+              # Get the data from the Specs repo.
+              #
+              # TODO Update to the right repo.
+              #
+              data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s"
+              data_url = data_url_template % [commit_sha, file] if commit_sha
+        
+              # Gets the data from data_url.
+              #
+              spec_hash = JSON.parse REST.get(data_url).body
+        
+              # Update the database after extracting the relevant data from the podspec.
+              #
+              pod = Pod.find(name: spec_hash['name'])
+              
+              send :"handle_#{type}", spec_hash, pod, commit_sha, committer_email if pod
             end
           end
         end
@@ -74,43 +91,41 @@ module Pod
       
       # We get the JSON podspec and add a commit to the pod's version.
       #
-      def handle_modified file, commit_sha, committer_email
-        # Get the data from the Specs repo.
-        #
-        # TODO Update to the right repo.
-        #
-        data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s"
-        data_url = data_url_template % [commit_sha, file] if commit_sha
-        
-        # Gets the data from data_url.
-        #
-        spec_hash = JSON.parse REST.get(data_url).body
-        
-        # Update the database after extracting the relevant data from the podspec.
-        #
-        pod = Pod.find(name: spec_hash['name'])
-        
-        if pod
-          version = PodVersion.find(:pod => pod, :name => spec_hash['version'])
+      def handle_modified spec_hash, pod, commit_sha, committer_email
+        version = PodVersion.find(:pod => pod, :name => spec_hash['version'])
           
-          # We ignore any new pod versions coming in through a manual merge.
+        # We ignore any new pod versions coming in through a manual merge.
+        #
+        if version
+          # Add a new commit to the existing version.
           #
-          if version
-            # Add a new commit to the existing version.
-            #
-            version.add_commit(
-              :sha => commit_sha,
-              :specification_data => JSON.pretty_generate(spec_hash),
-              :committer => pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed,
-            )
-          end
+          version.add_commit(
+            :sha => commit_sha,
+            :specification_data => JSON.pretty_generate(spec_hash),
+            :committer => pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed,
+          )
         end
       end
       
       # We only check if we have it, and if not, add it.
       #
-      def handle_added file, commit_sha, committer_email
-        
+      def handle_added spec_hash, pod, commit_sha, committer_email
+        # Do we have it?
+        #
+        if commit = Commit.find(:sha => commit_sha)
+          # Is it related to the pod?
+          #
+          unless commit.pod_version.pod == pod
+            # TODO It's not. Log as error?
+            #
+          end
+        else
+          # No? We should create it and connect it to the pod.
+          #
+          # TODO What if the version does not exist yet? Should we add one?
+          #
+          handle_modified spec_hash, pod, commit_sha, committer_email
+        end
       end
       
     end
