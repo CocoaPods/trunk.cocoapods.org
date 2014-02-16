@@ -24,7 +24,9 @@ module Pod::TrunkApp
         should.raise do
           @job.push!
         end
-        @version.reload.log_messages.last.message.match(%r{failed with error: oh noes!\.}).should.not == nil
+        @version.reload.log_messages.first.message.match(%r{initiated by: Appie <appie@example.com>.}).should.not == nil
+        @version.log_messages.first.data.should == @job.specification_data
+        @version.log_messages.last.message.match(%r{failed with error: oh noes!\.}).should.not == nil
       end
 
       it "creates a new commit in the spec repo and returns its sha" do
@@ -37,7 +39,6 @@ module Pod::TrunkApp
                                                'appie@example.com').returns(response)
 
         @job.push!.should == fixture_new_commit_sha
-        @version.reload.log_messages.first.message.match(%r{initiated by: Appie <appie@example.com>.}).should.not == nil
         @version.reload.log_messages.last.message.match(%r{has been pushed}).should.not == nil
       end
 
