@@ -23,6 +23,10 @@ module Pod
 
       register Sinatra::Twitter::Bootstrap::Assets
 
+      get '/' do
+        redirect to('/log_messages')
+      end
+
       get '/commits' do
         @commits = Commit.all
         erb :'commits/index'

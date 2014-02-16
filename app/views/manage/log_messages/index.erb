@@ -17,7 +17,7 @@
     <% @log_messages.each do |message| %>
       <tr>
         <!-- TODO Colorize level. Rename message.message to message.text. -->
-        <% [message.id, log_message.created_at.to_formatted_s(:rfc822), message.level, message.message, log_message.pod_version.pod.name, log_message.pod_version.name].each do |value| %>
+        <% [message.id, message.created_at.to_formatted_s(:rfc822), message.level, message.message, message.pod_version.pod.name, message.pod_version.name].each do |value| %>
           <td><%= value || 'n/a' %></td>
         <% end %>
       </tr>
