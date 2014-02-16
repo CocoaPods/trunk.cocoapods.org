@@ -129,14 +129,10 @@ module Pod::TrunkApp
       }.should.not.change { Commit.count }
     end
     
-    # TODO
-    #
-    # it "does not create a commit or redirects if a push fails" do
-    #   PushJob.any_instance.expects(:push!).raises('Oh noes!')
-    #   lambda {
-    #     post '/', spec.to_json
-    #   }
-    # end
+    it "does not create a commit or redirects if a push fails" do
+      PushJob.any_instance.stubs(:push!).raises('Oh noes!')
+      should.raise { post '/', spec.to_json } # This will return a 500 in dev/prod.
+    end
   end
 
   describe PodsController, "with an unauthenticated consumer" do
