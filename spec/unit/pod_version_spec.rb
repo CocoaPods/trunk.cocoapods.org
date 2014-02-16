@@ -126,5 +126,46 @@ module Pod::TrunkApp
         @version.commit_sha.should == last_commit.sha
       end
     end
+    
+    describe "#push!" do
+      before do
+        @pod = Pod.create(:name => 'AFNetworking')
+        @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+        @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+      end
+      
+      before do
+        PushJob.any_instance.stubs(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
+      end
+      
+      it "adds the committer as the owner of the pod if the pod has no owners yet" do
+        @pod.reload.owners.should == []
+        @version.push! @committer, 'DATA'
+        @pod.reload.owners.should == [@committer]
+      end
+      it "adds a commit" do
+        @version.commits.should == []
+        @version.push! @committer, 'DATA'
+        @version.commits.size.should == 1
+        @version.commits.last.sha.should == '3ca23060197547eef92983f15590b5a87270615f'
+      end
+      
+      before do
+        PushJob.any_instance.stubs(:push!).returns(nil)
+      end
+      
+      it "does not add the committer as the owner of the pod if the pod pushing fails" do
+        @pod.reload.owners.should == []
+        @version.push! @committer, 'DATA'
+        @pod.reload.owners.should == []
+      end
+      it "does not add a commit" do
+        PushJob.any_instance.stubs(:push!).returns()
+        
+        @version.commits.should == []
+        @version.push! @committer, 'DATA'
+        @version.commits.should == []
+      end
+    end
   end
 end
