@@ -5,7 +5,7 @@
   "summary": "Objective-C Address Book wrapper.",
   "homepage": "https://github.com/erica/ABContactHelper",
   "authors": {
-    "Test User": "test.user@cocoapods.org"
+    "Test User": "test.user@example.com"
   },
   "source": {
     "git": "https://github.com/shepting/ABContactHelper.git",

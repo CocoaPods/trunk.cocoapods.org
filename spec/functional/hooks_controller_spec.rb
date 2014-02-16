@@ -123,7 +123,7 @@ module Pod::TrunkApp
       PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
 
       Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
-      test_user = Owner.create(:email => 'test.user@cocoapods.org', :name => 'Test User')
+      test_user = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
       test_user.add_pod(existing_pod)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
