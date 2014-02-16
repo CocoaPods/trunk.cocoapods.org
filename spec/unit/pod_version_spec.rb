@@ -79,7 +79,7 @@ module Pod::TrunkApp
       end
 
       it "returns a URL from where the spec data can be retrieved" do
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => true, :sha => '3ca23060197547eef92983f15590b5a87270615f'))
+        @version.add_commit(@valid_commit_attrs.merge(:sha => '3ca23060197547eef92983f15590b5a87270615f'))
         @version.data_url.should == "https://raw.github.com/CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
       end
 
@@ -87,21 +87,9 @@ module Pod::TrunkApp
         @version.resource_path.should == '/pods/AFNetworking/versions/1.2.0'
       end
 
-      it "is published if any of its commits are pushed" do
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => false))
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => true))
+      it "is published if it has commits" do
+        @version.add_commit(@valid_commit_attrs)
         @version.should.be.published
-      end
-      
-      it "is not published if its commits are in progress" do
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => nil))
-        @version.should.not.be.published
-      end
-      
-      it "is not published if none of its commits has succeeded" do
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => false))
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => nil))
-        @version.should.not.be.published
       end
     end
 
@@ -113,23 +101,15 @@ module Pod::TrunkApp
         @valid_commit_attrs = { :committer => @committer, :specification_data => 'DATA' }
       end
 
-      it "has been published by all successfully pushed commits" do
-        successful_commit = @version.add_commit(@valid_commit_attrs.merge(:pushed => true))
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => false))
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => nil))
-        last_successful_commit = @version.add_commit(@valid_commit_attrs.merge(:pushed => true))
-        @version.published_by.should == [successful_commit, last_successful_commit]
-      end
-
       it "has been last published by the last pushed commit" do
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => false))
-        last_commit = @version.add_commit(@valid_commit_attrs.merge(:pushed => true))
+        @version.add_commit(@valid_commit_attrs)
+        last_commit = @version.add_commit(@valid_commit_attrs)
         @version.last_published_by.should == last_commit
       end
       
       it "has the same sha as the last pushed commit" do
-        @version.add_commit(@valid_commit_attrs.merge(:pushed => true, :sha => '4ca23060197547eef92983f15590b5a87270615f'))
-        last_commit = @version.add_commit(@valid_commit_attrs.merge(:pushed => true, :sha => '3ca23060197547eef92983f15590b5a87270615f'))
+        @version.add_commit(@valid_commit_attrs.merge(:sha => '4ca23060197547eef92983f15590b5a87270615f'))
+        last_commit = @version.add_commit(@valid_commit_attrs.merge(:sha => '3ca23060197547eef92983f15590b5a87270615f'))
         @version.commit_sha.should == last_commit.sha
       end
     end

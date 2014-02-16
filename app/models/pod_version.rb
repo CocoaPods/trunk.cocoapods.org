@@ -18,26 +18,15 @@ module Pod
       one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
       
       def published?
-        commits.any?(&:pushed?)
-      end
-      
-      def published_by
-        commits.select(&:pushed?)
+        commits.any?
       end
       
       def last_published_by
-        published_by.last
+        commits.last
       end
       
       def commit_sha
         last_published_by.sha
-      end
-
-      def after_initialize
-        super
-        # if new?
-        #   self.published = false if published.nil?
-        # end
       end
 
       def public_attributes
@@ -48,10 +37,6 @@ module Pod
         File.join('Specs', pod.name, name, "#{pod.name}.podspec.json")
       end
       
-      #def message
-        #"[Add] #{pod.name} #{name}"
-      #end
-
       def data_url
         DATA_URL % [commit_sha, destination_path] if commit_sha
       end
@@ -62,9 +47,8 @@ module Pod
 
       def push!(committer, specification_data)
         job = PushJob.new(self, committer, specification_data)
-        if job.push!
-          # TODO remove pushed field
-          add_commit(:committer => committer, :sha => job.commit_sha, :specification_data => specification_data, :pushed => true)
+        if commit_sha = job.push!
+          add_commit(:committer => committer, :sha => commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
           true
         else
