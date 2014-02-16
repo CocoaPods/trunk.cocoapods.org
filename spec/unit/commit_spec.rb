@@ -59,35 +59,5 @@ module Pod::TrunkApp
         end
       end
     end
-
-    describe "in general" do
-      before do
-        @commit.save
-      end
-      
-      it "initializes with a new state" do
-        @commit.should.be.in_progress
-      end
-    end
-    
-    describe "class methods" do
-      before do
-        @in_progress = Commit.create(:committer => @owner, :pod_version => @version, :pushed => nil, :specification_data => 'DATA')
-        @succeeded   = Commit.create(:committer => @owner, :pod_version => @version, :pushed => true, :specification_data => 'DATA')
-        @failed      = Commit.create(:committer => @owner, :pod_version => @version, :pushed => false, :specification_data => 'DATA')
-      end
-      
-      it "returns commits in progress" do
-        Commit.in_progress.should == [@in_progress]
-      end
-      
-      it "returns successful commits" do
-        Commit.succeeded.should == [@succeeded]
-      end
-      
-      it "returns failed commits" do
-        Commit.failed.should == [@failed]
-      end
-    end
   end
 end

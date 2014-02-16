@@ -17,38 +17,6 @@ module Pod
 
       many_to_one :committer, :class => 'Pod::TrunkApp::Owner'
       many_to_one :pod_version
-      one_to_many :push_jobs, :order => Sequel.desc(:updated_at)
-
-      alias_method :pushed?, :pushed
-
-      def self.succeeded
-        where(:pushed => true).all
-      end
-
-      def self.failed
-        where(:pushed => false).all
-      end
-
-      def self.in_progress
-        where(:pushed => nil).all
-      end
-
-      def pushed_by
-        push_jobs.last
-      end
-
-      def in_progress?
-        succeeded.nil?
-      end
-
-      # All state is tied to the pushed state.
-      #  * nil: In progress.
-      #  * true: Successfully pushed.
-      #  * false: Unsuccessfully pushed.
-      #
-      def succeeded
-        pushed
-      end
 
       protected
 
