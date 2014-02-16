@@ -45,6 +45,8 @@ module Pod
         URI.escape("/pods/#{pod.name}/versions/#{name}")
       end
 
+      # TODO Store duration.
+      #
       def push!(committer, specification_data)
         job = PushJob.new(self, committer, specification_data)
         if commit_sha = job.push!
