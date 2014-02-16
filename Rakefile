@@ -72,6 +72,19 @@ begin
         sh "env RACK_ENV=#{env} rake db:migrate"
       end
     end
+    
+    namespace :seed do
+      desc 'Seed the database with simple data (will destroy existing data)'
+      task :simple => :env do
+        require 'app/controllers/app_controller'
+        Pod::TrunkApp::Pod.create(:name => 'ADTestPod').add_version(:name => '1.0.0')
+          .add_commit(
+            :owner => Pod::TrunkApp::Owner.create(:name => 'Test User', :email => 'test.user@example.com'),
+            :sha => '3ca23060197547eef92983f15590b5a87270615f',
+            :specification_data => '{"SPEC":"DATA"}'
+          )
+      end
+    end
   end
 
   desc 'Starts a interactive console with the model env loaded'

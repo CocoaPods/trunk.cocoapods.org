@@ -1,0 +1,26 @@
+<% @title = 'Log Messages' %>
+
+<h2>Log Messages</h2>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Created At</th>
+      <th>Level</th>
+      <th>Message</th>
+      <th>Pod</th>
+      <th>Version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @log_messages.each do |message| %>
+      <tr>
+        <!-- TODO Colorize level. Rename message.message to message.text. -->
+        <% [message.id, log_message.created_at.to_formatted_s(:rfc822), message.level, message.message, log_message.pod_version.pod.name, log_message.pod_version.name].each do |value| %>
+          <td><%= value || 'n/a' %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

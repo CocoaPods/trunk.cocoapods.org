@@ -37,6 +37,11 @@ module Pod
         @versions = PodVersion.order(Sequel.desc(:id))
         erb :'pod_versions/index'
       end
+      
+      get '/log_messages' do
+        @log_messages = LogMessage.order(Sequel.desc(:id))
+        erb :'log_messages/index'
+      end
     end
   end
 end
