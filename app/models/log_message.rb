@@ -8,7 +8,7 @@ module Pod
       plugin :timestamps
       plugin :validation_helpers
 
-      many_to_one :push_job
+      many_to_one :pod_version
 
       def public_attributes
         { created_at => message }
@@ -18,7 +18,8 @@ module Pod
 
       def validate
         super
-        validates_presence :push_job_id
+        validates_presence :pod_version_id
+        validates_presence :level
         validates_presence :message
       end
     end
