@@ -19,7 +19,7 @@ module Pod
 
       def push!
         log(:info, "initiated", committer, specification_data)
-        log_duration { push_to_github! }
+        log_duration { push_to_github! } # TODO Incorporate the duration into the logs.
       end
       
       def push_to_github!
