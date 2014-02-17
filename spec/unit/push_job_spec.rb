@@ -26,9 +26,9 @@ module Pod::TrunkApp
         end
         @version.reload
         @version.log_messages.first.owner.should == @owner
-        @version.log_messages.first.message.match(%r{initiated.}).should.not == nil
+        @version.log_messages.first.message.should.match(%r{initiated.})
         @version.log_messages.first.data.should == @job.specification_data
-        @version.log_messages.last.message.match(%r{failed with error: oh noes!\.}).should.not == nil
+        @version.log_messages.last.message.should.match(%r{failed with error: oh noes!\.})
       end
 
       it "creates a new commit in the spec repo and returns its sha" do
@@ -42,8 +42,8 @@ module Pod::TrunkApp
 
         @job.push!.should == fixture_new_commit_sha
         @version.reload
-        @version.log_messages[-2].message.match(%r{has been pushed}).should.not == nil
-        @version.log_messages.last.message.match(%r{seconds}).should.not == nil
+        @version.log_messages[-2].message.should.match(%r{has been pushed})
+        @version.log_messages.last.message.should.match(%r{seconds})
       end
 
       describe "when creating a commit in the spec repo fails" do
@@ -85,8 +85,7 @@ module Pod::TrunkApp
           @version.reload
           log = @version.log_messages.last
           log.level.should == :info
-          log.message.match(%r{Push for `AFNetworking 1.2.0' with temporary ID `\d{14}' took 0\.\d{6} seconds\.})
-            .should.not == nil
+          log.message.should.match(%r{Push for `AFNetworking 1.2.0' with temporary ID `\d{14}' took 0\.\d{6} seconds\.})
         end
       end
     end
