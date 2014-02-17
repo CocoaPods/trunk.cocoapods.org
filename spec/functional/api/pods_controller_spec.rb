@@ -125,7 +125,7 @@ module Pod::TrunkApp
     it "does not create a commit if a push fails" do
       PushJob.any_instance.expects(:push!).returns(nil)
       lambda {
-        post '/', spec.to_json
+        should.raise { post '/', spec.to_json }
       }.should.not.change { Commit.count }
     end
     
