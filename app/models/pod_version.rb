@@ -51,14 +51,11 @@ module Pod
       end
 
       def push!(committer, specification_data)
-        log_duration do |infos|
-          job = PushJob.new(self, committer, specification_data)
-          infos[:logged_object_id] = job.object_id
-          if commit_sha = job.push!
-            commit = add_commit(:committer => committer, :sha => commit_sha, :specification_data => specification_data)
-            pod.add_owner(committer) if pod.owners.empty?
-            commit
-          end
+        job = PushJob.new(self, committer, specification_data)
+        if commit_sha = job.push!
+          commit = add_commit(:committer => committer, :sha => commit_sha, :specification_data => specification_data)
+          pod.add_owner(committer) if pod.owners.empty?
+          commit
         end
       end
 
@@ -77,18 +74,6 @@ module Pod
         if error = errors.delete(UNIQUE_VERSION)
           errors.add(:name, error.first)
         end
-      end
-      
-      def log_duration
-        t = Time.now
-        infos = {}
-        commit_sha = yield infos
-        duration = Time.now - t
-        add_log_message(
-          :level => :info,
-          :message => "Push for `#{description}' with temporary ID `#{infos[:logged_object_id] || "n/a"}' took #{duration} seconds."
-        )
-        commit_sha
       end
     end
   end

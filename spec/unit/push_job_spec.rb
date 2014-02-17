@@ -41,7 +41,9 @@ module Pod::TrunkApp
                                                'appie@example.com').returns(response)
 
         @job.push!.should == fixture_new_commit_sha
-        @version.reload.log_messages.last.message.match(%r{has been pushed}).should.not == nil
+        @version.reload
+        @version.log_messages[-2].message.match(%r{has been pushed}).should.not == nil
+        @version.log_messages.last.message.match(%r{seconds}).should.not == nil
       end
 
       describe "when creating a commit in the spec repo fails" do
@@ -53,7 +55,7 @@ module Pod::TrunkApp
         it "logs an error on our side in case the response has a 4xx status" do
           @github.stubs(:create_new_commit).returns(REST::Response.new(422, {}, 'DATA'))
           @job.push!
-          log = @version.reload.log_messages.last
+          log = @version.reload.log_messages[-2]
           log.level.should == :error
           log.message.should.end_with "failed with HTTP error `422' on our side."
           log.data.should == 'DATA'
@@ -62,7 +64,7 @@ module Pod::TrunkApp
         it "logs a warning on their (GitHub) side in case the response has a 5xx status" do
           @github.stubs(:create_new_commit).returns(REST::Response.new(503, {}, 'DATA'))
           @job.push!
-          log = @version.reload.log_messages.last
+          log = @version.reload.log_messages[-2]
           log.level.should == :warning
           log.message.should.end_with "failed with HTTP error `503' on GitHub’s side."
           log.data.should == 'DATA'
@@ -73,6 +75,18 @@ module Pod::TrunkApp
           should.raise do
             @job.push!
           end
+        end
+        
+        it "logs the duration" do
+          @github.stubs(:create_new_commit).returns(REST::Response.new(422))
+          lambda {
+            @job.push!
+          }.should.change { LogMessage.count }
+          @version.reload
+          log = @version.log_messages.last
+          log.level.should == :info
+          log.message.match(%r{Push for `AFNetworking 1.2.0' with temporary ID `\d{14}' took 0\.\d{6} seconds\.})
+            .should.not == nil
         end
       end
     end

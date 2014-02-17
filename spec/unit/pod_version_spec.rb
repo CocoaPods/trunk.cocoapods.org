@@ -150,14 +150,6 @@ module Pod::TrunkApp
         PushJob.any_instance.stubs(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
       end
       
-      it "logs the duration" do
-        lambda {
-          @version.push! @committer, 'DATA'
-        }.should.change { LogMessage.count }
-        LogMessage.last.message.match(%r{Push for `AFNetworking 1.2.0' took 0\.\d{6} seconds\.})
-          .should.not == nil
-      end
-      
       it "adds the committer as the owner of the pod if the pod has no owners yet" do
         @pod.reload.owners.should == []
         @version.push! @committer, 'DATA'
