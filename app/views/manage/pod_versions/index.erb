@@ -9,15 +9,16 @@
       <th>Pod</th>
       <th>Version</th>
       <th>Commits</th>
+      <th>Published?</th>
       <th>Created At</th>
       <th>Updated At</th>
     </tr>
   </thead>
   <tbody>
     <% @versions.each do |version| %>
-      <tr>
-        <% [version.id, version.pod.name, version.name, version.commits_dataset.count, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
-          <td><%= value || 'n/a' %></td>
+      <tr class="<%= version.published? ? 'info' : 'warning' %>">
+        <% [version.id, version.pod.name, version.name, version.commits_dataset.count, version.published?, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
+          <td><%= value.nil? && 'n/a' || value %></td>
         <% end %>
       </tr>
     <% end %>
