@@ -42,8 +42,8 @@ module Pod::TrunkApp
 
         @job.push!.should == fixture_new_commit_sha
         @version.reload
-        @version.log_messages[-2].message.should.match(%r{has been pushed})
-        @version.log_messages.last.message.should.match(%r{seconds})
+        @version.log_messages[-2].message.should.match(%r{initiated})
+        @version.log_messages.last.message.should.match(%r{has been pushed})
       end
 
       describe "when creating a commit in the spec repo fails" do
@@ -55,18 +55,18 @@ module Pod::TrunkApp
         it "logs an error on our side in case the response has a 4xx status" do
           @github.stubs(:create_new_commit).returns(REST::Response.new(422, {}, 'DATA'))
           @job.push!
-          log = @version.reload.log_messages[-2]
+          log = @version.reload.log_messages.last
           log.level.should == :error
-          log.message.should.end_with "failed with HTTP error `422' on our side."
+          log.message.should.match %r{failed with HTTP error `422' on our side}
           log.data.should == 'DATA'
         end
 
         it "logs a warning on their (GitHub) side in case the response has a 5xx status" do
           @github.stubs(:create_new_commit).returns(REST::Response.new(503, {}, 'DATA'))
           @job.push!
-          log = @version.reload.log_messages[-2]
+          log = @version.reload.log_messages.last
           log.level.should == :warning
-          log.message.should.end_with "failed with HTTP error `503' on GitHub’s side."
+          log.message.should.match %r{failed with HTTP error `503' on GitHub’s side}
           log.data.should == 'DATA'
         end
 
@@ -84,8 +84,8 @@ module Pod::TrunkApp
           }.should.change { LogMessage.count }
           @version.reload
           log = @version.log_messages.last
-          log.level.should == :info
-          log.message.should.match(%r{Push for `AFNetworking 1.2.0' with temporary ID `\d{14}' took 0\.\d{6} seconds\.})
+          log.level.should == :error
+          log.message.should.match(%r{\d\ss\).\z})
         end
       end
     end

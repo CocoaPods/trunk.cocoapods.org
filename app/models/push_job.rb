@@ -16,29 +16,28 @@ module Pod
       def commit_message
         "[Add] #{pod_version.description}"
       end
-
+      
       def push!
         log(:info, "initiated", committer, specification_data)
-        log_duration { push_to_github! } # TODO Incorporate the duration into the logs.
-      end
-      
-      def push_to_github!
-        response = self.class.github.create_new_commit(pod_version.destination_path,
-                                            specification_data,
-                                            commit_message,
-                                            committer.name,
-                                            committer.email)
+        response, duration = measure_duration do
+          self.class.github.create_new_commit(pod_version.destination_path,
+                                              specification_data,
+                                              commit_message,
+                                              committer.name,
+                                              committer.email)
+        end
+        
         case response.status_code
         when 200...400
           commit_sha = response.commit_sha
-          log(:info, "has been pushed")
+          log(:info, "has been pushed (#{duration} s)")
           return commit_sha
         when 400...500
-          log(:error, "failed with HTTP error `#{response.status_code}' on our side", committer, response.body)
+          log(:error, "failed with HTTP error `#{response.status_code}' on our side (#{duration} s)", committer, response.body)
         when 500...600
-          log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side", committer, response.body)
+          log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side (#{duration} s)", committer, response.body)
         else
-          raise "Unexpected HTTP response: #{response.inspect}"
+          raise "returned an unexpected HTTP response (#{duration} s): #{response.inspect}"
         end
         nil
       rescue Object => error
@@ -57,12 +56,10 @@ module Pod
         )
       end
       
-      def log_duration
-        t = Time.now
+      def measure_duration
+        start_time = Time.now
         result = yield
-        duration = Time.now - t
-        log(:info, "took #{duration} seconds")
-        result
+        [result, Time.now - start_time]
       end
 
       def self.github
