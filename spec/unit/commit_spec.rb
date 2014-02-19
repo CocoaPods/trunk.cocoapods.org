@@ -48,17 +48,10 @@ module Pod::TrunkApp
             @commit.save(:validate => false)
           end
         end
-        
+
         it "raises if an empty `committer_id' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @commit.committer_id = nil
-            @commit.save(:validate => false)
-          end
-        end
-        
-        it "raises if an empty `sha' gets inserted" do
-          should.raise Sequel::NotNullConstraintViolation do
-            @commit.sha = nil
             @commit.save(:validate => false)
           end
         end
@@ -66,6 +59,25 @@ module Pod::TrunkApp
         it "raises if an empty `specification_data' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @commit.specification_data = nil
+            @commit.save(:validate => false)
+          end
+        end
+
+        it "raises if an empty `sha' gets inserted" do
+          should.raise Sequel::NotNullConstraintViolation do
+            @commit.sha = nil
+            @commit.save(:validate => false)
+          end
+        end
+
+        it "raises if a duplicate `sha' gets inserted" do
+          Commit.create(
+            :pod_version => @version,
+            :committer => @owner,
+            :sha => '3ca23060197547eef92983f15590b5a87270615f',
+            :specification_data => fixture_read('AFNetworking.podspec')
+          )
+          should.raise Sequel::UniqueConstraintViolation do
             @commit.save(:validate => false)
           end
         end

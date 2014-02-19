@@ -128,13 +128,13 @@ module Pod::TrunkApp
 
       it "has been last published by the last pushed commit" do
         @version.add_commit(@valid_commit_attrs)
-        last_commit = @version.add_commit(@valid_commit_attrs)
+        last_commit = @version.add_commit(@valid_commit_attrs.merge(:sha => '7f694a5c1e43543a803b5d20d8892512aae375f3'))
         @version.last_published_by.should == last_commit
       end
       
       it "has the same sha as the last pushed commit" do
         @version.add_commit(@valid_commit_attrs)
-        last_commit = @version.add_commit(@valid_commit_attrs)
+        last_commit = @version.add_commit(@valid_commit_attrs.merge(:sha => '7f694a5c1e43543a803b5d20d8892512aae375f3'))
         @version.commit_sha.should == last_commit.sha
       end
     end
