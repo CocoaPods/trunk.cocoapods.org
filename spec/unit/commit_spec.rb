@@ -70,7 +70,7 @@ module Pod::TrunkApp
           end
         end
 
-        it "raises if a duplicate `sha' gets inserted" do
+        it "raises if a duplicate `pod_version_id + sha' gets inserted" do
           Commit.create(
             :pod_version => @version,
             :committer => @owner,
