@@ -151,7 +151,7 @@ module Pod::TrunkApp
       }.should.change { Session.count }
       last_response.status.should == 200
 
-      owner.sessions.should == [session.reload]
+      owner.sessions.map(&:id).should == [session.id]
       json_response.should == JSON.parse(session.public_attributes.to_json)
     end
 
