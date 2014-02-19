@@ -1,4 +1,6 @@
 require 'bacon'
+require 'pretty_bacon'
+
 require 'rack/test'
 require 'digest'
 

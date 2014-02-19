@@ -90,7 +90,7 @@ module Pod::TrunkApp
       errors.last.text.should == 'Unknown Pods EYFNetworking and JAYSONKit.'
     end
 
-    it "lists already claimed pods" do
+    xit "lists already claimed pods" do
     end
   end
 end

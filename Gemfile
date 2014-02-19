@@ -32,6 +32,7 @@ end
 group :test do
   gem 'bacon'
   gem 'mocha-on-bacon'
-  gem 'rack-test'
   gem 'nokogiri'
+  gem 'prettybacon', :git => 'https://github.com/irrationalfab/PrettyBacon.git'
+  gem 'rack-test'
 end
