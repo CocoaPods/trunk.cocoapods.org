@@ -38,7 +38,8 @@ module Pod
 
       delete '/', :requires_owner => true do
         @owner.sessions.each do |session|
-          session.destroy unless session == @session
+          next if session.id == @session.id
+          session.destroy
         end
         json_message(200, @session)
       end
