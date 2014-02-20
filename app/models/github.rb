@@ -30,8 +30,7 @@ module Pod
           :author    => { :name => author_name,        :email => author_email },
           :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
         })
-        response.extend(CommitResponseExt)
-        response
+        CreateCommitResponse.new(response)
       end
 
       def url_for(path)
@@ -44,11 +43,52 @@ module Pod
         REST.put(url_for(path), body.to_json, HEADERS, @basic_auth)
       end
 
-      module CommitResponseExt
+      public
+
+      class CreateCommitResponse
+        def self.response(status, body = nil)
+          new(REST::Response.new(status, {}, body))
+        end
+
+        def initialize(response)
+          @response = response
+          case @response.status_code
+          when 200...400
+            # no-op
+          when 400...500
+            @failed_on_our_side = true
+          when 500...600
+            @failed_on_their_side = true
+          else
+            raise "returned an unexpected HTTP response: #{response.inspect}"
+          end
+        end
+
+        def status_code
+          @response.status_code
+        end
+
+        def body
+          @response.body
+        end
+
+        def failed_on_our_side?
+          @failed_on_our_side
+        end
+
+        def failed_on_their_side?
+          @failed_on_their_side
+        end
+
+        def success?
+          !failed_on_our_side? && !failed_on_their_side?
+        end
+
         def commit_sha
-          JSON.parse(body)['commit']['sha']
+          @commit_sha ||= JSON.parse(@response.body)['commit']['sha']
         end
       end
+
     end
   end
 end

@@ -16,9 +16,10 @@ module Pod
       def commit_message
         "[Add] #{pod_version.description}"
       end
-      
+
       def push!
         log(:info, "initiated", committer, specification_data)
+
         response, duration = measure_duration do
           self.class.github.create_new_commit(pod_version.destination_path,
                                               specification_data,
@@ -26,20 +27,17 @@ module Pod
                                               committer.name,
                                               committer.email)
         end
-        
-        case response.status_code
-        when 200...400
-          commit_sha = response.commit_sha
+
+        if response.success?
           log(:info, "has been pushed (#{duration} s)")
-          return commit_sha
-        when 400...500
+        elsif response.failed_on_our_side?
           log(:error, "failed with HTTP error `#{response.status_code}' on our side (#{duration} s)", committer, response.body)
-        when 500...600
+        elsif response.failed_on_their_side?
           log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side (#{duration} s)", committer, response.body)
-        else
-          raise "returned an unexpected HTTP response (#{duration} s): #{response.inspect}"
         end
-        nil
+
+        return response
+
       rescue Object => error
         log(:error, "failed with error: #{error.message}.", committer, error.backtrace.join("\n\t\t"))
         raise

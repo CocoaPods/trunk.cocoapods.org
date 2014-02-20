@@ -32,15 +32,14 @@ module Pod::TrunkApp
       end
 
       it "creates a new commit in the spec repo and returns its sha" do
-        response = REST::Response.new(201, {}, { :commit => { :sha => fixture_new_commit_sha } }.to_json)
-        response.extend(GitHub::CommitResponseExt)
+        response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => fixture_new_commit_sha } }.to_json)
         @github.stubs(:create_new_commit).with(@version.destination_path,
                                                @job.specification_data,
                                                MESSAGE,
                                                'Appie',
                                                'appie@example.com').returns(response)
 
-        @job.push!.should == fixture_new_commit_sha
+        @job.push!.commit_sha.should == fixture_new_commit_sha
         @version.reload
         @version.log_messages[-2].message.should.match(%r{initiated})
         @version.log_messages.last.message.should.match(%r{has been pushed})
@@ -48,13 +47,13 @@ module Pod::TrunkApp
 
       describe "when creating a commit in the spec repo fails" do
         it "returns `nil`" do
-          @github.stubs(:create_new_commit).returns(REST::Response.new(422))
-          @job.push!.should == nil
+          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(422))
+          @job.push!.should.not.be.success
         end
 
         it "logs an error on our side in case the response has a 4xx status" do
-          @github.stubs(:create_new_commit).returns(REST::Response.new(422, {}, 'DATA'))
-          @job.push!
+          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(422, 'DATA'))
+          @job.push!.should.be.failed_on_our_side
           log = @version.reload.log_messages.last
           log.level.should == :error
           log.message.should.match %r{failed with HTTP error `422' on our side}
@@ -62,23 +61,16 @@ module Pod::TrunkApp
         end
 
         it "logs a warning on their (GitHub) side in case the response has a 5xx status" do
-          @github.stubs(:create_new_commit).returns(REST::Response.new(503, {}, 'DATA'))
-          @job.push!
+          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(503, 'DATA'))
+          @job.push!.should.be.failed_on_their_side
           log = @version.reload.log_messages.last
           log.level.should == :warning
           log.message.should.match %r{failed with HTTP error `503' on GitHub’s side}
           log.data.should == 'DATA'
         end
 
-        it "raises in case of a complete unexpected response" do
-          @github.stubs(:create_new_commit).returns(REST::Response.new(100))
-          should.raise do
-            @job.push!
-          end
-        end
-        
         it "logs the duration" do
-          @github.stubs(:create_new_commit).returns(REST::Response.new(422))
+          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(422))
           lambda {
             @job.push!
           }.should.change { LogMessage.count }

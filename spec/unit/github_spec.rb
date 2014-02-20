@@ -43,5 +43,38 @@ module Pod::TrunkApp
         'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
       }
     end
+
+    describe "concerning the response object" do
+      def response(status)
+        GitHub::CreateCommitResponse.response(status)
+      end
+
+      it "returns the commit was a success" do
+        response(201).should.be.success
+        response(201).should.not.be.failed_on_our_side
+        response(201).should.not.be.failed_on_their_side
+        response(302).should.be.success
+        response(302).should.not.be.failed_on_our_side
+        response(302).should.not.be.failed_on_their_side
+      end
+
+      it "returns the commit failed on our side, i.e. our request was incorrect" do
+        response(400).should.not.be.success
+        response(400).should.be.failed_on_our_side
+        response(400).should.not.be.failed_on_their_side
+      end
+
+      it "returns the commit failed on their side, i.e. GitHub ran into an unexpected exception" do
+        response(500).should.not.be.success
+        response(500).should.not.be.failed_on_our_side
+        response(500).should.be.failed_on_their_side
+      end
+
+      it "raises in case of an unexpected status" do
+        should.raise do
+          response(100)
+        end
+      end
+    end
   end
 end
