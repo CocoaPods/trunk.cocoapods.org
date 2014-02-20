@@ -6,6 +6,8 @@ $:.unshift File.join(ROOT, 'lib')
 ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
 
+require 'i18n'
+I18n.enforce_available_locales = false
 require 'active_support/core_ext/numeric/time'
 require 'active_support/core_ext/date/calculations'
 

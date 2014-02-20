@@ -116,7 +116,7 @@ module Pod::TrunkApp
 
       it "finds an unverified session by verification token" do
         @session.update(:verified => false)
-        Session.with_verification_token(@session.verification_token).id.should == @session.id
+        Session.with_verification_token(@session.verification_token).should == @session.reload
       end
     end
 
