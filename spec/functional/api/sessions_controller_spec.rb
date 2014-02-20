@@ -112,6 +112,7 @@ module Pod::TrunkApp
       get "/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
+      json_response.keys.should.not.include 'token'
     end
 
     it "does not verify an invalid session" do
