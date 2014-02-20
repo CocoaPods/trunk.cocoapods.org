@@ -41,14 +41,17 @@ module Pod
         settings.environment != :test
       end
 
-      error 500 do |error|
-        if catch_unexpected_errors?
-          NewRelic::Agent.notice_error(error, :uri => request.path,
-                                              :referer => request.referrer.to_s,
-                                              :request_params => request.params)
-          json_error(500, 'An internal server error occurred. Please try again later.')
-        else
-          raise error
+      error 500 do |*args|
+        # Unless a specific HTTP 500 response was thrown, this is a bubbled-up exception.
+        if error = args.first
+          if catch_unexpected_errors?
+            NewRelic::Agent.notice_error(error, :uri => request.path,
+                                                :referer => request.referrer.to_s,
+                                                :request_params => request.params)
+            json_error(500, 'An internal server error occurred. Please try again later.')
+          else
+            raise error
+          end
         end
       end
 

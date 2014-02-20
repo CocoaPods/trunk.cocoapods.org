@@ -129,6 +129,7 @@ module Pod::TrunkApp
       lambda {
         post '/', spec.to_json
       }.should.not.change { Commit.count }
+      last_response.status.should == 500
     end
     
     it "does not create a commit or redirects if a push fails" do
