@@ -47,8 +47,9 @@ module Pod
 
       def log(level, message, committer = nil, data = nil)
         pod_version.add_log_message(
+          :reference => "PushJob with temporary ID: #{object_id}",
           :level => level,
-          :message => "Push for `#{pod_version.description}' with temporary ID `#{object_id}' #{message}.",
+          :message => "Push for `#{pod_version.description}' #{message}.",
           :owner => committer,
           :data => data
         )

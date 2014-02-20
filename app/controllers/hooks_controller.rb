@@ -5,6 +5,11 @@ require 'app/models/pod'
 require 'app/models/session'
 require 'app/models/specification_wrapper'
 
+# TODO
+# Add logging to all steps and include as its LogMessage#reference:
+#
+#     "GitHub hook with temporary ID: #{object_id}"
+#
 module Pod
   module TrunkApp
     class HooksController < AppController
