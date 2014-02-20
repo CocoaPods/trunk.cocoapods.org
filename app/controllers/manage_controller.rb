@@ -43,7 +43,10 @@ module Pod
       end
       
       get '/log_messages' do
-        @log_messages = LogMessage.order(Sequel.desc(:id))
+        reference_filter = params[:reference]
+        messages = LogMessage
+        messages = messages.where('reference = ?', reference_filter) if reference_filter
+        @log_messages = messages.order(Sequel.desc(:id))
         erb :'log_messages/index'
       end
     end

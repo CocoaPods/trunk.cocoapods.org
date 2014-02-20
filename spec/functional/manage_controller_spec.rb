@@ -11,6 +11,10 @@ module Pod::TrunkApp
         :sha => '3ca23060197547eef92983f15590b5a87270615f',
         :specification_data => 'DATA'
       )
+      @messages = [
+        @version.add_log_message(:reference => 'ref1', :level => :info,  :message => 'log message 1'),
+        @version.add_log_message(:reference => 'ref2', :level => :error, :message => 'log message 2'),
+      ]
     end
 
     it "disallows access without authentication" do
@@ -43,6 +47,26 @@ module Pod::TrunkApp
       get '/versions'
       last_response.should.be.ok
       last_response.body.should.include @version.name
+    end
+    
+    it "shows a list of all messages" do
+      get '/log_messages'
+      last_response.should.be.ok
+      last_response.body.should.include 'info'
+    end
+    
+    it "shows a list of all filtered messages" do
+      get '/log_messages?reference=ref1'
+      last_response.should.be.ok
+      last_response.body.should.include 'ref1'
+      last_response.body.should.not.include 'ref2'
+    end
+    
+    it "shows a list of all filtered messages" do
+      get '/log_messages?reference=nothere'
+      last_response.should.be.ok
+      last_response.body.should.not.include 'ref1'
+      last_response.body.should.not.include 'ref2'
     end
   end
 end

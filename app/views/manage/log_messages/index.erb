@@ -6,6 +6,7 @@
   <thead>
     <tr>
       <th>ID</th>
+      <th>Reference</th>
       <th>Created At</th>
       <th>Level</th>
       <th>Message</th>
@@ -17,8 +18,9 @@
     <% @log_messages.each do |message| %>
       <tr class="<%= message.level %>">
         <!-- TODO Rename message.message to message.text. -->
-        <% [message.id, message.created_at.to_formatted_s(:rfc822), message.level, message.message, message.pod_version.pod.name, message.pod_version.name].each do |value| %>
-          <td><%= value || 'n/a' %></td>
+        <% reference_link = "<a href=\"?reference=#{message.reference}\">#{message.reference}</a>" %>
+        <% [message.id, reference_link, message.created_at.to_formatted_s(:rfc822), message.level, message.message, message.pod_version.pod.name, message.pod_version.name].each do |value| %>
+          <td><%= value || 'n/a' %></a></td>
         <% end %>
       </tr>
     <% end %>
