@@ -35,7 +35,9 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      PushJob.any_instance.stubs(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
+      response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      PushJob.any_instance.stubs(:push!).returns(response)
+
       sign_in!
     end
 
@@ -113,7 +115,6 @@ module Pod::TrunkApp
     end
 
     it "creates a commit once a push succeeds" do
-      PushJob.any_instance.expects(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
       lambda {
         post '/', spec.to_json
       }.should.change { Commit.count }
@@ -123,9 +124,10 @@ module Pod::TrunkApp
     end
     
     it "does not create a commit if a push fails" do
-      PushJob.any_instance.expects(:push!).returns(nil)
+      response = GitHub::CreateCommitResponse.response(500)
+      PushJob.any_instance.stubs(:push!).returns(response)
       lambda {
-        should.raise { post '/', spec.to_json }
+        post '/', spec.to_json
       }.should.not.change { Commit.count }
     end
     
@@ -195,7 +197,9 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      PushJob.any_instance.stubs(:push!).returns(true)
+      response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      PushJob.any_instance.stubs(:push!).returns(response)
+
       sign_in!
     end
 

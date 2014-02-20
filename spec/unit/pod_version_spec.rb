@@ -141,51 +141,52 @@ module Pod::TrunkApp
     
     describe "#push!" do
       before do
+        @response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+        PushJob.any_instance.stubs(:push!).returns(@response)
+
         @pod = Pod.create(:name => 'AFNetworking')
         @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
         @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
       end
-      
-      before do
-        PushJob.any_instance.stubs(:push!).returns('3ca23060197547eef92983f15590b5a87270615f')
-      end
-      
+
       it "adds the committer as the owner of the pod if the pod has no owners yet" do
         @pod.reload.owners.should == []
         @version.push! @committer, 'DATA'
         @pod.reload.owners.should == [@committer]
       end
+
       it "adds a commit" do
         @version.commits.should == []
         @version.push! @committer, 'DATA'
         @version.commits.size.should == 1
         @version.commits.last.sha.should == '3ca23060197547eef92983f15590b5a87270615f'
       end
+
       it "returns truthy" do
-        @version.push!(@committer, 'DATA').should == @version.commits.last
+        @version.push!(@committer, 'DATA').should == @response
       end
-      
+
       before do
-        PushJob.any_instance.stubs(:push!).returns(nil)
+        @response = GitHub::CreateCommitResponse.response(500)
+        PushJob.any_instance.stubs(:push!).returns(@response)
       end
-      
+
       it "does not add the committer as the owner of the pod if the pod pushing fails" do
         @pod.reload.owners.should == []
         @version.push! @committer, 'DATA'
         @pod.reload.owners.should == []
       end
+
       it "does not add a commit" do
-        PushJob.any_instance.stubs(:push!).returns
-        
         @version.commits.should == []
         @version.push! @committer, 'DATA'
         @version.commits.should == []
       end
-      
+
       it "returns falsy" do
-        @version.push!(@committer, 'DATA').should == nil
+        @version.push!(@committer, 'DATA').should.not.be.success
       end
-      
+
     end
   end
 end

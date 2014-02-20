@@ -17,15 +17,15 @@ module Pod
       many_to_one :pod
       one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
       one_to_many :log_messages, :order => Sequel.asc([:updated_at, :created_at])
-      
+
       def published?
         commits.any?
       end
-      
+
       def last_published_by
         commits.last
       end
-      
+
       def commit_sha
         last_published_by.sha
       end
@@ -37,7 +37,7 @@ module Pod
       def destination_path
         File.join('Specs', pod.name, name, "#{pod.name}.podspec.json")
       end
-      
+
       def data_url
         DATA_URL % [commit_sha, destination_path] if commit_sha
       end
@@ -45,18 +45,18 @@ module Pod
       def resource_path
         URI.escape("/pods/#{pod.name}/versions/#{name}")
       end
-      
+
       def description
         "#{pod.name} #{name}"
       end
 
       def push!(committer, specification_data)
-        job = PushJob.new(self, committer, specification_data)
-        if commit_sha = job.push!
-          commit = add_commit(:committer => committer, :sha => commit_sha, :specification_data => specification_data)
+        response = PushJob.new(self, committer, specification_data).push!
+        if response.success?
+          add_commit(:committer => committer, :sha => response.commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
-          commit
         end
+        response
       end
 
       protected
