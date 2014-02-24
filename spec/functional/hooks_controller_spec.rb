@@ -4,6 +4,12 @@ module Pod::TrunkApp
   
   describe HooksController, "when receiving push updates from the repository" do
     
+    def post_raw_hook_data
+      header 'Content-Type', 'application/x-www-form-urlencoded'
+      payload = fixture_read('GitHub/post_receive_hook_data.raw')
+      post '/github-post-receive/', payload
+    end
+    
     before do
       header 'X-Github-Delivery', '37ac017e-902c-11e3-8115-655d22cdc2ab'
       header 'User-Agent', 'GitHub Hookshot 7e04da1'
@@ -38,9 +44,7 @@ module Pod::TrunkApp
     it "processes payload data but does not create a new pod (if one does not exist)" do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
     
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      payload = fixture_read('GitHub/post_receive_hook_data.raw')
-      post '/github-post-receive/', payload
+      post_raw_hook_data
     
       last_response.status.should == 200
     
@@ -56,9 +60,7 @@ module Pod::TrunkApp
       
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
     
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      payload = fixture_read('GitHub/post_receive_hook_data.raw')
-      post '/github-post-receive/', payload
+      post_raw_hook_data
     
       last_response.status.should == 200
       
@@ -86,9 +88,7 @@ module Pod::TrunkApp
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
     
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      payload = fixture_read('GitHub/post_receive_hook_data.raw')
-      post '/github-post-receive/', payload
+      post_raw_hook_data
     
       last_response.status.should == 200
       
@@ -122,17 +122,14 @@ module Pod::TrunkApp
 
       test_user = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
       test_user.add_pod(existing_pod)
-
+      
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      payload = fixture_read('GitHub/post_receive_hook_data.raw')
-      post '/github-post-receive/', payload
+      post_raw_hook_data
 
       last_response.status.should == 200
 
       pod = Pod.find(name: 'KFData')
-
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == test_user
@@ -147,9 +144,7 @@ module Pod::TrunkApp
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      payload = fixture_read('GitHub/post_receive_hook_data.raw')
-      post '/github-post-receive/', payload
+      post_raw_hook_data
 
       last_response.status.should == 200
 
@@ -158,6 +153,51 @@ module Pod::TrunkApp
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == Owner.unclaimed
+    end
+    
+    it "creates the add commit if missing and version exists" do
+      # Create existing pod.
+      #
+      existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
+      existing_pod = Pod.create(:name => existing_spec.name)
+      pod_version = PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+
+      pod = Pod.find(name: 'KFData')
+      commit = pod.versions.last.last_published_by
+      
+      commit.should == nil
+
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+
+      post_raw_hook_data
+
+      last_response.status.should == 200
+
+      pod = Pod.find(name: 'KFData')
+      commit = pod.versions.last.last_published_by
+
+      commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
+    end
+    
+    # TODO Actually define what should happen here.
+    #
+    it "does not add the add commit if missing and version does not exist" do
+      # Create existing pod.
+      #
+      existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
+      existing_pod = Pod.create(:name => existing_spec.name)
+
+      pod = Pod.find(name: 'KFData')
+      pod.versions.last.should == nil
+
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+
+      post_raw_hook_data
+
+      last_response.status.should == 200
+
+      pod = Pod.find(name: 'KFData')
+      pod.versions.last.should == nil
     end
     
   end
