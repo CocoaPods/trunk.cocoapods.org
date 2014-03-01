@@ -140,8 +140,10 @@ module Pod::TrunkApp
     end
     
     describe "#push!" do
+      extend SpecHelpers::CommitResponse
+
       before do
-        @response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+        @response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
         PushJob.any_instance.stubs(:push!).returns(@response)
 
         @pod = Pod.create(:name => 'AFNetworking')
@@ -167,7 +169,7 @@ module Pod::TrunkApp
       end
 
       before do
-        @response = GitHub::CreateCommitResponse.response(500)
+        @response = response(500)
         PushJob.any_instance.stubs(:push!).returns(@response)
       end
 

@@ -31,8 +31,10 @@ module Pod::TrunkApp
         @version.log_messages.last.message.should.match(%r{failed with error: oh noes!\.})
       end
 
+      extend SpecHelpers::CommitResponse
+
       it "creates a new commit in the spec repo and returns its sha" do
-        response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => fixture_new_commit_sha } }.to_json)
+        response = response(201, { :commit => { :sha => fixture_new_commit_sha } }.to_json)
         @github.stubs(:create_new_commit).with(@version.destination_path,
                                                @job.specification_data,
                                                MESSAGE,
@@ -46,13 +48,15 @@ module Pod::TrunkApp
       end
 
       describe "when creating a commit in the spec repo fails" do
+        extend SpecHelpers::CommitResponse
+
         it "returns `nil`" do
-          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(422))
+          @github.stubs(:create_new_commit).returns(response(422))
           @job.push!.should.not.be.success
         end
 
         it "logs an error on our side in case the response has a 4xx status" do
-          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(422, 'DATA'))
+          @github.stubs(:create_new_commit).returns(response(422, 'DATA'))
           @job.push!.should.be.failed_on_our_side
           log = @version.reload.log_messages.last
           log.level.should == :error
@@ -61,7 +65,7 @@ module Pod::TrunkApp
         end
 
         it "logs a warning on their (GitHub) side in case the response has a 5xx status" do
-          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(503, 'DATA'))
+          @github.stubs(:create_new_commit).returns(response(503, 'DATA'))
           @job.push!.should.be.failed_on_their_side
           log = @version.reload.log_messages.last
           log.level.should == :warning
@@ -70,7 +74,7 @@ module Pod::TrunkApp
         end
 
         it "logs the duration" do
-          @github.stubs(:create_new_commit).returns(GitHub::CreateCommitResponse.response(422))
+          @github.stubs(:create_new_commit).returns(response(422))
           lambda {
             @job.push!
           }.should.change { LogMessage.count }

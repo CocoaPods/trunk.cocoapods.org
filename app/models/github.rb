@@ -19,18 +19,18 @@ module Pod
         @basic_auth = basic_auth
       end
 
-      # @return [REST::Response,CommitResponseExt] A HTTP response object extended to return the
-      #                                            `commit_sha`.
+      # @return [CreateCommitResponse] A encapsulated response object that parses the `commit_sha`.
       #
       def create_new_commit(destination_path, data, message, author_name, author_email)
-        response = put(File.join('contents', URI.escape(destination_path)), {
-          :message   => message,
-          :branch    => BRANCH,
-          :content   => Base64.encode64(data).delete("\r\n"),
-          :author    => { :name => author_name,        :email => author_email },
-          :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
-        })
-        CreateCommitResponse.new(response)
+        CreateCommitResponse.new do
+          put(File.join('contents', URI.escape(destination_path)), {
+            :message   => message,
+            :branch    => BRANCH,
+            :content   => Base64.encode64(data).delete("\r\n"),
+            :author    => { :name => author_name,        :email => author_email },
+            :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
+          })
+        end
       end
 
       def url_for(path)
@@ -46,12 +46,10 @@ module Pod
       public
 
       class CreateCommitResponse
-        def self.response(status, body = nil)
-          new(REST::Response.new(status, {}, body))
-        end
+        attr_reader :timeout_error
 
-        def initialize(response)
-          @response = response
+        def initialize
+          @response = yield
           case @response.status_code
           when 200...400
             # no-op
@@ -60,8 +58,11 @@ module Pod
           when 500...600
             @failed_on_their_side = true
           else
-            raise "returned an unexpected HTTP response: #{response.inspect}"
+            raise "returned an unexpected HTTP response: #{@response.inspect}"
           end
+        rescue Errno::ETIMEDOUT, Timeout::Error,
+               Net::OpenTimeout, Net::ReadTimeout => e
+          @timeout_error = "[#{e.class.name}] #{e.message}"
         end
 
         def status_code
@@ -80,8 +81,12 @@ module Pod
           @failed_on_their_side
         end
 
+        def failed_due_to_timeout?
+          !@timeout_error.nil?
+        end
+
         def success?
-          !failed_on_our_side? && !failed_on_their_side?
+          !failed_on_our_side? && !failed_on_their_side? && !failed_due_to_timeout?
         end
 
         def commit_sha

@@ -45,9 +45,7 @@ module Pod::TrunkApp
     end
 
     describe "concerning the response object" do
-      def response(status)
-        GitHub::CreateCommitResponse.response(status)
-      end
+      extend SpecHelpers::CommitResponse
 
       it "returns the commit was a success" do
         response(201).should.be.success
@@ -73,6 +71,27 @@ module Pod::TrunkApp
       it "raises in case of an unexpected status" do
         should.raise do
           response(100)
+        end
+      end
+
+      it "returns the commit failed due to a timeout" do
+        {
+          Errno::ETIMEDOUT => 'Connection timed out - connect(2)',
+          Net::OpenTimeout => 'execution expired',
+          Net::ReadTimeout => 'Does not have a message',
+          Timeout::Error   => 'execution expired'
+        }.each do |error_class, message|
+          res = response do
+            error = error_class.new
+            # ETIMEDOUT adds more useless text by itself, omitting for test purposes.
+            error.stubs(:message).returns(message)
+            raise error
+          end
+          res.should.not.be.success
+          res.should.not.be.failed_on_our_side
+          res.should.not.be.failed_on_their_side
+          res.should.be.failed_due_to_timeout
+          res.timeout_error.should == "[#{error_class.name}] #{message}"
         end
       end
     end

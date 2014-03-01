@@ -2,6 +2,8 @@ require File.expand_path('../../../spec_helper', __FILE__)
 require 'app/controllers/api/pods_controller'
 
 module SpecHelpers::PodsController
+  include SpecHelpers::CommitResponse
+
   def self.extended(context)
     context.send(:extend, SpecHelpers::Authentication)
     context.send(:extend, SpecHelpers::Response)
@@ -35,7 +37,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
 
       sign_in!
@@ -124,8 +126,7 @@ module Pod::TrunkApp
     end
     
     it "does not create a commit if a push fails" do
-      response = GitHub::CreateCommitResponse.response(500)
-      PushJob.any_instance.stubs(:push!).returns(response)
+      PushJob.any_instance.stubs(:push!).returns(response(500))
       lambda {
         post '/', spec.to_json
       }.should.not.change { Commit.count }
@@ -198,7 +199,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      response = GitHub::CreateCommitResponse.response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
 
       sign_in!
