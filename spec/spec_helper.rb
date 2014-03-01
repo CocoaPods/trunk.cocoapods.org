@@ -38,6 +38,7 @@ end
 
 module Bacon
   module BacktraceFilter
+    # Gray-out those backtrace lines that are usually less interesting.
     def handle_summary
       ErrorLog.gsub!(/\t(.+?)\n/) do |line|
         if $1.start_with?('/')
@@ -45,10 +46,9 @@ module Bacon
           if downcased.include?('cocoapods') && !downcased.include?('spec/spec_helper')
             line
           else
-            ''
+            "\e[0;37m#{line}\e[0m"
           end
         else
-          # always include relative paths
           line
         end
       end
