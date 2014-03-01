@@ -34,6 +34,8 @@ module Pod
           log(:error, "failed with HTTP error `#{response.status_code}' on our side (#{duration} s)", committer, response.body)
         elsif response.failed_on_their_side?
           log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side (#{duration} s)", committer, response.body)
+        elsif response.failed_due_to_timeout?
+          log(:warning, "failed due to timeout (#{duration} s)", committer, response.timeout_error)
         end
 
         return response

@@ -73,6 +73,15 @@ module Pod::TrunkApp
           log.data.should == 'DATA'
         end
 
+        it "logs a warning on neither side in case a timeout occurs" do
+          @github.stubs(:create_new_commit).returns(response { raise Timeout::Error, 'execution expired' })
+          @job.push!.should.be.failed_due_to_timeout
+          log = @version.reload.log_messages.last
+          log.level.should == :warning
+          log.message.should.match %r{failed due to timeout}
+          log.data.should == '[Timeout::Error] execution expired'
+        end
+
         it "logs the duration" do
           @github.stubs(:create_new_commit).returns(response(422))
           lambda {
