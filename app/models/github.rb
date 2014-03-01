@@ -37,13 +37,16 @@ module Pod
         File.join(@base_url, path)
       end
 
-      private
-
+      # Performs a PUT request with a max timeout of 10 seconds.
+      #
+      # TODO timeout could probably even be less.
+      #
       def put(path, body)
-        REST.put(url_for(path), body.to_json, HEADERS, @basic_auth)
+        REST.put(url_for(path), body.to_json, HEADERS, @basic_auth) do |http_request|
+          http_request.open_timeout = 3
+          http_request.read_timeout = 7
+        end
       end
-
-      public
 
       class CreateCommitResponse
         attr_reader :timeout_error

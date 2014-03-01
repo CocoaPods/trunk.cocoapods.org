@@ -12,6 +12,14 @@ module Pod::TrunkApp
       @github.url_for('git/refs/heads/master').should == 'https://api.github.com/repos/CocoaPods/Specs/git/refs/heads/master'
     end
 
+    it "configures timeouts" do
+      Net::HTTP.last_started_request = nil
+      @github.put('/', { :foo => 'bar' })
+      http_request = Net::HTTP.last_started_request
+      http_request.open_timeout.should == 3
+      http_request.read_timeout.should == 7
+    end
+
     it "creates a new commit" do
       # Capture the args so we can assert on them after the call.
       args = nil

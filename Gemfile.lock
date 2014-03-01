@@ -18,6 +18,12 @@ GIT
       notify (~> 0.5.2)
 
 GIT
+  remote: https://github.com/alloy/nap.git
+  revision: 2c15798f292ffc62b69eacbf7f8df8bf4ff7c670
+  specs:
+    nap (0.6.0)
+
+GIT
   remote: https://github.com/irrationalfab/PrettyBacon.git
   revision: eaf7e6c786fd5ccc6fb88e943bf7c5e6c27569a3
   specs:
@@ -59,7 +65,6 @@ GEM
     mocha-on-bacon (0.2.2)
       mocha (>= 0.13.0)
     multi_json (1.8.2)
-    nap (0.6.0)
     newrelic_rpm (3.7.1.180)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
@@ -123,7 +128,7 @@ DEPENDENCIES
   kicker!
   mail
   mocha-on-bacon
-  nap (>= 0.6)
+  nap (>= 0.6)!
   newrelic_rpm
   nokogiri
   pg

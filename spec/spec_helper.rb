@@ -122,6 +122,17 @@ end
 require 'net/http'
 module Net
   class HTTP
+    class << self
+      attr_accessor :last_started_request
+    end
+
+    def start
+      self.class.last_started_request = self
+      response = Net::HTTPOK.new('1.1', '200', 'OK')
+      def response.body; 'OK'; end
+      response
+    end
+
     class TryingToMakeHTTPConnectionException < StandardError; end
     def connect
       raise TryingToMakeHTTPConnectionException, "Please mock your HTTP calls so you don't do any HTTP requests."
