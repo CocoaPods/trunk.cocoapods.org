@@ -63,19 +63,21 @@ module Pod
         if response.success?
           redirect url(version.resource_path)
         elsif response.failed_on_our_side?
-          # TODO Update with our status page address.
-          json_error(500, "An internal server error occurred. Please check for any known status " \
-                          "issues at https://twitter.com/CocoaPods and try again later.")
+          throw_internal_server_error!
         elsif response.failed_on_their_side?
           # In case of a 5xx at GitHub’s side, this might not mean the commit didn’t get created,
           # it can also indicate an error occurred while rendering the response, hence asking for
           # some patience in case we still update the PodVersion with a new Commit from the GitHub
           # post-commit hook.
           #
-          # TODO Ask GitHub if they have some form of transaction system in place that rolls back a commit in case an error occurs during response rendering.
+          # TODO Ask GitHub if they have some form of transaction system in place that rolls back a
+          # commit in case an error occurs during response rendering.
           json_error(500, "An error occurred on GitHub’s side. Please check GitHub’s status at " \
-                          "https://status.github.com and try again later (~an hour) in case the " \
-                          "pod is still not published.")
+                          "https://status.github.com and try again later in case the pod is " \
+                          "still not published.")
+        elsif response.failed_due_to_timeout?
+          json_error(504, "Calling the GitHub commit API timed out. Please check GitHub’s " \
+                          "status at https://status.github.com and try again later.")
         end
       end
 

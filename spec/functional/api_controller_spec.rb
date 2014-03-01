@@ -46,7 +46,7 @@ module Pod::TrunkApp
       APIController.any_instance.stubs(:raise_test_error).raises
       get '/raise_test_error'
       last_response.status.should == 500
-      json_response['error'].should == 'An internal server error occurred. Please try again later.'
+      json_response['error'].should.match /An internal server error occurred/
     end
 
     it "reports all unexpected errors" do

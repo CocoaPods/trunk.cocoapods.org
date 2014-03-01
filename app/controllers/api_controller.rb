@@ -48,11 +48,17 @@ module Pod
             NewRelic::Agent.notice_error(error, :uri => request.path,
                                                 :referer => request.referrer.to_s,
                                                 :request_params => request.params)
-            json_error(500, 'An internal server error occurred. Please try again later.')
+            throw_internal_server_error!
           else
             raise error
           end
         end
+      end
+
+      def throw_internal_server_error!
+        # TODO Update with our status page address.
+        json_error(500, "An internal server error occurred. Please check for any known status " \
+                        "issues at https://twitter.com/CocoaPods and try again later.")
       end
 
       # --- Authentication ------------------------------------------------------------------------

@@ -132,10 +132,17 @@ module Pod::TrunkApp
       }.should.not.change { Commit.count }
       last_response.status.should == 500
     end
-    
-    it "does not create a commit or redirects if a push fails" do
+
+    it "informs the user if an exception occurs" do
       PushJob.any_instance.stubs(:push!).raises('Oh noes!')
       should.raise { post '/', spec.to_json } # This will return a 500 in dev/prod.
+    end
+
+    it "informs the user if a timeout occurs" do
+      response = response { raise Timeout::Error, 'execution expired' }
+      PushJob.any_instance.stubs(:push!).returns(response)
+      post '/', spec.to_json
+      last_response.status.should == 504
     end
   end
 
