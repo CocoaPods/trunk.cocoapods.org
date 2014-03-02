@@ -155,9 +155,16 @@ token = sessions.create(:email => 'kyle@example.com', :name => 'Kyle Fuller')
 pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 pods.create_from_name('KFData')
 
+# Create a few disputes
+puts "Creating disputes"
+claimer = Pod::TrunkApp::Owner.find_by_email('orta@example.com')
+dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "The Pod ORStackView is mine!")
+dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "Oops, KFData isn't mine.", :settled => true)
+
 # Create session for current user
 email = "#{ENV['USER']}@example.com"
 name = `git config --global user.name`.strip
 token = sessions.create(:email => email, :name => name)
 puts
 puts "[!] You now have a verified session for `#{name} <#{email}>': #{token}"
+
