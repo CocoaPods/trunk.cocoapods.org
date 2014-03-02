@@ -12,7 +12,7 @@
   <dt>Updated At</dt>
   <dd><%= @dispute.updated_at.try(:to_formatted_s, :rfc822) || 'n/a' %><dd>
   <dt>Claimer</dt>
-  <dd><%= @dispute.claimer.name %> <<%= @dispute.claimer.email %>></dd>
+  <dd><%= @dispute.claimer.name %> &lt;<%= @dispute.claimer.email %>&gt;</dd>
   <dt>Settled</dt>
   <dd><form method="POST" action="<%= url("/disputes/#{@dispute.id}") %>"><input type="hidden" name="_method" value="PUT" /><input type="hidden" name="dispute[settled]" value="false" /><input name="dispute[settled]" type="checkbox" <%= 'checked="checked"' if @dispute.settled? %> onchange="this.form.submit()"></form></dd>
 </dl>
