@@ -47,7 +47,7 @@ module Pod
 
       get '/disputes/new' do
         @pods = params[:pods].map { |name| Pod.find(:name => name) }
-        slim :'dispute'
+        slim :'disputes/new'
       end
 
       post '/disputes' do
@@ -57,7 +57,7 @@ module Pod
       end
 
       get '/disputes/thanks' do
-        slim :'dispute_thanks'
+        slim :'disputes/thanks'
       end
 
       private
