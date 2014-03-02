@@ -62,6 +62,11 @@ module Pod
         end
         erb :'disputes/index'
       end
+
+      get '/disputes/:id' do
+        @dispute = Dispute.find(:id => params[:id])
+        erb :'disputes/show'
+      end
     end
   end
 end

@@ -67,8 +67,10 @@ module Pod::TrunkApp
     end
 
     before do
-      Dispute.create(:claimer => @owner, :message => 'unsetled')
-      Dispute.create(:claimer => @owner, :message => 'settled', :settled => true)
+      @disputes = [
+        Dispute.create(:claimer => @owner, :message => 'unsetled'),
+        Dispute.create(:claimer => @owner, :message => 'settled', :settled => true),
+      ]
     end
 
     it "shows a list of all disputes" do
@@ -81,6 +83,11 @@ module Pod::TrunkApp
       get '/disputes?scope=unsettled'
       last_response.status.should == 200
       response_doc.css('table tbody tr').size.should == 1
+    end
+
+    it "shows an overview of a dispute" do
+      get "/disputes/#{@disputes.first.id}"
+      last_response.status.should == 200
     end
   end
 end

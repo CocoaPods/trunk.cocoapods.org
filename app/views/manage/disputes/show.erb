@@ -1,0 +1,23 @@
+<% @title = "Dispute #{@dispute.id}" %>
+
+<div class="page-header">
+  <h1><%= @title %></h1>
+</div>
+
+<dl class="dl-horizontal">
+  <dt>ID</dt>
+  <dd><%= @dispute.id %></dd>
+  <dt>Created At</dt>
+  <dd><%= @dispute.created_at.to_formatted_s(:rfc822) %><dd>
+  <dt>Updated At</dt>
+  <dd><%= @dispute.updated_at.try(:to_formatted_s, :rfc822) || 'n/a' %><dd>
+  <dt>Claimer</dt>
+  <dd><%= @dispute.claimer.name %> <<%= @dispute.claimer.email %>></dd>
+  <dt>Settled</dt>
+  <dd><form method="POST" action="<%= url("/disputes/#{@dispute.id}") %>"><input type="hidden" name="_method" value="PUT" /><input type="hidden" name="dispute[settled]" value="false" /><input name="dispute[settled]" type="checkbox" <%= 'checked="checked"' if @dispute.settled? %> onchange="this.form.submit()"></form></dd>
+</dl>
+
+<hr>
+
+<h3>Message</h3>
+<pre><code><%= @dispute.message %></code></pre>
