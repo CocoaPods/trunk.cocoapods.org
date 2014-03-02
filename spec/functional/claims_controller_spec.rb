@@ -106,7 +106,7 @@ module Pod::TrunkApp
       get '/disputes/new', :claimer_email => 'appie@example.com', :pods => ['AFNetworking']
       last_response.status.should == 200
       container = response_doc.css('article').first
-      container.css('li').first.text.should == 'AFNetworking: jenny@example.com'
+      container.css('li').first.text.should == 'AFNetworking <jenny@example.com>'
       form = container.css('form').first
       form.css('input[name="dispute[claimer_email]"]').first['value'].should == 'appie@example.com'
       form.css('textarea').first.text.should.include 'AFNetworking'
