@@ -1,0 +1,14 @@
+#content-wrapper
+  section.container
+    .row
+      article.col-md-12
+
+        p You have successfully claimed the following #{'pod'.pluralize(params[:successfully_claimed].size)} and are now registered as #{params[:successfully_claimed].size == 1 ? 'its' : 'their'} ‘owner’: #{params[:successfully_claimed].to_sentence}.
+
+        p If you have any co-maintainers, you can now add them as ‘owners’ as well. For information on how to do this see the [TODO] guide.
+
+        p Once we have finished the transition period, you will be able to push new versions of #{params[:successfully_claimed].size == 1 ? 'these pods' : 'this pod'} directly from the command-line. For more details see [TODO].
+
+        - unless params[:already_claimed].blank?
+          p The following #{params[:already_claimed].size == 1 ? 'pod has' : 'pods have'} already been claimed: #{params[:already_claimed].to_sentence}. If you disagree with this please <a href="#{url("/disputes/new?#{{ :claimer_email => params[:claimer_email], :pods => params[:already_claimed] }.to_query}")}">file a dispute</a>.
+

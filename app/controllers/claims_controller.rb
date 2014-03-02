@@ -25,15 +25,20 @@ module Pod
         find_pods
         if @owner.valid? && !@pods.empty? && @invalid_pods.empty?
           change_ownership
-          if @already_claimed_pods.empty?
-            redirect to('/thanks')
-          else
-            redirect to("/disputes/new?#{{ 'claimer_email' => @owner.email, 'pods' => @already_claimed_pods }.to_query}")
-          end
+          query = {
+            :claimer_email => @owner.email,
+            :successfully_claimed => @successfully_claimed_pods,
+            :already_claimed => @already_claimed_pods
+          }
+          redirect to("/thanks?#{query.to_query}")
         else
           prepare_errors
           slim :'new'
         end
+      end
+
+      get '/thanks' do
+        slim :'thanks'
       end
 
       get '/disputes/new' do
@@ -79,6 +84,7 @@ module Pod
       end
 
       def change_ownership
+        @successfully_claimed_pods = []
         @already_claimed_pods = []
         DB.test_safe_transaction do
           @owner.save_changes(:raise_on_save_failure => true)
@@ -87,6 +93,7 @@ module Pod
             if pod.owners == [unclaimed_owner]
               @owner.add_pod(pod)
               pod.remove_owner(unclaimed_owner)
+              @successfully_claimed_pods << pod.name
             else
               @already_claimed_pods << pod.name
             end

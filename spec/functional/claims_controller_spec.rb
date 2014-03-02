@@ -3,10 +3,6 @@ require 'nokogiri'
 
 module Pod::TrunkApp
   describe ClaimsController, "when claiming pods" do
-    def response_doc
-      Nokogiri::HTML(last_response.body)
-    end
-
     it "renders a new claim form" do
       get '/new'
       last_response.status.should == 200
@@ -39,7 +35,6 @@ module Pod::TrunkApp
       owner = Owner.find_by_email('appie@example.com')
       owner.name.should == 'Appie Duran'
       @pod.reload.owners.should == [owner]
-      last_response.location.should == 'https://example.org/thanks'
     end
 
     it "finds an existing owner and assigns it to the claimed pods" do
@@ -48,7 +43,6 @@ module Pod::TrunkApp
         post '/', :owner => { :email => 'appie@example.com' }, :pods => ['AFNetworking']
       }.should.not.change { Owner.count }
       @pod.reload.owners.should == [owner]
-      last_response.location.should == 'https://example.org/thanks'
     end
 
     it "finds an existing owner and updates its name if specified" do
@@ -68,7 +62,8 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [owner]
       other_pod.reload.owners.should == [other_owner]
       last_response.status.should == 302
-      last_response.location.should == "https://example.org/disputes/new?#{{ 'claimer_email' => owner.email, 'pods' => ['ObjectiveSugar'] }.to_query}"
+      query = { :claimer_email => owner.email, :successfully_claimed => ['AFNetworking'], :already_claimed => ['ObjectiveSugar'] }
+      last_response.location.should == "https://example.org/thanks?#{query.to_query}"
     end
 
     it "rolls back in case of an error" do
@@ -90,9 +85,25 @@ module Pod::TrunkApp
       errors.last.text.should == 'Unknown Pods EYFNetworking and JAYSONKit.'
     end
 
+    it "shows a thanks page" do
+      get '/thanks', :claimer_email => 'appie@example.com', :successfully_claimed => ['AFNetworking'], :already_claimed => ['JSONKit']
+      last_response.status.should == 200
+      last_response.body.should.include 'AFNetworking'
+      last_response.body.should.include 'JSONKit'
+
+      link = response_doc.css('article p a').first
+      query = { :claimer_email => 'appie@example.com', :pods => ['JSONKit'] }
+      link['href'].should == "https://example.org/disputes/new?#{query.to_query}"
+    end
+  end
+
+  describe ClaimsController, "concerning disputes" do
+    before do
+      @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
+      @pod = @owner.add_pod(:name => 'AFNetworking')
+    end
+
     it "lists already claimed pods" do
-      @pod.remove_owner(Owner.unclaimed)
-      @pod.add_owner(Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny'))
       get '/disputes/new', :claimer_email => 'appie@example.com', :pods => ['AFNetworking']
       last_response.status.should == 200
       container = response_doc.css('article').first
@@ -103,13 +114,12 @@ module Pod::TrunkApp
     end
 
     it "creates a new dispute" do
-      owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       lambda {
-        post '/disputes', :dispute => { :claimer_email => owner.email, :message => 'GIMME!' }
+        post '/disputes', :dispute => { :claimer_email => @owner.email, :message => 'GIMME!' }
       }.should.change { Dispute.count }
       last_response.location.should == 'https://example.org/disputes/thanks'
       dispute = Dispute.last
-      dispute.claimer.should == owner
+      dispute.claimer.should == @owner
       dispute.message.should == 'GIMME!'
     end
   end
