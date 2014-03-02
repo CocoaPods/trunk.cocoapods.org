@@ -3,7 +3,8 @@
     .row
       article.col-md-12
 
-        p The following pods have already been claimed. If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ and ask to be added as an ‘owner’. (See the [TODO] guide to learn how to add ‘owners’.)
+        p The following #{@pods.size == 1 ? 'pod has' : 'pods have'} already been claimed. If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ and ask to be added as an ‘owner’. (See the [TODO] guide to learn how to add ‘owners’.)
+
         p If you belief your Pod has been claimed by someone who has not been maintaining the spec, please file a dispute with the following form. Please include as much details as possible that verifies that your email address belongs to a person that has clearly been maintaining the spec.
 
         ul
@@ -21,7 +22,7 @@
             label.col-sm-3.control-label for="dispute[message]" Message:
             .col-sm-6
                 textarea name="dispute[message]" cols="50" rows="10"
-                  | The following pods have been claimed by others but are in fact mine: #{@pods.map(&:name).to_sentence}. Here is a sumary of how you can verify that I’m the rightful owner:
+                  | The following #{@pods.size == 1 ? 'pod has' : 'pods have'} been claimed by others but #{@pods.size == 1 ? 'is' : 'are'} in fact mine: #{@pods.map(&:name).to_sentence}. Here is a sumary of how you can verify that I’m the rightful owner:
 
           .form-group
             .col-sm-offset-3.col-sm-4
