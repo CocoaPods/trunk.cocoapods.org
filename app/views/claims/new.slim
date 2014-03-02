@@ -1,92 +1,43 @@
-css:
-  #trunk-content {
-    background-color:#d1c4c0;
-    margin-top: -260px;
-    margin-bottom: 64px;
-    color:white;
-    padding:32px;
-  }
-
-  @media (max-width:768px){
-    #trunk-content {
-        margin-top: -240px;
-    }
-  }
-  
-  #trunk-content h1 {
-    font-weight:normal;
-  }
-  
-  label {
-    text-transform:uppercase;
-  }
-  
-  .tt-dropdown-menu {
-    background-color:white;
-        color:black;
-  }
-  
-  .tt-suggestion p {
-    margin: 12px;
-  }
-  
-  #selected-pods input {
-    width:100%;
-    
-  }
-  span.twitter-typeahead {
-    width:100%;
-  }
-  
 script src="http://guides.cocoapods.org/javascripts/application.js"  
 script src="/claims/javascript/typeahead.bundle.min.js"
 
-.headline
-  section.container
-    .row
-      header.col-md-12.headline.index
-      
-#content-wrapper
-  section.container
-    .row
-      article#trunk-content.col-md-12
-      
-        h1 Claim your Pod
-      
-        p Over the next several days, we are allowing you to claim all the pods you have already published to be registered as being ‘owned’ by you. During this period you can not yet push new versions of your pods, because we will need time to allow for dealing with claim disputes. 
-        p The exact number of transition days depends completely on the number of disputes.
 
-        - unless @errors.blank?
-          .errors
-            ul
-              - for message in @errors
-                li = message
+h1 Claim your Pod
 
-        form.form-horizontal role="form" action="/claims" method="POST"
-          .form-group
-            label.col-sm-3.control-label for="name" Owner name:
-            .col-sm-6
-              input.form-control.col-md-4 id="name" type="textfield" name="owner[name]" value="#{@owner.name}" autofocus="autofocus" require="required"
+p Over the next several days, we are allowing you to claim all the pods you have already published to be registered as being ‘owned’ by you. During this period you can not yet push new versions of your pods, because we will need time to allow for dealing with claim disputes. 
+p The exact number of transition days depends completely on the number of disputes.
 
-          .form-group
-            label.col-sm-3.control-label for="email" Owner Email:
-            .col-sm-6
-              input.form-control id="email" type="email" name="owner[email]" value="#{@owner.email}" require="required" placeholder=""
+- unless @errors.blank?
+  .errors
+    ul
+      - for message in @errors
+        li = message
 
-          .form-group
-            label.col-sm-3.control-label for="pod" Claim Pod:
-            .col-sm-6
-              input.form-control.col-md-4 id="pod" type="textfield" name="pods[]" require="required"
+form.form-horizontal role="form" action="/claims" method="POST"
+  .form-group
+    label.col-sm-3.control-label for="name" Owner name:
+    .col-sm-6
+      input.form-control.col-md-4 id="name" type="textfield" name="owner[name]" value="#{@owner.name}" autofocus="autofocus" require="required"
 
-          .form-group#selected-pods
-            .col-sm-3
-            .col-sm-6
-              - for pod in @pods
-                input.col-md-4 type="text" readonly="readonly" name="pods[]" value="#{pod.name}"
+  .form-group
+    label.col-sm-3.control-label for="email" Owner Email:
+    .col-sm-6
+      input.form-control id="email" type="email" name="owner[email]" value="#{@owner.email}" require="required" placeholder=""
 
-          .form-group
-            .col-sm-offset-3.col-sm-4
-              input.btn.btn-default type="submit" name="button" id="button" value="SEND"
+  .form-group
+    label.col-sm-3.control-label for="pod" Claim Pod:
+    .col-sm-6
+      input.form-control.col-md-4 id="pod" type="textfield" name="pods[]" require="required"
+
+  .form-group#selected-pods
+    .col-sm-3
+    .col-sm-6
+      - for pod in @pods
+        input.col-md-4 type="text" readonly="readonly" name="pods[]" value="#{pod.name}"
+
+  .form-group
+    .col-sm-offset-3.col-sm-4
+      input.btn.btn-default type="submit" name="button" id="button" value="SEND"
 
 
 javascript:

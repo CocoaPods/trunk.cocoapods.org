@@ -11,6 +11,7 @@ html
   head
     title = "CocoaPods"
     link rel="stylesheet" media="screen, projection" type="text/css" href="http://guides.cocoapods.org/stylesheets/app.css"
+    link rel="stylesheet" media="screen, projection" type="text/css" href="/claims/claims.css"
     
     == shared_partial "favicons", "header_meta"
 
@@ -18,7 +19,18 @@ html
   body
     == shared_partial "header"
 
-    == yield
+    .headline
+      section.container
+        .row
+          header.col-md-12.headline.index
+      
+    #content-wrapper
+      section.container
+        .row
+          article#trunk-content.col-md-12
+
+
+            == yield
 
     == shared_partial "footer"
     

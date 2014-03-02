@@ -1,0 +1,47 @@
+#trunk-content {
+  background-color:#d1c4c0;
+  margin-top: -260px;
+  margin-bottom: 64px;
+  color:white;
+  padding:32px;
+}
+
+@media (max-width:768px){
+  #trunk-content {
+      margin-top: -240px;
+  }
+}
+
+#trunk-content {
+  h1 {
+    font-weight:normal;
+  }
+
+  label {
+    text-transform:uppercase;
+  }
+
+  .tt-dropdown-menu {
+    background-color:white;
+    color:black;
+  }
+
+  .tt-cursor {
+    background-color:#f5f5f5;
+  }
+
+  .tt-suggestion p {
+    margin: 12px;
+  }
+
+  #selected-pods input {
+    width:100%;
+  }  
+  
+  .form-horizontal .control-label {
+    padding-top:0;
+  }
+}
+span.twitter-typeahead {
+  width:100%;
+}

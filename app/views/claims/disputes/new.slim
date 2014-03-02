@@ -1,30 +1,71 @@
-#content-wrapper
-  section.container
-    .row
-      article.col-md-12
+css:
+  input.email {
+    color:grey;
+    padding: 0 12px;
+  }
+  
+  #content-wrapper .pods {
+    margin:0;
+    padding:0;
+  }
+  
+  #content-wrapper .pods li {
+    margin:0;
+    padding-top:4px;
+    padding-bottom:4px;
+    list-style: none;
+    background-color:white;
+    color:black;
+    padding-left:2px;
+    margin-top:2px;
+  }
+  
+  #content-wrapper ul.pods li span.name {
+    margin:8px;
+  }
+  
+  .pods li span.email {
+    padding:4px;
+    color:grey;
+  }
+  
+  textarea {
+    padding:8px;
+    width:100%;
+  }
+  
 
-        p The following #{@pods.size == 1 ? 'pod has' : 'pods have'} already been claimed. If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ and ask to be added as an ‘owner’. (See the [TODO] guide to learn how to add ‘owners’.)
+h1 The following #{@pods.size == 1 ? 'pod has' : 'pods have'} already been claimed. 
 
-        p If you belief your Pod has been claimed by someone who has not been maintaining the spec, please file a dispute with the following form. Please include as much details as possible that verifies that your email address belongs to a person that has clearly been maintaining the spec.
+p If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ and ask to be added as an ‘owner’. (See the [TODO] guide to learn how to add ‘owners’.)
 
-        ul
-          - for pod in @pods
-            <li>#{pod.name}: #{pod.owners.map(&:email).to_sentence}</li>
+p If you belief your Pod has been claimed by someone who has not been maintaining the spec, please file a dispute with the following form. Please include as much details as possible that verifies that your email address belongs to a person that has clearly been maintaining the spec.
 
-        form.form-horizontal role="form" action="/claims/disputes" method="POST"
 
-          .form-group
-            label.col-sm-3.control-label for="dispute[claimer_email]" Disputer:
-            .col-sm-6
-              input type="textfield" name="dispute[claimer_email]" readonly="readonly" value="#{params[:claimer_email]}"
+form.form-horizontal role="form" action="/claims/disputes" method="POST"
 
-          .form-group
-            label.col-sm-3.control-label for="dispute[message]" Message:
-            .col-sm-6
-                textarea name="dispute[message]" cols="50" rows="10"
-                  | The following #{@pods.size == 1 ? 'pod has' : 'pods have'} been claimed by others but #{@pods.size == 1 ? 'is' : 'are'} in fact mine: #{@pods.map(&:name).to_sentence}. Here is a sumary of how you can verify that I’m the rightful owner:
+  .form-group
+    label.col-sm-3.control-label for="dispute[claimer_email]" Disputer:
+    .col-sm-6
+      input.email type="textfield" name="dispute[claimer_email]" readonly="readonly" value="#{params[:claimer_email]}" 
 
-          .form-group
-            .col-sm-offset-3.col-sm-4
-              input.btn.btn-default type="submit" value="SEND"
+  .form-group
+    label.col-sm-3.control-label for="dispute[message]" Message:
+    .col-sm-9
+        textarea name="dispute[message]" rows="10"
+          | The following #{@pods.size == 1 ? 'pod has' : 'pods have'} been claimed by others but #{@pods.size == 1 ? 'is' : 'are'} in fact mine: #{@pods.map(&:name).to_sentence}.
+         
+            Here is a summary of how you can verify that I’m the rightful owner:
+  
+  .form-group
+    label.col-sm-3.control-label for="" Pods:
+    .col-sm-9
+      ul.pods
+        - for pod in @pods
+          <li class="pod"><span class="name">#{pod.name}</span><span class="email">&lt;#{pod.owners.map(&:email).to_sentence}&gt;</span></li>
+  
+  
+  .form-group
+    .col-sm-offset-3.col-sm-4
+      input.btn.btn-default type="submit" value="SEND"
 

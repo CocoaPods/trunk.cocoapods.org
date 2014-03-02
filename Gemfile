@@ -15,6 +15,7 @@ gem 'sequel'
 gem 'sinatra'
 gem 'sinatra-twitter-bootstrap'
 gem 'slim', '< 2.0'
+gem 'sass'
 
 group :development, :production do
   gem 'foreman'

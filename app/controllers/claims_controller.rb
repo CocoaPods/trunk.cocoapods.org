@@ -63,6 +63,12 @@ module Pod
         slim :'disputes/thanks'
       end
 
+      # --- Assets ------------------------------------------------------------------------------
+
+      get '/claims.css' do
+        scss :claims, :style => :expanded
+      end
+
       private
 
       def find_owner
