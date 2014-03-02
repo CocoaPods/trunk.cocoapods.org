@@ -1,0 +1,29 @@
+#content-wrapper
+  section.container
+    .row
+      article.col-md-12
+
+        p The following pods have already been claimed. If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ and ask to be added as an ‘owner’. (See the [TODO] guide to learn how to add ‘owners’.)
+        p If you belief your Pod has been claimed by someone who has not been maintaining the spec, please file a dispute with the following form. Please include as much details as possible that verifies that your email address belongs to a person that has clearly been maintaining the spec.
+
+        ul
+          - for pod in @pods
+            <li>#{pod.name}: #{pod.owners.map(&:email).to_sentence}</li>
+
+        form.form-horizontal role="form" action="/claims/dispute" method="POST"
+
+          .form-group
+            label.col-sm-3.control-label for="dispute[claimer_email]" Disputer:
+            .col-sm-6
+              input type="textfield" name="dispute[claimer_email]" readonly="readonly" value="#{params[:claimer_email]}"
+
+          .form-group
+            label.col-sm-3.control-label for="dispute[message]" Message:
+            .col-sm-6
+                textarea name="dispute[message]" cols="50" rows="10"
+                  | The following pods have been claimed by others but are in fact mine: #{@pods.map(&:name).to_sentence}. Here is a sumary of how you can verify that I’m the rightful owner:
+
+          .form-group
+            .col-sm-offset-3.col-sm-4
+              input.btn.btn-default type="submit" value="SEND"
+

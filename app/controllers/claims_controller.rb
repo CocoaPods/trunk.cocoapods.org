@@ -27,12 +27,17 @@ module Pod
           if @already_claimed_pods.empty?
             redirect to('/thanks')
           else
-            redirect to("/dispute?#{{ 'owner[email]' => @owner.email, 'pods' => @already_claimed_pods }.to_query}")
+            redirect to("/dispute/new?#{{ 'claimer_email' => @owner.email, 'pods' => @already_claimed_pods }.to_query}")
           end
         else
           prepare_errors
           slim :'new'
         end
+      end
+
+      get '/dispute/new' do
+        @pods = params[:pods].map { |name| Pod.find(:name => name) }
+        slim :'dispute'
       end
 
       private
