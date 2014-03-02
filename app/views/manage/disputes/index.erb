@@ -1,0 +1,31 @@
+<% @title = 'Disputes' %>
+
+<h2>Disputes</h2>
+
+<ul class="nav nav-tabs">
+  <% ['unsettled', 'all'].each do |scope| %>
+    <li<%= ' class="active"' if params[:scope] == scope %>>
+      <a href="<%= url("/disputes?scope=#{scope}") %>"><%= scope.capitalize %></a>
+    </li>
+  <% end %>
+</ul>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Claimer</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @disputes.each do |dispute| %>
+      <tr>
+        <% [dispute.id, dispute.claimer.email, dispute.created_at.to_formatted_s(:rfc822)].each do |value| %>
+          <td><a href="<%= url("/disputes/#{dispute.id}") %>"><%= value %></a></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

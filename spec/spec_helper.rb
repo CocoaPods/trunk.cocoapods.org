@@ -59,6 +59,8 @@ module Bacon
   extend BacktraceFilter
 end
 
+require 'nokogiri'
+
 class Bacon::Context
   def test_controller!(app)
     extend Rack::Test::Methods

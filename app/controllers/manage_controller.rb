@@ -53,6 +53,15 @@ module Pod
         @log_messages = messages.order(Sequel.desc(:id))
         erb :'log_messages/index'
       end
+
+      get '/disputes' do
+        if params[:scope] == 'unsettled'
+          @disputes = Dispute.where(:settled => false).order(Sequel.asc(:id))
+        else
+          @disputes = Dispute.order(Sequel.desc(:id))
+        end
+        erb :'disputes/index'
+      end
     end
   end
 end

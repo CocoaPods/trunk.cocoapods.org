@@ -2,23 +2,8 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
   describe ManageController do
-    before do
-      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
-      @pod = Pod.create(:name => 'AFNetworking')
-      @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
-      @commit = @version.add_commit(
-        :committer => @owner,
-        :sha => '3ca23060197547eef92983f15590b5a87270615f',
-        :specification_data => 'DATA'
-      )
-      @messages = [
-        @version.add_log_message(:reference => 'ref1', :level => :info,  :message => 'log message 1'),
-        @version.add_log_message(:reference => 'ref2', :level => :error, :message => 'log message 2'),
-      ]
-    end
-
     it "disallows access without authentication" do
-      get '/jobs'
+      get '/'
       last_response.status.should == 401
     end
 
@@ -29,6 +14,15 @@ module Pod::TrunkApp
 
     before do
       authorize 'admin', 'secret'
+
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
+      @pod = Pod.create(:name => 'AFNetworking')
+      @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+      @commit = @version.add_commit(
+        :committer => @owner,
+        :sha => '3ca23060197547eef92983f15590b5a87270615f',
+        :specification_data => 'DATA'
+      )
     end
 
     it "shows a list of commits" do
@@ -48,7 +42,12 @@ module Pod::TrunkApp
       last_response.should.be.ok
       last_response.body.should.include @version.name
     end
-    
+
+    before do
+      @version.add_log_message(:reference => 'ref1', :level => :info,  :message => 'log message 1')
+      @version.add_log_message(:reference => 'ref2', :level => :error, :message => 'log message 2')
+    end
+
     it "shows a list of all messages" do
       get '/log_messages'
       last_response.should.be.ok
@@ -60,13 +59,28 @@ module Pod::TrunkApp
       last_response.should.be.ok
       last_response.body.should.include 'ref1'
       last_response.body.should.not.include 'ref2'
-    end
-    
-    it "shows a list of all filtered messages" do
+
       get '/log_messages?reference=nothere'
       last_response.should.be.ok
       last_response.body.should.not.include 'ref1'
       last_response.body.should.not.include 'ref2'
+    end
+
+    before do
+      Dispute.create(:claimer => @owner, :message => 'unsetled')
+      Dispute.create(:claimer => @owner, :message => 'settled', :settled => true)
+    end
+
+    it "shows a list of all disputes" do
+      get '/disputes'
+      last_response.status.should == 200
+      response_doc.css('table tbody tr').size.should == 2
+    end
+
+    it "shows a list of all unsettled disputes" do
+      get '/disputes?scope=unsettled'
+      last_response.status.should == 200
+      response_doc.css('table tbody tr').size.should == 1
     end
   end
 end
