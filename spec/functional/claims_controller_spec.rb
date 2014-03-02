@@ -122,5 +122,10 @@ module Pod::TrunkApp
       dispute.claimer.should == @owner
       dispute.message.should == 'GIMME!'
     end
+
+    it "shows a thanks page" do
+      get '/disputes/thanks'
+      last_response.status.should == 200
+    end
   end
 end

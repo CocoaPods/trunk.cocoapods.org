@@ -14,6 +14,8 @@ module Pod
         set :views, settings.root + '/app/views/claims'
       end
 
+      # --- Claims --------------------------------------------------------------------------------
+
       get '/new' do
         @owner = Owner.new
         @pods = []
@@ -41,6 +43,8 @@ module Pod
         slim :'thanks'
       end
 
+      # --- Disputes ------------------------------------------------------------------------------
+
       get '/disputes/new' do
         @pods = params[:pods].map { |name| Pod.find(:name => name) }
         slim :'dispute'
@@ -50,6 +54,10 @@ module Pod
         claimer = Owner.find_by_email(params[:dispute][:claimer_email])
         Dispute.create(:claimer => claimer, :message => params[:dispute][:message])
         redirect to('/disputes/thanks')
+      end
+
+      get '/disputes/thanks' do
+        slim :'dispute_thanks'
       end
 
       private

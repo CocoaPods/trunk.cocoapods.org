@@ -10,7 +10,7 @@
           - for pod in @pods
             <li>#{pod.name}: #{pod.owners.map(&:email).to_sentence}</li>
 
-        form.form-horizontal role="form" action="/claims/dispute" method="POST"
+        form.form-horizontal role="form" action="/claims/disputes" method="POST"
 
           .form-group
             label.col-sm-3.control-label for="dispute[claimer_email]" Disputer:
