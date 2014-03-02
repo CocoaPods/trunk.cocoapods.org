@@ -121,6 +121,7 @@ module Pod::TrunkApp
       dispute = Dispute.last
       dispute.claimer.should == @owner
       dispute.message.should == 'GIMME!'
+      dispute.should.not.be.settled
     end
 
     it "shows a thanks page" do
