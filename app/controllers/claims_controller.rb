@@ -3,7 +3,6 @@ require 'app/models/dispute'
 
 require 'active_support/core_ext/object/to_query'
 require 'sinatra/twitter-bootstrap'
-#require 'sinatra/reloader'
 require 'slim'
 
 module Pod
@@ -12,6 +11,10 @@ module Pod
 
       configure do
         set :views, settings.root + '/app/views/claims'
+      end
+
+      configure :development do
+        register Sinatra::Reloader
       end
 
       # --- Claims --------------------------------------------------------------------------------

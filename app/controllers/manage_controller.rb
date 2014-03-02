@@ -19,6 +19,10 @@ module Pod
         set :views, settings.root + '/app/views/manage'
       end
 
+      configure :development do
+        register Sinatra::Reloader
+      end
+
       helpers ManageHelper
 
       register Sinatra::Twitter::Bootstrap::Assets
