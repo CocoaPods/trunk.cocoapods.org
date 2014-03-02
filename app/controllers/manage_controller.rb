@@ -16,6 +16,7 @@ module Pod
       end
 
       configure do
+        enable :method_override # Enable PUT from forms.
         set :views, settings.root + '/app/views/manage'
       end
 
@@ -66,6 +67,12 @@ module Pod
       get '/disputes/:id' do
         @dispute = Dispute.find(:id => params[:id])
         erb :'disputes/show'
+      end
+
+      put '/disputes/:id' do
+        @dispute = Dispute.find(:id => params[:id])
+        @dispute.update(params[:dispute])
+        redirect to("/disputes/#{@dispute.id}")
       end
     end
   end

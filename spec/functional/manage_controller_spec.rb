@@ -89,5 +89,11 @@ module Pod::TrunkApp
       get "/disputes/#{@disputes.first.id}"
       last_response.status.should == 200
     end
+
+    it "updates a dispute" do
+      put "/disputes/#{@disputes.first.id}", :dispute => { :settled => true }
+      last_response.status.should == 302
+      @disputes.first.reload.should.be.settled
+    end
   end
 end
