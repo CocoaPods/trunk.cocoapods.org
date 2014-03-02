@@ -1,4 +1,5 @@
 require 'app/controllers/app_controller'
+require 'app/models/dispute'
 
 require 'active_support/core_ext/object/to_query'
 require 'sinatra/twitter-bootstrap'
@@ -27,7 +28,7 @@ module Pod
           if @already_claimed_pods.empty?
             redirect to('/thanks')
           else
-            redirect to("/dispute/new?#{{ 'claimer_email' => @owner.email, 'pods' => @already_claimed_pods }.to_query}")
+            redirect to("/disputes/new?#{{ 'claimer_email' => @owner.email, 'pods' => @already_claimed_pods }.to_query}")
           end
         else
           prepare_errors
@@ -35,9 +36,15 @@ module Pod
         end
       end
 
-      get '/dispute/new' do
+      get '/disputes/new' do
         @pods = params[:pods].map { |name| Pod.find(:name => name) }
         slim :'dispute'
+      end
+
+      post '/disputes' do
+        claimer = Owner.find_by_email(params[:dispute][:claimer_email])
+        Dispute.create(:claimer => claimer, :message => params[:dispute][:message])
+        redirect to('/disputes/thanks')
       end
 
       private

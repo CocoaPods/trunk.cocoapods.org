@@ -68,7 +68,7 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [owner]
       other_pod.reload.owners.should == [other_owner]
       last_response.status.should == 302
-      last_response.location.should == "https://example.org/dispute/new?#{{ 'claimer_email' => owner.email, 'pods' => ['ObjectiveSugar'] }.to_query}"
+      last_response.location.should == "https://example.org/disputes/new?#{{ 'claimer_email' => owner.email, 'pods' => ['ObjectiveSugar'] }.to_query}"
     end
 
     it "rolls back in case of an error" do
@@ -93,13 +93,24 @@ module Pod::TrunkApp
     it "lists already claimed pods" do
       @pod.remove_owner(Owner.unclaimed)
       @pod.add_owner(Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny'))
-      get '/dispute/new', :claimer_email => 'appie@example.com', :pods => ['AFNetworking']
+      get '/disputes/new', :claimer_email => 'appie@example.com', :pods => ['AFNetworking']
       last_response.status.should == 200
       container = response_doc.css('article').first
       container.css('li').first.text.should == 'AFNetworking: jenny@example.com'
       form = container.css('form').first
       form.css('input[name="dispute[claimer_email]"]').first['value'].should == 'appie@example.com'
       form.css('textarea').first.text.should.include 'AFNetworking'
+    end
+
+    it "creates a new dispute" do
+      owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
+      lambda {
+        post '/disputes', :dispute => { :claimer_email => owner.email, :message => 'GIMME!' }
+      }.should.change { Dispute.count }
+      last_response.location.should == 'https://example.org/disputes/thanks'
+      dispute = Dispute.last
+      dispute.claimer.should == owner
+      dispute.message.should == 'GIMME!'
     end
   end
 end
