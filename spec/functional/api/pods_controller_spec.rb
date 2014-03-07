@@ -87,7 +87,8 @@ module Pod::TrunkApp
 
       last_response.status.should == 422
       json_response.should == {
-        'error' => {
+        'error' => 'The Pod Specification did not pass validation.',
+        'data' => {
           'errors'   => ['Missing required attribute `name`.', 'A version is required.'],
           'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
         }

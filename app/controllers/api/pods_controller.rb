@@ -40,7 +40,7 @@ module Pod
           json_error(400, 'Unable to load a Pod Specification from the provided input.')
         end
         unless specification.valid?
-          json_error(422, specification.validation_errors)
+          error(422, { 'error' => 'The Pod Specification did not pass validation.', 'data' => specification.validation_errors }.to_json)
         end
 
         pod = Pod.find_by_name_and_owner(specification.name, @owner) do
