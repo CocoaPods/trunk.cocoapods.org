@@ -107,11 +107,12 @@ module Pod::TrunkApp
       header 'Content-Type', 'text/plain'
     end
 
-    it "verifies a session" do
+    it "verifies a session and nulls the verification token" do
       session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
       get "/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
+      session.verification_token.should == nil
       json_response.keys.should.not.include 'token'
     end
 

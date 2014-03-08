@@ -23,7 +23,7 @@ module Pod
       # TODO render HTML
       get '/verify/:token', :requires_owner => false do
         if session = Session.with_verification_token(params[:token])
-          session.update(:verified => true)
+          session.verify!
           json_message(200, session)
         else
           json_error(404, 'Session not found.')

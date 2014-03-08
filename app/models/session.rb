@@ -40,6 +40,11 @@ module Pod
         self.valid_until = duration_in_days.days.from_now
       end
 
+      def verify!
+        raise "Unable to verify an already verified token." if verified
+        update(:verified => true, :verification_token => nil)
+      end
+
       def prolong!
         raise 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.now && verified
         update(:valid_for => VALIDITY_LENGTH)

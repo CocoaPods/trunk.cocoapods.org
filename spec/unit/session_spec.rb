@@ -42,13 +42,6 @@ module Pod::TrunkApp
           end
         end
 
-        it "raises if an empty verification_token gets inserted" do
-          should.raise Sequel::NotNullConstraintViolation do
-            @session.verification_token = nil
-            @session.save(:validate => false)
-          end
-        end
-
         it "raises if an empty owner_id gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @session.owner_id = nil
@@ -123,6 +116,13 @@ module Pod::TrunkApp
     it "coerces to JSON" do
       json = JSON.parse(Session.new.to_json)
       json.keys.sort.should == %w(created_at valid_until verified)
+    end
+
+    it "verifies a session" do
+      session = Session.create(:owner => @owner)
+      session.verify!
+      session.reload.verified.should == true
+      session.verification_token.should == nil
     end
 
     it "extends the validity" do
