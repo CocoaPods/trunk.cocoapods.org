@@ -69,7 +69,7 @@ begin
       sh "bundle exec ruby db/seeds.rb"
     end
 
-    desc 'Create all DBs'
+    desc 'Drop, create, migrate, and seed all DBs'
     task :bootstrap do
       Rake::Task['db:drop'].invoke
       Rake::Task['db:create'].invoke
