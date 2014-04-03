@@ -15,8 +15,8 @@
         <td><%= pod.name %></td>
         <td>
           <% pod.owners.each do |owner| %>
-            <input type="hidden" name="pod" value="<%= pod.name %>" />
-            <input type="hidden" name="email" value="<%= owner.email %>" />
+            <input type="hidden" name="pod" value="<%= pod.id %>" />
+            <input type="hidden" name="owner" value="<%= owner.id %>" />
             <input class="btn btn-small" type="submit" value="Remove <%= "#{owner.name} &lt;#{owner.email}&gt;" %>" />
           <% end %>
         </td>
@@ -28,21 +28,20 @@
   $(document).ready(function() {
     $('input[type=submit]').click(function(event) {
       var button     = $(event.currentTarget);
-      var emailInput = button.prev('input[name=email]');
-      var podInput   = emailInput.prev('input[name=pod]');
-      var email      = emailInput.val();
+      var ownerInput = button.prev('input[name=owner]');
+      var podInput   = ownerInput.prev('input[name=pod]');
+      var owner      = ownerInput.val();
       var pod        = podInput.val();
       
       $.post(
         '/manage/owners/delete',
-        {
-          data: ('email=' + email + '&pod=' + pod),
-          success: function(data) {
-            button.replaceWith('Owner with email &lt;' + email + '&gt; removed.');
-            emailInput.remove();
-            podInput.remove();
-          }
-        }
+        { owner: owner, pod: pod },
+        function(owner) {
+          button.replaceWith('Removed ' + owner.name + ' &lt;' + owner.email + '&gt;.');
+          ownerInput.remove();
+          podInput.remove();
+        },
+        'json'
       )
     });
   });

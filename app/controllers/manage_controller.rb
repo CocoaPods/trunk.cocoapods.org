@@ -48,8 +48,12 @@ module Pod
       end
       
       post '/owners/delete' do
-        email = params[:email]
+        owner = Owner.find(:id => params[:owner])
+        pod = Pod.find(:id => params[:pod])
         
+        pod.remove_owner owner
+        
+        body owner.to_json
       end
 
       get '/versions' do
