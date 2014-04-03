@@ -42,6 +42,16 @@ module Pod::TrunkApp
       last_response.should.be.ok
       last_response.body.should.include @version.name
     end
+    
+    it "shows a list of all pods with their owners" do
+      get '/pods'
+      last_response.should.be.ok
+      last_response.body.should.include @pod.name
+      @pod.owners.each do |owner|
+        last_response.body.should.include owner.name
+        last_response.body.should.include owner.email
+      end
+    end
 
     before do
       @version.add_log_message(:reference => 'ref1', :level => :info,  :message => 'log message 1')
