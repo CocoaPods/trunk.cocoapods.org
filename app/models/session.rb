@@ -18,6 +18,8 @@ module Pod
       subset(:valid) { valid_until > Time.now }
       subset(:verified, :verified => true)
 
+      alias_method :verified?, :verified
+
       def after_initialize
         super
         if new?

@@ -104,7 +104,7 @@ module Pod::TrunkApp
     extend SpecHelpers::Authentication
 
     before do
-      header 'Content-Type', 'text/plain'
+      header 'Content-Type', 'application/json'
     end
 
     it 'verifies a session and nulls the verification token' do
@@ -127,10 +127,6 @@ module Pod::TrunkApp
     it 'does not verify an unexisting session' do
       get '/verify/doesnotexist'
       last_response.status.should == 404
-    end
-
-    before do
-      header 'Content-Type', 'text/json'
     end
 
     it 'shows an overview of all active sessions' do

@@ -1,0 +1,44 @@
+ruby:
+  def shared_partial(*sources)
+    sources.inject([]) do |combined, source|
+      combined <<  Slim::Template.new("shared/includes/_#{source}.slim", {}).render()
+    end.join
+  end
+
+
+doctype html
+html
+  head
+    title = "CocoaPods"
+    link rel="stylesheet" media="screen, projection" type="text/css" href="http://guides.cocoapods.org/stylesheets/app.css"
+    link rel="stylesheet" media="screen, projection" type="text/css" href="/claims/claims.css"
+
+    == shared_partial "favicons", "header_meta"
+
+
+  body
+    == shared_partial "header"
+
+    .headline
+      section.container
+        .row
+          header.col-md-12.headline.index
+
+    #content-wrapper
+      section.container
+        .row
+          article#trunk-content.col-md-12
+
+
+            == yield
+
+    == shared_partial "footer"
+
+  javascript:
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-29866548-4', 'cocoapods.org');
+    ga('send', 'pageview');
