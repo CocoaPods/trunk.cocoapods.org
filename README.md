@@ -14,19 +14,11 @@ Available under the MIT license.
 
         $ rake bootstrap
 
-4. Create the PostgreSQL databases for the various environments:
+4. Create and migrate the databases for the various environments:
 
-        $ createdb -h localhost trunk_cocoapods_org_test -E UTF8
-        $ createdb -h localhost trunk_cocoapods_org_development -E UTF8
-        $ createdb -h localhost trunk_cocoapods_org_production -E UTF8
+        $ rake db:bootstrap
 
-5. Migrate the database(s):
-
-        $ rake db:migrate RACK_ENV=test
-        $ rake db:migrate RACK_ENV=development
-        $ rake db:migrate RACK_ENV=production
-
-6. Test whether or not a pod sends correctly
+5. Test whether or not a pod sends correctly
 
         $ ./bin/test-push localhost:4567 spec/fixtures/AFNetworking.podspec
 
