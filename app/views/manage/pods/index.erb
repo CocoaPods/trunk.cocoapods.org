@@ -12,10 +12,38 @@
   <tbody>
     <% @pods.each do |pod| %>
       <tr>
-        <% [pod.name, pod.owners.map { |owner| "#{owner.name} &lt;#{owner.email}&gt;" }.join(', ')].each do |value| %>
-          <td><%= value.nil? && 'n/a' || value %></td>
-        <% end %>
+        <td><%= pod.name %></td>
+        <td>
+          <% pod.owners.each do |owner| %>
+            <input type="hidden" name="pod" value="<%= pod.name %>" />
+            <input type="hidden" name="email" value="<%= owner.email %>" />
+            <input class="btn btn-small" type="submit" value="Remove <%= "#{owner.name} &lt;#{owner.email}&gt;" %>" />
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('input[type=submit]').click(function(event) {
+      var button     = $(event.currentTarget);
+      var emailInput = button.prev('input[name=email]');
+      var podInput   = emailInput.prev('input[name=pod]');
+      var email      = emailInput.val();
+      var pod        = podInput.val();
+      
+      $.post(
+        '/manage/owners/delete',
+        {
+          data: ('email=' + email + '&pod=' + pod),
+          success: function(data) {
+            button.replaceWith('Owner with email &lt;' + email + '&gt; removed.');
+            emailInput.remove();
+            podInput.remove();
+          }
+        }
+      )
+    });
+  });
+</script>

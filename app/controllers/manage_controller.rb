@@ -46,6 +46,11 @@ module Pod
         @pods = Pod.order(Sequel.asc(:name))
         erb :'pods/index'
       end
+      
+      post '/owners/delete' do
+        email = params[:email]
+        
+      end
 
       get '/versions' do
         @versions = PodVersion.order(Sequel.desc(:id))
