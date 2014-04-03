@@ -1,0 +1,21 @@
+<% @title = 'Pods' %>
+
+<h2>Pods</h2>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Owners</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @pods.each do |pod| %>
+      <tr>
+        <% [pod.name, pod.owners.map { |owner| "#{owner.name} &lt;#{owner.email}&gt;" }.join(', ')].each do |value| %>
+          <td><%= value.nil? && 'n/a' || value %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

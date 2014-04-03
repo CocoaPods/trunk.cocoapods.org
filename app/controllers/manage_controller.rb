@@ -42,6 +42,11 @@ module Pod
         erb :'commits/show'
       end
 
+      get '/pods' do
+        @pods = Pod.order(Sequel.asc(:name))
+        erb :'pods/index'
+      end
+
       get '/versions' do
         @versions = PodVersion.order(Sequel.desc(:id))
         erb :'pod_versions/index'
