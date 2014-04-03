@@ -67,9 +67,9 @@ module Pod
             # TODO Only get the latest version of a file.
             #
             files.each do |file|
-              # TODO Use existing CP code for this?
+              # TODO Add .podspec example.
               #
-              next unless file =~ /\.podspec.json\z/
+              next unless file =~ /\.podspec(.json)?\z/
 
               # Get the data from the Specs repo.
               #
@@ -80,13 +80,13 @@ module Pod
 
               # Gets the data from data_url.
               #
-              spec_hash = JSON.parse REST.get(data_url).body
+              spec = ::Pod::Specification.from_string(REST.get(data_url).body, file)
 
               # Update the database after extracting the relevant data from the podspec.
               #
-              pod = Pod.find(name: spec_hash['name'])
-
-              send :"handle_#{type}", spec_hash, pod, commit_sha, committer_email if pod
+              pod = Pod.find(name: spec.name)
+              
+              send :"handle_#{type}", spec, pod, commit_sha, committer_email if pod
             end
           end
         end
@@ -97,10 +97,10 @@ module Pod
       # We get the JSON podspec and add a commit to the pod's version (And
       # add a new version if necessary).
       #
-      def handle_modified spec_hash, pod, commit_sha, committer_email
+      def handle_modified spec, pod, commit_sha, committer_email
         committer = pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed
 
-        version_name = spec_hash['version']
+        version_name = spec.version.to_s
 
         # Note: Sadly, we cannot use find_or_create here.
         #
@@ -119,14 +119,14 @@ module Pod
         #
         version.add_commit(
           :sha => commit_sha,
-          :specification_data => JSON.pretty_generate(spec_hash),
+          :specification_data => JSON.pretty_generate(spec.attributes_hash),
           :committer => committer,
         )
       end
 
       # We only check if we have it, and if not, add it.
       #
-      def handle_added spec_hash, pod, commit_sha, committer_email
+      def handle_added spec, pod, commit_sha, committer_email
         # Do we have it?
         #
         if commit = Commit.find(:sha => commit_sha)
@@ -141,7 +141,7 @@ module Pod
           #
           # TODO What if the version does not exist yet? Should we add one?
           #
-          handle_modified spec_hash, pod, commit_sha, committer_email
+          handle_modified spec, pod, commit_sha, committer_email
         end
       end
 
