@@ -27,22 +27,34 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('input[type=submit]').click(function(event) {
-      var button     = $(event.currentTarget);
+      var buttonTarget = event.currentTarget;
+      
+      buttonTarget.timesClicked = buttonTarget.timesClicked || 0;
+      
+      var button     = $(buttonTarget);
       var ownerInput = button.prev('input[name=owner]');
       var podInput   = ownerInput.prev('input[name=pod]');
       var owner      = ownerInput.val();
       var pod        = podInput.val();
       
-      $.post(
-        '/manage/owners/delete',
-        { owner: owner, pod: pod },
-        function(owner) {
-          button.replaceWith('Removed ' + owner.name + ' &lt;' + owner.email + '&gt;.');
-          ownerInput.remove();
-          podInput.remove();
-        },
-        'json'
-      )
+      // They need to be really really really sure ;)
+      //
+      if (buttonTarget.timesClicked == 3) {
+        $.post(
+          '/manage/owners/delete',
+          { owner: owner, pod: pod },
+          function(owner) {
+            button.replaceWith('Removed ' + owner.name + ' &lt;' + owner.email + '&gt;.');
+            ownerInput.remove();
+            podInput.remove();
+          },
+          'json'
+        );
+      } else {
+        button.val('Really ' + button.val() + '?');
+        if (buttonTarget.timesClicked == 0) { button.addClass('btn-warning'); }
+        buttonTarget.timesClicked += 1;
+      }
     });
   });
 </script>
