@@ -26,6 +26,10 @@ group :development do
   gem 'kicker'
   gem 'saga'
   gem 'terminal-table'
+
+  # Only needed for importing existing spec repo data into DB.
+  gem 'rugged'
+
   gem 'sinatra-contrib'
 end
 
