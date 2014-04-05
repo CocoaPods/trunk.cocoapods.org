@@ -114,7 +114,7 @@ module Pod::TrunkApp
       # Did add a new commit.
       #
       commit = pod.versions.last.commits.last
-      commit.committer.should == Owner.unclaimed
+      commit.committer.should == Owner.first(:email => 'test.user@example.com') # Owner.unclaimed
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       commit.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
 
@@ -165,7 +165,7 @@ module Pod::TrunkApp
 
       commit = pod.versions.last.last_published_by
 
-      commit.committer.should == Owner.unclaimed
+      commit.committer.should == Owner.first(:email => 'test.user@example.com') # Owner.unclaimed
     end
 
     it 'creates the add commit if missing and version exists' do
