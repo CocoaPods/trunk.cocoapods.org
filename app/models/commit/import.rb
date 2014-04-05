@@ -16,8 +16,6 @@ module Pod
         # TODO: handle network/request failures
         #
         def self.fetch_spec(commit_sha, file)
-          puts 'AAAAAA!'
-          exit 1
           data = REST.get(DATA_URL_TEMPLATE % [commit_sha, file]).body
           ::Pod::Specification.from_string(data, file)
         end
@@ -26,7 +24,7 @@ module Pod
         #
         # TODO: Only get the latest version of a file.
         #
-        def self.import_commit(commit_sha, committer_email, type, files)
+        def self.import(commit_sha, committer_email, type, files)
           files.each do |file|
             # TODO: Add .podspec example.
             #

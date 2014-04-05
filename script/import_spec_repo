@@ -131,7 +131,7 @@ Dir.chdir(REPO.workdir) do
       next unless [:added, :modified].include?(status)
       p [status, file]
       begin
-        Pod::TrunkApp::Commit::Import.import_commit(sha, email, status, [file])
+        Pod::TrunkApp::Commit::Import.import(sha, email, status, [file])
       rescue Object => e
         puts "ERROR: #{e.message}\n\t#{e.backtrace.join("\n\t")}"
       end
