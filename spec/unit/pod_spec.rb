@@ -49,7 +49,7 @@ module Pod::TrunkApp
       end
 
       it 'does not find an unexisting pod' do
-        Pod.find_by_name_and_owner('CocoaLumberjack', @owner).should.nil?
+        Pod.find_by_name_and_owner('CocoaLumberjack', @owner).should.be.nil
       end
 
       it "returns an existing pod if it's owned by the specified owner" do
@@ -60,7 +60,7 @@ module Pod::TrunkApp
       it "does not return a pod if it's owned by another user" do
         other_owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
         other_owner.add_pod(:name => 'AFNetworking')
-        Pod.find_by_name_and_owner('AFNetworking', @owner).should.nil?
+        Pod.find_by_name_and_owner('AFNetworking', @owner).should.be.nil
       end
 
       it "yields the 'no access allowed' block if it's owned by another user" do
