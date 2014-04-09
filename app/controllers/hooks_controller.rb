@@ -119,7 +119,7 @@ module Pod
         version.add_commit(
           :sha => commit_sha,
           :specification_data => JSON.pretty_generate(spec.attributes_hash),
-          :committer => committer,
+          :committer => committer
         )
       end
 

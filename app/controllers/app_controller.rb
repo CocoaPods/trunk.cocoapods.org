@@ -68,7 +68,7 @@ module Pod
       '/manage'          => ManageController,
       # TODO Temporary routes while we transition to the trunk app.
       '/claims'          => ClaimsController,
-      '/'                => lambda { |_| [303, { 'Location' => '/claims/new' }, ''] },
+      '/'                => lambda { |_| [303, { 'Location' => '/claims/new' }, ''] }
     )
   end
 end

@@ -79,7 +79,7 @@ module Pod::TrunkApp
     before do
       @disputes = [
         Dispute.create(:claimer => @owner, :message => 'unsetled'),
-        Dispute.create(:claimer => @owner, :message => 'settled', :settled => true),
+        Dispute.create(:claimer => @owner, :message => 'settled', :settled => true)
       ]
     end
 

@@ -48,7 +48,7 @@ module Pod::TrunkApp
         'message'   => MESSAGE,
         'branch'    => 'master',
         'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
-        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
+        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' }
       }
     end
 

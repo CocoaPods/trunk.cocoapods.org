@@ -181,7 +181,7 @@ module Pod::TrunkApp
       get '/AFNetworking'
       last_response.body.should == {
         'versions' => [@version.public_attributes],
-        'owners' => [@owner.public_attributes],
+        'owners' => [@owner.public_attributes]
       }.to_json
     end
 
