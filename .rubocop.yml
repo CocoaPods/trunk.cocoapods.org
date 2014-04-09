@@ -26,6 +26,10 @@ AsciiComments:
 IfUnlessModifier:
   Enabled: false
 
+# No enforced convention here.
+SingleLineBlockParams:
+  Enabled: false
+
 # Allow for `should.match /regexp/`.
 AmbiguousRegexpLiteral:
   Exclude:
