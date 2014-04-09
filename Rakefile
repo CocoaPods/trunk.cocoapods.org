@@ -101,7 +101,7 @@ begin
 
   desc 'Use Kicker to automatically run specs'
   task :kick do
-    exec 'kicker -c -rruby -b bacon'
+    exec 'kicker -c -rruby -b "bacon --quiet"'
   end
 
   task :default => :spec
