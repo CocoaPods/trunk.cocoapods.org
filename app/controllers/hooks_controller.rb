@@ -74,7 +74,7 @@ module Pod
               # TODO: Update to the right repo.
               #
               data_url_template = 'https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s'
-              data_url = data_url_template % [commit_sha, file] if commit_sha
+              data_url = format(data_url_template, commit_sha, file) if commit_sha
 
               # Gets the data from data_url.
               #

@@ -32,11 +32,6 @@ Documentation:
 FileName:
   Enabled: false
 
-# Offense count: 2
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-FormatString:
-  Enabled: false
-
 # Offense count: 1
 HandleExceptions:
   Enabled: false
