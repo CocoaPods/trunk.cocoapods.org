@@ -47,5 +47,3 @@ UselessAssignment:
   Enabled: false
 Void:
   Enabled: false
-WordArray:
-  MinSize: 3
