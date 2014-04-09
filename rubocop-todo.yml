@@ -35,8 +35,6 @@ MethodLength:
   Max: 21
 MultilineBlockChain:
   Enabled: false
-PercentLiteralDelimiters:
-  Enabled: false
 PerlBackrefs:
   Enabled: false
 RedundantSelf:
