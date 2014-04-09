@@ -2,10 +2,10 @@ source 'https://rubygems.org'
 ruby '2.0.0'
 
 gem 'activesupport'
-gem 'cocoapods-core', :git => 'git://github.com/CocoaPods/Core.git'
+gem 'cocoapods-core'
 gem 'json', '~> 1.8'
 gem 'mail'
-gem 'nap', '>= 0.6', :git => 'https://github.com/alloy/nap.git'
+gem 'nap'
 gem 'newrelic_rpm'
 gem 'pg'
 gem 'rack-ssl'
@@ -23,17 +23,17 @@ group :development, :production do
 end
 
 group :development do
-  gem 'kicker', :git => 'https://github.com/alloy/kicker.git', :branch => '3.0.0'
+  gem 'kicker'
   gem 'saga'
   gem 'terminal-table'
-  
   gem 'sinatra-contrib'
+  gem 'rubocop'
 end
 
 group :test do
   gem 'bacon'
   gem 'mocha-on-bacon'
   gem 'nokogiri'
-  gem 'prettybacon', :git => 'https://github.com/irrationalfab/PrettyBacon.git'
+  gem 'prettybacon'
   gem 'rack-test'
 end

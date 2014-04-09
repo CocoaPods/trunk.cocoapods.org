@@ -19,7 +19,7 @@ ENV['GH_TOKEN']    = 'secret'
 ENV['TRUNK_APP_PUSH_ALLOWED']   = 'true'
 ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
-$:.unshift File.expand_path('../../', __FILE__)
+$LOAD_PATH.unshift File.expand_path('../../', __FILE__)
 require 'config/init'
 require 'app/controllers/app_controller'
 
@@ -27,7 +27,7 @@ def DB.test_safe_transaction(&block)
   DB.transaction(:savepoint => true, &block)
 end
 
-$:.unshift(ROOT, 'spec')
+$LOAD_PATH.unshift(ROOT, 'spec')
 Dir.glob(File.join(ROOT, 'spec/spec_helper/**/*.rb')).each do |filename|
   require File.join('spec_helper', File.basename(filename, '.rb'))
 end
@@ -41,8 +41,8 @@ module Bacon
     # Gray-out those backtrace lines that are usually less interesting.
     def handle_summary
       ErrorLog.gsub!(/\t(.+?)\n/) do |line|
-        if $1.start_with?('/')
-          downcased = $1.downcase
+        if Regexp.last_match[1].start_with?('/')
+          downcased = Regexp.last_match[1].downcase
           if downcased.include?('cocoapods') && !downcased.include?('spec/spec_helper')
             line
           else
@@ -66,8 +66,8 @@ class Bacon::Context
     extend Rack::Test::Methods
     extend SpecHelpers::Access
 
-    self.singleton_class.send(:define_method, :app) { app }
-    self.singleton_class.send(:define_method, :response_doc) { Nokogiri::HTML(last_response.body) }
+    singleton_class.send(:define_method, :app) { app }
+    singleton_class.send(:define_method, :response_doc) { Nokogiri::HTML(last_response.body) }
   end
 
   def fixture(filename)
@@ -133,7 +133,9 @@ module Net
     def start
       self.class.last_started_request = self
       response = Net::HTTPOK.new('1.1', '200', 'OK')
-      def response.body; 'OK'; end
+      def response.body
+        'OK'
+      end
       response
     end
 

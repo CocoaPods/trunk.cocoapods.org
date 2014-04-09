@@ -1,7 +1,7 @@
 # -- General ------------------------------------------------------------------
 
 ROOT = File.expand_path('../../', __FILE__)
-$:.unshift File.join(ROOT, 'lib')
+$LOAD_PATH.unshift File.join(ROOT, 'lib')
 
 ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
@@ -15,15 +15,15 @@ I18n.enforce_available_locales = false
 require 'active_support/core_ext/numeric/time'
 require 'active_support/core_ext/date/calculations'
 
-# Explicitely load the C-ext version.
+# Explicitly load the C-ext version.
 require 'json/ext'
 
 if !defined?(IRB) && ENV['RACK_ENV'] == 'production'
   require 'newrelic_rpm'
 end
 
-#require 'new_relic/rack/developer_mode'
-#use NewRelic::Rack::DeveloperMode
+# require 'new_relic/rack/developer_mode'
+# use NewRelic::Rack::DeveloperMode
 
 # -- Logging ------------------------------------------------------------------
 
@@ -49,16 +49,16 @@ require 'sequel'
 require 'pg'
 
 db_loggers = []
-db_loggers << TRUNK_APP_LOGGER # TODO For now also enable DB logger in production. unless ENV['RACK_ENV'] == 'production'
+db_loggers << TRUNK_APP_LOGGER # TODO: For now also enable DB logger in production. unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 Sequel.extension :core_extensions, :migration
 
 class << DB
-  # Savepoint is needed in testing, because tests already run in a transaction,
-  # which means the transaction would be re-used and we can't test whether or
-  # the transaction has been rolled back.
+  # Save point is needed in testing, because tests already run in a
+  # transaction, which means the transaction would be re-used and we can't test
+  # whether or the transaction has been rolled back.
   #
-  # This is overriden in tests to do add a savepoint.
+  # This is overridden in tests to do add a save point.
   alias_method :test_safe_transaction, :transaction
 end
 
@@ -69,15 +69,15 @@ require 'mail'
 Mail.defaults do
   case ENV['RACK_ENV']
   when 'production'
-    delivery_method :smtp, {
-      :address => 'smtp.sendgrid.net',
-      :port => '587',
-      :domain => 'heroku.com',
-      :user_name => ENV['SENDGRID_USERNAME'],
-      :password => ENV['SENDGRID_PASSWORD'],
-      :authentication => :plain,
-      :enable_starttls_auto => true
-    }
+    delivery_method :smtp,
+                    :address => 'smtp.sendgrid.net',
+                    :port => '587',
+                    :domain => 'heroku.com',
+                    :user_name => ENV['SENDGRID_USERNAME'],
+                    :password => ENV['SENDGRID_PASSWORD'],
+                    :authentication => :plain,
+                    :enable_starttls_auto => true
+
   else
     delivery_method :test
   end

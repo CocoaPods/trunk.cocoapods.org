@@ -5,18 +5,16 @@ require 'app/models/pod'
 require 'app/models/session'
 require 'app/models/specification_wrapper'
 
-# TODO
-# Add logging to all steps and include as its LogMessage#reference:
+# TODO: Add logging to all steps and include as its LogMessage#reference:
 #
 #     "GitHub hook with temporary ID: #{object_id}"
 #
 module Pod
   module TrunkApp
     class HooksController < AppController
-
       # --- Post Receive Hook ---------------------------------------------------------------------
 
-      # TODO Package most of this action's content neatly into
+      # TODO: Package most of this action's content neatly into
       # a class specific to loading podspec data.
       #
       post "/github-post-receive/#{ENV['HOOK_PATH']}" do
@@ -64,19 +62,19 @@ module Pod
 
             # For each changed file, get its data (if it's a podspec).
             #
-            # TODO Only get the latest version of a file.
+            # TODO: Only get the latest version of a file.
             #
             files.each do |file|
-              # TODO Add .podspec example.
+              # TODO: Add .podspec example.
               #
               next unless file =~ /\.podspec(.json)?\z/
 
               # Get the data from the Specs repo.
               #
-              # TODO Update to the right repo.
+              # TODO: Update to the right repo.
               #
-              data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s"
-              data_url = data_url_template % [commit_sha, file] if commit_sha
+              data_url_template = 'https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s'
+              data_url = format(data_url_template, commit_sha, file) if commit_sha
 
               # Gets the data from data_url.
               #
@@ -84,8 +82,8 @@ module Pod
 
               # Update the database after extracting the relevant data from the podspec.
               #
-              pod = Pod.find(name: spec.name)
-              
+              pod = Pod.find(:name => spec.name)
+
               send :"handle_#{type}", spec, pod, commit_sha, committer_email if pod
             end
           end
@@ -97,7 +95,7 @@ module Pod
       # We get the JSON podspec and add a commit to the pod's version (And
       # add a new version if necessary).
       #
-      def handle_modified spec, pod, commit_sha, committer_email
+      def handle_modified(spec, pod, commit_sha, committer_email)
         committer = pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed
 
         version_name = spec.version.to_s
@@ -120,31 +118,30 @@ module Pod
         version.add_commit(
           :sha => commit_sha,
           :specification_data => JSON.pretty_generate(spec.attributes_hash),
-          :committer => committer,
+          :committer => committer
         )
       end
 
       # We only check if we have it, and if not, add it.
       #
-      def handle_added spec, pod, commit_sha, committer_email
+      def handle_added(spec, pod, commit_sha, committer_email)
         # Do we have it?
         #
         if commit = Commit.find(:sha => commit_sha)
           # Is it related to the pod?
           #
           unless commit.pod_version.pod == pod
-            # TODO It's not. Log as error?
+            # TODO: It's not. Log as error?
             #
           end
         else
           # No? We should create it and connect it to the pod.
           #
-          # TODO What if the version does not exist yet? Should we add one?
+          # TODO: What if the version does not exist yet? Should we add one?
           #
           handle_modified spec, pod, commit_sha, committer_email
         end
       end
-
     end
   end
 end

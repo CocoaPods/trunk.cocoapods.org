@@ -39,7 +39,7 @@ module Pod
       end
 
       def data_url
-        DATA_URL % [commit_sha, destination_path] if commit_sha
+        format(DATA_URL, commit_sha, destination_path) if commit_sha
       end
 
       def resource_path

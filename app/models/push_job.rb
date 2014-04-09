@@ -18,7 +18,7 @@ module Pod
       end
 
       def push!
-        log(:info, "initiated", committer, specification_data)
+        log(:info, 'initiated', committer, specification_data)
 
         response, duration = measure_duration do
           self.class.github.create_new_commit(pod_version.destination_path,
@@ -56,7 +56,7 @@ module Pod
           :data => data
         )
       end
-      
+
       def measure_duration
         start_time = Time.now
         result = yield
@@ -69,4 +69,3 @@ module Pod
     end
   end
 end
-

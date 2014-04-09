@@ -6,7 +6,6 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class PodsController < APIController
-
       get '/:name', :requires_owner => false do
         if pod = Pod.find(:name => params[:name])
           versions = pod.versions.select(&:published?)
@@ -70,7 +69,7 @@ module Pod
           # some patience in case we still update the PodVersion with a new Commit from the GitHub
           # post-commit hook.
           #
-          # TODO Ask GitHub if they have some form of transaction system in place that rolls back a
+          # TODO: Ask GitHub if they have some form of transaction system in place that rolls back a
           # commit in case an error occurs during response rendering.
           json_error(500, "An error occurred on GitHub’s side. Please check GitHub’s status at " \
                           "https://status.github.com and try again later in case the pod is " \
@@ -101,7 +100,6 @@ module Pod
         pod.add_owner(other_owner)
         json_message(200, pod.owners.map(&:public_attributes))
       end
-
     end
   end
 end

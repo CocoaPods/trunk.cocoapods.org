@@ -46,13 +46,13 @@ module Pod
         @pods = Pod.order(Sequel.asc(:name))
         erb :'pods/index'
       end
-      
+
       post '/owners/delete' do
         owner = Owner.find(:id => params[:owner])
         pod = Pod.find(:id => params[:pod])
-        
+
         pod.remove_owner owner
-        
+
         body owner.to_json
       end
 
@@ -60,7 +60,7 @@ module Pod
         @versions = PodVersion.order(Sequel.desc(:id))
         erb :'pod_versions/index'
       end
-      
+
       get '/log_messages' do
         reference_filter = params[:reference]
         messages = LogMessage

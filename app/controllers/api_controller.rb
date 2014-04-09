@@ -6,7 +6,6 @@ require 'newrelic_rpm'
 module Pod
   module TrunkApp
     class APIController < AppController
-
       private
 
       # --- Request / Response --------------------------------------------------------------------
@@ -56,7 +55,7 @@ module Pod
       end
 
       def throw_internal_server_error!
-        # TODO Update with our status page address.
+        # TODO: Update with our status page address.
         json_error(500, "An internal server error occurred. Please check for any known status " \
                         "issues at https://twitter.com/CocoaPods and try again later.")
       end
@@ -90,7 +89,7 @@ module Pod
         # Override all the route methods to ensure an ACL rule is specified.
         #
         [:get, :post, :put, :patch, :delete].each do |verb|
-          class_eval <<-EOS, __FILE__, __LINE__+1
+          class_eval <<-EOS, __FILE__, __LINE__ + 1
             def #{verb}(route, options, &block)
               unless options.has_key?(:requires_owner)
                 raise "Must specify a ACL rule for #{name} #{verb.to_s.upcase} \#{route}"
@@ -132,7 +131,6 @@ module Pod
           token
         end
       end
-
     end
   end
 end

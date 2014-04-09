@@ -1,4 +1,4 @@
-$:.unshift(File.expand_path('../../', __FILE__))
+$LOAD_PATH.unshift(File.expand_path('../../', __FILE__))
 
 ENV['TRUNK_APP_PUSH_ALLOWED'] = 'true'
 ENV['RACK_ENV'] ||= 'development'
@@ -35,7 +35,6 @@ end
 
 module Pod
   module TrunkApp
-
     class SeedAPI
       include Rack::Test::Methods
 
@@ -58,9 +57,10 @@ module Pod
     end
 
     class SeedAPI
-
       class Sessions < SeedAPI
-        def app; SessionsController; end
+        def app
+          SessionsController
+        end
 
         def create(params)
           puts "Signing in as: #{params[:name]} <#{params[:email]}>"
@@ -76,7 +76,9 @@ module Pod
       end
 
       class Pods < SeedAPI
-        def app; PodsController; end
+        def app
+          PodsController
+        end
 
         def initialize(token)
           header 'Authorization', "Token #{token}"
@@ -108,7 +110,7 @@ module Pod
             commit_sha = `git log -n 1 --pretty="%H" -- '#{spec.defined_in_file.basename}'`.strip
           end
           if commit_sha.blank?
-            raise "Unable to determine commit sha!"
+            raise 'Unable to determine commit sha!'
           end
           # Every 4th push fails
           if @push_count && (@push_count % 4) == 3
@@ -121,7 +123,6 @@ module Pod
           @push_count += 1 if @push_count
         end
       end
-
     end
   end
 end
@@ -156,9 +157,9 @@ pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 pods.create_from_name('KFData')
 
 # Create a few disputes
-puts "Creating disputes"
+puts 'Creating disputes'
 claimer = Pod::TrunkApp::Owner.find_by_email('orta@example.com')
-dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "The Pod ORStackView is mine!")
+dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => 'The Pod ORStackView is mine!')
 dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "Oops, KFData isn't mine.", :settled => true)
 
 # Create session for current user
@@ -167,4 +168,3 @@ name = `git config --global user.name`.strip
 token = sessions.create(:email => email, :name => name)
 puts
 puts "[!] You now have a verified session for `#{name} <#{email}>': #{token}"
-

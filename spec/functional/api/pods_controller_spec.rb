@@ -33,7 +33,7 @@ module SpecHelpers::PodsController
 end
 
 module Pod::TrunkApp
-  describe PodsController, "when POSTing pod versions with an authenticated owner" do
+  describe PodsController, 'when POSTing pod versions with an authenticated owner' do
     extend SpecHelpers::PodsController
 
     before do
@@ -43,19 +43,19 @@ module Pod::TrunkApp
       sign_in!
     end
 
-    it "only accepts JSON" do
+    it 'only accepts JSON' do
       header 'Content-Type', 'text/yaml'
-      post '/', {}, { 'HTTPS' => 'on' }
+      post '/', {},  'HTTPS' => 'on'
       last_response.status.should == 415
     end
 
-    it "does not accept a push unless explicitely enabled" do
+    it 'does not accept a push unless explicitely enabled' do
       begin
         [nil, '', 'false'].each do |value|
           ENV['TRUNK_APP_PUSH_ALLOWED'] = value
-          lambda {
+          lambda do
             post '/', spec.to_json
-          }.should.not.change { Pod.count + PodVersion.count }
+          end.should.not.change { Pod.count + PodVersion.count }
           last_response.status.should == 503
           json_response['error'].should == 'Push access is currently disabled.'
         end
@@ -64,26 +64,26 @@ module Pod::TrunkApp
       end
     end
 
-    it "fails with data other than serialized spec data" do
-      lambda {
+    it 'fails with data other than serialized spec data' do
+      lambda do
         post '/', ''
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 400
 
-      lambda {
+      lambda do
         post '/', '{"something":"else"}'
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 422
     end
 
-    it "fails with a spec that does not pass a quick lint" do
+    it 'fails with a spec that does not pass a quick lint' do
       spec.name = nil
       spec.version = nil
       spec.license = nil
 
-      lambda {
+      lambda do
         post '/', spec.to_json
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
 
       last_response.status.should == 422
       json_response.should == {
@@ -99,47 +99,47 @@ module Pod::TrunkApp
       @owner.add_pod(:name => spec.name)
             .add_version(:name => spec.version.to_s)
             .add_commit(valid_commit_attrs)
-      lambda {
+      lambda do
         post '/', spec.to_json
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 409
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
-    it "creates new pod and version records, then redirects" do
-      lambda {
-        lambda {
+    it 'creates new pod and version records, then redirects' do
+      lambda do
+        lambda do
           post '/', spec.to_json
-        }.should.change { Pod.count }
-      }.should.change { PodVersion.count }
+        end.should.change { Pod.count }
+      end.should.change { PodVersion.count }
       last_response.status.should == 302
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
-    it "creates a commit once a push succeeds" do
-      lambda {
+    it 'creates a commit once a push succeeds' do
+      lambda do
         post '/', spec.to_json
-      }.should.change { Commit.count }
+      end.should.change { Commit.count }
       commit = Commit.first
       commit.committer.should == @owner
       commit.specification_data.should == JSON.pretty_generate(spec)
     end
-    
-    it "does not create a commit if a push fails" do
+
+    it 'does not create a commit if a push fails' do
       PushJob.any_instance.stubs(:push!).returns(response(500))
-      lambda {
+      lambda do
         post '/', spec.to_json
-      }.should.not.change { Commit.count }
+      end.should.not.change { Commit.count }
       last_response.status.should == 500
     end
 
-    it "informs the user if an exception occurs" do
+    it 'informs the user if an exception occurs' do
       PushJob.any_instance.stubs(:push!).raises('Oh noes!')
       should.raise { post '/', spec.to_json } # This will return a 500 in dev/prod.
     end
 
-    it "informs the user if a timeout occurs" do
+    it 'informs the user if a timeout occurs' do
       response = response { raise Timeout::Error, 'execution expired' }
       PushJob.any_instance.stubs(:push!).returns(response)
       post '/', spec.to_json
@@ -147,7 +147,7 @@ module Pod::TrunkApp
     end
   end
 
-  describe PodsController, "with an unauthenticated consumer" do
+  describe PodsController, 'with an unauthenticated consumer' do
     extend SpecHelpers::PodsController
 
     should_require_login.post('/') { spec.to_json }
@@ -167,13 +167,13 @@ module Pod::TrunkApp
       last_response.status.should == 404
     end
 
-    it "considers a pod non-existant if no version is published yet" do
+    it 'considers a pod non-existant if no version is published yet' do
       get '/AFNetworking'
       last_response.status.should == 404
       last_response.body.should == { 'error' => 'No pod found with the specified name.' }.to_json
     end
 
-    it "returns an overview of a pod including only the published versions" do
+    it 'returns an overview of a pod including only the published versions' do
       create_session_with_owner
       @pod.add_owner(@owner)
       @pod.add_version(:name => '0.2.1')
@@ -181,7 +181,7 @@ module Pod::TrunkApp
       get '/AFNetworking'
       last_response.body.should == {
         'versions' => [@version.public_attributes],
-        'owners' => [@owner.public_attributes],
+        'owners' => [@owner.public_attributes]
       }.to_json
     end
 
@@ -191,7 +191,7 @@ module Pod::TrunkApp
       last_response.body.should == { 'error' => 'No pod found with the specified version.' }.to_json
     end
 
-    it "returns an overview of a published pod version" do
+    it 'returns an overview of a published pod version' do
       @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @version.add_commit(valid_commit_attrs)
       get '/AFNetworking/versions/1.2.0'
@@ -203,7 +203,7 @@ module Pod::TrunkApp
     end
   end
 
-  describe PodsController, "concerning authorization" do
+  describe PodsController, 'concerning authorization' do
     extend SpecHelpers::PodsController
 
     before do
@@ -213,13 +213,13 @@ module Pod::TrunkApp
       sign_in!
     end
 
-    it "allows a push for an existing pod owned by the authenticated owner" do
+    it 'allows a push for an existing pod owned by the authenticated owner' do
       @owner.add_pod(:name => spec.name)
-      lambda {
-        lambda {
+      lambda do
+        lambda do
           post '/', spec.to_json
-        }.should.not.change { Pod.count }
-      }.should.change { PodVersion.count }
+        end.should.not.change { Pod.count }
+      end.should.change { PodVersion.count }
     end
 
     before do
@@ -237,7 +237,7 @@ module Pod::TrunkApp
       @other_pod = @other_owner.add_pod(:name => spec.name)
     end
 
-    # TODO see if changes (or the lack of) can be detected from the macro, besides just count.
+    # TODO: see if changes (or the lack of) can be detected from the macro, besides just count.
     it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
       patch '/AFNetworking/owners', { 'email' => @owner.email }.to_json
       @other_pod.owners.should == [@other_owner]

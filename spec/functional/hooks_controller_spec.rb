@@ -1,15 +1,14 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
-
-  describe HooksController, "when receiving push updates from the repository" do
+  describe HooksController, 'when receiving push updates from the repository' do
 
     def post_raw_hook_json_data
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_json_data.raw')
       post '/github-post-receive/', payload
     end
-    
+
     def post_raw_hook_ruby_data
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_ruby_data.raw')
@@ -27,44 +26,44 @@ module Pod::TrunkApp
       header 'Host', 'trunk.cocoapods.org'
     end
 
-    it "fails with media type other than JSON data" do
+    it 'fails with media type other than JSON data' do
       header 'Content-Type', 'text/yaml'
       post '/github-post-receive/', ''
       last_response.status.should == 415
     end
 
-    it "fails with data other than a push payload" do
+    it 'fails with data other than a push payload' do
       header 'Content-Type', 'application/x-www-form-urlencoded'
-      post '/github-post-receive/', something: 'else'
+      post '/github-post-receive/', :something => 'else'
       last_response.status.should == 422
     end
 
-    it "fails with a payload other than serialized push data" do
+    it 'fails with a payload other than serialized push data' do
       header 'Content-Type', 'application/x-www-form-urlencoded'
-      post '/github-post-receive/', payload: 'not-push-data'
+      post '/github-post-receive/', :payload => 'not-push-data'
       last_response.status.should == 415
     end
 
     rest_response = Struct.new(:body)
-    
+
     # JSON podspecs
     #
 
-    it "processes payload data but does not create a new pod (if one does not exist)" do
+    it 'processes payload data but does not create a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
 
       post_raw_hook_json_data
 
       last_response.status.should == 200
 
-      Pod.find(name: 'MobileAppTracker').should == nil
+      Pod.find(:name => 'MobileAppTracker').should.be.nil
     end
 
     before do
       Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
     end
 
-    it "processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)" do
+    it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
@@ -77,7 +76,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did add a version.
       #
@@ -95,7 +94,7 @@ module Pod::TrunkApp
       pod.versions.find { |version| version.name == '1.0.2' }.commits.map(&:sha).should == ['3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f']
     end
 
-    it "processes payload data and creates a new submission job (because the version exists)" do
+    it 'processes payload data and creates a new submission job (because the version exists)' do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
@@ -108,7 +107,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did not add a new version.
       #
@@ -129,7 +128,7 @@ module Pod::TrunkApp
       version.last_published_by.should == commit
     end
 
-    it "adds the right committer to the commit" do
+    it 'adds the right committer to the commit' do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
@@ -145,13 +144,13 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == test_user
     end
 
-    it "adds the right committer to the commit" do
+    it 'adds the right committer to the commit' do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
@@ -164,24 +163,24 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == Owner.unclaimed
     end
 
-    it "creates the add commit if missing and version exists" do
+    it 'creates the add commit if missing and version exists' do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
       pod_version = PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
-      commit.should == nil
+      commit.should.be.nil
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
@@ -189,20 +188,20 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
 
-    it "does add the add commit and a version if missing and version does not exist" do
+    it 'does add the add commit and a version if missing and version does not exist' do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
 
-      pod = Pod.find(name: 'KFData')
-      pod.versions.last.should == nil
+      pod = Pod.find(:name => 'KFData')
+      pod.versions.last.should.be.nil
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
@@ -210,7 +209,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did log a big fat warning.
       #
@@ -223,21 +222,21 @@ module Pod::TrunkApp
 
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
-      
+
     # Ruby podspecs
     #
-    
-    it "processes payload data but does not create a new pod (if one does not exist)" do
+
+    it 'processes payload data but does not create a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec')))
 
       post_raw_hook_ruby_data
 
       last_response.status.should == 200
 
-      Pod.find(name: 'MobileAppTracker').should == nil
+      Pod.find(:name => 'MobileAppTracker').should.be.nil
     end
 
-    it "processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)" do
+    it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
       # Create existing pod.
       #
       file = 'GitHub/KFData.podspec'
@@ -251,7 +250,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did add a version.
       #
@@ -269,7 +268,7 @@ module Pod::TrunkApp
       pod.versions.find { |version| version.name == '1.0.2' }.commits.map(&:sha).should == ['3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f']
     end
 
-    it "processes payload data and creates a new submission job (because the version exists)" do
+    it 'processes payload data and creates a new submission job (because the version exists)' do
       # Create existing pod.
       #
       file = 'GitHub/KFData.podspec'
@@ -283,7 +282,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did not add a new version.
       #
@@ -304,7 +303,7 @@ module Pod::TrunkApp
       version.last_published_by.should == commit
     end
 
-    it "adds the right committer to the commit" do
+    it 'adds the right committer to the commit' do
       # Create existing pod.
       #
       file = 'GitHub/KFData.podspec'
@@ -321,13 +320,13 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == test_user
     end
 
-    it "adds the right committer to the commit" do
+    it 'adds the right committer to the commit' do
       # Create existing pod.
       #
       file = 'GitHub/KFData.podspec'
@@ -341,14 +340,14 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == Owner.unclaimed
     end
 
-    it "creates the add commit if missing and version exists" do
+    it 'creates the add commit if missing and version exists' do
       # Create existing pod.
       #
       file = 'GitHub/KFData.podspec'
@@ -356,10 +355,10 @@ module Pod::TrunkApp
       existing_pod = Pod.create(:name => existing_spec.name)
       pod_version = PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
-      commit.should == nil
+      commit.should.be.nil
 
       REST.stubs(:get).returns(rest_response.new(fixture_read(file)))
 
@@ -367,21 +366,21 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
-    
-    it "does add the add commit and a version if missing and version does not exist" do
+
+    it 'does add the add commit and a version if missing and version does not exist' do
       # Create existing pod.
       #
       file = 'GitHub/KFData.podspec'
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
       existing_pod = Pod.create(:name => existing_spec.name)
 
-      pod = Pod.find(name: 'KFData')
-      pod.versions.last.should == nil
+      pod = Pod.find(:name => 'KFData')
+      pod.versions.last.should.be.nil
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec')))
 
@@ -389,7 +388,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did log a big fat warning.
       #
@@ -404,5 +403,4 @@ module Pod::TrunkApp
     end
 
   end
-
 end

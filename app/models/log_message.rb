@@ -9,7 +9,7 @@ module Pod
 
       plugin :timestamps
       plugin :validation_helpers
-      
+
       many_to_one :owner
       many_to_one :pod_version
 
@@ -33,4 +33,3 @@ module Pod
     end
   end
 end
-

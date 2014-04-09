@@ -6,7 +6,7 @@ require 'base64'
 module Pod
   module TrunkApp
     class GitHub
-      BASE_URL = "https://api.github.com/repos/%s".freeze
+      BASE_URL = 'https://api.github.com/repos/%s'.freeze
       HEADERS  = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
       BRANCH   = 'master'
 
@@ -23,13 +23,13 @@ module Pod
       #
       def create_new_commit(destination_path, data, message, author_name, author_email)
         CreateCommitResponse.new do
-          put(File.join('contents', URI.escape(destination_path)), {
-            :message   => message,
-            :branch    => BRANCH,
-            :content   => Base64.encode64(data).delete("\r\n"),
-            :author    => { :name => author_name,        :email => author_email },
-            :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
-          })
+          put(File.join('contents', URI.escape(destination_path)),
+              :message   => message,
+              :branch    => BRANCH,
+              :content   => Base64.encode64(data).delete("\r\n"),
+              :author    => { :name => author_name,        :email => author_email },
+              :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
+          )
         end
       end
 
@@ -39,7 +39,7 @@ module Pod
 
       # Performs a PUT request with a max timeout of 10 seconds.
       #
-      # TODO timeout could probably even be less.
+      # TODO: timeout could probably even be less.
       #
       def put(path, body)
         REST.put(url_for(path), body.to_json, HEADERS, @basic_auth) do |http_request|
@@ -76,13 +76,11 @@ module Pod
           @response.body
         end
 
-        def failed_on_our_side?
-          @failed_on_our_side
-        end
+        attr_reader :failed_on_our_side
+        alias_method :failed_on_our_side?, :failed_on_our_side
 
-        def failed_on_their_side?
-          @failed_on_their_side
-        end
+        attr_reader :failed_on_their_side
+        alias_method :failed_on_their_side?, :failed_on_their_side
 
         def failed_due_to_timeout?
           !@timeout_error.nil?
@@ -96,7 +94,6 @@ module Pod
           @commit_sha ||= JSON.parse(@response.body)['commit']['sha']
         end
       end
-
     end
   end
 end

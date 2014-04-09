@@ -55,7 +55,7 @@ require 'app/controllers/api/sessions_controller'
 require 'app/controllers/hooks_controller'
 require 'app/controllers/manage_controller'
 
-# TODO Temporary controller while we transition to the trunk app.
+# TODO: Temporary controller while we transition to the trunk app.
 require 'app/controllers/claims_controller'
 
 # And assemble base routes to controllers map.
@@ -66,9 +66,9 @@ module Pod
       '/api/v1/sessions' => SessionsController,
       '/hooks'           => HooksController,
       '/manage'          => ManageController,
-      # TODO Temporary routes while we transition to the trunk app.
+      # TODO: Temporary routes while we transition to the trunk app.
       '/claims'          => ClaimsController,
-      '/'                => lambda { |_| [303, { 'Location' => '/claims/new' }, ''] },
+      '/'                => lambda { |_| [303, { 'Location' => '/claims/new' }, ''] }
     )
   end
 end

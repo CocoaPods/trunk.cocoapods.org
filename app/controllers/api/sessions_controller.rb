@@ -7,7 +7,6 @@ require 'active_support/core_ext/hash/slice'
 module Pod
   module TrunkApp
     class SessionsController < APIController
-
       post '/', :requires_owner => false do
         owner_params = JSON.parse(request.body.read)
         DB.test_safe_transaction do
@@ -20,7 +19,7 @@ module Pod
         end
       end
 
-      # TODO render HTML
+      # TODO: render HTML
       get '/verify/:token', :requires_owner => false do
         if session = Session.with_verification_token(params[:token])
           session.verify!
@@ -43,8 +42,6 @@ module Pod
         end
         json_message(200, @session)
       end
-
     end
   end
 end
-
