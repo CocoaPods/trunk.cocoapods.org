@@ -19,9 +19,9 @@ Sequel.migration do
       index [:name], :unique=>true
     end
 
-    #create_table(:schema_info) do
-      #Integer :version, :default=>0, :null=>false
-    #end
+    # create_table(:schema_info) do
+      # Integer :version, :default=>0, :null=>false
+    # end
 
     create_table(:owners_pods) do
       foreign_key :owner_id, :owners, :null=>false, :key=>[:id]

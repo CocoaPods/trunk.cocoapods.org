@@ -9,8 +9,6 @@
 AmbiguousRegexpLiteral:
   Enabled: false
 
-
-
 # Offense count: 4
 AsciiComments:
   Enabled: false
@@ -101,11 +99,6 @@ IndentHash:
 
 # Offense count: 4
 Lambda:
-  Enabled: false
-
-# Offense count: 6
-# Cop supports --auto-correct.
-LeadingCommentSpace:
   Enabled: false
 
 # Offense count: 282

@@ -33,7 +33,7 @@ sha_base_tree = response['tree']['sha']
 
 #### Create Git objects
 
-#test_name = "test-#{Time.now.to_i}"
+# test_name = "test-#{Time.now.to_i}"
 test_name = "AFNetworking-1.2.0-#{Time.now.to_i}"
 
 # Create new tree entry (the contents)
