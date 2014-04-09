@@ -31,7 +31,10 @@ describe "Token" do
   it "raises an exception if for whatever reason more than 10 collisions occur" do
     count = 0
     should.raise Token::CollisionError do
-      Token.generate { count += 1; true }
+      Token.generate do
+        count += 1
+        true
+      end
     end
     count.should == 10
   end
