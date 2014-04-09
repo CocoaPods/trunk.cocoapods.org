@@ -18,7 +18,7 @@ module Pod
       end
 
       def push!
-        log(:info, "initiated", committer, specification_data)
+        log(:info, 'initiated', committer, specification_data)
 
         response, duration = measure_duration do
           self.class.github.create_new_commit(pod_version.destination_path,
@@ -49,11 +49,11 @@ module Pod
 
       def log(level, message, committer = nil, data = nil)
         pod_version.add_log_message(
-          :reference => "PushJob with temporary ID: #{object_id}",
-          :level => level,
-          :message => "Push for `#{pod_version.description}' #{message}.",
-          :owner => committer,
-          :data => data
+          reference: "PushJob with temporary ID: #{object_id}",
+          level: level,
+          message: "Push for `#{pod_version.description}' #{message}.",
+          owner: committer,
+          data: data
         )
       end
 
@@ -64,7 +64,7 @@ module Pod
       end
 
       def self.github
-        @github ||= GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+        @github ||= GitHub.new(ENV['GH_REPO'], username: ENV['GH_TOKEN'], password: 'x-oauth-basic')
       end
     end
   end

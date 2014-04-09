@@ -7,8 +7,7 @@ require 'active_support/core_ext/hash/slice'
 module Pod
   module TrunkApp
     class SessionsController < APIController
-
-      post '/', :requires_owner => false do
+      post '/', requires_owner: false do
         owner_params = JSON.parse(request.body.read)
         DB.test_safe_transaction do
           owner_email, owner_name = owner_params.values_at('email', 'name')
@@ -21,7 +20,7 @@ module Pod
       end
 
       # TODO render HTML
-      get '/verify/:token', :requires_owner => false do
+      get '/verify/:token', requires_owner: false do
         if session = Session.with_verification_token(params[:token])
           session.verify!
           json_message(200, session)
@@ -30,20 +29,19 @@ module Pod
         end
       end
 
-      get '/', :requires_owner => true do
+      get '/', requires_owner: true do
         owner_attributes = @owner.public_attributes
         owner_attributes['sessions'] = @owner.sessions.map(&:public_attributes)
         json_message(200, owner_attributes)
       end
 
-      delete '/', :requires_owner => true do
+      delete '/', requires_owner: true do
         @owner.sessions.each do |session|
           next if session.id == @session.id
           session.destroy
         end
         json_message(200, @session)
       end
-
     end
   end
 end

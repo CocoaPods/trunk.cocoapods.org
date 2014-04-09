@@ -15,7 +15,7 @@ module Pod
       plugin :timestamps
       plugin :validation_helpers
 
-      many_to_one :committer, :class => 'Pod::TrunkApp::Owner'
+      many_to_one :committer, class: 'Pod::TrunkApp::Owner'
       many_to_one :pod_version
 
       protected

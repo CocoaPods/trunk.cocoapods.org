@@ -16,15 +16,15 @@ module Pod
       many_to_one :owner
 
       subset(:valid) { valid_until > Time.now }
-      subset(:verified, :verified => true)
+      subset(:verified, verified: true)
 
       def after_initialize
         super
         if new?
           self.verified = false
-          self.valid_for = VALIDITY_LENGTH unless self.valid_until
-          self.token ||= Token.generate(TOKEN_LENGTH) { |t| Session.find(:token => t) }
-          self.verification_token ||= Token.generate(VERIFICATION_TOKEN_LENGTH) { |t| Session.find(:verification_token => t) }
+          self.valid_for = VALIDITY_LENGTH unless valid_until
+          self.token ||= Token.generate(TOKEN_LENGTH) { |t| Session.find(token: t) }
+          self.verification_token ||= Token.generate(VERIFICATION_TOKEN_LENGTH) { |t| Session.find(verification_token: t) }
         end
       end
 
@@ -41,23 +41,23 @@ module Pod
       end
 
       def verify!
-        raise "Unable to verify an already verified token." if verified
-        update(:verified => true, :verification_token => nil)
+        fail 'Unable to verify an already verified token.' if verified
+        update(verified: true, verification_token: nil)
       end
 
       def prolong!
-        raise 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.now && verified
-        update(:valid_for => VALIDITY_LENGTH)
+        fail 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.now && verified
+        update(valid_for: VALIDITY_LENGTH)
       end
 
       def self.with_token(token)
         return if token.nil?
-        valid.verified.where(:token => token).first
+        valid.verified.where(token: token).first
       end
 
       def self.with_verification_token(token)
         return if token.nil?
-        valid.where(:verification_token => token).first
+        valid.where(verification_token: token).first
       end
 
       protected

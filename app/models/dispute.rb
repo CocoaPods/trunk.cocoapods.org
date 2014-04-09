@@ -8,7 +8,7 @@ module Pod
       plugin :timestamps
       plugin :validation_helpers
 
-      many_to_one :claimer, :class => 'Pod::TrunkApp::Owner'
+      many_to_one :claimer, class: 'Pod::TrunkApp::Owner'
 
       alias_method :settled?, :settled
 

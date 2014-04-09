@@ -15,8 +15,8 @@ module Pod
       plugin :after_initialize
 
       many_to_one :pod
-      one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
-      one_to_many :log_messages, :order => Sequel.asc([:updated_at, :created_at])
+      one_to_many :commits, order: Sequel.asc([:updated_at, :created_at])
+      one_to_many :log_messages, order: Sequel.asc([:updated_at, :created_at])
 
       def published?
         commits.any?
@@ -53,7 +53,7 @@ module Pod
       def push!(committer, specification_data)
         response = PushJob.new(self, committer, specification_data).push!
         if response.success?
-          add_commit(:committer => committer, :sha => response.commit_sha, :specification_data => specification_data)
+          add_commit(committer: committer, sha: response.commit_sha, specification_data: specification_data)
           pod.add_owner(committer) if pod.owners.empty?
         end
         response

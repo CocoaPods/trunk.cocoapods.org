@@ -1,7 +1,7 @@
 # -- General ------------------------------------------------------------------
 
 ROOT = File.expand_path('../../', __FILE__)
-$:.unshift File.join(ROOT, 'lib')
+$LOAD_PATH.unshift File.join(ROOT, 'lib')
 
 ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
@@ -50,7 +50,7 @@ require 'pg'
 
 db_loggers = []
 db_loggers << TRUNK_APP_LOGGER # TODO For now also enable DB logger in production. unless ENV['RACK_ENV'] == 'production'
-DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
+DB = Sequel.connect(ENV['DATABASE_URL'], loggers: db_loggers)
 Sequel.extension :core_extensions, :migration
 
 class << DB
@@ -69,15 +69,15 @@ require 'mail'
 Mail.defaults do
   case ENV['RACK_ENV']
   when 'production'
-    delivery_method :smtp, {
-      :address => 'smtp.sendgrid.net',
-      :port => '587',
-      :domain => 'heroku.com',
-      :user_name => ENV['SENDGRID_USERNAME'],
-      :password => ENV['SENDGRID_PASSWORD'],
-      :authentication => :plain,
-      :enable_starttls_auto => true
-    }
+    delivery_method :smtp,
+                    address: 'smtp.sendgrid.net',
+                    port: '587',
+                    domain: 'heroku.com',
+                    user_name: ENV['SENDGRID_USERNAME'],
+                    password: ENV['SENDGRID_PASSWORD'],
+                    authentication: :plain,
+                    enable_starttls_auto: true
+
   else
     delivery_method :test
   end

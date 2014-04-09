@@ -13,7 +13,6 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class HooksController < AppController
-
       # --- Post Receive Hook ---------------------------------------------------------------------
 
       # TODO Package most of this action's content neatly into
@@ -58,8 +57,8 @@ module Pod
           # Note: We ignore deleted specs.
           #
           {
-            :added => manual_commit['added'] || [],
-            :modified => manual_commit['modified'] || []
+            added: manual_commit['added'] || [],
+            modified: manual_commit['modified'] || []
           }.each do |type, files|
 
             # For each changed file, get its data (if it's a podspec).
@@ -75,7 +74,7 @@ module Pod
               #
               # TODO Update to the right repo.
               #
-              data_url_template = "https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s"
+              data_url_template = 'https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s'
               data_url = data_url_template % [commit_sha, file] if commit_sha
 
               # Gets the data from data_url.
@@ -97,39 +96,39 @@ module Pod
       # We get the JSON podspec and add a commit to the pod's version (And
       # add a new version if necessary).
       #
-      def handle_modified spec, pod, commit_sha, committer_email
-        committer = pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed
+      def handle_modified(spec, pod, commit_sha, committer_email)
+        committer = pod.owners_dataset.first(email: committer_email) || Owner.unclaimed
 
         version_name = spec.version.to_s
 
         # Note: Sadly, we cannot use find_or_create here.
         #
-        version = PodVersion.find(:pod => pod, :name => version_name)
+        version = PodVersion.find(pod: pod, name: version_name)
         unless version
-          version = PodVersion.create(:pod => pod, :name => version_name)
+          version = PodVersion.create(pod: pod, name: version_name)
           version.add_log_message(
-            :reference => "Github hook call to temporary ID: #{object_id}",
-            :level => :warning,
-            :message => "Version `#{version.description}' created via Github hook.",
-            :owner => committer
+            reference: "Github hook call to temporary ID: #{object_id}",
+            level: :warning,
+            message: "Version `#{version.description}' created via Github hook.",
+            owner: committer
           )
         end
 
         # Add a new commit to the existing version.
         #
         version.add_commit(
-          :sha => commit_sha,
-          :specification_data => JSON.pretty_generate(spec.attributes_hash),
-          :committer => committer,
+          sha: commit_sha,
+          specification_data: JSON.pretty_generate(spec.attributes_hash),
+          committer: committer,
         )
       end
 
       # We only check if we have it, and if not, add it.
       #
-      def handle_added spec, pod, commit_sha, committer_email
+      def handle_added(spec, pod, commit_sha, committer_email)
         # Do we have it?
         #
-        if commit = Commit.find(:sha => commit_sha)
+        if commit = Commit.find(sha: commit_sha)
           # Is it related to the pod?
           #
           unless commit.pod_version.pod == pod
@@ -144,7 +143,6 @@ module Pod
           handle_modified spec, pod, commit_sha, committer_email
         end
       end
-
     end
   end
 end

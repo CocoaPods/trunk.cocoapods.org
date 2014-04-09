@@ -21,7 +21,7 @@ class Token
       if collision
         count += 1
         if count == raise_after_collisions
-          raise CollisionError, "#{raise_after_collisions} number of " \
+          fail CollisionError, "#{raise_after_collisions} number of " \
             "collisions have occurred while generating a token."
         end
       else

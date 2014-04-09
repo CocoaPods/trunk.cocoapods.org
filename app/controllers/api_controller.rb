@@ -6,7 +6,6 @@ require 'newrelic_rpm'
 module Pod
   module TrunkApp
     class APIController < AppController
-
       private
 
       # --- Request / Response --------------------------------------------------------------------
@@ -45,12 +44,12 @@ module Pod
         # Unless a specific HTTP 500 response was thrown, this is a bubbled-up exception.
         if error = args.first
           if catch_unexpected_errors?
-            NewRelic::Agent.notice_error(error, :uri => request.path,
-                                                :referer => request.referrer.to_s,
-                                                :request_params => request.params)
+            NewRelic::Agent.notice_error(error, uri: request.path,
+                                                referer: request.referrer.to_s,
+                                                request_params: request.params)
             throw_internal_server_error!
           else
-            raise error
+            fail error
           end
         end
       end
@@ -132,7 +131,6 @@ module Pod
           token
         end
       end
-
     end
   end
 end
