@@ -19,10 +19,6 @@ BlockNesting:
 ClassAndModuleChildren:
   Enabled: false
 
-# Offense count: 1
-ClassVars:
-  Enabled: false
-
 # Offense count: 15
 # Configuration parameters: Keywords.
 CommentAnnotation:

@@ -1,5 +1,7 @@
 inherit_from: rubocop-todo.yml
 
+#- CocoaPods -----------------------------------------------------------------#
+
 # Can be removed once the support for Ruby 1.8.7 on CocoaPods.
 HashSyntax:
   EnforcedStyle: hash_rockets
@@ -16,3 +18,9 @@ AmbiguousRegexpLiteral:
 # Allow backticks
 AsciiComments:
   Enabled: false
+
+#- Trunk ---------------------------------------------------------------------#
+
+ClassVars:
+  Exclude:
+    - spec/**
