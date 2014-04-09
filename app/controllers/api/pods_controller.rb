@@ -6,8 +6,8 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class PodsController < APIController
-      get '/:name', :requires_owner => false do
-        if pod = Pod.find(:name => params[:name])
+      get '/:name', requires_owner: false do
+        if pod = Pod.find(name: params[:name])
           versions = pod.versions.select(&:published?)
           unless versions.empty?
             json_message(200, 'versions' => versions.map(&:public_attributes),
@@ -17,9 +17,9 @@ module Pod
         json_error(404, 'No pod found with the specified name.')
       end
 
-      get '/:name/versions/:version', :requires_owner => false do
-        if pod = Pod.find(:name => params[:name])
-          if version = pod.versions_dataset.where(:name => params[:version]).first
+      get '/:name/versions/:version', requires_owner: false do
+        if pod = Pod.find(name: params[:name])
+          if version = pod.versions_dataset.where(name: params[:version]).first
             if version.published?
               json_message(200, 'messages' => version.log_messages.map(&:public_attributes),
                                 'data_url' => version.data_url)
@@ -29,7 +29,7 @@ module Pod
         json_error(404, 'No pod found with the specified version.')
       end
 
-      post '/', :requires_owner => true do
+      post '/', requires_owner: true do
         unless ENV['TRUNK_APP_PUSH_ALLOWED'] == 'true'
           json_error(503, 'Push access is currently disabled.')
         end
@@ -46,16 +46,16 @@ module Pod
           json_error(403, 'You are not allowed to push new versions for this pod.')
         end
         unless pod
-          pod = Pod.create(:name => specification.name)
+          pod = Pod.create(name: specification.name)
         end
 
-        if version = pod.versions_dataset.where(:name => specification.version).first
+        if version = pod.versions_dataset.where(name: specification.version).first
           if version.published?
             headers 'Location' => url(version.resource_path)
             json_error(409, "Unable to accept duplicate entry for: #{specification}")
           end
         else
-          version = pod.add_version(:name => specification.version)
+          version = pod.add_version(name: specification.version)
         end
 
         response = version.push!(@owner, JSON.pretty_generate(specification))
@@ -80,7 +80,7 @@ module Pod
         end
       end
 
-      patch '/:name/owners', :requires_owner => true do
+      patch '/:name/owners', requires_owner: true do
         pod = Pod.find_by_name_and_owner(params[:name], @owner) do
           json_error(403, 'You are not allowed to add owners to this pod.')
         end

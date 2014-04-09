@@ -5,9 +5,9 @@ module Pod::TrunkApp
   describe PushJob do
     describe "in general" do
       before do
-        @pod = Pod.create(:name => 'AFNetworking')
-        @version = @pod.add_version(:name => '1.2.0')
-        @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
+        @pod = Pod.create(name: 'AFNetworking')
+        @version = @pod.add_version(name: '1.2.0')
+        @owner = Owner.create(email: 'appie@example.com', name: 'Appie')
         @job = PushJob.new(@version, @owner, fixture_read('GitHub/KFData.podspec.json'))
       end
 
@@ -16,7 +16,7 @@ module Pod::TrunkApp
       end
 
       it "configures the GitHub client" do
-        @github.basic_auth.should == { :username => 'secret', :password => 'x-oauth-basic' }
+        @github.basic_auth.should == { username: 'secret', password: 'x-oauth-basic' }
       end
 
       it "creates log messages before anything else and gets persisted regardless of further errors" do
@@ -34,7 +34,7 @@ module Pod::TrunkApp
       extend SpecHelpers::CommitResponse
 
       it "creates a new commit in the spec repo and returns its sha" do
-        response = response(201, { :commit => { :sha => fixture_new_commit_sha } }.to_json)
+        response = response(201, { commit: { sha: fixture_new_commit_sha } }.to_json)
         @github.stubs(:create_new_commit).with(@version.destination_path,
                                                @job.specification_data,
                                                MESSAGE,

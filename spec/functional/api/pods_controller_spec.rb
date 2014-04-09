@@ -19,16 +19,16 @@ module SpecHelpers::PodsController
 
   def valid_commit_attrs
     {
-      :committer => @owner,
-      :sha => '3ca23060197547eef92983f15590b5a87270615f',
-      :specification_data => 'DATA'
+      committer: @owner,
+      sha: '3ca23060197547eef92983f15590b5a87270615f',
+      specification_data: 'DATA'
     }
   end
 
   def create_pod_version!
-    @pod = Pod::TrunkApp::Pod.create(:name => spec.name)
+    @pod = Pod::TrunkApp::Pod.create(name: spec.name)
     @pod.add_owner(@owner) if @owner
-    @version = @pod.add_version(:name => spec.version.to_s)
+    @version = @pod.add_version(name: spec.version.to_s)
   end
 end
 
@@ -37,7 +37,7 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      response = response(201, { commit: { sha: '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
 
       sign_in!
@@ -96,8 +96,8 @@ module Pod::TrunkApp
     end
 
     it "does not allow a push for an existing pod version if it's published" do
-      @owner.add_pod(:name => spec.name)
-            .add_version(:name => spec.version.to_s)
+      @owner.add_pod(name: spec.name)
+            .add_version(name: spec.version.to_s)
             .add_commit(valid_commit_attrs)
       lambda do
         post '/', spec.to_json
@@ -114,7 +114,7 @@ module Pod::TrunkApp
       end.should.change { PodVersion.count }
       last_response.status.should == 302
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
-      Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
+      Pod.first(name: spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
     it "creates a commit once a push succeeds" do
@@ -176,7 +176,7 @@ module Pod::TrunkApp
     it "returns an overview of a pod including only the published versions" do
       create_session_with_owner
       @pod.add_owner(@owner)
-      @pod.add_version(:name => '0.2.1')
+      @pod.add_version(name: '0.2.1')
       @version.add_commit(valid_commit_attrs)
       get '/AFNetworking'
       last_response.body.should == {
@@ -192,7 +192,7 @@ module Pod::TrunkApp
     end
 
     it "returns an overview of a published pod version" do
-      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
+      @owner = Owner.create(email: 'appie@example.com', name: 'Appie')
       @version.add_commit(valid_commit_attrs)
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
@@ -207,14 +207,14 @@ module Pod::TrunkApp
     extend SpecHelpers::PodsController
 
     before do
-      response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      response = response(201, { commit: { sha: '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
 
       sign_in!
     end
 
     it "allows a push for an existing pod owned by the authenticated owner" do
-      @owner.add_pod(:name => spec.name)
+      @owner.add_pod(name: spec.name)
       lambda do
         lambda do
           post '/', spec.to_json
@@ -223,18 +223,18 @@ module Pod::TrunkApp
     end
 
     before do
-      @other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
+      @other_owner = Owner.create(email: 'jenny@example.com', name: 'Jenny')
     end
 
     it "adds an owner to the pod's owners" do
-      pod = @owner.add_pod(:name => spec.name)
+      pod = @owner.add_pod(name: spec.name)
       patch '/AFNetworking/owners', { 'email' => @other_owner.email }.to_json
       last_response.status.should == 200
       pod.owners.should == [@owner, @other_owner]
     end
 
     before do
-      @other_pod = @other_owner.add_pod(:name => spec.name)
+      @other_pod = @other_owner.add_pod(name: spec.name)
     end
 
     # TODO see if changes (or the lack of) can be detected from the macro, besides just count.

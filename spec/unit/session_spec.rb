@@ -4,7 +4,7 @@ require 'app/models/session'
 module Pod::TrunkApp
   describe Session do
     before do
-      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+      @owner = Owner.create(email: 'appie@example.com', name: 'Appie Duran')
     end
 
     describe "when initializing" do
@@ -26,7 +26,7 @@ module Pod::TrunkApp
 
     describe "concerning validations" do
       before do
-        @session = Session.new(:owner => @owner)
+        @session = Session.new(owner: @owner)
       end
 
       it "needs a owner" do
@@ -38,28 +38,28 @@ module Pod::TrunkApp
         it "raises if an empty token gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @session.token = nil
-            @session.save(:validate => false)
+            @session.save(validate: false)
           end
         end
 
         it "raises if an empty owner_id gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @session.owner_id = nil
-            @session.save(:validate => false)
+            @session.save(validate: false)
           end
         end
 
         it "raises if an empty verified gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @session.verified = nil
-            @session.save(:validate => false)
+            @session.save(validate: false)
           end
         end
 
         it "raises if an empty valid_until gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @session.valid_until = nil
-            @session.save(:validate => false)
+            @session.save(validate: false)
           end
         end
 
@@ -76,7 +76,7 @@ module Pod::TrunkApp
 
     describe "finders" do
       before do
-        @session = Session.new(:owner => @owner)
+        @session = Session.new(owner: @owner)
         @session.verified = true
         @session.save
       end
@@ -92,7 +92,7 @@ module Pod::TrunkApp
       end
 
       it "does not find an invalid session based on a token" do
-        @session.update(:valid_until => 1.second.ago)
+        @session.update(valid_until: 1.second.ago)
         Session.with_token(@session.token).should.be.nil
         Session.with_verification_token(@session.verification_token).should.be.nil
       end
@@ -103,12 +103,12 @@ module Pod::TrunkApp
       end
 
       it "does not find an unverified session" do
-        @session.update(:verified => false)
+        @session.update(verified: false)
         Session.with_token(@session.token).should.be.nil
       end
 
       it "finds an unverified session by verification token" do
-        @session.update(:verified => false)
+        @session.update(verified: false)
         Session.with_verification_token(@session.verification_token).should == @session.reload
       end
     end
@@ -119,25 +119,25 @@ module Pod::TrunkApp
     end
 
     it "verifies a session" do
-      session = Session.create(:owner => @owner)
+      session = Session.create(owner: @owner)
       session.verify!
       session.reload.verified.should == true
       session.verification_token.should == nil
     end
 
     it "extends the validity" do
-      session = Session.create(:owner => @owner)
-      session.update(:valid_until => 10.seconds.from_now, :verified => true)
+      session = Session.create(owner: @owner)
+      session.update(valid_until: 10.seconds.from_now, verified: true)
       session.prolong!
       session.reload.valid_until.should > 10.seconds.from_now
     end
 
     it "does not extend the validity of an invalid session" do
-      session = Session.create(:owner => @owner)
-      session.update(:valid_until => 10.seconds.ago, :verified => true)
+      session = Session.create(owner: @owner)
+      session.update(valid_until: 10.seconds.ago, verified: true)
       lambda { session.prolong! }.should.raise
-      session = Session.create(:owner => @owner)
-      session.update(:valid_until => 10.seconds.from_now, :verified => false)
+      session = Session.create(owner: @owner)
+      session.update(valid_until: 10.seconds.from_now, verified: false)
       lambda { session.prolong! }.should.raise
     end
   end

@@ -12,7 +12,7 @@ module Pod::TrunkApp
     end
 
     before do
-      @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
+      @owner = Owner.create(email: 'jenny@example.com', name: 'Jenny')
     end
 
     it "finds an existing owner by email" do
@@ -60,7 +60,7 @@ module Pod::TrunkApp
         it "raises if an empty name gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @owner.name = nil
-            @owner.save(:validate => false)
+            @owner.save(validate: false)
           end
         end
 
@@ -68,13 +68,13 @@ module Pod::TrunkApp
           should.raise Sequel::NotNullConstraintViolation do
             Owner.stubs(:normalize_email).returns(nil)
             @owner.email = nil
-            @owner.save(:validate => false)
+            @owner.save(validate: false)
           end
         end
 
         it "raises if a duplicate email gets inserted" do
           should.raise Sequel::UniqueConstraintViolation do
-            Owner.create(:email => 'jenny@example.com', :name => 'Penny')
+            Owner.create(email: 'jenny@example.com', name: 'Penny')
           end
         end
       end
@@ -98,7 +98,7 @@ module Pod::TrunkApp
 
       it "normalizes the email address when assigning the email address" do
         email = 'janny@example.com'
-        owner = Owner.new(:email => " #{email.upcase} ")
+        owner = Owner.new(email: " #{email.upcase} ")
         owner.email.should == email
       end
     end
@@ -126,7 +126,7 @@ module Pod::TrunkApp
       end
 
       it "sends a new session confirmation email if the owner was not just created" do
-        owner = Owner.find(:id => @owner.id)
+        owner = Owner.find(id: @owner.id)
         owner.create_session!('https://example.com/%s')
         mail = Mail::TestMailer.deliveries.last
         mail.to.should == [@owner.email]
@@ -138,8 +138,8 @@ module Pod::TrunkApp
 
     describe "concerning pods it owns" do
       it "adds a pod" do
-        pod = @owner.add_pod(:name => 'AFNetworking')
-        Pod.find(:id => pod.id).owners.should == [@owner]
+        pod = @owner.add_pod(name: 'AFNetworking')
+        Pod.find(id: pod.id).owners.should == [@owner]
       end
     end
   end

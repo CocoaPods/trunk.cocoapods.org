@@ -59,7 +59,7 @@ module Pod::TrunkApp
     end
 
     it "creates only a new session on subsequent registrations" do
-      owner = Owner.create(:email => @email, :name => @name)
+      owner = Owner.create(email: @email, name: @name)
       owner.add_session({})
       lambda do
         lambda do
@@ -71,13 +71,13 @@ module Pod::TrunkApp
     end
 
     it "updates the owner's name in case it is specified on subsequent registrations" do
-      owner = Owner.create(:email => @email, :name => @name)
+      owner = Owner.create(email: @email, name: @name)
       post '/', { 'email' => @email, 'name' => 'Changed' }.to_json
       owner.reload.name.should == 'Changed'
     end
 
     it "does not create a new session in case emailing raises an error" do
-      owner = Owner.create(:email => @email, :name => @name)
+      owner = Owner.create(email: @email, name: @name)
       Mail::Message.any_instance.stubs(:deliver).raises
       lambda do
         should.raise do
@@ -108,7 +108,7 @@ module Pod::TrunkApp
     end
 
     it "verifies a session and nulls the verification token" do
-      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
+      session = Session.create(owner: Owner.create(email: 'appie@example.com', name: 'Appie Duran'))
       get "/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
@@ -117,8 +117,8 @@ module Pod::TrunkApp
     end
 
     it "does not verify an invalid session" do
-      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
-      session.update(:valid_until => 1.second.ago)
+      session = Session.create(owner: Owner.create(email: 'appie@example.com', name: 'Appie Duran'))
+      session.update(valid_until: 1.second.ago)
       get "/verify/#{session.verification_token}"
       last_response.status.should == 404
       session.reload.verified.should == false
@@ -159,7 +159,7 @@ module Pod::TrunkApp
 
     it "prolongs a session each time it's used" do
       session = sign_in!
-      session.update(:valid_until => 10.seconds.from_now)
+      session.update(valid_until: 10.seconds.from_now)
       get '/'
       session.reload.valid_until.should > 10.seconds.from_now
     end

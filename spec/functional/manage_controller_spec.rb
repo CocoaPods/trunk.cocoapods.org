@@ -15,13 +15,13 @@ module Pod::TrunkApp
     before do
       authorize 'admin', 'secret'
 
-      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
-      @pod = Pod.create(:name => 'AFNetworking')
-      @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+      @owner = Owner.create(email: 'appie@example.com', name: 'Appie')
+      @pod = Pod.create(name: 'AFNetworking')
+      @version = PodVersion.create(pod: @pod, name: '1.2.0')
       @commit = @version.add_commit(
-        :committer => @owner,
-        :sha => '3ca23060197547eef92983f15590b5a87270615f',
-        :specification_data => 'DATA'
+        committer: @owner,
+        sha: '3ca23060197547eef92983f15590b5a87270615f',
+        specification_data: 'DATA'
       )
     end
 
@@ -54,8 +54,8 @@ module Pod::TrunkApp
     end
 
     before do
-      @version.add_log_message(:reference => 'ref1', :level => :info,  :message => 'log message 1')
-      @version.add_log_message(:reference => 'ref2', :level => :error, :message => 'log message 2')
+      @version.add_log_message(reference: 'ref1', level: :info,  message: 'log message 1')
+      @version.add_log_message(reference: 'ref2', level: :error, message: 'log message 2')
     end
 
     it "shows a list of all messages" do
@@ -78,8 +78,8 @@ module Pod::TrunkApp
 
     before do
       @disputes = [
-        Dispute.create(:claimer => @owner, :message => 'unsetled'),
-        Dispute.create(:claimer => @owner, :message => 'settled', :settled => true),
+        Dispute.create(claimer: @owner, message: 'unsetled'),
+        Dispute.create(claimer: @owner, message: 'settled', settled: true),
       ]
     end
 
@@ -101,7 +101,7 @@ module Pod::TrunkApp
     end
 
     it "updates a dispute" do
-      put "/disputes/#{@disputes.first.id}", :dispute => { :settled => true }
+      put "/disputes/#{@disputes.first.id}", dispute: { settled: true }
       last_response.status.should == 302
       @disputes.first.reload.should.be.settled
     end

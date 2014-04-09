@@ -1,8 +1,8 @@
 module SpecHelpers
   module Authentication
     def create_session_with_owner
-      @owner = Pod::TrunkApp::Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
-      session = Pod::TrunkApp::Session.new(:owner => @owner)
+      @owner = Pod::TrunkApp::Owner.create(email: 'appie@example.com', name: 'Appie Duran')
+      session = Pod::TrunkApp::Session.new(owner: @owner)
       session.verified = true
       session.save
       session

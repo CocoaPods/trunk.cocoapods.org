@@ -23,8 +23,6 @@ FormatString:
   Enabled: false
 HandleExceptions:
   Enabled: false
-HashSyntax:
-  Enabled: false
 IfUnlessModifier:
   Enabled: false
 IndentHash:

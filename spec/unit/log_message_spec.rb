@@ -5,7 +5,7 @@ module Pod::TrunkApp
   describe LogMessage do
     describe "concerning validations" do
       before do
-        @message = LogMessage.new(:level => :info, :message => 'yay', :pod_version_id => 42)
+        @message = LogMessage.new(level: :info, message: 'yay', pod_version_id: 42)
       end
 
       it "needs a valid level" do
@@ -37,21 +37,21 @@ module Pod::TrunkApp
         it "raises if an empty `level' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @message.level = nil
-            @message.save(:validate => false)
+            @message.save(validate: false)
           end
         end
 
         it "raises if an empty `message' gets inserted" do
           should.raise Sequel::NotNullConstraintViolation do
             @message.message = nil
-            @message.save(:validate => false)
+            @message.save(validate: false)
           end
         end
 
         it "does not raise if an empty `submission_job_id' gets inserted" do
           should.not.raise Sequel::NotNullConstraintViolation do
             @message.pod_version_id = nil
-            @message.save(:validate => false)
+            @message.save(validate: false)
           end
         end
       end

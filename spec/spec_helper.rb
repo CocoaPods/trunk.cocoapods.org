@@ -24,7 +24,7 @@ require 'config/init'
 require 'app/controllers/app_controller'
 
 def DB.test_safe_transaction(&block)
-  DB.transaction(:savepoint => true, &block)
+  DB.transaction(savepoint: true, &block)
 end
 
 $:.unshift(ROOT, 'spec')
@@ -99,7 +99,7 @@ class Bacon::Context
     TRUNK_APP_LOGGER.info('-' * description.size)
     TRUNK_APP_LOGGER.info(description)
     TRUNK_APP_LOGGER.info('-' * description.size)
-    Sequel::Model.db.transaction(:rollback => :always) do
+    Sequel::Model.db.transaction(rollback: :always) do
       run_requirement_before_sequel(description, spec)
     end
   end

@@ -25,7 +25,7 @@ def perform_action(name, *args)
   result
 end
 
-@github = Pod::TrunkApp::GitHub.new(ENV['GH_REPO'], 'master', :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+@github = Pod::TrunkApp::GitHub.new(ENV['GH_REPO'], 'master', username: ENV['GH_TOKEN'], password: 'x-oauth-basic')
 
 destination_path = 'Specs/AFNetworking/1.2.0/AFNetworking.podspec.yaml'
 data = File.read(File.expand_path('../../AFNetworking.podspec', __FILE__))

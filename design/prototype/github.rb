@@ -7,7 +7,7 @@ require 'yaml'
 
 OWNER = 'alloy'
 REPO  = 'push.cocoapods.org-test'
-auth_params = { :username => ENV['GH_USERNAME'], :password => ENV['GH_PASSWORD'] }
+auth_params = { username: ENV['GH_USERNAME'], password: ENV['GH_PASSWORD'] }
 
 def url(path)
   "https://api.github.com/repos/#{OWNER}/#{REPO}/#{path}"

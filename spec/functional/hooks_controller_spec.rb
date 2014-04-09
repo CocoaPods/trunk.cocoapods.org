@@ -60,15 +60,15 @@ module Pod::TrunkApp
     end
 
     before do
-      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+      Owner.create(email: Owner::UNCLAIMED_OWNER_EMAIL, name: 'Unclaimed')
     end
 
     it "processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)" do
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
 
@@ -98,8 +98,8 @@ module Pod::TrunkApp
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
@@ -132,10 +132,10 @@ module Pod::TrunkApp
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
-      test_user = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
+      test_user = Owner.create(email: 'test.user@example.com', name: 'Test User')
       test_user.add_pod(existing_pod)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
@@ -154,8 +154,8 @@ module Pod::TrunkApp
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
@@ -174,8 +174,8 @@ module Pod::TrunkApp
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
-      existing_pod = Pod.create(:name => existing_spec.name)
-      pod_version = PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      pod_version = PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       pod = Pod.find(name: 'KFData')
       commit = pod.versions.last.last_published_by
@@ -198,7 +198,7 @@ module Pod::TrunkApp
       # Create existing pod.
       #
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
-      existing_pod = Pod.create(:name => existing_spec.name)
+      existing_pod = Pod.create(name: existing_spec.name)
 
       pod = Pod.find(name: 'KFData')
       pod.versions.last.should == nil
@@ -241,8 +241,8 @@ module Pod::TrunkApp
       #
       file = 'GitHub/KFData.podspec'
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.new.podspec')))
 
@@ -273,8 +273,8 @@ module Pod::TrunkApp
       #
       file = 'GitHub/KFData.podspec'
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read(file)))
 
@@ -308,10 +308,10 @@ module Pod::TrunkApp
       #
       file = 'GitHub/KFData.podspec'
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
-      test_user = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
+      test_user = Owner.create(email: 'test.user@example.com', name: 'Test User')
       test_user.add_pod(existing_pod)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read(file)))
@@ -331,8 +331,8 @@ module Pod::TrunkApp
       #
       file = 'GitHub/KFData.podspec'
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
-      existing_pod = Pod.create(:name => existing_spec.name)
-      PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       REST.stubs(:get).returns(rest_response.new(fixture_read(file)))
 
@@ -352,8 +352,8 @@ module Pod::TrunkApp
       #
       file = 'GitHub/KFData.podspec'
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
-      existing_pod = Pod.create(:name => existing_spec.name)
-      pod_version = PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
+      existing_pod = Pod.create(name: existing_spec.name)
+      pod_version = PodVersion.create(pod: existing_pod, name: existing_spec.version.version)
 
       pod = Pod.find(name: 'KFData')
       commit = pod.versions.last.last_published_by
@@ -377,7 +377,7 @@ module Pod::TrunkApp
       #
       file = 'GitHub/KFData.podspec'
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
-      existing_pod = Pod.create(:name => existing_spec.name)
+      existing_pod = Pod.create(name: existing_spec.name)
 
       pod = Pod.find(name: 'KFData')
       pod.versions.last.should == nil

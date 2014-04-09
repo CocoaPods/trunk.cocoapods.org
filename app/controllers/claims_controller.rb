@@ -30,9 +30,9 @@ module Pod
         if @owner.valid? && !@pods.empty? && @invalid_pods.empty?
           change_ownership
           query = {
-            :claimer_email => @owner.email,
-            :successfully_claimed => @successfully_claimed_pods,
-            :already_claimed => @already_claimed_pods
+            claimer_email: @owner.email,
+            successfully_claimed: @successfully_claimed_pods,
+            already_claimed: @already_claimed_pods
           }
           redirect to("/thanks?#{query.to_query}")
         else
@@ -48,13 +48,13 @@ module Pod
       # --- Disputes ------------------------------------------------------------------------------
 
       get '/disputes/new' do
-        @pods = params[:pods].map { |name| Pod.find(:name => name) }
+        @pods = params[:pods].map { |name| Pod.find(name: name) }
         slim :'disputes/new'
       end
 
       post '/disputes' do
         claimer = Owner.find_by_email(params[:dispute][:claimer_email])
-        Dispute.create(:claimer => claimer, :message => params[:dispute][:message])
+        Dispute.create(claimer: claimer, message: params[:dispute][:message])
         redirect to('/disputes/thanks')
       end
 
@@ -65,7 +65,7 @@ module Pod
       # --- Assets ------------------------------------------------------------------------------
 
       get '/claims.css' do
-        scss :claims, :style => :expanded
+        scss :claims, style: :expanded
       end
 
       private
@@ -81,7 +81,7 @@ module Pod
         unless params[:pods].blank?
           params[:pods].map(&:strip).uniq.each do |pod_name|
             next if pod_name.blank?
-            if pod = Pod.find(:name => pod_name)
+            if pod = Pod.find(name: pod_name)
               @pods << pod
             else
               @invalid_pods << pod_name
@@ -103,7 +103,7 @@ module Pod
         @successfully_claimed_pods = []
         @already_claimed_pods = []
         DB.test_safe_transaction do
-          @owner.save_changes(:raise_on_save_failure => true)
+          @owner.save_changes(raise_on_save_failure: true)
           unclaimed_owner = Owner.unclaimed
           @pods.each do |pod|
             if pod.owners == [unclaimed_owner]

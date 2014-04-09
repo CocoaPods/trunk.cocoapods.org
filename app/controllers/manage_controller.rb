@@ -38,7 +38,7 @@ module Pod
       end
 
       get '/commits/:id' do
-        @commit = Commit.find(:id => params[:id])
+        @commit = Commit.find(id: params[:id])
         erb :'commits/show'
       end
 
@@ -48,8 +48,8 @@ module Pod
       end
 
       post '/owners/delete' do
-        owner = Owner.find(:id => params[:owner])
-        pod = Pod.find(:id => params[:pod])
+        owner = Owner.find(id: params[:owner])
+        pod = Pod.find(id: params[:pod])
 
         pod.remove_owner owner
 
@@ -71,7 +71,7 @@ module Pod
 
       get '/disputes' do
         if params[:scope] == 'unsettled'
-          @disputes = Dispute.where(:settled => false).order(Sequel.asc(:id))
+          @disputes = Dispute.where(settled: false).order(Sequel.asc(:id))
         else
           @disputes = Dispute.order(Sequel.desc(:id))
         end
@@ -79,12 +79,12 @@ module Pod
       end
 
       get '/disputes/:id' do
-        @dispute = Dispute.find(:id => params[:id])
+        @dispute = Dispute.find(id: params[:id])
         erb :'disputes/show'
       end
 
       put '/disputes/:id' do
-        @dispute = Dispute.find(:id => params[:id])
+        @dispute = Dispute.find(id: params[:id])
         @dispute.update(params[:dispute])
         redirect to("/disputes/#{@dispute.id}")
       end

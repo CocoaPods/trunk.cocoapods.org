@@ -21,11 +21,11 @@ module Pod
       # use of the trunk app.
       #
       def self.unclaimed
-        first(:email => UNCLAIMED_OWNER_EMAIL)
+        first(email: UNCLAIMED_OWNER_EMAIL)
       end
 
       def self.find_by_email(email)
-        first(:email => normalize_email(email))
+        first(email: normalize_email(email))
       end
 
       def self.find_or_initialize_by_email_and_update_name(email, name)
@@ -33,13 +33,13 @@ module Pod
           owner.name = name unless name.blank?
           owner
         else
-          Owner.new(:email => email, :name => name)
+          Owner.new(email: email, name: name)
         end
       end
 
       def self.find_or_create_by_email_and_update_name(email, name)
         owner = find_or_initialize_by_email_and_update_name(email, name)
-        owner.save_changes(:raise_on_save_failure => true)
+        owner.save_changes(raise_on_save_failure: true)
         owner
       end
 
@@ -91,7 +91,7 @@ module Pod
       def validate
         super
         validates_presence :name
-        validates_format RFC822::EMAIL, :email, :message => 'has invalid format'
+        validates_format RFC822::EMAIL, :email, message: 'has invalid format'
         validates_mx_records :email
       end
 

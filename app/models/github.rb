@@ -24,11 +24,11 @@ module Pod
       def create_new_commit(destination_path, data, message, author_name, author_email)
         CreateCommitResponse.new do
           put(File.join('contents', URI.escape(destination_path)),
-              :message   => message,
-              :branch    => BRANCH,
-              :content   => Base64.encode64(data).delete("\r\n"),
-              :author    => { :name => author_name,        :email => author_email },
-              :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
+              message: message,
+              branch: BRANCH,
+              content: Base64.encode64(data).delete("\r\n"),
+              author: { name: author_name,        email: author_email },
+              committer: { name: ENV['GH_USERNAME'], email: ENV['GH_EMAIL'] }
           )
         end
       end

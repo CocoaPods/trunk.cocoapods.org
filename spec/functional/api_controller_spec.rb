@@ -6,7 +6,7 @@ module Pod::TrunkApp
     def raise_test_error
     end
 
-    get '/raise_test_error', :requires_owner => false do
+    get '/raise_test_error', requires_owner: false do
       raise_test_error
     end
   end
@@ -52,15 +52,15 @@ module Pod::TrunkApp
     it "reports all unexpected errors" do
       error = StandardError.new('oops')
       APIController.any_instance.stubs(:raise_test_error).raises(error)
-      NewRelic::Agent.expects(:notice_error).with(error, :uri => '/raise_test_error',
-                                                         :referer => 'http://example.com',
-                                                         :request_params => { 'key' => 'value' })
+      NewRelic::Agent.expects(:notice_error).with(error, uri: '/raise_test_error',
+                                                         referer: 'http://example.com',
+                                                         request_params: { 'key' => 'value' })
       get '/raise_test_error', { 'key' => 'value' },  'HTTP_REFERER' => 'http://example.com'
     end
   end
 
   class APIController
-    get '/owner_required', :requires_owner => true do
+    get '/owner_required', requires_owner: true do
     end
   end
 
@@ -92,7 +92,7 @@ module Pod::TrunkApp
 
     it "does not allow access when an unverified authentication token is supplied" do
       session = create_session_with_owner
-      session.update(:verified => false)
+      session.update(verified: false)
       get '/owner_required', nil,  'HTTP_AUTHORIZATION' => "Token #{session.token}"
       last_response.status.should == 401
       json_response['error'].should == "Authentication token is invalid or unverified."

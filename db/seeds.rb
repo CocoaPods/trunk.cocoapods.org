@@ -63,7 +63,7 @@ module Pod
         def create(params)
           puts "Signing in as: #{params[:name]} <#{params[:email]}>"
           json = perform(:post, '/', 201, params)
-          session = Session.find(:token => json['token'])
+          session = Session.find(token: json['token'])
           verify(session.verification_token)
           session.token
         end
@@ -82,7 +82,7 @@ module Pod
         end
 
         def add_owner(pod_name, email)
-          perform(:patch, "/#{pod_name}/owners", 200, :email => email)
+          perform(:patch, "/#{pod_name}/owners", 200, email: email)
         end
 
         def create_from_name(pod_name)
@@ -110,10 +110,10 @@ module Pod
           end
           # Every 4th push fails
           if @push_count && (@push_count % 4) == 3
-            REST.mock_response([422, 500][rand(2)], {}, { :error => 'Oh noes!' }.to_json)
+            REST.mock_response([422, 500][rand(2)], {}, { error: 'Oh noes!' }.to_json)
             perform(:post, '/', 500, spec)
           else
-            REST.mock_response(201, {}, { :commit => { :sha => commit_sha } }.to_json)
+            REST.mock_response(201, {}, { commit: { sha: commit_sha } }.to_json)
             perform(:post, '/', 302, spec)
           end
           @push_count += 1 if @push_count
@@ -128,39 +128,39 @@ end
 sessions = Pod::TrunkApp::SeedAPI::Sessions.new
 
 # Create unclaimed pods and owner
-token = sessions.create(:email => Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+token = sessions.create(email: Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL, name: 'Unclaimed')
 pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 # Add an unclaimed pod by Orta
 pods.create_from_name('ORStackView')
 
 # Import work by Orta
-token = sessions.create(:email => 'orta@example.com', :name => 'Orta')
+token = sessions.create(email: 'orta@example.com', name: 'Orta')
 pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 pods.create_from_name('ARAnalytics')
 # Adding second owner
-sessions.create(:email => 'artsy@example.com', :name => 'Artsy')
+sessions.create(email: 'artsy@example.com', name: 'Artsy')
 pods.add_owner('ARAnalytics', 'artsy@example.com')
 
 # Import work by Mattt Thompson
-token = sessions.create(:email => 'mattt@example.com', :name => 'Mattt Thompson')
+token = sessions.create(email: 'mattt@example.com', name: 'Mattt Thompson')
 pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 pods.create_from_name('AFNetworking')
 pods.create_from_name('AFIncrementalStore')
 
 # Import work by Kyle Fuller
-token = sessions.create(:email => 'kyle@example.com', :name => 'Kyle Fuller')
+token = sessions.create(email: 'kyle@example.com', name: 'Kyle Fuller')
 pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 pods.create_from_name('KFData')
 
 # Create a few disputes
 puts "Creating disputes"
 claimer = Pod::TrunkApp::Owner.find_by_email('orta@example.com')
-dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "The Pod ORStackView is mine!")
-dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "Oops, KFData isn't mine.", :settled => true)
+dispute = Pod::TrunkApp::Dispute.create(claimer: claimer, message: "The Pod ORStackView is mine!")
+dispute = Pod::TrunkApp::Dispute.create(claimer: claimer, message: "Oops, KFData isn't mine.", settled: true)
 
 # Create session for current user
 email = "#{ENV['USER']}@example.com"
 name = `git config --global user.name`.strip
-token = sessions.create(:email => email, :name => name)
+token = sessions.create(email: email, name: name)
 puts
 puts "[!] You now have a verified session for `#{name} <#{email}>': #{token}"

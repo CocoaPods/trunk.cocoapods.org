@@ -4,8 +4,8 @@ require 'app/models/dispute'
 module Pod::TrunkApp
   describe Dispute do
     before do
-      @claimer = Owner.create(:email => 'appie@example.com', :name => 'Appie')
-      @dispute = Dispute.new(:claimer => @claimer, :message => 'GIMME!')
+      @claimer = Owner.create(email: 'appie@example.com', name: 'Appie')
+      @dispute = Dispute.new(claimer: @claimer, message: 'GIMME!')
     end
 
     describe "concerning validations" do

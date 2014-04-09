@@ -8,7 +8,7 @@ module Pod
       plugin :timestamps
       plugin :validation_helpers
 
-      one_to_many :versions, :class => 'Pod::TrunkApp::PodVersion'
+      one_to_many :versions, class: 'Pod::TrunkApp::PodVersion'
       many_to_many :owners
 
       # Finds a pod by name.
@@ -17,7 +17,7 @@ module Pod
       # allowed' block will be called.
       #
       def self.find_by_name_and_owner(name, owner)
-        if pod = find(:name => name)
+        if pod = find(name: name)
           if pod.owners.include?(owner)
             return pod
           else
