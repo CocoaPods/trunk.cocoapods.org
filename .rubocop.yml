@@ -37,8 +37,6 @@ RegexpLiteral:
   Enabled: false
 SingleLineBlockParams:
   Enabled: false
-SingleLineMethods:
-  Enabled: false
 SpecialGlobalVars:
   Enabled: false
 StringLiterals:
