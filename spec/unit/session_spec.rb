@@ -122,7 +122,7 @@ module Pod::TrunkApp
       session = Session.create(:owner => @owner)
       session.verify!
       session.reload.verified.should == true
-      session.verification_token.should == nil
+      session.verification_token.should.nil?
     end
 
     it "extends the validity" do
