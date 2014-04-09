@@ -1,9 +1,14 @@
 inherit_from: rubocop-todo.yml
 
-# Remove once the support for Ruby 1.8.7 has been phased out
+# Can be removed once the support for Ruby 1.8.7 on CocoaPods.
 HashSyntax:
   EnforcedStyle: hash_rockets
 
-# fail vs raise https://github.com/bbatsov/ruby-style-guide/issues/233
+# We adopted raise instead of fail.
 SignalException:
   EnforcedStyle: only_raise
+
+# Allows for `should.match /regexp/`.
+AmbiguousRegexpLiteral:
+  Exclude:
+    - spec/**

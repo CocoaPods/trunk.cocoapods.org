@@ -1,6 +1,4 @@
 ---
-AmbiguousRegexpLiteral:
-  Enabled: false
 AsciiComments:
   Enabled: false
 AssignmentInCondition:
