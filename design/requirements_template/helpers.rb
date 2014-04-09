@@ -10,15 +10,15 @@ module Helpers
     end
     parts.join(', ')
   end
-  
+
   def format_header(header)
     "#{header[0,1].upcase}#{header[1..-1].downcase}"
   end
-  
+
   def pluralize(cardinality, singular, plural)
     [cardinality, cardinality == 1 ? singular : plural].join(' ')
   end
-  
+
   def format_estimate(cardinality, interval)
     case interval
     when :days

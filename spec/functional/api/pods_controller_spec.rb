@@ -125,7 +125,7 @@ module Pod::TrunkApp
       commit.committer.should == @owner
       commit.specification_data.should == JSON.pretty_generate(spec)
     end
-    
+
     it "does not create a commit if a push fails" do
       PushJob.any_instance.stubs(:push!).returns(response(500))
       lambda {

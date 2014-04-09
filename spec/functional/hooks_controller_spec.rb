@@ -9,7 +9,7 @@ module Pod::TrunkApp
       payload = fixture_read('GitHub/post_receive_hook_json_data.raw')
       post '/github-post-receive/', payload
     end
-    
+
     def post_raw_hook_ruby_data
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_ruby_data.raw')
@@ -46,7 +46,7 @@ module Pod::TrunkApp
     end
 
     rest_response = Struct.new(:body)
-    
+
     # JSON podspecs
     #
 
@@ -223,10 +223,10 @@ module Pod::TrunkApp
 
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
-      
+
     # Ruby podspecs
     #
-    
+
     it "processes payload data but does not create a new pod (if one does not exist)" do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec')))
 
@@ -372,7 +372,7 @@ module Pod::TrunkApp
 
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
-    
+
     it "does add the add commit and a version if missing and version does not exist" do
       # Create existing pod.
       #
