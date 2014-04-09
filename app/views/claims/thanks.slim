@@ -1,7 +1,7 @@
 ruby:
   claimed_pods = params[:successfully_claimed] != nil
   pod_message = claimed_pods ? 'pod'.pluralize(params[:successfully_claimed].size) : nil
-  
+
 - if claimed_pods
   p You have successfully claimed the following #{ pod_message } and are now registered as #{params[:successfully_claimed].size == 1 ? 'its' : 'their'} ‘owner’: #{params[:successfully_claimed].to_sentence}.
 

@@ -28,15 +28,15 @@
   $(document).ready(function() {
     $('input[type=submit]').click(function(event) {
       var buttonTarget = event.currentTarget;
-      
+
       buttonTarget.timesClicked = buttonTarget.timesClicked || 0;
-      
+
       var button     = $(buttonTarget);
       var ownerInput = button.prev('input[name=owner]');
       var podInput   = ownerInput.prev('input[name=pod]');
       var owner      = ownerInput.val();
       var pod        = podInput.val();
-      
+
       // They need to be really really really sure ;)
       //
       if (buttonTarget.timesClicked == 3) {

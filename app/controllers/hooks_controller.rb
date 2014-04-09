@@ -85,7 +85,7 @@ module Pod
               # Update the database after extracting the relevant data from the podspec.
               #
               pod = Pod.find(name: spec.name)
-              
+
               send :"handle_#{type}", spec, pod, commit_sha, committer_email if pod
             end
           end

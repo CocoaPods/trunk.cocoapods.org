@@ -56,7 +56,7 @@ module Pod
           :data => data
         )
       end
-      
+
       def measure_duration
         start_time = Time.now
         result = yield
