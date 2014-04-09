@@ -66,8 +66,8 @@ class Bacon::Context
     extend Rack::Test::Methods
     extend SpecHelpers::Access
 
-    self.singleton_class.send(:define_method, :app) { app }
-    self.singleton_class.send(:define_method, :response_doc) { Nokogiri::HTML(last_response.body) }
+    singleton_class.send(:define_method, :app) { app }
+    singleton_class.send(:define_method, :response_doc) { Nokogiri::HTML(last_response.body) }
   end
 
   def fixture(filename)

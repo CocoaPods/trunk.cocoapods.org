@@ -22,7 +22,7 @@ module Pod
         super
         if new?
           self.verified = false
-          self.valid_for = VALIDITY_LENGTH unless self.valid_until
+          self.valid_for = VALIDITY_LENGTH unless valid_until
           self.token ||= Token.generate(TOKEN_LENGTH) { |t| Session.find(token: t) }
           self.verification_token ||= Token.generate(VERIFICATION_TOKEN_LENGTH) { |t| Session.find(verification_token: t) }
         end
