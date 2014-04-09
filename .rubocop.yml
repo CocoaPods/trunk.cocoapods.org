@@ -29,3 +29,7 @@ MultilineBlockChain:
   Exclude:
     - spec/**
 
+# Variables are used for the erb templates
+UselessAssignment:
+  Enabled: false
+

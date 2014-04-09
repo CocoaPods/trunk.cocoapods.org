@@ -64,10 +64,6 @@ RegexpLiteral:
 SingleLineBlockParams:
   Enabled: false
 
-# Offense count: 11
-UselessAssignment:
-  Enabled: false
-
 # Offense count: 124
 Void:
   Enabled: false
