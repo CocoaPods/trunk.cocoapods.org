@@ -10,14 +10,19 @@ HashSyntax:
 SignalException:
   EnforcedStyle: only_raise
 
-# Allows for `should.match /regexp/`.
+# Allow backticks
+AsciiComments:
+  Enabled: false
+
+# Allow for `should.match /regexp/`.
 AmbiguousRegexpLiteral:
   Exclude:
     - spec/**
 
-# Allow backticks
-AsciiComments:
-  Enabled: false
+# Allow `object.should == object` syntax.
+Void:
+  Exclude:
+    - spec/**
 
 #- Trunk ---------------------------------------------------------------------#
 
