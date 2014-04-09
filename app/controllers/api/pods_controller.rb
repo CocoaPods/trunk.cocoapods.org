@@ -36,14 +36,18 @@ module Pod
 
         specification = SpecificationWrapper.from_json(request.body.read)
         if specification.nil?
-          json_error(400, 'Unable to load a Pod Specification from the provided input.')
+          message = 'Unable to load a Pod Specification from the provided input.'
+          json_error(400, message)
         end
         unless specification.valid?
-          error(422, { 'error' => 'The Pod Specification did not pass validation.', 'data' => specification.validation_errors }.to_json)
+          message = 'The Pod Specification did not pass validation.'
+          data = specification.validation_errors
+          error(422, { 'error' => message, 'data' => data }.to_json)
         end
 
         pod = Pod.find_by_name_and_owner(specification.name, @owner) do
-          json_error(403, 'You are not allowed to push new versions for this pod.')
+          message = 'You are not allowed to push new versions for this pod.'
+          json_error(403, message)
         end
         unless pod
           pod = Pod.create(:name => specification.name)
@@ -52,7 +56,8 @@ module Pod
         if version = pod.versions_dataset.where(:name => specification.version).first
           if version.published?
             headers 'Location' => url(version.resource_path)
-            json_error(409, "Unable to accept duplicate entry for: #{specification}")
+            message = "Unable to accept duplicate entry for: #{specification}"
+            json_error(409, message)
           end
         else
           version = pod.add_version(:name => specification.version)
@@ -64,13 +69,15 @@ module Pod
         elsif response.failed_on_our_side?
           throw_internal_server_error!
         elsif response.failed_on_their_side?
-          # In case of a 5xx at GitHub’s side, this might not mean the commit didn’t get created,
-          # it can also indicate an error occurred while rendering the response, hence asking for
-          # some patience in case we still update the PodVersion with a new Commit from the GitHub
+          # In case of a 5xx at GitHub’s side, this might not mean the commit
+          # didn’t get created, it can also indicate an error occurred while
+          # rendering the response, hence asking for some patience in case we
+          # still update the PodVersion with a new Commit from the GitHub
           # post-commit hook.
           #
-          # TODO: Ask GitHub if they have some form of transaction system in place that rolls back a
-          # commit in case an error occurs during response rendering.
+          # TODO: Ask GitHub if they have some form of transaction system in
+          # place that rolls back a commit in case an error occurs during
+          # response rendering.
           json_error(500, "An error occurred on GitHub’s side. Please check GitHub’s status at " \
                           "https://status.github.com and try again later in case the pod is " \
                           "still not published.")
@@ -90,7 +97,8 @@ module Pod
 
         owner_params = JSON.parse(request.body.read)
         if !owner_params.kind_of?(Hash) || owner_params.empty?
-          json_error(422, 'Please send the owner email address in the body of your post.')
+          message = 'Please send the owner email address in the body of your post.'
+          json_error(422, message)
         end
 
         unless other_owner = Owner.find_by_email(owner_params['email'])

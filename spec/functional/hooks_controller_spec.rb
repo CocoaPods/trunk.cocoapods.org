@@ -91,7 +91,9 @@ module Pod::TrunkApp
 
       # Did add a new commit.
       #
-      pod.versions.find { |version| version.name == '1.0.2' }.commits.map(&:sha).should == ['3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f']
+      version = pod.versions.find { |pod_version| pod_version.name == '1.0.2' }
+      shas = version.commits.map(&:sha)
+      shas.should == ['3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f']
     end
 
     it 'processes payload data and creates a new submission job (because the version exists)' do
@@ -265,7 +267,9 @@ module Pod::TrunkApp
 
       # Did add a new commit.
       #
-      pod.versions.find { |version| version.name == '1.0.2' }.commits.map(&:sha).should == ['3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f']
+      version = pod.versions.find { |pod_version| pod_version.name == '1.0.2' }
+      shas = version.commits.map(&:sha)
+      shas.should == ['3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f']
     end
 
     it 'processes payload data and creates a new submission job (because the version exists)' do

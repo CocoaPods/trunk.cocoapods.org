@@ -68,3 +68,9 @@ HandleExceptions:
 FileName:
   Exclude:
     - spec/fixtures/*
+
+LineLength:
+  Exclude:
+    - design/prototype/github.rb
+
+

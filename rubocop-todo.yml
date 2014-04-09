@@ -11,7 +11,7 @@ Documentation:
 
 # Offense count: 282
 LineLength:
-  Max: 221
+  Max: 130
 
 # Offense count: 11
 # Configuration parameters: CountComments.

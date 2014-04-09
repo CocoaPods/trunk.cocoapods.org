@@ -21,31 +21,42 @@ module Pod
         log(:info, 'initiated', committer, specification_data)
 
         response, duration = measure_duration do
-          self.class.github.create_new_commit(pod_version.destination_path,
-                                              specification_data,
-                                              commit_message,
-                                              committer.name,
-                                              committer.email)
+          self.class.github.create_new_commit(
+            pod_version.destination_path,
+            specification_data,
+            commit_message,
+            committer.name,
+            committer.email
+          )
         end
 
-        if response.success?
-          log(:info, "has been pushed (#{duration} s)")
-        elsif response.failed_on_our_side?
-          log(:error, "failed with HTTP error `#{response.status_code}' on our side (#{duration} s)", committer, response.body)
-        elsif response.failed_on_their_side?
-          log(:warning, "failed with HTTP error `#{response.status_code}' on GitHub’s side (#{duration} s)", committer, response.body)
-        elsif response.failed_due_to_timeout?
-          log(:warning, "failed due to timeout (#{duration} s)", committer, response.timeout_error)
-        end
-
+        log_response(response, committer, duration)
         return response
 
       rescue Object => error
-        log(:error, "failed with error: #{error.message}.", committer, error.backtrace.join("\n\t\t"))
+        message = "failed with error: #{error.message}."
+        log(:error, message, committer, error.backtrace.join("\n\t\t"))
         raise
       end
 
       protected
+
+      def log_response(response, committer, duration)
+        if response.success?
+          log(:info, "has been pushed (#{duration} s)")
+        elsif response.failed_on_our_side?
+          message = "failed with HTTP error `#{response.status_code}' on " \
+            "our side (#{duration} s)"
+          log(:error, message, committer, response.body)
+        elsif response.failed_on_their_side?
+          message = "failed with HTTP error `#{response.status_code}' on " \
+            "GitHub’s side (#{duration} s)"
+          log(:warning, message, committer, response.body)
+        elsif response.failed_due_to_timeout?
+          message = "failed due to timeout (#{duration} s)"
+          log(:warning, message, committer, response.timeout_error)
+        end
+      end
 
       def log(level, message, committer = nil, data = nil)
         pod_version.add_log_message(
@@ -64,7 +75,11 @@ module Pod
       end
 
       def self.github
-        @github ||= GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+        @github ||= GitHub.new(
+          ENV['GH_REPO'],
+          :username => ENV['GH_TOKEN'],
+          :password => 'x-oauth-basic'
+        )
       end
     end
   end
