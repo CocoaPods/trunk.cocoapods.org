@@ -8,4 +8,3 @@ module SpecHelpers
     end
   end
 end
-

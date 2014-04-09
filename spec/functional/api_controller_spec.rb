@@ -100,4 +100,3 @@ module Pod::TrunkApp
   end
 
 end
-

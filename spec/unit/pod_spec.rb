@@ -73,4 +73,3 @@ module Pod::TrunkApp
     end
   end
 end
-

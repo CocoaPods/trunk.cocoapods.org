@@ -174,11 +174,6 @@ SpecialGlobalVars:
 StringLiterals:
   Enabled: false
 
-# Offense count: 17
-# Cop supports --auto-correct.
-TrailingBlankLines:
-  Enabled: false
-
 # Offense count: 6
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
 TrailingComma:

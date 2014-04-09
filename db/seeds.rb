@@ -167,4 +167,3 @@ name = `git config --global user.name`.strip
 token = sessions.create(:email => email, :name => name)
 puts
 puts "[!] You now have a verified session for `#{name} <#{email}>': #{token}"
-
