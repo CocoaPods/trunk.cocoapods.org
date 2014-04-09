@@ -33,8 +33,6 @@ MethodLength:
   Max: 21
 MultilineBlockChain:
   Enabled: false
-PerlBackrefs:
-  Enabled: false
 RedundantSelf:
   Enabled: false
 RegexpLiteral:

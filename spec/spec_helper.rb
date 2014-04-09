@@ -41,8 +41,8 @@ module Bacon
     # Gray-out those backtrace lines that are usually less interesting.
     def handle_summary
       ErrorLog.gsub!(/\t(.+?)\n/) do |line|
-        if $1.start_with?('/')
-          downcased = $1.downcase
+        if Regexp.last_match[1].start_with?('/')
+          downcased = Regexp.last_match[1].downcase
           if downcased.include?('cocoapods') && !downcased.include?('spec/spec_helper')
             line
           else
