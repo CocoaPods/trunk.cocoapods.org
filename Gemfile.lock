@@ -1,14 +1,4 @@
 GIT
-  remote: git://github.com/CocoaPods/Core.git
-  revision: 5699f9c785d6d3e7e3c5b49dead286ef4af8f8b0
-  specs:
-    cocoapods-core (0.31.1)
-      activesupport (>= 3.2.15, < 4)
-      fuzzy_match (~> 2.0.4)
-      json_pure (~> 1.8)
-      nap (~> 0.5)
-
-GIT
   remote: https://github.com/alloy/kicker.git
   revision: 87b0047202c0320d4ef62e1f1a4b2cbdefadf008
   branch: 3.0.0
@@ -38,6 +28,11 @@ GEM
       multi_json (~> 1.0)
     backports (3.6.0)
     bacon (1.2.0)
+    cocoapods-core (0.31.1)
+      activesupport (>= 3.2.15, < 4)
+      fuzzy_match (~> 2.0.4)
+      json_pure (~> 1.8)
+      nap (~> 0.5)
     daemons (1.1.9)
     dotenv (0.10.0)
     erubis (2.7.0)
@@ -123,7 +118,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   bacon
-  cocoapods-core!
+  cocoapods-core
   foreman
   json (~> 1.8)
   kicker!

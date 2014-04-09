@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.0.0'
 
 gem 'activesupport'
-gem 'cocoapods-core', :git => 'git://github.com/CocoaPods/Core.git'
+gem 'cocoapods-core'
 gem 'json', '~> 1.8'
 gem 'mail'
 gem 'nap', '>= 0.6', :git => 'https://github.com/alloy/nap.git'
