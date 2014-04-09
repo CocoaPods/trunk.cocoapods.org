@@ -54,10 +54,6 @@ LineLength:
 MethodLength:
   Max: 21
 
-# Offense count: 29
-MultilineBlockChain:
-  Enabled: false
-
 # Offense count: 8
 # Configuration parameters: MaxSlashes.
 RegexpLiteral:

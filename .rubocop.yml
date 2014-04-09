@@ -24,3 +24,8 @@ AsciiComments:
 ClassVars:
   Exclude:
     - spec/**
+
+MultilineBlockChain:
+  Exclude:
+    - spec/**
+
