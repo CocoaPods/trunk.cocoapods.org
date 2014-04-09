@@ -5,8 +5,7 @@ require 'app/models/pod'
 require 'app/models/session'
 require 'app/models/specification_wrapper'
 
-# TODO
-# Add logging to all steps and include as its LogMessage#reference:
+# TODO: Add logging to all steps and include as its LogMessage#reference:
 #
 #     "GitHub hook with temporary ID: #{object_id}"
 #
@@ -15,7 +14,7 @@ module Pod
     class HooksController < AppController
       # --- Post Receive Hook ---------------------------------------------------------------------
 
-      # TODO Package most of this action's content neatly into
+      # TODO: Package most of this action's content neatly into
       # a class specific to loading podspec data.
       #
       post "/github-post-receive/#{ENV['HOOK_PATH']}" do
@@ -63,16 +62,16 @@ module Pod
 
             # For each changed file, get its data (if it's a podspec).
             #
-            # TODO Only get the latest version of a file.
+            # TODO: Only get the latest version of a file.
             #
             files.each do |file|
-              # TODO Add .podspec example.
+              # TODO: Add .podspec example.
               #
               next unless file =~ /\.podspec(.json)?\z/
 
               # Get the data from the Specs repo.
               #
-              # TODO Update to the right repo.
+              # TODO: Update to the right repo.
               #
               data_url_template = 'https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s'
               data_url = data_url_template % [commit_sha, file] if commit_sha
@@ -132,13 +131,13 @@ module Pod
           # Is it related to the pod?
           #
           unless commit.pod_version.pod == pod
-            # TODO It's not. Log as error?
+            # TODO: It's not. Log as error?
             #
           end
         else
           # No? We should create it and connect it to the pod.
           #
-          # TODO What if the version does not exist yet? Should we add one?
+          # TODO: What if the version does not exist yet? Should we add one?
           #
           handle_modified spec, pod, commit_sha, committer_email
         end

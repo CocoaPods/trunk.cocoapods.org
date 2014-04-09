@@ -237,7 +237,7 @@ module Pod::TrunkApp
       @other_pod = @other_owner.add_pod(:name => spec.name)
     end
 
-    # TODO see if changes (or the lack of) can be detected from the macro, besides just count.
+    # TODO: see if changes (or the lack of) can be detected from the macro, besides just count.
     it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
       patch '/AFNetworking/owners', { 'email' => @owner.email }.to_json
       @other_pod.owners.should == [@other_owner]

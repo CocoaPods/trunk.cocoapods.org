@@ -9,7 +9,7 @@ module Pod
           new(Specification.from_hash(hash))
         end
       rescue JSON::ParserError
-        # TODO report error?
+        # TODO: report error?
         nil
       end
 

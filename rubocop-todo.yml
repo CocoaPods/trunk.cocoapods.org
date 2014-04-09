@@ -19,11 +19,6 @@ BlockNesting:
 ClassAndModuleChildren:
   Enabled: false
 
-# Offense count: 15
-# Configuration parameters: Keywords.
-CommentAnnotation:
-  Enabled: false
-
 # Offense count: 1
 CyclomaticComplexity:
   Max: 7

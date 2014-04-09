@@ -55,7 +55,7 @@ module Pod
       end
 
       def throw_internal_server_error!
-        # TODO Update with our status page address.
+        # TODO: Update with our status page address.
         json_error(500, "An internal server error occurred. Please check for any known status " \
                         "issues at https://twitter.com/CocoaPods and try again later.")
       end

@@ -39,7 +39,7 @@ module Pod
 
       # Performs a PUT request with a max timeout of 10 seconds.
       #
-      # TODO timeout could probably even be less.
+      # TODO: timeout could probably even be less.
       #
       def put(path, body)
         REST.put(url_for(path), body.to_json, HEADERS, @basic_auth) do |http_request|

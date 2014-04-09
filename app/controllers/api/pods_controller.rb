@@ -69,7 +69,7 @@ module Pod
           # some patience in case we still update the PodVersion with a new Commit from the GitHub
           # post-commit hook.
           #
-          # TODO Ask GitHub if they have some form of transaction system in place that rolls back a
+          # TODO: Ask GitHub if they have some form of transaction system in place that rolls back a
           # commit in case an error occurs during response rendering.
           json_error(500, "An error occurred on GitHub’s side. Please check GitHub’s status at " \
                           "https://status.github.com and try again later in case the pod is " \
