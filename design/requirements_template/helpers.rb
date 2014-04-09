@@ -12,7 +12,7 @@ module Helpers
   end
 
   def format_header(header)
-    "#{header[0,1].upcase}#{header[1..-1].downcase}"
+    "#{header[0, 1].upcase}#{header[1..-1].downcase}"
   end
 
   def pluralize(cardinality, singular, plural)

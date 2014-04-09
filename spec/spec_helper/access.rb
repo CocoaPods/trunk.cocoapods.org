@@ -21,7 +21,7 @@ module SpecHelpers
       private
 
       def total_db_record_count
-        DB.tables.map { |table| DB[table].count }.inject(0) { |x,sum| sum + x }
+        DB.tables.map { |table| DB[table].count }.inject(0) { |x, sum| sum + x }
       end
     end
 

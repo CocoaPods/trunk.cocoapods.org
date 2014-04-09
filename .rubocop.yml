@@ -179,11 +179,6 @@ SingleLineBlockParams:
 SingleLineMethods:
   Enabled: false
 
-# Offense count: 2
-# Cop supports --auto-correct.
-SpaceAfterComma:
-  Enabled: false
-
 # Offense count: 53
 # Cop supports --auto-correct.
 SpaceAroundOperators:
