@@ -9,11 +9,6 @@
 BlockNesting:
   Max: 4
 
-# Offense count: 19
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-ClassAndModuleChildren:
-  Enabled: false
-
 # Offense count: 1
 CyclomaticComplexity:
   Max: 7
