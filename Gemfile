@@ -27,7 +27,6 @@ group :development do
   gem 'saga'
   gem 'terminal-table'
   gem 'sinatra-contrib'
-  gem 'rubocop'
 end
 
 group :test do
@@ -36,4 +35,5 @@ group :test do
   gem 'nokogiri'
   gem 'prettybacon'
   gem 'rack-test'
+  gem 'rubocop'
 end
