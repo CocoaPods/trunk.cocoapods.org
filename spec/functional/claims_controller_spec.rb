@@ -11,9 +11,9 @@ module Pod::TrunkApp
     end
 
     it "does not create an owner if no pods are specified" do
-      lambda {
+      lambda do
         post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => []
-      }.should.not.change { Owner.count }
+      end.should.not.change { Owner.count }
       last_response.status.should == 200
       form = response_doc.css('form').first
       form.css('input[name="owner[email]"]').first['value'].should == 'appie@example.com'
@@ -28,9 +28,9 @@ module Pod::TrunkApp
     end
 
     it "creates an owner and assigns it to the claimed pods" do
-      lambda {
+      lambda do
         post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking']
-      }.should.change { Owner.count }
+      end.should.change { Owner.count }
       owner = Owner.find_by_email('appie@example.com')
       owner.name.should == 'Appie Duran'
       @pod.reload.owners.should == [owner]
@@ -38,9 +38,9 @@ module Pod::TrunkApp
 
     it "finds an existing owner and assigns it to the claimed pods" do
       owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
-      lambda {
+      lambda do
         post '/', :owner => { :email => 'appie@example.com' }, :pods => ['AFNetworking']
-      }.should.not.change { Owner.count }
+      end.should.not.change { Owner.count }
       @pod.reload.owners.should == [owner]
     end
 
@@ -67,11 +67,11 @@ module Pod::TrunkApp
 
     it "rolls back in case of an error" do
       Pod.any_instance.stubs(:remove_owner).raises
-      lambda {
+      lambda do
         should.raise do
           post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking']
         end
-      }.should.not.change { Owner.count }
+      end.should.not.change { Owner.count }
       @pod.reload.owners.should == [Owner.unclaimed]
     end
 
@@ -113,9 +113,9 @@ module Pod::TrunkApp
     end
 
     it "creates a new dispute" do
-      lambda {
+      lambda do
         post '/disputes', :dispute => { :claimer_email => @owner.email, :message => 'GIMME!' }
-      }.should.change { Dispute.count }
+      end.should.change { Dispute.count }
       last_response.location.should == 'https://example.org/disputes/thanks'
       dispute = Dispute.last
       dispute.claimer.should == @owner

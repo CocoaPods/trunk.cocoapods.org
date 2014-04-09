@@ -19,9 +19,9 @@ module Pod::TrunkApp
     end
 
     it "creates a new owner on first registration" do
-      lambda {
+      lambda do
         post '/', { 'email' => @email, 'name' => @name }.to_json
-      }.should.change { Owner.count }
+      end.should.change { Owner.count }
       last_response.status.should == 201
 
       owner = Owner.find_by_email(@email)
@@ -30,9 +30,9 @@ module Pod::TrunkApp
     end
 
     it "creates a new session on first registration" do
-      lambda {
+      lambda do
         post '/', { 'email' => @email, 'name' => @name }.to_json
-      }.should.change { Session.count }
+      end.should.change { Session.count }
       last_response.status.should == 201
 
       session = Owner.find_by_email(@email).sessions_dataset.valid.last
@@ -42,30 +42,30 @@ module Pod::TrunkApp
     end
 
     it "shows validation errors if creating an owner fails" do
-      lambda {
+      lambda do
         post '/', { 'email' => nil, 'name' => nil }.to_json
-      }.should.not.change { Owner.count + Session.count }
+      end.should.not.change { Owner.count + Session.count }
       last_response.status.should == 422
       json_response['error'].keys.sort.should == %w(email name)
     end
 
     it "does not create a new owner or session in case emailing raises an error" do
       Mail::Message.any_instance.stubs(:deliver).raises
-      lambda {
+      lambda do
         should.raise do
           post '/', { 'email' => @email, 'name' => @name }.to_json
         end
-      }.should.not.change { Owner.count + Session.count }
+      end.should.not.change { Owner.count + Session.count }
     end
 
     it "creates only a new session on subsequent registrations" do
       owner = Owner.create(:email => @email, :name => @name)
       owner.add_session({})
-      lambda {
-        lambda {
+      lambda do
+        lambda do
           post '/', { 'email' => @email, 'name' => nil }.to_json
-        }.should.not.change { Owner.count }
-      }.should.change { Session.count }
+        end.should.not.change { Owner.count }
+      end.should.change { Session.count }
       owner.reload.sessions.size.should == 2
       owner.name.should == @name
     end
@@ -79,17 +79,17 @@ module Pod::TrunkApp
     it "does not create a new session in case emailing raises an error" do
       owner = Owner.create(:email => @email, :name => @name)
       Mail::Message.any_instance.stubs(:deliver).raises
-      lambda {
+      lambda do
         should.raise do
           post '/', { 'email' => @email, 'name' => @name }.to_json
         end
-      }.should.not.change { Session.count }
+      end.should.not.change { Session.count }
     end
 
     it "sends an email with the session verification link" do
-      lambda {
+      lambda do
         post '/', { 'email' => @email, 'name' => @name }.to_json
-      }.should.change { Mail::TestMailer.deliveries.size }
+      end.should.change { Mail::TestMailer.deliveries.size }
       last_response.status.should == 201
 
       mail = Mail::TestMailer.deliveries.last
@@ -148,9 +148,9 @@ module Pod::TrunkApp
       session = sign_in!
       owner = session.owner
       owner.add_session({})
-      lambda {
+      lambda do
         delete '/'
-      }.should.change { Session.count }
+      end.should.change { Session.count }
       last_response.status.should == 200
 
       owner.sessions.should == [session.reload]

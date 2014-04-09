@@ -84,9 +84,9 @@ module Pod::TrunkApp
 
         it "logs the duration" do
           @github.stubs(:create_new_commit).returns(response(422))
-          lambda {
+          lambda do
             @job.push!
-          }.should.change { LogMessage.count }
+          end.should.change { LogMessage.count }
           @version.reload
           log = @version.log_messages.last
           log.level.should == :error
