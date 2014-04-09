@@ -58,3 +58,6 @@ MultilineBlockChain:
 UselessAssignment:
   Enabled: false
 
+HandleExceptions:
+  Exclude:
+    - db/seeds.rb
