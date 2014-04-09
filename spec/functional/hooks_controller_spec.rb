@@ -34,13 +34,13 @@ module Pod::TrunkApp
 
     it "fails with data other than a push payload" do
       header 'Content-Type', 'application/x-www-form-urlencoded'
-      post '/github-post-receive/', something: 'else'
+      post '/github-post-receive/', :something => 'else'
       last_response.status.should == 422
     end
 
     it "fails with a payload other than serialized push data" do
       header 'Content-Type', 'application/x-www-form-urlencoded'
-      post '/github-post-receive/', payload: 'not-push-data'
+      post '/github-post-receive/', :payload => 'not-push-data'
       last_response.status.should == 415
     end
 
@@ -56,7 +56,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      Pod.find(name: 'MobileAppTracker').should == nil
+      Pod.find(:name => 'MobileAppTracker').should == nil
     end
 
     before do
@@ -76,7 +76,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did add a version.
       #
@@ -107,7 +107,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did not add a new version.
       #
@@ -144,7 +144,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == test_user
@@ -163,7 +163,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       commit = pod.versions.last.last_published_by
 
@@ -177,7 +177,7 @@ module Pod::TrunkApp
       existing_pod = Pod.create(:name => existing_spec.name)
       pod_version = PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.should == nil
@@ -188,7 +188,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
@@ -200,7 +200,7 @@ module Pod::TrunkApp
       existing_spec = ::Pod::Specification.from_json(fixture_read('GitHub/KFData.podspec.json'))
       existing_pod = Pod.create(:name => existing_spec.name)
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       pod.versions.last.should == nil
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
@@ -209,7 +209,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did log a big fat warning.
       #
@@ -233,7 +233,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      Pod.find(name: 'MobileAppTracker').should == nil
+      Pod.find(:name => 'MobileAppTracker').should == nil
     end
 
     it "processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)" do
@@ -250,7 +250,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did add a version.
       #
@@ -282,7 +282,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did not add a new version.
       #
@@ -320,7 +320,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.committer.should == test_user
@@ -340,7 +340,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       commit = pod.versions.last.last_published_by
 
@@ -355,7 +355,7 @@ module Pod::TrunkApp
       existing_pod = Pod.create(:name => existing_spec.name)
       pod_version = PodVersion.create(:pod => existing_pod, :name => existing_spec.version.version)
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.should == nil
@@ -366,7 +366,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       commit = pod.versions.last.last_published_by
 
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
@@ -379,7 +379,7 @@ module Pod::TrunkApp
       existing_spec = ::Pod::Specification.from_string(fixture_read(file), file)
       existing_pod = Pod.create(:name => existing_spec.name)
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
       pod.versions.last.should == nil
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec')))
@@ -388,7 +388,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      pod = Pod.find(name: 'KFData')
+      pod = Pod.find(:name => 'KFData')
 
       # Did log a big fat warning.
       #
