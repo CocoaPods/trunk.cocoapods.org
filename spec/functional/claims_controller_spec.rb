@@ -1,8 +1,8 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
-  describe ClaimsController, "when claiming pods" do
-    it "renders a new claim form" do
+  describe ClaimsController, 'when claiming pods' do
+    it 'renders a new claim form' do
       get '/new'
       last_response.status.should == 200
       form = response_doc.css('form').first
@@ -10,7 +10,7 @@ module Pod::TrunkApp
       form['method'].should == 'POST'
     end
 
-    it "does not create an owner if no pods are specified" do
+    it 'does not create an owner if no pods are specified' do
       lambda do
         post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => []
       end.should.not.change { Owner.count }
@@ -27,7 +27,7 @@ module Pod::TrunkApp
       @pod = unclaimed_owner.add_pod(:name => 'AFNetworking')
     end
 
-    it "creates an owner and assigns it to the claimed pods" do
+    it 'creates an owner and assigns it to the claimed pods' do
       lambda do
         post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking']
       end.should.change { Owner.count }
@@ -36,7 +36,7 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [owner]
     end
 
-    it "finds an existing owner and assigns it to the claimed pods" do
+    it 'finds an existing owner and assigns it to the claimed pods' do
       owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
       lambda do
         post '/', :owner => { :email => 'appie@example.com' }, :pods => ['AFNetworking']
@@ -44,7 +44,7 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [owner]
     end
 
-    it "finds an existing owner and updates its name if specified" do
+    it 'finds an existing owner and updates its name if specified' do
       owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
       post '/', :owner => { :email => 'appie@example.com', :name => ' ' }, :pods => ['AFNetworking']
       owner.reload.name.should == 'Appie Duran'
@@ -52,7 +52,7 @@ module Pod::TrunkApp
       owner.reload.name.should == 'Appiepocalypse'
     end
 
-    it "does not assign a pod that has already been claimed" do
+    it 'does not assign a pod that has already been claimed' do
       other_pod = Pod.create(:name => 'ObjectiveSugar')
       other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       other_owner.add_pod(other_pod)
@@ -65,7 +65,7 @@ module Pod::TrunkApp
       last_response.location.should == "https://example.org/thanks?#{query.to_query}"
     end
 
-    it "rolls back in case of an error" do
+    it 'rolls back in case of an error' do
       Pod.any_instance.stubs(:remove_owner).raises
       lambda do
         should.raise do
@@ -75,7 +75,7 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [Owner.unclaimed]
     end
 
-    it "shows validation errors" do
+    it 'shows validation errors' do
       post '/', :owner => { :email => 'appie@example.com', :name => '' }, :pods => ['AFNetworking', 'EYFNetworking', 'JAYSONKit']
       last_response.status.should == 200
       @pod.reload.owners.should == [Owner.unclaimed]
@@ -84,7 +84,7 @@ module Pod::TrunkApp
       errors.last.text.should == 'Unknown Pods EYFNetworking and JAYSONKit.'
     end
 
-    it "shows a thanks page" do
+    it 'shows a thanks page' do
       get '/thanks', :claimer_email => 'appie@example.com', :successfully_claimed => ['AFNetworking'], :already_claimed => ['JSONKit']
       last_response.status.should == 200
       last_response.body.should.include 'AFNetworking'
@@ -96,13 +96,13 @@ module Pod::TrunkApp
     end
   end
 
-  describe ClaimsController, "concerning disputes" do
+  describe ClaimsController, 'concerning disputes' do
     before do
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       @pod = @owner.add_pod(:name => 'AFNetworking')
     end
 
-    it "lists already claimed pods" do
+    it 'lists already claimed pods' do
       get '/disputes/new', :claimer_email => 'appie@example.com', :pods => ['AFNetworking']
       last_response.status.should == 200
       container = response_doc.css('article').first
@@ -112,7 +112,7 @@ module Pod::TrunkApp
       form.css('textarea').first.text.should.include 'AFNetworking'
     end
 
-    it "creates a new dispute" do
+    it 'creates a new dispute' do
       lambda do
         post '/disputes', :dispute => { :claimer_email => @owner.email, :message => 'GIMME!' }
       end.should.change { Dispute.count }
@@ -123,7 +123,7 @@ module Pod::TrunkApp
       dispute.should.not.be.settled
     end
 
-    it "shows a thanks page" do
+    it 'shows a thanks page' do
       get '/disputes/thanks'
       last_response.status.should == 200
     end

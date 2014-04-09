@@ -41,7 +41,7 @@ module Pod
       end
 
       def verify!
-        raise "Unable to verify an already verified token." if verified
+        raise 'Unable to verify an already verified token.' if verified
         update(:verified => true, :verification_token => nil)
       end
 

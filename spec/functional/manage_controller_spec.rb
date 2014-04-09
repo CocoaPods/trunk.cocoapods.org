@@ -2,12 +2,12 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
   describe ManageController do
-    it "disallows access without authentication" do
+    it 'disallows access without authentication' do
       get '/'
       last_response.status.should == 401
     end
 
-    it "disallows access with incorrect authentication" do
+    it 'disallows access with incorrect authentication' do
       authorize 'admin', 'incorrect'
       last_response.status.should == 401
     end
@@ -25,25 +25,25 @@ module Pod::TrunkApp
       )
     end
 
-    it "shows a list of commits" do
+    it 'shows a list of commits' do
       get '/commits'
       last_response.should.be.ok
       last_response.body.should.include @version.name
     end
 
-    it "shows an overview of an individual commit" do
+    it 'shows an overview of an individual commit' do
       get "/commits/#{@commit.id}"
       last_response.should.be.ok
       last_response.body.should.include @version.name
     end
 
-    it "shows a list of all pod versions" do
+    it 'shows a list of all pod versions' do
       get '/versions'
       last_response.should.be.ok
       last_response.body.should.include @version.name
     end
 
-    it "shows a list of all pods with their owners" do
+    it 'shows a list of all pods with their owners' do
       get '/pods'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
@@ -58,13 +58,13 @@ module Pod::TrunkApp
       @version.add_log_message(:reference => 'ref2', :level => :error, :message => 'log message 2')
     end
 
-    it "shows a list of all messages" do
+    it 'shows a list of all messages' do
       get '/log_messages'
       last_response.should.be.ok
       last_response.body.should.include 'info'
     end
 
-    it "shows a list of all filtered messages" do
+    it 'shows a list of all filtered messages' do
       get '/log_messages?reference=ref1'
       last_response.should.be.ok
       last_response.body.should.include 'ref1'
@@ -83,24 +83,24 @@ module Pod::TrunkApp
       ]
     end
 
-    it "shows a list of all disputes" do
+    it 'shows a list of all disputes' do
       get '/disputes'
       last_response.status.should == 200
       response_doc.css('table tbody tr').size.should == 2
     end
 
-    it "shows a list of all unsettled disputes" do
+    it 'shows a list of all unsettled disputes' do
       get '/disputes?scope=unsettled'
       last_response.status.should == 200
       response_doc.css('table tbody tr').size.should == 1
     end
 
-    it "shows an overview of a dispute" do
+    it 'shows an overview of a dispute' do
       get "/disputes/#{@disputes.first.id}"
       last_response.status.should == 200
     end
 
-    it "updates a dispute" do
+    it 'updates a dispute' do
       put "/disputes/#{@disputes.first.id}", :dispute => { :settled => true }
       last_response.status.should == 302
       @disputes.first.reload.should.be.settled
