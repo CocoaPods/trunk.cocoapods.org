@@ -33,8 +33,6 @@ MethodLength:
   Max: 21
 MultilineBlockChain:
   Enabled: false
-NilComparison:
-  Enabled: false
 PercentLiteralDelimiters:
   Enabled: false
 PerlBackrefs:

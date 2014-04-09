@@ -56,7 +56,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      Pod.find(name: 'MobileAppTracker').should == nil
+      Pod.find(name: 'MobileAppTracker').should.nil?
     end
 
     before do
@@ -180,7 +180,7 @@ module Pod::TrunkApp
       pod = Pod.find(name: 'KFData')
       commit = pod.versions.last.last_published_by
 
-      commit.should == nil
+      commit.should.nil?
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
@@ -201,7 +201,7 @@ module Pod::TrunkApp
       existing_pod = Pod.create(name: existing_spec.name)
 
       pod = Pod.find(name: 'KFData')
-      pod.versions.last.should == nil
+      pod.versions.last.should.nil?
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
 
@@ -233,7 +233,7 @@ module Pod::TrunkApp
 
       last_response.status.should == 200
 
-      Pod.find(name: 'MobileAppTracker').should == nil
+      Pod.find(name: 'MobileAppTracker').should.nil?
     end
 
     it "processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)" do
@@ -358,7 +358,7 @@ module Pod::TrunkApp
       pod = Pod.find(name: 'KFData')
       commit = pod.versions.last.last_published_by
 
-      commit.should == nil
+      commit.should.nil?
 
       REST.stubs(:get).returns(rest_response.new(fixture_read(file)))
 
@@ -380,7 +380,7 @@ module Pod::TrunkApp
       existing_pod = Pod.create(name: existing_spec.name)
 
       pod = Pod.find(name: 'KFData')
-      pod.versions.last.should == nil
+      pod.versions.last.should.nil?
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec')))
 
