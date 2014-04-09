@@ -7,8 +7,6 @@ AssignmentInCondition:
   Enabled: false
 BlockNesting:
   Max: 4
-BracesAroundHashParameters:
-  Enabled: false
 ClassAndModuleChildren:
   Enabled: false
 ClassVars:

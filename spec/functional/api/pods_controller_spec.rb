@@ -45,7 +45,7 @@ module Pod::TrunkApp
 
     it "only accepts JSON" do
       header 'Content-Type', 'text/yaml'
-      post '/', {}, { 'HTTPS' => 'on' }
+      post '/', {},  'HTTPS' => 'on'
       last_response.status.should == 415
     end
 

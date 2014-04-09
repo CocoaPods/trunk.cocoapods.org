@@ -14,7 +14,7 @@ module Pod::TrunkApp
 
     it "configures timeouts" do
       Net::HTTP.last_started_request = nil
-      @github.put('/', { :foo => 'bar' })
+      @github.put('/',  :foo => 'bar')
       http_request = Net::HTTP.last_started_request
       http_request.open_timeout.should == 3
       http_request.read_timeout.should == 7
