@@ -96,7 +96,6 @@ module Pod
           @commit_sha ||= JSON.parse(@response.body)['commit']['sha']
         end
       end
-
     end
   end
 end

@@ -164,5 +164,4 @@ module Pod::TrunkApp
       session.reload.valid_until.should > 10.seconds.from_now
     end
   end
-
 end

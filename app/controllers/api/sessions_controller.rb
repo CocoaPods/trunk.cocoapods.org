@@ -7,7 +7,6 @@ require 'active_support/core_ext/hash/slice'
 module Pod
   module TrunkApp
     class SessionsController < APIController
-
       post '/', :requires_owner => false do
         owner_params = JSON.parse(request.body.read)
         DB.test_safe_transaction do
@@ -43,7 +42,6 @@ module Pod
         end
         json_message(200, @session)
       end
-
     end
   end
 end
