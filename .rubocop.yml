@@ -174,12 +174,6 @@ SingleLineMethods:
 SpaceAroundOperators:
   Enabled: false
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
-SpaceInsideHashLiteralBraces:
-  Enabled: false
-
 # Offense count: 4
 # Cop supports --auto-correct.
 SpecialGlobalVars:
