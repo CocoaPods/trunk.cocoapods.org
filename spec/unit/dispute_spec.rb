@@ -8,13 +8,13 @@ module Pod::TrunkApp
       @dispute = Dispute.new(claimer: @claimer, message: 'GIMME!')
     end
 
-    describe "concerning validations" do
-      it "needs a claimer" do
+    describe 'concerning validations' do
+      it 'needs a claimer' do
         @dispute.should.not.validate_with(:claimer_id, nil)
         @dispute.should.validate_with(:claimer_id, @claimer.id)
       end
 
-      it "needs a message" do
+      it 'needs a message' do
         @dispute.should.not.validate_with(:message, nil)
         @dispute.should.not.validate_with(:message, '')
         @dispute.should.not.validate_with(:message, ' ')

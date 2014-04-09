@@ -37,8 +37,6 @@ RegexpLiteral:
   Enabled: false
 SingleLineBlockParams:
   Enabled: false
-StringLiterals:
-  Enabled: false
 TrailingComma:
   Enabled: false
 TrivialAccessors:
