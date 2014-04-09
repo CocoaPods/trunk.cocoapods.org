@@ -96,7 +96,7 @@ module Pod
       # We get the JSON podspec and add a commit to the pod's version (And
       # add a new version if necessary).
       #
-      def handle_modified spec, pod, commit_sha, committer_email
+      def handle_modified(spec, pod, commit_sha, committer_email)
         committer = pod.owners_dataset.first(:email => committer_email) || Owner.unclaimed
 
         version_name = spec.version.to_s
@@ -125,7 +125,7 @@ module Pod
 
       # We only check if we have it, and if not, add it.
       #
-      def handle_added spec, pod, commit_sha, committer_email
+      def handle_added(spec, pod, commit_sha, committer_email)
         # Do we have it?
         #
         if commit = Commit.find(:sha => commit_sha)
