@@ -29,10 +29,6 @@ IndentHash:
   Enabled: false
 Lambda:
   Enabled: false
-LineLength:
-  Max: 221
-MethodDefParentheses:
-  Enabled: false
 MethodLength:
   Max: 21
 MultilineBlockChain:
