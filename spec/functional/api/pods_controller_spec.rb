@@ -53,9 +53,9 @@ module Pod::TrunkApp
       begin
         [nil, '', 'false'].each do |value|
           ENV['TRUNK_APP_PUSH_ALLOWED'] = value
-          lambda {
+          lambda do
             post '/', spec.to_json
-          }.should.not.change { Pod.count + PodVersion.count }
+          end.should.not.change { Pod.count + PodVersion.count }
           last_response.status.should == 503
           json_response['error'].should == 'Push access is currently disabled.'
         end
@@ -65,14 +65,14 @@ module Pod::TrunkApp
     end
 
     it "fails with data other than serialized spec data" do
-      lambda {
+      lambda do
         post '/', ''
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 400
 
-      lambda {
+      lambda do
         post '/', '{"something":"else"}'
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 422
     end
 
@@ -81,9 +81,9 @@ module Pod::TrunkApp
       spec.version = nil
       spec.license = nil
 
-      lambda {
+      lambda do
         post '/', spec.to_json
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
 
       last_response.status.should == 422
       json_response.should == {
@@ -99,28 +99,28 @@ module Pod::TrunkApp
       @owner.add_pod(:name => spec.name)
             .add_version(:name => spec.version.to_s)
             .add_commit(valid_commit_attrs)
-      lambda {
+      lambda do
         post '/', spec.to_json
-      }.should.not.change { Pod.count + PodVersion.count }
+      end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 409
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
     end
 
     it "creates new pod and version records, then redirects" do
-      lambda {
-        lambda {
+      lambda do
+        lambda do
           post '/', spec.to_json
-        }.should.change { Pod.count }
-      }.should.change { PodVersion.count }
+        end.should.change { Pod.count }
+      end.should.change { PodVersion.count }
       last_response.status.should == 302
       last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 
     it "creates a commit once a push succeeds" do
-      lambda {
+      lambda do
         post '/', spec.to_json
-      }.should.change { Commit.count }
+      end.should.change { Commit.count }
       commit = Commit.first
       commit.committer.should == @owner
       commit.specification_data.should == JSON.pretty_generate(spec)
@@ -128,9 +128,9 @@ module Pod::TrunkApp
 
     it "does not create a commit if a push fails" do
       PushJob.any_instance.stubs(:push!).returns(response(500))
-      lambda {
+      lambda do
         post '/', spec.to_json
-      }.should.not.change { Commit.count }
+      end.should.not.change { Commit.count }
       last_response.status.should == 500
     end
 
@@ -215,11 +215,11 @@ module Pod::TrunkApp
 
     it "allows a push for an existing pod owned by the authenticated owner" do
       @owner.add_pod(:name => spec.name)
-      lambda {
-        lambda {
+      lambda do
+        lambda do
           post '/', spec.to_json
-        }.should.not.change { Pod.count }
-      }.should.change { PodVersion.count }
+        end.should.not.change { Pod.count }
+      end.should.change { PodVersion.count }
     end
 
     before do

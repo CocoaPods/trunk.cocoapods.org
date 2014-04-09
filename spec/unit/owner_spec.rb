@@ -4,9 +4,9 @@ module Pod::TrunkApp
   describe Owner do
     it "creates an owner" do
       owner = nil
-      lambda {
+      lambda do
         owner = Owner.find_or_create_by_email_and_update_name(' appie@example.com ', ' Appie ')
-      }.should.change { Owner.count }
+      end.should.change { Owner.count }
       owner.email.should == 'appie@example.com'
       owner.name.should == 'Appie'
     end
@@ -16,9 +16,9 @@ module Pod::TrunkApp
     end
 
     it "finds an existing owner by email" do
-      lambda {
+      lambda do
         Owner.find_or_create_by_email_and_update_name(@owner.email, '').should == @owner
-      }.should.not.change { Owner.count }
+      end.should.not.change { Owner.count }
     end
 
     it "updates an owner's name if specified" do
@@ -110,9 +110,9 @@ module Pod::TrunkApp
 
       it "adds a new session" do
         session = nil
-        lambda {
+        lambda do
           session = @owner.create_session!('https://example.com/%s')
-        }.should.change { Session.count }
+        end.should.change { Session.count }
         @owner.sessions_dataset.valid.to_a.should == [session]
       end
 
