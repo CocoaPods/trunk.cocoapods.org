@@ -24,9 +24,10 @@ Available under the MIT license.
 
 ## Usage
 
-To start a development server run the following command, replacing the environment variables with
-your GitHub credentials, a GitHub testing sandbox repository, and a SHA hashed version of the
-password for the admin area (in this example the password is ‘secret’):
+To start a development server run the following command, replacing the
+environment variables with your GitHub credentials, a GitHub testing sandbox
+repository, and a SHA hashed version of the password for the admin area (in
+this example the password is ‘secret’):
 
     env RACK_ENV=development \
         GH_USERNAME=alloy GH_EMAIL=user@example.com GH_TOKEN=secret GH_REPO=alloy/trunk.cocoapods.org-test \

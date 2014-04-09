@@ -15,7 +15,7 @@ I18n.enforce_available_locales = false
 require 'active_support/core_ext/numeric/time'
 require 'active_support/core_ext/date/calculations'
 
-# Explicitely load the C-ext version.
+# Explicitly load the C-ext version.
 require 'json/ext'
 
 if !defined?(IRB) && ENV['RACK_ENV'] == 'production'
@@ -54,11 +54,11 @@ DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 Sequel.extension :core_extensions, :migration
 
 class << DB
-  # Savepoint is needed in testing, because tests already run in a transaction,
-  # which means the transaction would be re-used and we can't test whether or
-  # the transaction has been rolled back.
+  # Save point is needed in testing, because tests already run in a
+  # transaction, which means the transaction would be re-used and we can't test
+  # whether or the transaction has been rolled back.
   #
-  # This is overriden in tests to do add a savepoint.
+  # This is overridden in tests to do add a save point.
   alias_method :test_safe_transaction, :transaction
 end
 

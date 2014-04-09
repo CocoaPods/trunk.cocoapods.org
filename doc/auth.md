@@ -1,6 +1,6 @@
 # Authorization
 
-We'll look at authorization from the client standpoint. The object of the iteraction is to get a valid and verified session token.
+We'll look at authorization from the client standpoint. The object of the interaction is to get a valid and verified session token.
 
 ## Very first token
 
@@ -24,7 +24,7 @@ If something goes wrong you get a `422` with a YAML error body or a `500` when e
 
 You can now store this token and possibly the other information. Note that you will not be able to authenticate with it because it's not verified yet.
 
-Ask your commandline pilot to check their e-mail. They should receive and e-mail with a confirm link. Once they click the link the token will be verified and usable.
+Ask your command line pilot to check their e-mail. They should receive and e-mail with a confirm link. Once they click the link the token will be verified and usable.
 
 You can authenticate by sending the token in an Authorization header:
 
