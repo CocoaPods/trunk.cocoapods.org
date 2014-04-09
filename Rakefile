@@ -92,7 +92,11 @@ begin
 
   desc 'Run the specs'
   task :spec do
+    title 'Running the specs'
     sh "bacon #{FileList['spec/**/*_spec.rb'].shuffle.join(' ')}"
+
+    title 'Checking code style'
+    Rake::Task[:rubocop].invoke
   end
 
   desc 'Use Kicker to automatically run specs'
@@ -102,9 +106,24 @@ begin
 
   task :default => :spec
 
+#-- Rubocop -------------------------------------------------------------------
+
   require 'rubocop/rake_task'
-  Rubocop::RakeTask.new
+  Rubocop::RakeTask.new(:rubocop) do |task|
+    task.fail_on_error = true
+  end
 
 rescue SystemExit, LoadError => e
   puts "[!] The normal tasks have been disabled: #{e.message}"
+end
+
+#-- UI ------------------------------------------------------------------------
+
+def title(title)
+  cyan_title = "\033[0;36m#{title}\033[0m"
+  puts
+  puts '-' * 80
+  puts cyan_title
+  puts '-' * 80
+  puts
 end
