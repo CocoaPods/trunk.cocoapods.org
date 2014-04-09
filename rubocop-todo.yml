@@ -37,8 +37,6 @@ RegexpLiteral:
   Enabled: false
 SingleLineBlockParams:
   Enabled: false
-TrivialAccessors:
-  Enabled: false
 UselessAssignment:
   Enabled: false
 Void:

@@ -76,13 +76,11 @@ module Pod
           @response.body
         end
 
-        def failed_on_our_side?
-          @failed_on_our_side
-        end
+        attr_reader :failed_on_our_side
+        alias_method :failed_on_our_side?, :failed_on_our_side
 
-        def failed_on_their_side?
-          @failed_on_their_side
-        end
+        attr_reader :failed_on_their_side
+        alias_method :failed_on_their_side?, :failed_on_their_side
 
         def failed_due_to_timeout?
           !@timeout_error.nil?
