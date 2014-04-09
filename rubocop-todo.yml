@@ -54,11 +54,6 @@ LineLength:
 MethodLength:
   Max: 21
 
-# Offense count: 8
-# Configuration parameters: MaxSlashes.
-RegexpLiteral:
-  Enabled: false
-
 # Offense count: 1
 # Configuration parameters: Methods.
 SingleLineBlockParams:
