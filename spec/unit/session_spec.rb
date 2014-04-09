@@ -63,7 +63,7 @@ module Pod::TrunkApp
           end
         end
 
-        %w{ token verification_token }.each do |attr|
+        %w(token verification_token).each do |attr|
           it "raises if a duplicate #{attr} gets inserted" do
             Session.create(attr => 'secret', :owner => @owner)
             should.raise Sequel::UniqueConstraintViolation do
