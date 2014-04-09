@@ -26,10 +26,6 @@ FileName:
 HandleExceptions:
   Enabled: false
 
-# Offense count: 4
-Lambda:
-  Enabled: false
-
 # Offense count: 282
 LineLength:
   Max: 221
