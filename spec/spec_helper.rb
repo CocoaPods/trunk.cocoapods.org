@@ -19,7 +19,7 @@ ENV['GH_TOKEN']    = 'secret'
 ENV['TRUNK_APP_PUSH_ALLOWED']   = 'true'
 ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
-$:.unshift File.expand_path('../../', __FILE__)
+$LOAD_PATH.unshift File.expand_path('../../', __FILE__)
 require 'config/init'
 require 'app/controllers/app_controller'
 
@@ -27,7 +27,7 @@ def DB.test_safe_transaction(&block)
   DB.transaction(:savepoint => true, &block)
 end
 
-$:.unshift(ROOT, 'spec')
+$LOAD_PATH.unshift(ROOT, 'spec')
 Dir.glob(File.join(ROOT, 'spec/spec_helper/**/*.rb')).each do |filename|
   require File.join('spec_helper', File.basename(filename, '.rb'))
 end

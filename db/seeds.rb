@@ -1,4 +1,4 @@
-$:.unshift(File.expand_path('../../', __FILE__))
+$LOAD_PATH.unshift(File.expand_path('../../', __FILE__))
 
 ENV['TRUNK_APP_PUSH_ALLOWED'] = 'true'
 ENV['RACK_ENV'] ||= 'development'
