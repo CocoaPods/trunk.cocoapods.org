@@ -163,11 +163,6 @@ SingleLineBlockParams:
 SingleLineMethods:
   Enabled: false
 
-# Offense count: 53
-# Cop supports --auto-correct.
-SpaceAroundOperators:
-  Enabled: false
-
 # Offense count: 4
 # Cop supports --auto-correct.
 SpecialGlobalVars:

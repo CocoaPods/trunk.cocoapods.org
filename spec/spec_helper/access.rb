@@ -6,7 +6,7 @@ module SpecHelpers
       end
 
       [:get, :post, :put, :patch, :delete].each do |method|
-        class_eval <<-EOS, __FILE__, __LINE__+1
+        class_eval <<-EOS, __FILE__, __LINE__ + 1
           def #{method}(route, &block)
             @context.it "\#{@desc} to access: #{method.to_s.upcase} \#{route}" do
               lambda {

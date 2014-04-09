@@ -90,7 +90,7 @@ module Pod
         # Override all the route methods to ensure an ACL rule is specified.
         #
         [:get, :post, :put, :patch, :delete].each do |verb|
-          class_eval <<-EOS, __FILE__, __LINE__+1
+          class_eval <<-EOS, __FILE__, __LINE__ + 1
             def #{verb}(route, options, &block)
               unless options.has_key?(:requires_owner)
                 raise "Must specify a ACL rule for #{name} #{verb.to_s.upcase} \#{route}"
