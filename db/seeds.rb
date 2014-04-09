@@ -58,7 +58,9 @@ module Pod
 
     class SeedAPI
       class Sessions < SeedAPI
-        def app; SessionsController; end
+        def app
+          SessionsController
+        end
 
         def create(params)
           puts "Signing in as: #{params[:name]} <#{params[:email]}>"
@@ -74,7 +76,9 @@ module Pod
       end
 
       class Pods < SeedAPI
-        def app; PodsController; end
+        def app
+          PodsController
+        end
 
         def initialize(token)
           header 'Authorization', "Token #{token}"

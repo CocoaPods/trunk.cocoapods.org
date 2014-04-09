@@ -133,7 +133,9 @@ module Net
     def start
       self.class.last_started_request = self
       response = Net::HTTPOK.new('1.1', '200', 'OK')
-      def response.body; 'OK'; end
+      def response.body
+        'OK'
+      end
       response
     end
 
