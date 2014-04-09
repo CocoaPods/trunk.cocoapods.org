@@ -27,6 +27,7 @@ group :development do
   gem 'saga'
   gem 'terminal-table'
   gem 'sinatra-contrib'
+  gem 'rubocop'
 end
 
 group :test do

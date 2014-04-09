@@ -22,8 +22,6 @@ Documentation:
 FileName:
   Enabled: false
 
-# Offense count: 1
-
 # Offense count: 282
 LineLength:
   Max: 221

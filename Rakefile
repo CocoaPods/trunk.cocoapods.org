@@ -101,6 +101,10 @@ begin
   end
 
   task :default => :spec
+
+  require 'rubocop/rake_task'
+  Rubocop::RakeTask.new
+
 rescue SystemExit, LoadError => e
   puts "[!] The normal tasks have been disabled: #{e.message}"
 end

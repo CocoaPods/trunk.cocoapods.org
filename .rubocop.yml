@@ -1,13 +1,5 @@
 inherit_from: rubocop-todo.yml
 
-#- CocoaPods support for Ruby 1.8.7 ------------------------------------------#
-
-HashSyntax:
-  EnforcedStyle: hash_rockets
-
-Lambda:
-  Enabled: false
-
 #- CocoaPods -----------------------------------------------------------------#
 
 # We adopted raise instead of fail.
@@ -29,6 +21,17 @@ IfUnlessModifier:
 # No enforced convention here.
 SingleLineBlockParams:
   Enabled: false
+
+#- CocoaPods support for Ruby 1.8.7 ------------------------------------------#
+
+HashSyntax:
+  EnforcedStyle: hash_rockets
+
+Lambda:
+  Enabled: false
+
+
+#- CocoaPods specs -----------------------------------------------------------#
 
 # Allow for `should.match /regexp/`.
 AmbiguousRegexpLiteral:
