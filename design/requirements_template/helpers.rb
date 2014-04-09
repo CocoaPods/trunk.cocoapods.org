@@ -3,7 +3,7 @@ module Helpers
     parts = []
     parts << author[:name] if author[:name]
     parts << "<a href=\"mailto:#{author[:email]}\">#{author[:email]}</a>" if author[:email]
-    if author[:website] and author[:company]
+    if author[:website] && author[:company]
       parts << "<a href=\"#{author[:website]}\">#{author[:company]}</a>"
     elsif author[:company]
       parts << author[:company]

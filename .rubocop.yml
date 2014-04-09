@@ -9,10 +9,7 @@
 AmbiguousRegexpLiteral:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-AndOr:
-  Enabled: false
+
 
 # Offense count: 4
 AsciiComments:
