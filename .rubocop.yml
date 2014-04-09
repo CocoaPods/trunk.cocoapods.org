@@ -35,8 +35,6 @@ MultilineBlockChain:
   Enabled: false
 RegexpLiteral:
   Enabled: false
-SignalException:
-  Enabled: false
 SingleLineBlockParams:
   Enabled: false
 SingleLineMethods:

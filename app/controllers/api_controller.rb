@@ -49,7 +49,7 @@ module Pod
                                                 request_params: request.params)
             throw_internal_server_error!
           else
-            raise error
+            fail error
           end
         end
       end

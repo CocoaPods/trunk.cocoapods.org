@@ -140,7 +140,7 @@ module Pod::TrunkApp
     end
 
     it "informs the user if a timeout occurs" do
-      response = response { raise Timeout::Error, 'execution expired' }
+      response = response { fail Timeout::Error, 'execution expired' }
       PushJob.any_instance.stubs(:push!).returns(response)
       post '/', spec.to_json
       last_response.status.should == 504

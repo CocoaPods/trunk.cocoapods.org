@@ -74,7 +74,7 @@ module Pod::TrunkApp
         end
 
         it "logs a warning on neither side in case a timeout occurs" do
-          @github.stubs(:create_new_commit).returns(response { raise Timeout::Error, 'execution expired' })
+          @github.stubs(:create_new_commit).returns(response { fail Timeout::Error, 'execution expired' })
           @job.push!.should.be.failed_due_to_timeout
           log = @version.reload.log_messages.last
           log.level.should == :warning

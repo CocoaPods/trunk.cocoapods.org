@@ -61,7 +61,7 @@ module Pod
           when 500...600
             @failed_on_their_side = true
           else
-            raise "returned an unexpected HTTP response: #{@response.inspect}"
+            fail "returned an unexpected HTTP response: #{@response.inspect}"
           end
         rescue Errno::ETIMEDOUT, Timeout::Error,
                Net::OpenTimeout, Net::ReadTimeout => e

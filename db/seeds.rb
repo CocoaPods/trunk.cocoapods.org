@@ -45,7 +45,7 @@ module Pod
       def perform(method, route, expected_status, data = nil)
         send(method, route, data.nil? ? nil : data.to_json)
         unless last_response.status == expected_status
-          raise "[#{app.name.split('::').last}][#{method.to_s.upcase} #{route}][#{last_response.status}] Failed to perform with: #{data.inspect}.\nResponse: #{last_response.inspect}"
+          fail "[#{app.name.split('::').last}][#{method.to_s.upcase} #{route}][#{last_response.status}] Failed to perform with: #{data.inspect}.\nResponse: #{last_response.inspect}"
         end
         unless last_response.body.blank?
           begin
@@ -106,7 +106,7 @@ module Pod
             commit_sha = `git log -n 1 --pretty="%H" -- '#{spec.defined_in_file.basename}'`.strip
           end
           if commit_sha.blank?
-            raise "Unable to determine commit sha!"
+            fail "Unable to determine commit sha!"
           end
           # Every 4th push fails
           if @push_count && (@push_count % 4) == 3

@@ -41,12 +41,12 @@ module Pod
       end
 
       def verify!
-        raise "Unable to verify an already verified token." if verified
+        fail "Unable to verify an already verified token." if verified
         update(verified: true, verification_token: nil)
       end
 
       def prolong!
-        raise 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.now && verified
+        fail 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.now && verified
         update(valid_for: VALIDITY_LENGTH)
       end
 

@@ -93,7 +93,7 @@ module Pod::TrunkApp
             error = error_class.new
             # ETIMEDOUT adds more useless text by itself, omitting for test purposes.
             error.stubs(:message).returns(message)
-            raise error
+            fail error
           end
           res.should.not.be.success
           res.should.not.be.failed_on_our_side
