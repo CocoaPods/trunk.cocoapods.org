@@ -26,11 +26,6 @@ FileName:
 HandleExceptions:
   Enabled: false
 
-# Offense count: 8
-# Configuration parameters: MaxLineLength.
-IfUnlessModifier:
-  Enabled: false
-
 # Offense count: 4
 Lambda:
   Enabled: false
