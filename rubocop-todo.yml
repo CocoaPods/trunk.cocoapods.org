@@ -11,8 +11,6 @@ ClassAndModuleChildren:
   Enabled: false
 ClassVars:
   Enabled: false
-CollectionMethods:
-  Enabled: false
 CommentAnnotation:
   Enabled: false
 CyclomaticComplexity:
