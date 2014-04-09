@@ -12,3 +12,7 @@ SignalException:
 AmbiguousRegexpLiteral:
   Exclude:
     - spec/**
+
+# Allow backticks
+AsciiComments:
+  Enabled: false

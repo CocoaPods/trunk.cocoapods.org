@@ -1,6 +1,4 @@
 ---
-AsciiComments:
-  Enabled: false
 AssignmentInCondition:
   Enabled: false
 BlockNesting:
