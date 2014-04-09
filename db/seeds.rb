@@ -35,7 +35,6 @@ end
 
 module Pod
   module TrunkApp
-
     class SeedAPI
       include Rack::Test::Methods
 
@@ -58,7 +57,6 @@ module Pod
     end
 
     class SeedAPI
-
       class Sessions < SeedAPI
         def app; SessionsController; end
 
@@ -121,7 +119,6 @@ module Pod
           @push_count += 1 if @push_count
         end
       end
-
     end
   end
 end

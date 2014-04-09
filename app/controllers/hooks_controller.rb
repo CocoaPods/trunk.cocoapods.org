@@ -13,7 +13,6 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class HooksController < AppController
-
       # --- Post Receive Hook ---------------------------------------------------------------------
 
       # TODO Package most of this action's content neatly into
@@ -144,7 +143,6 @@ module Pod
           handle_modified spec, pod, commit_sha, committer_email
         end
       end
-
     end
   end
 end

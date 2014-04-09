@@ -17,8 +17,6 @@ CyclomaticComplexity:
   Max: 7
 Documentation:
   Enabled: false
-EmptyLinesAroundBody:
-  Enabled: false
 FileName:
   Enabled: false
 FormatString:

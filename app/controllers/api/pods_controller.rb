@@ -6,7 +6,6 @@ require 'app/models/specification_wrapper'
 module Pod
   module TrunkApp
     class PodsController < APIController
-
       get '/:name', :requires_owner => false do
         if pod = Pod.find(:name => params[:name])
           versions = pod.versions.select(&:published?)
@@ -101,7 +100,6 @@ module Pod
         pod.add_owner(other_owner)
         json_message(200, pod.owners.map(&:public_attributes))
       end
-
     end
   end
 end

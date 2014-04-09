@@ -98,5 +98,4 @@ module Pod::TrunkApp
       json_response['error'].should == "Authentication token is invalid or unverified."
     end
   end
-
 end

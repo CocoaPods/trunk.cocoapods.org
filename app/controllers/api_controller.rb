@@ -6,7 +6,6 @@ require 'newrelic_rpm'
 module Pod
   module TrunkApp
     class APIController < AppController
-
       private
 
       # --- Request / Response --------------------------------------------------------------------
@@ -132,7 +131,6 @@ module Pod
           token
         end
       end
-
     end
   end
 end
