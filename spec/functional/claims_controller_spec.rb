@@ -56,7 +56,7 @@ module Pod::TrunkApp
       other_pod = Pod.create(name: 'ObjectiveSugar')
       other_owner = Owner.create(email: 'jenny@example.com', name: 'Jenny Penny')
       other_owner.add_pod(other_pod)
-      post '/', owner: { email: 'appie@example.com', name: 'Appie Duran' }, pods: ['AFNetworking', 'ObjectiveSugar']
+      post '/', owner: { email: 'appie@example.com', name: 'Appie Duran' }, pods: %w(AFNetworking ObjectiveSugar)
       owner = Owner.find_by_email('appie@example.com')
       @pod.reload.owners.should == [owner]
       other_pod.reload.owners.should == [other_owner]
@@ -76,7 +76,7 @@ module Pod::TrunkApp
     end
 
     it 'shows validation errors' do
-      post '/', owner: { email: 'appie@example.com', name: '' }, pods: ['AFNetworking', 'EYFNetworking', 'JAYSONKit']
+      post '/', owner: { email: 'appie@example.com', name: '' }, pods: %w(AFNetworking EYFNetworking JAYSONKit)
       last_response.status.should == 200
       @pod.reload.owners.should == [Owner.unclaimed]
       errors = response_doc.css('.errors li')
