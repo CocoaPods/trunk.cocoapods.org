@@ -6,7 +6,7 @@ inherit_from: rubocop-todo.yml
 SignalException:
   EnforcedStyle: only_raise
 
-# They are idiomatic
+# These are idiomatic
 AssignmentInCondition:
   Enabled: false
 
@@ -20,6 +20,10 @@ IfUnlessModifier:
 
 # No enforced convention here.
 SingleLineBlockParams:
+  Enabled: false
+
+# These are idiomatic
+FormatString:
   Enabled: false
 
 #- CocoaPods support for Ruby 1.8.7 ------------------------------------------#
