@@ -27,6 +27,10 @@ begin
     require 'config/init'
   end
 
+  task :rack_env do
+    ENV['RACK_ENV'] ||= 'development'
+  end
+
   namespace :db do
     desc 'Show schema'
     task :schema => :env do
@@ -43,40 +47,36 @@ begin
     end
 
     desc 'Run migrations'
-    task :migrate do
+    task :migrate => :rack_env do
       ENV['TRUNK_APP_LOG_TO_STDOUT'] = 'true'
       Rake::Task[:env].invoke
       version = ENV['VERSION'].to_i if ENV['VERSION']
       Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'), :target => version)
     end
 
-    desc 'Drop all DBs'
-    task :drop do
-      `dropdb trunk_cocoapods_org_test`
-      `dropdb trunk_cocoapods_org_development`
-      `dropdb trunk_cocoapods_org_production`
+    desc 'Drop DB for RACK_ENV'
+    task :drop => :rack_env do
+      sh "dropdb trunk_cocoapods_org_#{ENV['RACK_ENV']}"
     end
 
-    desc 'Create all DBs'
-    task :create do
-      `createdb -h localhost trunk_cocoapods_org_test -E UTF8`
-      `createdb -h localhost trunk_cocoapods_org_development -E UTF8`
-      `createdb -h localhost trunk_cocoapods_org_production -E UTF8`
+    desc 'Create DB for RACK_ENV'
+    task :create => :rack_env do
+      sh "createdb -h localhost trunk_cocoapods_org_#{ENV['RACK_ENV']} -E UTF8"
     end
 
     desc 'Seed DB'
-    task :seed do
+    task :seed => :rack_env do
       sh "bundle exec ruby db/seeds.rb"
     end
 
+    desc 'Drop, create, migrate, and see the DB for RACK_ENV'
+    task :reset => [:drop, :create, :migrate, :seed]
+
     desc 'Drop, create, migrate, and seed all DBs'
     task :bootstrap do
-      Rake::Task['db:drop'].invoke
-      Rake::Task['db:create'].invoke
       %w{test development production}.each do |env|
-        sh "env RACK_ENV=#{env} rake db:migrate"
+        sh "env RACK_ENV=#{env} rake db:reset"
       end
-      Rake::Task['db:seed'].invoke
     end
   end
 

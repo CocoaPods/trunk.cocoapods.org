@@ -1,0 +1,141 @@
+#!/usr/bin/env ruby
+
+# TODO
+#
+# * Handled deleted specs
+# * Handle renamed specs
+# * Handle renamed specs that are also modified (so not R100)
+
+exit(1) unless system('pod repo update master')
+
+require 'rubygems'
+require 'rugged'
+
+$LOAD_PATH.unshift(File.expand_path('../../', __FILE__))
+ENV['RACK_ENV'] ||= 'development'
+require 'config/init'
+require 'cocoapods-core'
+require 'app/models/commit/import'
+
+require 'rfc822'
+module RFC822
+  def self.mx_records(address)
+    [MXRecord.new(20, 'mail.example.com')]
+  end
+end
+
+REPO = Rugged::Repository.new(File.expand_path('~/.cocoapods/repos/master'))
+
+module Pod
+  module TrunkApp
+    class Commit
+      module Import
+        def self.mock_spec(file)
+          name = File.basename(file, File.extname(file))
+          version = File.basename(File.dirname(file))
+          begin
+            Pod::Version.new(version)
+          rescue ArgumentError
+            version = '0.0.1'
+          end
+          puts "[!] Unparsable spec: #{name} <#{version}>"
+          Pod::Specification.new do |s|
+            s.name = name
+            s.version = version
+            s.summary = 'Unparsable at `trunk` import time.'
+          end
+        end
+
+        def self.fetch_spec(commit_sha, file)
+          commit = REPO.lookup(commit_sha)
+          entry = commit.tree.path(file)
+          blob = REPO.lookup(entry[:oid])
+          data = blob.text
+          data.sub!(/\.version\s*=\s*["']v(.+?)["']/, '.version = "\1"')
+          spec = Pod::Specification.from_string(data, file)
+          if spec.name.nil?
+            spec.name = File.basename(file, File.extname(file))
+            puts "[!] Fixing name of spec: #{spec.name}"
+          end
+          if spec.attributes_hash['version'].nil?
+            spec.attributes_hash['version'] = File.basename(File.dirname(file))
+            puts "[!] Fixing version of spec: #{spec.name} <#{spec.version}>"
+          end
+          spec
+
+        rescue Pod::DSLError
+          mock_spec(file)
+        end
+      end
+    end
+  end
+end
+
+def changes(commit_sha)
+  `git diff-tree --no-commit-id --find-renames --name-status -r #{commit_sha}`.split("\n").map do |line|
+    status, file, to = line.split("\t")
+    case status
+    when 'A' then [:added, file]
+    when 'M' then [:modified, file]
+    when 'D' then [:deleted, file]
+    when /R\d{3}/ then [:renamed, to, file]
+    else
+      raise "Unknown status: #{status}"
+    end
+  end
+end
+
+walker = Rugged::Walker.new(REPO)
+walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+walker.push(REPO.head.target)
+
+Dir.chdir(REPO.workdir) do
+  walker.each do |commit|
+    # Omit root and merge commits
+    if commit.parent_oids.size != 1
+      next
+    end
+
+    puts '----------------------------------------'
+    sha = commit.oid
+    email = commit.author[:email]
+    p sha, email
+    stats = changes(commit.oid)
+
+    if sha == '8dd7386313af0493b31d62e9ce9d697a25a63025'
+      puts '[!] Skipping because it is known to be an empty file'
+      next
+    end
+
+    case email
+    when 'fabio@discontinity.it'
+      email = 'fabio@discontinuity.it'
+    when 'mo at mobarak dot com'
+      email = 'mo@mobarak.com'
+    when /jasper@apssquick\.ly/i
+      email = 'jasper@appsquick.ly'
+    when 'my@fake.email', /@example\.com$/i, /@server\.com$/i, /\.(local|lan)$/i
+      # local addresses are considered unknown and thus unclaimed
+      puts '[!] Setting email to that of the unclaimed owner.'
+      email = Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL
+    else
+      unless email =~ RFC822::EMAIL
+        # inavlid addresses are considered unknown and thus unclaimed
+        puts '[!] Setting email to that of the unclaimed owner.'
+        email = Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL
+      end
+    end
+
+    stats.each do |status, file, _|
+      next unless [:added, :modified].include?(status)
+      p [status, file]
+      begin
+        Pod::TrunkApp::Commit::Import.import_commit(sha, email, status, [file])
+      rescue Object => e
+        puts "ERROR: #{e.message}\n\t#{e.backtrace.join("\n\t")}"
+      end
+    end
+
+    puts
+  end
+end
