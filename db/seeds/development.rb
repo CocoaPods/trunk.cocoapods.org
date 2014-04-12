@@ -21,7 +21,8 @@ end
 require 'rfc822'
 module RFC822
   def self.mx_records(address)
-    if address == Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL || address.split('@').last == 'example.com'
+    if address == Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL ||
+        address.split('@').last == 'example.com'
       [MXRecord.new(20, 'mail.example.com')]
     else
       []
@@ -31,7 +32,6 @@ end
 
 module Pod
   module TrunkApp
-
     class SeedAPI
       include Rack::Test::Methods
 
@@ -42,21 +42,25 @@ module Pod
       def perform(method, route, expected_status, data = nil)
         send(method, route, data.nil? ? nil : data.to_json)
         unless last_response.status == expected_status
-          raise "[#{app.name.split('::').last}][#{method.to_s.upcase} #{route}][#{last_response.status}] Failed to perform with: #{data.inspect}.\nResponse: #{last_response.inspect}"
+          raise "[#{app.name.split('::').last}][#{method.to_s.upcase} " \
+                "#{route}][#{last_response.status}] Failed to perform with: " \
+                "#{data.inspect}.\nResponse: #{last_response.inspect}"
         end
         unless last_response.body.blank?
           begin
             JSON.parse(last_response.body)
           rescue JSON::ParserError
+            nil
           end
         end
       end
     end
 
     class SeedAPI
-
       class Sessions < SeedAPI
-        def app; SessionsController; end
+        def app
+          SessionsController
+        end
 
         def create(params)
           puts "Signing in as: #{params[:name]} <#{params[:email]}>"
@@ -72,7 +76,9 @@ module Pod
       end
 
       class Pods < SeedAPI
-        def app; PodsController; end
+        def app
+          PodsController
+        end
 
         def initialize(token)
           header 'Authorization', "Token #{token}"
@@ -104,7 +110,7 @@ module Pod
             commit_sha = `git log -n 1 --pretty="%H" -- '#{spec.defined_in_file.basename}'`.strip
           end
           if commit_sha.blank?
-            raise "Unable to determine commit sha!"
+            raise 'Unable to determine commit sha!'
           end
           # Every 4th push fails
           if @push_count && (@push_count % 4) == 3
@@ -117,7 +123,6 @@ module Pod
           @push_count += 1 if @push_count
         end
       end
-
     end
   end
 end
@@ -152,9 +157,9 @@ pods = Pod::TrunkApp::SeedAPI::Pods.new(token)
 pods.create_from_name('KFData')
 
 # Create a few disputes
-puts "Creating disputes"
+puts 'Creating disputes'
 claimer = Pod::TrunkApp::Owner.find_by_email('orta@example.com')
-dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "The Pod ORStackView is mine!")
+dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => 'The Pod ORStackView is mine!')
 dispute = Pod::TrunkApp::Dispute.create(:claimer => claimer, :message => "Oops, KFData isn't mine.", :settled => true)
 
 # Create session for current user
@@ -163,5 +168,3 @@ name = `git config --global user.name`.strip
 token = sessions.create(:email => email, :name => name)
 puts
 puts "[!] You now have a verified session for `#{name} <#{email}>': #{token}"
-
-
