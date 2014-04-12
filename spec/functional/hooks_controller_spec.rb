@@ -59,10 +59,6 @@ module Pod::TrunkApp
       Pod.find(:name => 'MobileAppTracker').should.be.nil
     end
 
-    before do
-      Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
-    end
-
     it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
       # Create existing pod.
       #

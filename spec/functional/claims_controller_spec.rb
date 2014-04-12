@@ -21,10 +21,7 @@ module Pod::TrunkApp
     end
 
     before do
-      unclaimed_owner = Owner.new(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
-      # The email address doesn’t pass our mocked RFC822.mx_records(), so don't validate.
-      unclaimed_owner.save(:validate => false)
-      @pod = unclaimed_owner.add_pod(:name => 'AFNetworking')
+      @pod = Owner.unclaimed.add_pod(:name => 'AFNetworking')
     end
 
     it 'creates an owner and assigns it to the claimed pods' do
