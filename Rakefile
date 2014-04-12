@@ -69,7 +69,7 @@ begin
       sh "bundle exec ruby db/seeds.rb"
     end
 
-    desc 'Drop, create, migrate, and see the DB for RACK_ENV'
+    desc 'Drop, create, migrate, and seed the DB for RACK_ENV'
     task :reset => [:drop, :create, :migrate, :seed]
 
     desc 'Drop, create, migrate, and seed all DBs'

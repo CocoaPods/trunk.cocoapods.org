@@ -6,7 +6,7 @@
 # * Handle renamed specs
 # * Handle renamed specs that are also modified (so not R100)
 
-exit(1) unless system('pod repo update master')
+exit(1) unless ENV['REPO'] || system('pod repo update master')
 
 require 'rubygems'
 require 'rugged'
@@ -24,7 +24,8 @@ module RFC822
   end
 end
 
-REPO = Rugged::Repository.new(File.expand_path('~/.cocoapods/repos/master'))
+repo = File.expand_path(ENV['REPO'] || '~/.cocoapods/repos/master')
+REPO = Rugged::Repository.new(repo)
 
 module Pod
   module TrunkApp
@@ -34,12 +35,12 @@ module Pod
           name = File.basename(file, File.extname(file))
           version = File.basename(File.dirname(file))
           begin
-            Pod::Version.new(version)
+            ::Pod::Version.new(version)
           rescue ArgumentError
             version = '0.0.1'
           end
           puts "[!] Unparsable spec: #{name} <#{version}>"
-          Pod::Specification.new do |s|
+          ::Pod::Specification.new do |s|
             s.name = name
             s.version = version
             s.summary = 'Unparsable at `trunk` import time.'
@@ -52,7 +53,7 @@ module Pod
           blob = REPO.lookup(entry[:oid])
           data = blob.text
           data.sub!(/\.version\s*=\s*["']v(.+?)["']/, '.version = "\1"')
-          spec = Pod::Specification.from_string(data, file)
+          spec = ::Pod::Specification.from_string(data, file)
           if spec.name.nil?
             spec.name = File.basename(file, File.extname(file))
             puts "[!] Fixing name of spec: #{spec.name}"
@@ -63,7 +64,7 @@ module Pod
           end
           spec
 
-        rescue Pod::DSLError
+        rescue ::Pod::DSLError
           mock_spec(file)
         end
       end
