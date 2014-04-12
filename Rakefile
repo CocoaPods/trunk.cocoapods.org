@@ -110,6 +110,7 @@ begin
 
   require 'rubocop/rake_task'
   Rubocop::RakeTask.new(:rubocop) do |task|
+    task.patterns = FileList['{app,config,db,lib,spec}/**/*.rb']
     task.fail_on_error = true
   end
 
