@@ -2,7 +2,10 @@ require 'app/controllers/app_controller'
 require 'app/helpers/manage_helper'
 require 'app/models/pod'
 
+require 'active_support/core_ext/hash/except'
+require 'peiji_san/view_helper'
 require 'sinatra/twitter-bootstrap'
+require 'sinatra/url_for'
 
 module Pod
   module TrunkApp
@@ -24,7 +27,7 @@ module Pod
         register Sinatra::Reloader
       end
 
-      helpers ManageHelper
+      helpers ManageHelper, Sinatra::UrlForHelper, PeijiSan::ViewHelper
 
       register Sinatra::Twitter::Bootstrap::Assets
 
@@ -33,7 +36,7 @@ module Pod
       end
 
       get '/commits' do
-        @commits = Commit.all
+        @collection = Commit.page(params[:page])
         erb :'commits/index'
       end
 
@@ -43,7 +46,7 @@ module Pod
       end
 
       get '/pods' do
-        @pods = Pod.order(Sequel.asc(:name))
+        @collection = Pod.page(params[:page]).order(Sequel.asc(:name))
         erb :'pods/index'
       end
 
@@ -57,23 +60,24 @@ module Pod
       end
 
       get '/versions' do
-        @versions = PodVersion.order(Sequel.desc(:id))
+        @collection = PodVersion.page(params[:page]).order(Sequel.desc(:id))
         erb :'pod_versions/index'
       end
 
       get '/log_messages' do
         reference_filter = params[:reference]
-        messages = LogMessage
+        messages = LogMessage.page(params[:page])
         messages = messages.where('reference = ?', reference_filter) if reference_filter
-        @log_messages = messages.order(Sequel.desc(:id))
+        @collection = messages.order(Sequel.desc(:id))
         erb :'log_messages/index'
       end
 
       get '/disputes' do
+        disputes = Dispute.page(params[:page])
         if params[:scope] == 'unsettled'
-          @disputes = Dispute.where(:settled => false).order(Sequel.asc(:id))
+          @collection = disputes.where(:settled => false).order(Sequel.asc(:id))
         else
-          @disputes = Dispute.order(Sequel.desc(:id))
+          @collection = disputes.order(Sequel.desc(:id))
         end
         erb :'disputes/index'
       end

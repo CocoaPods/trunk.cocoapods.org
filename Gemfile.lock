@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/alloy/peiji-san.git
+  revision: eca485d8dc95f12aaec1a434b49d295c7e91844b
+  specs:
+    peiji-san (1.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -107,6 +113,8 @@ GEM
       rack (>= 1.0.0)
     thor (0.19.1)
     tilt (1.4.1)
+    tobias-sinatra-url-for (0.2.1)
+      sinatra (>= 0.9.1.1)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -126,6 +134,7 @@ DEPENDENCIES
   nap
   newrelic_rpm
   nokogiri
+  peiji-san!
   pg
   prettybacon
   rack-ssl
@@ -143,3 +152,4 @@ DEPENDENCIES
   slim (< 2.0)
   terminal-table
   thin
+  tobias-sinatra-url-for

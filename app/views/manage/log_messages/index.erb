@@ -15,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @log_messages.each do |message| %>
+    <% @collection.each do |message| %>
       <tr class="<%= message.level %>">
         <!-- TODO Rename message.message to message.text. -->
         <% reference_link = "<a href=\"?reference=#{message.reference}\">#{message.reference}</a>" %>

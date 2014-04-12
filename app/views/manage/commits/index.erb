@@ -13,7 +13,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @commits.each do |commit| %>
+    <% @collection.each do |commit| %>
       <!-- TODO Use a partial here and in show.erb? -->
       <tr>
         <% href = url("/commits/#{commit.id}") %>

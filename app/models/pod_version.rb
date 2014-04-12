@@ -1,6 +1,8 @@
 require 'app/models/commit'
 require 'app/concerns/git_commit_sha_validator'
 
+require 'peiji_san'
+
 module Pod
   module TrunkApp
     class PodVersion < Sequel::Model
@@ -10,6 +12,7 @@ module Pod
 
       self.dataset = :pod_versions
 
+      extend PeijiSan
       plugin :timestamps
       plugin :validation_helpers
       plugin :after_initialize

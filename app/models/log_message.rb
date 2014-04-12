@@ -1,5 +1,7 @@
 require 'app/models/push_job'
 
+require 'peiji_san'
+
 module Pod
   module TrunkApp
     class LogMessage < Sequel::Model
@@ -7,6 +9,7 @@ module Pod
 
       self.dataset = :log_messages
 
+      extend PeijiSan
       plugin :timestamps
       plugin :validation_helpers
 

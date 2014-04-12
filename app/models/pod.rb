@@ -1,10 +1,13 @@
 require 'app/models/pod_version'
 
+require 'peiji_san'
+
 module Pod
   module TrunkApp
     class Pod < Sequel::Model
       self.dataset = :pods
 
+      extend PeijiSan
       plugin :timestamps
       plugin :validation_helpers
 

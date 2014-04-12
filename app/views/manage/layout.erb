@@ -29,6 +29,13 @@
 
   <div class="container">
     <%= yield %>
+
+    <% if @collection && @collection.page_count > 1 %>
+      <% params.delete(:page) %>
+      <% pages_to_link_to(@collection).each do |page| %>
+        <%= page.is_a?(String) ? page : link_to_page(page, @collection) %>
+      <% end %>
+    <% end %>
   </div>
 </body>
 </html>
