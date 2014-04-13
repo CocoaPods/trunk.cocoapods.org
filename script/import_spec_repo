@@ -142,7 +142,7 @@ Dir.chdir(REPO.workdir) do
 end
 
 # Finally set all pods to be owned by the unclaimed owner.
-owner = Owner.unclaimed
+owner = Pod::TrunkApp::Owner.unclaimed
 Pod::TrunkApp::Pod.dataset.use_cursor(:rows_per_fetch => 100).each do |pod|
   pod.add_owner(owner)
 end
