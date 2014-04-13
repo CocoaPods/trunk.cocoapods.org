@@ -52,6 +52,7 @@ end
 # Now load subclass controllers.
 require 'app/controllers/api/pods_controller'
 require 'app/controllers/api/sessions_controller'
+require 'app/controllers/session_verification_controller'
 require 'app/controllers/hooks_controller'
 require 'app/controllers/manage_controller'
 
@@ -63,7 +64,9 @@ module Pod
   module TrunkApp
     App = Rack::URLMap.new(
       '/api/v1/pods'     => PodsController,
+      # TODO: namespace controllers in API and HTML namespaces?
       '/api/v1/sessions' => SessionsController,
+      '/sessions'        => SessionVerificationController,
       '/hooks'           => HooksController,
       '/manage'          => ManageController,
       # TODO: Temporary routes while we transition to the trunk app.

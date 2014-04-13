@@ -19,7 +19,6 @@ module Pod
         end
       end
 
-      # TODO: render HTML
       get '/verify/:token', :requires_owner => false do
         if session = Session.with_verification_token(params[:token])
           session.verify!
