@@ -77,4 +77,6 @@ LineLength:
   Exclude:
     - design/prototype/github.rb
 
-
+# Sinatra app classes can be longer
+ClassLength:
+  Enabled: false
