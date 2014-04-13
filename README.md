@@ -16,7 +16,8 @@ Available under the MIT license.
 
 4. Create and migrate the databases for the various environments:
 
-        $ rake db:bootstrap
+        $ rake db:bootstrap RACK_ENV=test
+        $ rake db:bootstrap RACK_ENV=development
 
 5. Test whether or not a pod sends correctly
 

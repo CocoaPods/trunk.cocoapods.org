@@ -69,15 +69,11 @@ begin
       sh "bundle exec ruby db/seeds.rb"
     end
 
-    desc 'Drop, create, migrate, and seed the DB for RACK_ENV'
-    task :reset => [:drop, :create, :migrate, :seed]
+    desc 'Create, migrate, and seed the DB for RACK_ENV'
+    task :bootstrap => [:create, :migrate, :seed]
 
-    desc 'Drop, create, migrate, and seed all DBs'
-    task :bootstrap do
-      %w{test development production}.each do |env|
-        sh "env RACK_ENV=#{env} rake db:reset"
-      end
-    end
+    desc 'Drop and then bootstrap the DB for RACK_ENV'
+    task :reset => [:drop, :bootstrap]
   end
 
   desc 'Starts a interactive console with the model env loaded'
