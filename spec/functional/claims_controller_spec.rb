@@ -62,6 +62,21 @@ module Pod::TrunkApp
       last_response.location.should == "https://example.org/thanks?#{query.to_query}"
     end
 
+    it 'immediately redirects to the dispute page if all pods are claimed' do
+      @pod.remove_owner(Owner.unclaimed)
+      owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
+      owner.add_pod(@pod)
+      lambda do
+        post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => ['AFNetworking']
+      end.should.change { Owner.count }
+      last_response.status.should == 302
+      uri = URI.parse(last_response.location)
+      uri.path.should == '/disputes/new'
+      query = { 'claimer_email' => 'appie@example.com', 'pods[]' => 'AFNetworking' }
+      Rack::Utils.parse_query(uri.query).should == query
+      Owner.find_by_email('appie@example.com').should.not.be.nil
+    end
+
     it 'rolls back in case of an error' do
       Pod.any_instance.stubs(:remove_owner).raises
       lambda do

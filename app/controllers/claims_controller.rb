@@ -27,18 +27,25 @@ module Pod
       post '/' do
         find_owner
         find_pods
-        if @owner.valid? && !@pods.empty? && @invalid_pods.empty?
+        if @owner.valid? && valid_pods?
           change_ownership
-          query = {
-            :claimer_email => @owner.email,
-            :successfully_claimed => @successfully_claimed_pods,
-            :already_claimed => @already_claimed_pods
-          }
-          redirect to("/thanks?#{query.to_query}")
-        else
-          prepare_errors
-          slim :'new'
+          if all_pods_already_claimed?
+            query = {
+              :claimer_email => @owner.email,
+              :pods => @already_claimed_pods
+            }
+            redirect to("/disputes/new?#{query.to_query}")
+          else
+            query = {
+              :claimer_email => @owner.email,
+              :successfully_claimed => @successfully_claimed_pods,
+              :already_claimed => @already_claimed_pods
+            }
+            redirect to("/thanks?#{query.to_query}")
+          end
         end
+        prepare_errors
+        slim :'new'
       end
 
       get '/thanks' do
@@ -88,6 +95,14 @@ module Pod
             end
           end
         end
+      end
+
+      def valid_pods?
+        !@pods.empty? && @invalid_pods.empty?
+      end
+
+      def all_pods_already_claimed?
+        @successfully_claimed_pods.empty? && !@already_claimed_pods.empty?
       end
 
       def prepare_errors

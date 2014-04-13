@@ -15,7 +15,7 @@ module Pod
 
       get '/verify/:token' do
         if session = Session.with_verification_token(params[:token])
-          # session.verify!
+          session.verify!
           slim :'verified'
         else
           error 404
