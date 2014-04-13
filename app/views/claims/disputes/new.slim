@@ -35,7 +35,11 @@ css:
   }
 
 
-h1 The following #{@pods.size == 1 ? 'pod has' : 'pods have'} already been claimed.
+h1 The following #{@pods.size == 1 ? 'pod has' : 'pods have'} already been claimed:
+
+ul.pods
+  - for pod in @pods
+    <li class="pod"><span class="name">#{pod.name}</span><span class="email"> &lt;#{pod.owners.map(&:email).to_sentence}&gt;</span></li>
 
 p If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ and ask to be added as an ‘owner’. (See the [TODO] guide to learn how to add ‘owners’.)
 
@@ -56,14 +60,6 @@ form.form-horizontal role="form" action="/claims/disputes" method="POST"
           | The following #{@pods.size == 1 ? 'pod has' : 'pods have'} been claimed by others but #{@pods.size == 1 ? 'is' : 'are'} in fact mine: #{@pods.map(&:name).to_sentence}.
 
             Here is a summary of how you can verify that I’m the rightful owner:
-
-  .form-group
-    label.col-sm-3.control-label for="" Pods:
-    .col-sm-9
-      ul.pods
-        - for pod in @pods
-          <li class="pod"><span class="name">#{pod.name}</span><span class="email"> &lt;#{pod.owners.map(&:email).to_sentence}&gt;</span></li>
-
 
   .form-group
     .col-sm-offset-3.col-sm-4
