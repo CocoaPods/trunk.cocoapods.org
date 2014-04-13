@@ -1,1 +1,36 @@
-p Your session has been verified and can now be used.
+css:
+  div.headline {
+    background: url("/sessions/images/pod-push.jpg") no-repeat center bottom;
+  }
+  
+  @media (max-width:768px){
+    div.headline {
+        background:none;
+    }
+  }
+  
+  #trunk-content {
+    background-color:RGBA(0,0,0,0);
+    margin-top: -380px;
+  }
+
+  @media (max-width:768px){
+    #trunk-content {
+        margin-top: -240px;
+    }
+  }
+
+  #trunk-content h2 {
+    text-align:center;
+    color:#fb0006;
+    text-transform:uppercase;
+  }
+  
+  #trunk-content h4 {
+    text-align:center;
+    color:#380200;
+  }
+  
+h2 Congratulations, you're setup.
+h4 You can go back to your <a href='telnet:/'>terminal</a> now.
+
