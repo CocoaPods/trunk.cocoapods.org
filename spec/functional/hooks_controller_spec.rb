@@ -146,7 +146,7 @@ module Pod::TrunkApp
       test_user.add_pod(@existing_pod)
 
       lambda do
-      post_raw_hook_json_data
+        post_raw_hook_json_data
       end.should.not.change { Owner.count }
       last_response.status.should == 200
 
@@ -156,7 +156,7 @@ module Pod::TrunkApp
 
     it 'adds a new committer to the commit' do
       lambda do
-      post_raw_hook_json_data
+        post_raw_hook_json_data
       end.should.change { Owner.count }
       last_response.status.should == 200
 
@@ -166,6 +166,11 @@ module Pod::TrunkApp
       commit = @existing_pod.reload.versions.last.last_published_by
       commit.committer.should == committer
     end
+
+    xit 'sets the committer as the pod owner if the pod was newly created' do
+    end
+
+    xit 'does *not* set the committer as the pod owner if the pod already existed' do
     end
 
     it 'creates the add commit if missing and version exists' do
