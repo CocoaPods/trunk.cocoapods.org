@@ -26,8 +26,6 @@ module Pod
         #
         def self.import(commit_sha, committer_email, type, files)
           files.each do |file|
-            # TODO: Add .podspec example.
-            #
             next unless file =~ /\.podspec(.json)?\z/
 
             spec = fetch_spec(commit_sha, file)
