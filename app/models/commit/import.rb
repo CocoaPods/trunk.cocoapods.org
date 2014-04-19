@@ -49,8 +49,6 @@ module Pod
 
           version_name = spec.version.to_s
 
-          # Note: Sadly, we cannot use find_or_create here.
-          #
           version = PodVersion.find(:pod => pod, :name => version_name)
           unless version
             version = PodVersion.create(:pod => pod, :name => version_name)
@@ -67,18 +65,15 @@ module Pod
             )
           end
 
-          # TODO: test
-          if version.commits_dataset.first(:sha => commit_sha)
-            return
+          unless version.commits_dataset.first(:sha => commit_sha)
+            # Add a new commit to the existing version.
+            #
+            version.add_commit(
+              :sha => commit_sha,
+              :specification_data => JSON.pretty_generate(spec),
+              :committer => committer
+            )
           end
-
-          # Add a new commit to the existing version.
-          #
-          version.add_commit(
-            :sha => commit_sha,
-            :specification_data => JSON.pretty_generate(spec),
-            :committer => committer
-          )
         end
         # rubocop:enable MethodLength
 
