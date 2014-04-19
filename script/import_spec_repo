@@ -103,6 +103,8 @@ Dir.chdir(REPO.workdir) do
     p sha, email
     stats = changes(commit.oid)
 
+    raise "TODO Import committer names!"
+
     if sha == '8dd7386313af0493b31d62e9ce9d697a25a63025'
       puts '[!] Skipping because it is known to be an empty file'
       next

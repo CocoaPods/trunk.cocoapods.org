@@ -141,23 +141,31 @@ module Pod::TrunkApp
       version.last_published_by.should == commit
     end
 
-    it 'adds the right committer to the commit' do
+    it 'adds an existing committer to the commit' do
       test_user = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
       test_user.add_pod(@existing_pod)
 
+      lambda do
       post_raw_hook_json_data
+      end.should.not.change { Owner.count }
       last_response.status.should == 200
 
       commit = @existing_pod.reload.versions.last.last_published_by
       commit.committer.should == test_user
     end
 
-    it 'adds the right committer to the commit' do
+    it 'adds a new committer to the commit' do
+      lambda do
       post_raw_hook_json_data
+      end.should.change { Owner.count }
       last_response.status.should == 200
 
+      committer = Owner.first(:email => 'test.user@example.com')
+      committer.name.should == 'Harshal Ogale'
+
       commit = @existing_pod.reload.versions.last.last_published_by
-      commit.committer.should == Owner.first(:email => 'test.user@example.com') # Owner.unclaimed
+      commit.committer.should == committer
+    end
     end
 
     it 'creates the add commit if missing and version exists' do

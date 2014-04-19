@@ -24,7 +24,7 @@ module Pod
         #
         # TODO: Only get the latest version of a file.
         #
-        def self.import(commit_sha, committer_email, type, files)
+        def self.import(commit_sha, type, files, committer_email, committer_name = nil)
           files.each do |file|
             next unless file =~ /\.podspec(.json)?\z/
 
@@ -33,19 +33,18 @@ module Pod
               pod = Pod.create(:name => spec.name)
             end
 
-            send(:"handle_#{type}", spec, pod, commit_sha, committer_email)
+            send(:"handle_#{type}", spec, pod, commit_sha, committer_email, committer_name)
           end
         end
 
         # We add a commit to the pod's version and, if necessary, add a new version.
         #
         # rubocop:disable MethodLength
-        def self.handle_modified(spec, pod, commit_sha, committer_email)
-          # TODO: Always add the committer to the DB!
-          # committer = pod.owners_dataset.first(:email => committer_email) #|| Owner.unclaimed
-          committer = Owner.find_by_email(committer_email)
-          unless committer
-            committer = Owner.create(:email => committer_email, :name => 'TODO')
+        def self.handle_modified(spec, pod, commit_sha, committer_email, committer_name)
+          unless committer = Owner.find_by_email(committer_email)
+            committer = Owner.new(:email => committer_email)
+            committer.name = committer_name unless committer_name.blank?
+            committer.save(:raise_on_save_failure => true)
           end
 
           version_name = spec.version.to_s
@@ -85,7 +84,7 @@ module Pod
 
         # We only check if we have it and, if not, add it.
         #
-        def self.handle_added(spec, pod, commit_sha, committer_email)
+        def self.handle_added(spec, pod, commit_sha, committer_email, committer_name)
           if commit = Commit.find(:sha => commit_sha)
             unless commit.pod_version.pod == pod
               # TODO: The existing commit in the BD is not about this pod. Log as error?
@@ -95,7 +94,7 @@ module Pod
             #
             # TODO: What if the version does not exist yet? Should we add one?
             #
-            handle_modified(spec, pod, commit_sha, committer_email)
+            handle_modified(spec, pod, commit_sha, committer_email, committer_name)
           end
         end
       end

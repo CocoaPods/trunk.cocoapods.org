@@ -38,6 +38,7 @@ module Pod
         payload['commits'].each do |manual_commit|
           commit_sha = manual_commit['id']
           committer_email = manual_commit['committer']['email']
+          committer_name = manual_commit['committer']['name']
 
           # Get all changed (added + modified) files.
           #
@@ -47,7 +48,7 @@ module Pod
             :added => manual_commit['added'],
             :modified => manual_commit['modified']
           }.each do |type, files|
-            Commit::Import.import(commit_sha, committer_email, type, files || [])
+            Commit::Import.import(commit_sha, type, files || [], committer_email, committer_name)
           end
         end
 
