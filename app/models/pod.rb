@@ -38,9 +38,8 @@ module Pod
         end
       end
 
-      def was_created?
-        @was_created
-      end
+      attr_reader :was_created
+      alias_method :was_created?, :was_created
 
       protected
 

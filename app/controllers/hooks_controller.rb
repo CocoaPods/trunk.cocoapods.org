@@ -42,7 +42,7 @@ module Pod
 
           # Get all changed (added + modified) files.
           #
-          # TODO We ignore deleted specs.
+          # TODO: We ignore deleted specs.
           #
           {
             :added => manual_commit['added'],
