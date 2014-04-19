@@ -8,6 +8,7 @@ module Pod
       self.dataset = :pods
 
       extend PeijiSan
+      plugin :after_initialize
       plugin :timestamps
       plugin :validation_helpers
 
@@ -28,6 +29,17 @@ module Pod
           end
         end
         nil
+      end
+
+      def after_initialize
+        super
+        if new?
+          @was_created = true
+        end
+      end
+
+      def was_created?
+        @was_created
       end
 
       protected

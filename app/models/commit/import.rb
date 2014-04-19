@@ -29,9 +29,7 @@ module Pod
             next unless file =~ /\.podspec(.json)?\z/
 
             spec = fetch_spec(commit_sha, file)
-            pod = Pod.find(:name => spec.name)
-            # TODO: add pod if it doesn't exist yet
-            unless pod
+            unless pod = Pod.find(:name => spec.name)
               pod = Pod.create(:name => spec.name)
             end
 
@@ -57,10 +55,15 @@ module Pod
           version = PodVersion.find(:pod => pod, :name => version_name)
           unless version
             version = PodVersion.create(:pod => pod, :name => version_name)
+            if pod.was_created?
+              message = "Pod `#{pod.name}' and version `#{version.name}' created via Github hook."
+            else
+              message = "Version `#{version.description}' created via Github hook."
+            end
             version.add_log_message(
               :reference => "Github hook call to temporary ID: #{object_id}",
               :level => :warning,
-              :message => "Version `#{version.description}' created via Github hook.",
+              :message => message,
               :owner => committer
             )
           end

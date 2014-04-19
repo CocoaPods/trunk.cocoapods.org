@@ -40,11 +40,22 @@ module Pod::TrunkApp
 
     rest_response = Struct.new(:body)
 
-    it 'processes payload data but does not create a new pod (if one does not exist)' do
+    it 'processes payload data and creates a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
-      post_raw_hook_json_data
+      lambda do
+        post_raw_hook_json_data
+      end.should.change { Pod.count }
       last_response.status.should == 200
-      Pod.find(:name => 'MobileAppTracker').should.be.nil
+
+      pod = Pod.find(:name => 'ABContactHelper')
+      pod.should.not.be.nil
+
+      # Did log a big fat warning.
+      #
+      last_version = pod.versions.last
+      last_log_message = last_version.log_messages.last
+      last_log_message.pod_version.should == last_version
+      last_log_message.message.should == "Pod `ABContactHelper' and version `0.1' created via Github hook."
     end
 
     # Create existing pod.
