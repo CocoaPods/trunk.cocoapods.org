@@ -1,5 +1,0 @@
-* Don't unnecessarily catch errors, but let them bubble up to central handlers.
-* Look at the NewRelic development stuff.
-* Rename JSON 'error' to 'errors'?
-* Manfred sez don't show all the tokens themselves on GET /sessions, but why exactly?
-* Render HTML when confirming a session.
