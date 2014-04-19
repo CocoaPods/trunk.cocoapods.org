@@ -14,11 +14,11 @@ module Pod
       post "/github-post-receive/#{ENV['HOOK_PATH']}" do
         halt 415 unless request.media_type == 'application/x-www-form-urlencoded'
 
-        payload_json = params[:payload]
-
         # We don't get the right body structure.
         #
-        halt 422 unless payload_json
+        unless payload_json = params[:payload]
+          halt 422
+        end
 
         payload = nil
         begin
@@ -36,12 +36,12 @@ module Pod
         # Go through each of the commits and get the commit data.
         #
         payload['commits'].each do |manual_commit|
-          commit_sha   = manual_commit['id']
+          commit_sha = manual_commit['id']
           committer_email = manual_commit['committer']['email']
 
           # Get all changed (added + modified) files.
           #
-          # Note: We ignore deleted specs.
+          # TODO We ignore deleted specs.
           #
           {
             :added => manual_commit['added'],
