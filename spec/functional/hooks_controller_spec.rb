@@ -174,7 +174,9 @@ module Pod::TrunkApp
     end
 
     it 'creates the add commit if missing and version exists' do
-      post_raw_hook_json_data
+      lambda do
+        post_raw_hook_json_data
+      end.should.change { Commit.count }
       last_response.status.should == 200
 
       commit = @existing_pod.reload.versions.last.last_published_by
