@@ -37,6 +37,12 @@ module Pod::TrunkApp
     end
 
     describe 'in general' do
+      it 'returns whether it was just created' do
+        pod = Pod.create(:name => 'AFNetworking')
+        pod.was_created?.should == true
+        Pod.find(:name => pod.name).was_created?.should == false
+      end
+
       before do
         @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       end

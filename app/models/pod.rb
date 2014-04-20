@@ -33,9 +33,7 @@ module Pod
 
       def after_initialize
         super
-        if new?
-          @was_created = true
-        end
+        @was_created = new?
       end
 
       attr_reader :was_created
