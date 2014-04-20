@@ -111,6 +111,11 @@ module Pod::TrunkApp
         }
       end
 
+      it 'returns whether it was just created' do
+        @version.was_created?.should == true
+        PodVersion.find(:name => @version.name).was_created?.should == false
+      end
+
       it 'has a description' do
         @version.description.should == 'AFNetworking 1.2.0'
       end

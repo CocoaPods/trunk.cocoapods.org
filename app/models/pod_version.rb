@@ -21,6 +21,14 @@ module Pod
       one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
       one_to_many :log_messages, :order => Sequel.asc([:updated_at, :created_at])
 
+      def after_initialize
+        super
+        @was_created = new?
+      end
+
+      attr_reader :was_created
+      alias_method :was_created?, :was_created
+
       def published?
         commits.any?
       end
