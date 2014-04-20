@@ -142,8 +142,7 @@ module Pod::TrunkApp
     end
 
     it 'adds an existing committer to the commit' do
-      test_user = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
-      test_user.add_pod(@existing_pod)
+      committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
 
       lambda do
         post_raw_hook_json_data
@@ -151,7 +150,14 @@ module Pod::TrunkApp
       last_response.status.should == 200
 
       commit = @existing_pod.reload.versions.last.last_published_by
-      commit.committer.should == test_user
+      commit.committer.should == committer
+    end
+
+    it 'does not update the committer name if the committer existed' do
+      committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
+      post_raw_hook_json_data
+      last_response.status.should == 200
+      committer.reload.name.should == 'Test User'
     end
 
     it 'adds a new committer to the commit' do

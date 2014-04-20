@@ -24,7 +24,7 @@ module Pod
         #
         # TODO: Only get the latest version of a file.
         #
-        def self.import(commit_sha, type, files, committer_email, committer_name = nil)
+        def self.import(commit_sha, type, files, committer_email, committer_name)
           files.each do |file|
             next unless file =~ /\.podspec(.json)?\z/
 
@@ -42,9 +42,7 @@ module Pod
         # rubocop:disable MethodLength
         def self.handle_modified(spec, pod, commit_sha, committer_email, committer_name)
           unless committer = Owner.find_by_email(committer_email)
-            committer = Owner.new(:email => committer_email)
-            committer.name = committer_name unless committer_name.blank?
-            committer.save(:raise_on_save_failure => true)
+            committer = Owner.create(:email => committer_email, :name => committer_name)
           end
 
           version_name = spec.version.to_s
