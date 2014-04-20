@@ -1,51 +1,43 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
-  describe HooksController, 'when receiving push updates from the repository' do
+  describe Commit::Import, 'when importing' do
 
-    def post_raw_hook_json_data
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      payload = fixture_read('GitHub/post_receive_hook_json_data.raw')
-      post '/github-post-receive/', payload
-    end
-
-    before do
-      header 'X-Github-Delivery', '37ac017e-902c-11e3-8115-655d22cdc2ab'
-      header 'User-Agent', 'GitHub Hookshot 7e04da1'
-      header 'Content-Length', '3687'
-      header 'X-Request-Id', '00f5fba2-c1ef-4169-b417-8abf02b26b94'
-      header 'Connection', 'close'
-      header 'X-Github-Event', 'push'
-      header 'Accept', '*/*'
-      header 'Host', 'trunk.cocoapods.org'
-    end
-
-    it 'fails with media type other than JSON data' do
-      header 'Content-Type', 'text/yaml'
-      post '/github-post-receive/', ''
-      last_response.status.should == 415
-    end
-
-    it 'fails with data other than a push payload' do
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      post '/github-post-receive/', :something => 'else'
-      last_response.status.should == 422
-    end
-
-    it 'fails with a payload other than serialized push data' do
-      header 'Content-Type', 'application/x-www-form-urlencoded'
-      post '/github-post-receive/', :payload => 'not-push-data'
-      last_response.status.should == 415
+    # TODO: This is a bad sign.
+    #
+    def trigger_commit_with_fake_data
+      Commit::Import.import(
+        '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
+        :modified,
+        ['KFData/1.0.1/KFData.podspec.json'],
+        'test.user@example.com',
+        'Test User'
+      )
+      Commit::Import.import(
+        '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
+        :added,
+        ['KFData/1.0.1/KFData.podspec.json'],
+        'test.user@example.com',
+        'Keith Smiley'
+      )
     end
 
     rest_response = Struct.new(:body)
 
+    it 'gets the podspec data from the right URL' do
+      expected_url = 'https://raw.github.com/CocoaPods/Specs/' \
+        '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
+      REST.expects(:get).with(expected_url).twice
+        .returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
+
+      trigger_commit_with_fake_data
+    end
+
     it 'processes payload data and creates a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
       lambda do
-        post_raw_hook_json_data
+        trigger_commit_with_fake_data
       end.should.change { Pod.count }
-      last_response.status.should == 200
 
       pod = Pod.find(:name => 'ABContactHelper')
       pod.should.not.be.nil
@@ -67,8 +59,7 @@ module Pod::TrunkApp
 
     it 'does add the add commit and a version if missing and version does not exist' do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
-      post_raw_hook_json_data
-      last_response.status.should == 200
+      trigger_commit_with_fake_data
 
       # Did log a big fat warning.
       #
@@ -89,8 +80,9 @@ module Pod::TrunkApp
 
     it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
-      post_raw_hook_json_data
-      last_response.status.should == 200
+
+      trigger_commit_with_fake_data
+
       @existing_pod.reload
 
       # Did add a version.
@@ -118,8 +110,8 @@ module Pod::TrunkApp
     end
 
     it 'processes payload data and creates a new submission job (because the version exists)' do
-      post_raw_hook_json_data
-      last_response.status.should == 200
+      trigger_commit_with_fake_data
+
       @existing_pod.reload
 
       # Did not add a new version.
@@ -145,9 +137,8 @@ module Pod::TrunkApp
       committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
 
       lambda do
-        post_raw_hook_json_data
+        trigger_commit_with_fake_data
       end.should.not.change { Owner.count }
-      last_response.status.should == 200
 
       commit = @existing_pod.reload.versions.last.last_published_by
       commit.committer.should == committer
@@ -155,16 +146,16 @@ module Pod::TrunkApp
 
     it 'does not update the committer name if the committer existed' do
       committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
-      post_raw_hook_json_data
-      last_response.status.should == 200
+
+      trigger_commit_with_fake_data
+
       committer.reload.name.should == 'Test User'
     end
 
     it 'adds a new committer to the commit' do
       lambda do
-        post_raw_hook_json_data
+        trigger_commit_with_fake_data
       end.should.change { Owner.count }
-      last_response.status.should == 200
 
       committer = Owner.first(:email => 'test.user@example.com')
       committer.name.should == 'Test User'
@@ -178,15 +169,14 @@ module Pod::TrunkApp
       @existing_version.delete
       @existing_pod.delete
 
-      post_raw_hook_json_data
-      last_response.status.should == 200
+      trigger_commit_with_fake_data
 
       Pod.find(:name => 'KFData').owners.map(&:email).should == ['test.user@example.com']
     end
 
     it 'does *not* set the committer as the pod owner if the pod already existed' do
-      post_raw_hook_json_data
-      last_response.status.should == 200
+      trigger_commit_with_fake_data
+
       @existing_pod.reload.owners.map(&:email).should.not.include 'test.user@example.com'
     end
 
@@ -201,9 +191,8 @@ module Pod::TrunkApp
       )
 
       lambda do
-        post_raw_hook_json_data
+        trigger_commit_with_fake_data
       end.should.change { Commit.count }
-      last_response.status.should == 200
 
       commit = @existing_pod.reload.versions.last.last_published_by
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
@@ -219,9 +208,9 @@ module Pod::TrunkApp
       )
 
       PodVersion.any_instance.expects(:add_commit).never
-
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
-      post_raw_hook_json_data
+
+      trigger_commit_with_fake_data
     end
 
   end
