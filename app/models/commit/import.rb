@@ -9,9 +9,7 @@ module Pod
   module TrunkApp
     class Commit
       module Import
-        # TODO: Point to correct repo
-        #
-        DATA_URL_TEMPLATE = 'https://raw.github.com/alloy/trunk.cocoapods.org-test/%s/Specs/%s'
+        DATA_URL_TEMPLATE = "https://raw.github.com/#{ENV['GH_REPO']}/%s/Specs/%s"
 
         # TODO: handle network/request failures
         #
