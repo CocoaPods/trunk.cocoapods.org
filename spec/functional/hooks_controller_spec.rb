@@ -191,19 +191,6 @@ module Pod::TrunkApp
     end
 
     it 'creates the add commit if missing for this pod and version exists' do
-      # TODO: This does not seem to be the right way to test it, because even
-      # with these additions to the test, the old code would still pass:
-      #
-      #   Commit.first(:sha => commit_sha)
-      #
-      # This is probably because I don't fully understand the fixtures and the
-      # way handle_added/handle_modified is handled.
-      #
-      # In theory, that old code would have matched any Commit for the commit
-      # sha, even though that record might be for another Pod or PodVersion.
-      #
-      # Also see the disabled test below.
-      #
       other_pod = Pod.create(:name => 'ObjectiveSugar')
       other_version = other_pod.add_version(:name => '1.0.0')
       other_committer = Owner.create(:email => 'other@example.com', :name => 'Other Committer')

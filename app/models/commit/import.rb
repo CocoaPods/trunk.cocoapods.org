@@ -56,6 +56,7 @@ module Pod
           end
 
           # Check if an associated Commit for this sha exists yet.
+          #
           unless version.commits_dataset.first(:sha => commit_sha)
             version.add_commit(
               :sha => commit_sha,
