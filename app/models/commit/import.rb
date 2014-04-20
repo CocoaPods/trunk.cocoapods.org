@@ -29,22 +29,21 @@ module Pod
             next unless file =~ /\.podspec(.json)?\z/
 
             spec = fetch_spec(commit_sha, file)
-            unless pod = Pod.find(:name => spec.name)
-              pod = Pod.create(:name => spec.name)
+
+            unless committer = Owner.find_by_email(committer_email)
+              committer = Owner.create(:email => committer_email, :name => committer_name)
             end
 
-            send(:"handle_#{type}", spec, pod, commit_sha, committer_email, committer_name)
+            pod = Pod.find_or_create(:name => spec.name)
+            pod.add_owner(committer) if pod.was_created?
+
+            send(:"handle_#{type}", spec, pod, committer, commit_sha)
           end
         end
 
         # We add a commit to the pod's version and, if necessary, add a new version.
         #
-        # rubocop:disable MethodLength
-        def self.handle_modified(spec, pod, commit_sha, committer_email, committer_name)
-          unless committer = Owner.find_by_email(committer_email)
-            committer = Owner.create(:email => committer_email, :name => committer_name)
-          end
-
+        def self.handle_modified(spec, pod, committer, commit_sha)
           version = PodVersion.find_or_create(:pod => pod, :name => spec.version.to_s)
           if version.was_created?
             if pod.was_created?
@@ -69,15 +68,14 @@ module Pod
             )
           end
         end
-        # rubocop:enable MethodLength
 
         # We only check if we have a commit for this pod and version and,
         # if not, add it.
         #
-        def self.handle_added(spec, pod, commit_sha, committer_email, committer_name)
+        def self.handle_added(spec, pod, committer, commit_sha)
           version = pod.versions_dataset.first(:name => spec.version.to_s)
           unless version && version.commits_dataset.first(:sha => commit_sha)
-            handle_modified(spec, pod, commit_sha, committer_email, committer_name)
+            handle_modified(spec, pod, committer, commit_sha)
           end
         end
       end

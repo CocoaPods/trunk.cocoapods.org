@@ -84,7 +84,7 @@ module Pod::TrunkApp
     # Create existing pod version
     #
     before do
-      PodVersion.create(:pod => @existing_pod, :name => @existing_spec.version.version)
+      @existing_version = PodVersion.create(:pod => @existing_pod, :name => @existing_spec.version.version)
     end
 
     it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
@@ -173,7 +173,15 @@ module Pod::TrunkApp
       commit.committer.should == committer
     end
 
-    xit 'sets the committer as the pod owner if the pod was newly created' do
+    it 'sets the committer as the pod owner if the pod was newly created' do
+      # Reset
+      @existing_version.delete
+      @existing_pod.delete
+
+      post_raw_hook_json_data
+      last_response.status.should == 200
+
+      Pod.find(:name => 'KFData').owners.map(&:email).should == ['test.user@example.com']
     end
 
     xit 'does *not* set the committer as the pod owner if the pod already existed' do
