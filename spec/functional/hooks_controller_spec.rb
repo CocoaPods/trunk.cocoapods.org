@@ -222,7 +222,7 @@ module Pod::TrunkApp
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
 
-    xit 'does not try to update pod data if a commit already exists' do
+    it 'does not try to add a commit to a version if a commit already exists' do
       committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
       version = PodVersion.create(:pod => @existing_pod, :name => '1.0.2')
       commit = version.add_commit(
@@ -231,7 +231,8 @@ module Pod::TrunkApp
         :committer => committer
       )
 
-      Commit::Import.expects(:handle_modified).never
+      PodVersion.any_instance.expects(:add_commit).never
+
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
       post_raw_hook_json_data
     end
