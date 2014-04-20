@@ -71,18 +71,12 @@ module Pod
         end
         # rubocop:enable MethodLength
 
-        # We only check if we have it and, if not, add it.
+        # We only check if we have a commit for this pod and version and,
+        # if not, add it.
         #
         def self.handle_added(spec, pod, commit_sha, committer_email, committer_name)
-          if commit = Commit.find(:sha => commit_sha)
-            unless commit.pod_version.pod == pod
-              # TODO: The existing commit in the BD is not about this pod. Log as error?
-            end
-          else
-            # No? We should create it and connect it to the pod.
-            #
-            # TODO: What if the version does not exist yet? Should we add one?
-            #
+          version = pod.versions_dataset.first(:name => spec.version.to_s)
+          unless version && version.commits_dataset.first(:sha => commit_sha)
             handle_modified(spec, pod, commit_sha, committer_email, committer_name)
           end
         end

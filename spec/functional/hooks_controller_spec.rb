@@ -179,7 +179,29 @@ module Pod::TrunkApp
     xit 'does *not* set the committer as the pod owner if the pod already existed' do
     end
 
-    it 'creates the add commit if missing and version exists' do
+    it 'creates the add commit if missing for this pod and version exists' do
+      # TODO: This does not seem to be the right way to test it, because even
+      # with these additions to the test, the old code would still pass:
+      #
+      #   Commit.first(:sha => commit_sha)
+      #
+      # This is probably because I don't fully understand the fixtures and the
+      # way handle_added/handle_modified is handled.
+      #
+      # In theory, that old code would have matched any Commit for the commit
+      # sha, even though that record might be for another Pod or PodVersion.
+      #
+      # Also see the disabled test below.
+      #
+      other_pod = Pod.create(:name => 'ObjectiveSugar')
+      other_version = other_pod.add_version(:name => '1.0.0')
+      other_committer = Owner.create(:email => 'other@example.com', :name => 'Other Committer')
+      other_version.add_commit(
+        :sha => '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
+        :specification_data => 'DATA',
+        :committer => other_committer
+      )
+
       lambda do
         post_raw_hook_json_data
       end.should.change { Commit.count }
@@ -187,6 +209,20 @@ module Pod::TrunkApp
 
       commit = @existing_pod.reload.versions.last.last_published_by
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
+    end
+
+    xit 'does not try to update pod data if a commit already exists' do
+      committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
+      version = PodVersion.create(:pod => @existing_pod, :name => '1.0.2')
+      commit = version.add_commit(
+        :sha => '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
+        :specification_data => 'DATA',
+        :committer => committer
+      )
+
+      Commit::Import.expects(:handle_modified).never
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
+      post_raw_hook_json_data
     end
 
   end
