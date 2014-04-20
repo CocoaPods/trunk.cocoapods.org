@@ -9,6 +9,13 @@ GIT
       nap (~> 0.5)
 
 GIT
+  remote: https://github.com/alloy/nap.git
+  revision: 0b417cbd51c82392208f46db049f203b7067bf83
+  branch: error
+  specs:
+    nap (0.7.0)
+
+GIT
   remote: https://github.com/alloy/peiji-san.git
   revision: eca485d8dc95f12aaec1a434b49d295c7e91844b
   specs:
@@ -53,7 +60,6 @@ GEM
     mocha-on-bacon (0.2.2)
       mocha (>= 0.13.0)
     multi_json (1.9.2)
-    nap (0.7.0)
     newrelic_rpm (3.7.3.204)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
@@ -136,7 +142,7 @@ DEPENDENCIES
   kicker
   mail
   mocha-on-bacon
-  nap
+  nap!
   newrelic_rpm
   nokogiri
   peiji-san!
