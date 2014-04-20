@@ -45,11 +45,8 @@ module Pod
             committer = Owner.create(:email => committer_email, :name => committer_name)
           end
 
-          version_name = spec.version.to_s
-
-          version = PodVersion.find(:pod => pod, :name => version_name)
-          unless version
-            version = PodVersion.create(:pod => pod, :name => version_name)
+          version = PodVersion.find_or_create(:pod => pod, :name => spec.version.to_s)
+          if version.was_created?
             if pod.was_created?
               message = "Pod `#{pod.name}' and version `#{version.name}' created via Github hook."
             else
@@ -63,9 +60,8 @@ module Pod
             )
           end
 
+          # Check if an associated Commit for this sha exists yet.
           unless version.commits_dataset.first(:sha => commit_sha)
-            # Add a new commit to the existing version.
-            #
             version.add_commit(
               :sha => commit_sha,
               :specification_data => JSON.pretty_generate(spec),
