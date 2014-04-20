@@ -63,8 +63,7 @@ module Pod
           else
             raise "returned an unexpected HTTP response: #{@response.inspect}"
           end
-        rescue Errno::ETIMEDOUT, Timeout::Error,
-               Net::OpenTimeout, Net::ReadTimeout => e
+        rescue REST::Error::Timeout => e
           @timeout_error = "[#{e.class.name}] #{e.message}"
         end
 
