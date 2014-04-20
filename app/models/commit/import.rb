@@ -20,8 +20,6 @@ module Pod
 
         # For each changed file, get its data (if it's a podspec).
         #
-        # TODO: Only get the latest version of a file.
-        #
         def self.import(commit_sha, type, files, committer_email, committer_name)
           files.each do |file|
             next unless file =~ /\.podspec(.json)?\z/
