@@ -184,7 +184,10 @@ module Pod::TrunkApp
       Pod.find(:name => 'KFData').owners.map(&:email).should == ['test.user@example.com']
     end
 
-    xit 'does *not* set the committer as the pod owner if the pod already existed' do
+    it 'does *not* set the committer as the pod owner if the pod already existed' do
+      post_raw_hook_json_data
+      last_response.status.should == 200
+      @existing_pod.reload.owners.map(&:email).should.not.include 'test.user@example.com'
     end
 
     it 'creates the add commit if missing for this pod and version exists' do
