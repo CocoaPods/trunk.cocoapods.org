@@ -1,8 +1,15 @@
 #!/usr/bin/env ruby
 
+# Run import
+#
 # $ rake db:drop RACK_ENV=production
 # $ rake db:bootstrap RACK_ENV=production
 # $ env RACK_ENV=production REPO=[PATH] bundle exec ./script/import_spec_repo
+
+# Push:
+#
+# $ heroku pg:reset DATABASE_URL
+# $ pg_dump -xO trunk_cocoapods_org_production | psql `heroku config:get DATABASE_URL`
 
 exit(1) unless ENV['REPO'] || system('pod repo update master')
 
