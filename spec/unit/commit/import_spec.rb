@@ -72,6 +72,14 @@ module Pod::TrunkApp
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
 
+    it 'marks a commit as being imported' do
+      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+      trigger_commit_with_fake_data
+      last_version = @existing_pod.reload.versions.last
+      commit = last_version.last_published_by
+      commit.should.be.imported
+    end
+
     # Create existing pod version
     #
     before do

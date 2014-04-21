@@ -61,7 +61,8 @@ module Pod
             version.add_commit(
               :sha => commit_sha,
               :specification_data => JSON.pretty_generate(spec),
-              :committer => committer
+              :committer => committer,
+              :imported => true
             )
           end
         end
