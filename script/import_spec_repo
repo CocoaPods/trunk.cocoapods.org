@@ -92,6 +92,8 @@ walker = Rugged::Walker.new(REPO)
 walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
 walker.push(REPO.head.target)
 
+unclaimed_owner = Pod::TrunkApp::Owner.unclaimed
+
 Dir.chdir(REPO.workdir) do
   walker.each do |commit|
     # Omit root and merge commits
@@ -139,7 +141,10 @@ Dir.chdir(REPO.workdir) do
         # Create the Pod *before* sending it off to Import, otherwise the
         # committer becomes an owner.
         spec = Pod::TrunkApp::Commit::Import.fetch_spec(sha, file)
-        Pod::TrunkApp::Pod.find_or_create(:name => spec.name)
+        pod = Pod::TrunkApp::Pod.find_or_create(:name => spec.name)
+        # Set all pods to be owned by the unclaimed owner.
+        pod.add_owner(unclaimed_owner) if pod.was_created?
+
         # Now perform the actual import.
         Pod::TrunkApp::Commit::Import.import(sha, status, [file],
                                              committer_email, committer_name)
@@ -150,10 +155,4 @@ Dir.chdir(REPO.workdir) do
 
     puts
   end
-end
-
-# Finally set all pods to be owned by the unclaimed owner.
-owner = Pod::TrunkApp::Owner.unclaimed
-Pod::TrunkApp::Pod.dataset.use_cursor(:rows_per_fetch => 100).each do |pod|
-  pod.add_owner(owner)
 end
