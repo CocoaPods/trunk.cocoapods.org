@@ -49,6 +49,8 @@ module Pod
 
           # Get all changed (added + modified) files.
           #
+          # TODO: We ignore renamed specs.
+          #
           # TODO: We ignore deleted specs.
           # https://github.com/CocoaPods/trunk.cocoapods.org/issues/46
           #

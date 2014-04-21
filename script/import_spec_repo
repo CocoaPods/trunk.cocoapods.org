@@ -1,10 +1,5 @@
 #!/usr/bin/env ruby
 
-# TODO
-#
-# * Handle renamed specs
-# * Handle renamed specs that are also modified (so not R100)
-
 # $ rake db:drop RACK_ENV=production
 # $ rake db:bootstrap RACK_ENV=production
 # $ env RACK_ENV=production REPO=[PATH] bundle exec ./script/import_spec_repo
@@ -30,18 +25,27 @@ end
 
 repo = File.expand_path(ENV['REPO'] || '~/.cocoapods/repos/master')
 REPO = Rugged::Repository.new(repo)
+HEAD_SHA = REPO.head.target
+
+LOG_MESSAGE_REFERENCE = 'spec-repo-import'
 
 module Pod
   module TrunkApp
     class Commit
       module Import
-        def self.mock_spec(file)
+        def self.mock_spec(commit_sha, file)
           name = File.basename(file, File.extname(file))
           version = File.basename(File.dirname(file))
           begin
             ::Pod::Version.new(version)
           rescue ArgumentError
             version = '0.0.1'
+            LogMessage.create(
+              :reference => LOG_MESSAGE_REFERENCE,
+              :level => :warning,
+              :message => "Fixing the version of the spec in file `#{file}` " \
+                          "@ `#{commit_sha}`."
+            )
           end
           puts "[!] Unparsable spec: #{name} <#{version}>"
           ::Pod::Specification.new do |s|
@@ -61,15 +65,52 @@ module Pod
           if spec.name.nil?
             spec.name = File.basename(file, File.extname(file))
             puts "[!] Fixing name of spec: #{spec.name}"
+            LogMessage.create(
+              :reference => LOG_MESSAGE_REFERENCE,
+              :level => :warning,
+              :message => "Fixing the name of the spec in file `#{file}` " \
+                          "@ `#{commit_sha}`."
+            )
           end
           if spec.attributes_hash['version'].nil?
             spec.attributes_hash['version'] = File.basename(File.dirname(file))
             puts "[!] Fixing version of spec: #{spec.name} <#{spec.version}>"
+            LogMessage.create(
+              :reference => LOG_MESSAGE_REFERENCE,
+              :level => :warning,
+              :message => "Fixing the version of the spec in file `#{file}` " \
+                          "@ `#{commit_sha}`."
+            )
           end
           spec
 
-        rescue ::Pod::DSLError
-          mock_spec(file)
+        rescue Rugged::TreeError
+          mock_spec(commit_sha, file)
+        rescue ::Pod::DSLError, ::Pod::Informative
+          LogMessage.create(
+            :reference => LOG_MESSAGE_REFERENCE,
+            :level => :warning,
+            :message => "The file `#{file}` @ `#{commit_sha}` was unparsable."
+          )
+          mock_spec(commit_sha, file)
+        end
+
+        # TODO: These should be moved into the real Import module at some point
+        # when we've decided how to properly handle it.
+        private
+
+        def self.handle_renamed(spec, pod, committer, commit_sha)
+          if commit = handle_added(spec, pod, committer, commit_sha)
+            commit.update(:renamed_file_during_import => true)
+          end
+        end
+
+        def self.handle_deleted(spec, pod, committer, commit_sha)
+          commit = handle_modified(spec, pod, committer, commit_sha)
+          commit.update(
+            :deleted_file_during_import => true,
+            :specification_data => '{}'
+          )
         end
       end
     end
@@ -84,7 +125,7 @@ def changes(sha)
     when 'A' then [:added, file]
     when 'M' then [:modified, file]
     when 'D' then [:deleted, file]
-    when /R\d{3}/ then [:renamed, to, file]
+    when /R\d{3}/ then [:renamed, to]
     else
       raise "Unknown status: #{status}"
     end
@@ -116,6 +157,7 @@ Dir.chdir(REPO.workdir) do
       next
     end
 
+    original_committer_email = committer_email
     case committer_email
     when 'fabio@discontinity.it'
       committer_email = 'fabio@discontinuity.it'
@@ -134,30 +176,37 @@ Dir.chdir(REPO.workdir) do
         committer_email = Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL
       end
     end
+    if original_committer_email != committer_email
+      Pod::TrunkApp::LogMessage.create(
+        :reference => LOG_MESSAGE_REFERENCE,
+        :level => :warning,
+        :message => "The committer email `#{original_committer_email}` @ " \
+                    " `#{sha}` was unusable and set to that of the " \
+                    "`unclaimed` owner."
+      )
+    end
 
-    # TODO: Disable exception rescueing before the final import.
-    stats.each do |status, file, _|
-      p [status, file]
-      # We currently skip deleted and renamed specs.
-      next unless [:added, :modified].include?(status)
+    stats.each do |status, file|
       next unless file =~ /\.podspec(.json)?\z/
+      next if sha == HEAD_SHA && status == :deleted
+      p [status, file]
 
-      begin
-        # Create the Pod *before* sending it off to Import, otherwise the
-        # committer becomes an owner.
-        spec = Pod::TrunkApp::Commit::Import.fetch_spec(sha, file)
-        pod = Pod::TrunkApp::Pod.find_or_create(:name => spec.name)
-        # Set all pods to be owned by the unclaimed owner.
-        pod.add_owner(unclaimed_owner) if pod.was_created?
+      # Create the Pod *before* sending it off to Import, otherwise the
+      # committer becomes an owner.
+      spec = Pod::TrunkApp::Commit::Import.fetch_spec(sha, file)
+      pod = Pod::TrunkApp::Pod.find_or_create(:name => spec.name)
+      # Set all pods to be owned by the unclaimed owner.
+      pod.add_owner(unclaimed_owner) if pod.was_created?
 
-        # Now perform the actual import.
-        Pod::TrunkApp::Commit::Import.import(sha, status, [file],
-                                             committer_email, committer_name)
-      rescue Object => e
-        puts "ERROR: #{e.message}\n\t#{e.backtrace.join("\n\t")}"
-      end
+      # Now perform the actual import.
+      Pod::TrunkApp::Commit::Import.import(sha, status, [file],
+                                           committer_email, committer_name)
     end
 
     puts
   end
 end
+
+# Finally, clear all log messages that were generated during importing and are
+# only relavent when actually receiving a webhook POST from GitHub.
+Pod::TrunkApp::LogMessage.where('pod_version_id != 0').delete

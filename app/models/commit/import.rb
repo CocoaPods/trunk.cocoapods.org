@@ -55,16 +55,13 @@ module Pod
             )
           end
 
-          # Check if an associated Commit for this sha exists yet.
-          #
-          unless version.commits_dataset.first(:sha => commit_sha)
-            version.add_commit(
-              :sha => commit_sha,
-              :specification_data => JSON.pretty_generate(spec),
-              :committer => committer,
-              :imported => true
-            )
-          end
+          # TODO: add test for returning commit
+          version.commits_dataset.first(:sha => commit_sha) || version.add_commit(
+            :sha => commit_sha,
+            :specification_data => JSON.pretty_generate(spec),
+            :committer => committer,
+            :imported => true
+          )
         end
 
         # We only check if we have a commit for this pod and version and,
