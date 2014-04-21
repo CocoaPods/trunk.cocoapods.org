@@ -1,3 +1,7 @@
 require 'app/models/owner'
 
-Pod::TrunkApp::Owner.create(:email => Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+module Pod::TrunkApp
+  Owner.create(:email => 'eloy.de.enige@gmail.com', :name => 'Eloy Durán')
+
+  Owner.create(:email => Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+end
