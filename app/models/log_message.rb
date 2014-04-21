@@ -29,7 +29,6 @@ module Pod
 
       def validate
         super
-        validates_presence :pod_version_id
         validates_presence :message
         validates_includes LEVELS, :level
       end

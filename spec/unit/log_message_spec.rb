@@ -23,11 +23,6 @@ module Pod::TrunkApp
         @message.should.validate_with(:message, 'yay')
       end
 
-      it 'needs a pod version' do
-        @message.should.not.validate_with(:pod_version_id, nil)
-        @message.should.validate_with(:pod_version_id, 42)
-      end
-
       it 'does not need an owner' do
         @message.should.validate_with(:owner, nil)
         @message.should.validate_with(:owner, Owner.unclaimed)
