@@ -43,6 +43,7 @@ module Pod
           # Get all changed (added + modified) files.
           #
           # TODO: We ignore deleted specs.
+          # https://github.com/CocoaPods/trunk.cocoapods.org/issues/46
           #
           {
             :added => manual_commit['added'],

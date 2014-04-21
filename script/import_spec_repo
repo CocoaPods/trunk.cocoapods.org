@@ -8,11 +8,12 @@
 
 exit(1) unless ENV['REPO'] || system('pod repo update master')
 
+ENV['RACK_ENV'] ||= 'development'
+
 require 'rubygems'
 require 'rugged'
 
 $LOAD_PATH.unshift(File.expand_path('../../', __FILE__))
-ENV['RACK_ENV'] ||= 'development'
 require 'config/init'
 require 'cocoapods-core'
 require 'app/models/commit/import'
@@ -72,8 +73,9 @@ module Pod
   end
 end
 
-def changes(commit_sha)
-  `git diff-tree --no-commit-id --find-renames --name-status -r #{commit_sha}`.split("\n").map do |line|
+def changes(sha)
+  output = `git diff-tree --no-commit-id --find-renames --name-status -r #{sha}`
+  output.split("\n").map do |line|
     status, file, to = line.split("\t")
     case status
     when 'A' then [:added, file]
@@ -99,42 +101,48 @@ Dir.chdir(REPO.workdir) do
 
     puts '----------------------------------------'
     sha = commit.oid
-    email = commit.author[:email]
-    p sha, email
+    committer_email = commit.author[:email]
+    committer_name = commit.author[:name]
+    p [sha, committer_email, committer_name]
     stats = changes(commit.oid)
-
-    raise "TODO Import committer names!"
-    raise "TODO Create the Pod *before* sending it off to Import, otherwise the committer becomes an owner!"
 
     if sha == '8dd7386313af0493b31d62e9ce9d697a25a63025'
       puts '[!] Skipping because it is known to be an empty file'
       next
     end
 
-    case email
+    case committer_email
     when 'fabio@discontinity.it'
-      email = 'fabio@discontinuity.it'
+      committer_email = 'fabio@discontinuity.it'
     when 'mo at mobarak dot com'
-      email = 'mo@mobarak.com'
+      committer_email = 'mo@mobarak.com'
     when /jasper@apssquick\.ly/i
-      email = 'jasper@appsquick.ly'
+      committer_email = 'jasper@appsquick.ly'
     when 'my@fake.email', /@example\.com$/i, /@server\.com$/i, /\.(local|lan)$/i
-      # local addresses are considered unknown and thus unclaimed
+      # Local addresses are considered unknown and thus unclaimed.
       puts '[!] Setting email to that of the unclaimed owner.'
-      email = Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL
+      committer_email = Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL
     else
-      unless email =~ RFC822::EMAIL
-        # inavlid addresses are considered unknown and thus unclaimed
+      unless committer_email =~ RFC822::EMAIL
+        # Invalid addresses are considered unknown and thus unclaimed.
         puts '[!] Setting email to that of the unclaimed owner.'
-        email = Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL
+        committer_email = Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL
       end
     end
 
+    # TODO: Disable exception rescueing before the final import.
     stats.each do |status, file, _|
       next unless [:added, :modified].include?(status)
+      next unless file =~ /\.podspec(.json)?\z/
       p [status, file]
       begin
-        Pod::TrunkApp::Commit::Import.import(sha, email, status, [file])
+        # Create the Pod *before* sending it off to Import, otherwise the
+        # committer becomes an owner.
+        spec = Pod::TrunkApp::Commit::Import.fetch_spec(sha, file)
+        Pod::TrunkApp::Pod.find_or_create(:name => spec.name)
+        # Now perform the actual import.
+        Pod::TrunkApp::Commit::Import.import(sha, status, [file],
+                                             committer_email, committer_name)
       rescue Object => e
         puts "ERROR: #{e.message}\n\t#{e.backtrace.join("\n\t")}"
       end
