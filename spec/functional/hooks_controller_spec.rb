@@ -9,6 +9,12 @@ module Pod::TrunkApp
       post '/github-post-receive/', payload
     end
 
+    def post_raw_merge_commit_hook_json_data
+      header 'Content-Type', 'application/x-www-form-urlencoded'
+      payload = fixture_read('GitHub/post_receive_hook_json_data_merge_commit.raw')
+      post '/github-post-receive/', payload
+    end
+
     before do
       header 'X-Github-Delivery', '37ac017e-902c-11e3-8115-655d22cdc2ab'
       header 'User-Agent', 'GitHub Hookshot 7e04da1'
@@ -222,6 +228,14 @@ module Pod::TrunkApp
 
       REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
       post_raw_hook_json_data
+    end
+
+    it 'does not process the merge commit - only the merged commit' do
+      Commit::Import.expects(:import)
+        .with('a919e8abd40ea9b8f2e4cdd38d58966b92aba94c', :added, ['PromiseKit/0.9.0/PromiseKit.podspec'], 'test.user@example.com', 'Test User')
+        .once
+
+      post_raw_merge_commit_hook_json_data
     end
 
   end

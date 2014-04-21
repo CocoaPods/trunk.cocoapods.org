@@ -33,10 +33,17 @@ module Pod
         #
         return 422 unless payload.respond_to?(:to_h)
 
+        head_commit_id = payload['head_commit']['id']
+
         # Go through each of the commits and get the commit data.
         #
         payload['commits'].each do |manual_commit|
           commit_sha = manual_commit['id']
+
+          # Do not process merge commits.
+          #
+          next if head_commit_id == commit_sha && manual_commit['message'].start_with?('Merge pull request #')
+
           committer_email = manual_commit['committer']['email']
           committer_name = manual_commit['committer']['name']
 
@@ -49,7 +56,8 @@ module Pod
             :added => manual_commit['added'],
             :modified => manual_commit['modified']
           }.each do |type, files|
-            Commit::Import.import(commit_sha, type, files || [], committer_email, committer_name)
+            next if files.empty?
+            Commit::Import.import(commit_sha, type, files, committer_email, committer_name)
           end
         end
 
