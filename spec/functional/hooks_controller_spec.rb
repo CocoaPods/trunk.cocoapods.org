@@ -232,8 +232,13 @@ module Pod::TrunkApp
 
     it 'does not process the merge commit - only the merged commit' do
       Commit::Import.expects(:import)
-        .with('a919e8abd40ea9b8f2e4cdd38d58966b92aba94c', :added, ['PromiseKit/0.9.0/PromiseKit.podspec'], 'test.user@example.com', 'Test User')
-        .once
+        .with(
+          'a919e8abd40ea9b8f2e4cdd38d58966b92aba94c',
+          :added,
+          ['PromiseKit/0.9.0/PromiseKit.podspec'],
+          'test.user@example.com',
+          'Test User'
+        ).once
 
       post_raw_merge_commit_hook_json_data
     end
