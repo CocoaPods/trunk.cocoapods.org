@@ -2,9 +2,12 @@
 
 # TODO
 #
-# * Handled deleted specs
 # * Handle renamed specs
 # * Handle renamed specs that are also modified (so not R100)
+
+# $ rake db:drop RACK_ENV=production
+# $ rake db:bootstrap RACK_ENV=production
+# $ env RACK_ENV=production REPO=[PATH] bundle exec ./script/import_spec_repo
 
 exit(1) unless ENV['REPO'] || system('pod repo update master')
 
@@ -134,9 +137,11 @@ Dir.chdir(REPO.workdir) do
 
     # TODO: Disable exception rescueing before the final import.
     stats.each do |status, file, _|
+      p [status, file]
+      # We currently skip deleted and renamed specs.
       next unless [:added, :modified].include?(status)
       next unless file =~ /\.podspec(.json)?\z/
-      p [status, file]
+
       begin
         # Create the Pod *before* sending it off to Import, otherwise the
         # committer becomes an owner.
