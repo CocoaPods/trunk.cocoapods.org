@@ -15,6 +15,13 @@ module Pod::TrunkApp
       )
     end
 
+    describe 'in general' do
+      it 'marks it as not being imported' do
+        @commit.save(:raise_on_save_failure => true)
+        @commit.reload.should.not.be.imported
+      end
+    end
+
     describe 'concerning validations' do
       it 'needs a pod version' do
         @commit.should.not.validate_with(:pod_version_id, nil)
