@@ -12,4 +12,6 @@ unless ENV['TRUNK_APP_LOG_TO_STDOUT']
   STDERR.reopen(TRUNK_APP_LOG_FILE)
 end
 
+require 'lib/web_hook'
+
 run Pod::TrunkApp::App
