@@ -1,3 +1,10 @@
+# A minimal web hook implementation.
+#
+# Use WebHook.call("message") in the server.
+# Use WebHook.run in a worker process.
+#
+# Note that WebHook.call will currently block if there is no worker process.
+#
 class WebHook
 
   # List of attached web hook URLs.
@@ -14,14 +21,14 @@ class WebHook
 
   # Set up FIFO file (the "queue").
   #
-  `mkfifo #{fifo}`
+  `mkfifo #{fifo}` unless File.exists?(fifo)
 
   # Use in Trunk to notify all attached services.
   #
-  # Note: Blocks.
+  # Note: Blocks until message is read.
   #
   def self.call message
-    `#{message} > #{fifo}`
+    `echo #{message} > #{fifo}`
   end
 
   # Used in the worker process to process hook calls.
@@ -29,11 +36,20 @@ class WebHook
   # Reads from
   #
   def self.run
-    while do
+    while true do
+
+      # Block and wait for messages.
+      #
       message = `cat #{fifo}`
-      URLs.each do |url|
-        `curl #{url} -d"#{message}" --max-time 1`
+
+      # Contact web hooks in a child process.
+      #
+      fork do
+        URLs.each do |url|
+          `curl #{url} -d"#{message}" --max-time 1`
+        end
       end
+
     end
   end
 
