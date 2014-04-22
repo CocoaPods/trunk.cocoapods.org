@@ -6,10 +6,9 @@
 # Note that WebHook.call will currently block if there is no worker process.
 #
 class WebHook
-
   # List of attached web hook URLs.
   #
-  URLs = [
+  URLS = [
     "http://metrics.cocoapods.org/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
   ]
 
@@ -21,13 +20,13 @@ class WebHook
 
   # Set up FIFO file (the "queue").
   #
-  `mkfifo #{fifo}` unless File.exists?(fifo)
+  `mkfifo #{fifo}` unless File.exist?(fifo)
 
   # Use in Trunk to notify all attached services.
   #
   # Note: Blocks until message is read.
   #
-  def self.call message
+  def self.call(message)
     `echo #{message} > #{fifo}`
   end
 
@@ -36,7 +35,7 @@ class WebHook
   # Reads from
   #
   def self.run
-    while true do
+    loop do
 
       # Block and wait for messages.
       #
@@ -45,12 +44,11 @@ class WebHook
       # Contact web hooks in a child process.
       #
       fork do
-        URLs.each do |url|
+        URLS.each do |url|
           `curl #{url} -d"#{message}" --max-time 1`
         end
       end
 
     end
   end
-
 end
