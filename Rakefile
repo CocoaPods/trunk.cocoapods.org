@@ -23,7 +23,7 @@ begin
   end
 
   task :env do
-    $:.unshift(File.expand_path('../', __FILE__))
+    $LOAD_PATH.unshift(File.expand_path('../', __FILE__))
     require 'config/init'
   end
 
@@ -66,7 +66,7 @@ begin
 
     desc 'Seed DB'
     task :seed => :rack_env do
-      sh "bundle exec ruby db/seeds.rb"
+      sh 'bundle exec ruby db/seeds.rb'
     end
 
     desc 'Create, migrate, and seed the DB for RACK_ENV'
@@ -83,7 +83,7 @@ begin
 
   desc 'Starts processes for local development'
   task :serve do
-    exec "env PORT=4567 RACK_ENV=development foreman start"
+    exec 'env PORT=4567 RACK_ENV=development foreman start'
   end
 
   desc 'Run the specs'

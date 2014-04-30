@@ -40,26 +40,26 @@ Lambda:
 # Allow for `should.match /regexp/`.
 AmbiguousRegexpLiteral:
   Exclude:
-    - spec/**
+    - spec/**/*
 
 # Allow `object.should == object` syntax.
 Void:
   Exclude:
-    - spec/**
+    - spec/**/*
 
 ClassAndModuleChildren:
   Exclude:
-    - spec/**
+    - spec/**/*
 
 #- Trunk ---------------------------------------------------------------------#
 
 ClassVars:
   Exclude:
-    - spec/**
+    - spec/**/*
 
 MultilineBlockChain:
   Exclude:
-    - spec/**
+    - spec/**/*
 
 # Variables are used for the erb templates
 UselessAssignment:
@@ -71,7 +71,7 @@ HandleExceptions:
 
 FileName:
   Exclude:
-    - spec/fixtures/*
+    - spec/fixtures/**/*
 
 LineLength:
   Exclude:
@@ -80,3 +80,8 @@ LineLength:
 # Sinatra app classes can be longer
 ClassLength:
   Enabled: false
+
+UnusedMethodArgument:
+  Exclude:
+    - db/seeds.rb
+    - db/seeds/**/*

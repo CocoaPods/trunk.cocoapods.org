@@ -104,6 +104,7 @@ module Pod
 
         # TODO: These should be moved into the real Import module at some point
         # when we've decided how to properly handle it.
+
         private
 
         def self.handle_renamed(spec, pod, committer, commit_sha)
@@ -189,7 +190,7 @@ Dir.chdir(REPO.workdir) do
         :level => :warning,
         :message => "The committer email `#{original_committer_email}` @ " \
                     " `#{sha}` was unusable and set to that of the " \
-                    "`unclaimed` owner."
+                    '`unclaimed` owner.'
       )
     end
 

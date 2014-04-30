@@ -78,12 +78,12 @@ module Pod
           # TODO: Ask GitHub if they have some form of transaction system in
           # place that rolls back a commit in case an error occurs during
           # response rendering.
-          json_error(500, "An error occurred on GitHub’s side. Please check GitHub’s status at " \
-                          "https://status.github.com and try again later in case the pod is " \
-                          "still not published.")
+          json_error(500, 'An error occurred on GitHub’s side. Please check GitHub’s status at ' \
+                          'https://status.github.com and try again later in case the pod is ' \
+                          'still not published.')
         elsif response.failed_due_to_timeout?
-          json_error(504, "Calling the GitHub commit API timed out. Please check GitHub’s " \
-                          "status at https://status.github.com and try again later.")
+          json_error(504, 'Calling the GitHub commit API timed out. Please check GitHub’s ' \
+                          'status at https://status.github.com and try again later.')
         end
       end
 

@@ -14,7 +14,7 @@ module Pod
         type = content_type(:json)
         if (request.post? || request.put?) && request.media_type != 'application/json'
           json_error(415, "Unable to accept input with Content-Type `#{request.media_type}`, " \
-                          "must be `application/json`.")
+                          'must be `application/json`.')
         end
       end
 
@@ -56,8 +56,8 @@ module Pod
 
       def throw_internal_server_error!
         # TODO: Update with our status page address.
-        json_error(500, "An internal server error occurred. Please check for any known status " \
-                        "issues at https://twitter.com/CocoaPods and try again later.")
+        json_error(500, 'An internal server error occurred. Please check for any known status ' \
+                        'issues at https://twitter.com/CocoaPods and try again later.')
       end
 
       # --- Authentication ------------------------------------------------------------------------
