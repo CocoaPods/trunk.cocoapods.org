@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/CocoaPods/Core.git
-  revision: e33565de148fc7560e58ac82c1bc2bc37b20b2f7
+  revision: bb05ef7ba950275b2fcdb5199ee297c4e5a641db
   specs:
-    cocoapods-core (0.31.1)
+    cocoapods-core (0.32.1)
       activesupport (>= 3.2.15, < 4)
       fuzzy_match (~> 2.0.4)
       json_pure (~> 1.8)
@@ -59,7 +59,7 @@ GEM
       metaclass (~> 0.0.1)
     mocha-on-bacon (0.2.2)
       mocha (>= 0.13.0)
-    multi_json (1.9.2)
+    multi_json (1.9.3)
     newrelic_rpm (3.7.3.204)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
