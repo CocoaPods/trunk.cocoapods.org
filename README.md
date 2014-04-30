@@ -1,5 +1,9 @@
 # trunk.cocoapods.org
 
+
+[![Build Status](https://img.shields.io/travis/CocoaPods/trunk.cocoapods.org/master.svg?style=flat)](https://travis-ci.org/CocoaPods/trunk.cocoapods.org)
+
+
 Available under the MIT license.
 
 ## Installation
