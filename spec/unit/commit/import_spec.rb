@@ -52,6 +52,19 @@ module Pod::TrunkApp
       last_log_message.message.should == "Pod `ABContactHelper' and version `0.1' created via Github hook."
     end
 
+    it 'creates a LogMessage if no spec is fetched' do
+      REST.stubs(:get).returns(rest_response(nil, 400))
+      sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
+      path = 'KFData/1.0.1/KFData.podspec.json'
+      lambda do
+        spec = Commit::Import.fetch_spec(sha, path)
+        spec.should.be.nil?
+      end.should.change { LogMessage.count }
+      log_message = LogMessage.last
+      log_message.level.should == :error
+      log_message.message.should.match /(#{sha})*(#{path})/
+    end
+
     # Create existing pod.
     #
     before do
