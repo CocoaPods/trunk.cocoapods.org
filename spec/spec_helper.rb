@@ -91,7 +91,11 @@ class Bacon::Context
   end
 
   def rest_response(body_or_fixture_name, code = 200, header = nil)
-    body = fixture_read(body_or_fixture_name) rescue body_or_fixture_name
+    begin
+      body = fixture_read(body_or_fixture_name)
+    rescue
+      body = body_or_fixture_name
+    end
     REST::Response.new(code, header, body)
   end
 
