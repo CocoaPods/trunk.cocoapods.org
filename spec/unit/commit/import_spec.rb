@@ -49,7 +49,7 @@ module Pod::TrunkApp
     end
 
     it 'creates a LogMessage if no spec is fetched' do
-      REST.stubs(:get).returns(rest_response(nil, 400))
+      REST.stubs(:get).returns(rest_response('Bad Request', 400))
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
       lambda do
@@ -58,11 +58,14 @@ module Pod::TrunkApp
       end.should.change { LogMessage.count }
       log_message = LogMessage.last
       log_message.level.should == :error
-      log_message.message.should.match /(#{sha})*(#{path})/
+      log_message.message.should.match /(#{sha})*(#{path})*(400)/
+      log_message.data.should == 'Bad Request'
     end
 
     it 'creates a LogMessage the request raises' do
-      REST.stubs(:get).raises(Timeout::Error)
+      error = Timeout::Error.new('execution expired')
+      p error
+      REST.stubs(:get).raises(error)
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
       lambda do
@@ -71,7 +74,8 @@ module Pod::TrunkApp
       end.should.change { LogMessage.count }
       log_message = LogMessage.last
       log_message.level.should == :error
-      log_message.message.should.match /(#{sha})*(#{path})/
+      log_message.message.should.match /(#{sha})*(#{path})*(Timeout::Error - execution expired)/
+      log_message.data.should == error.backtrace.join("\n\t\t")
     end
 
     # Create existing pod.

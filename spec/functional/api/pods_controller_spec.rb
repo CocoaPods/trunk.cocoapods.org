@@ -230,7 +230,7 @@ module Pod::TrunkApp
       pod = @owner.add_pod(:name => spec.name)
       patch '/AFNetworking/owners', { 'email' => @other_owner.email }.to_json
       last_response.status.should == 200
-      pod.owners.should == [@owner, @other_owner]
+      pod.owners.sort_by(&:name).should == [@owner, @other_owner].sort_by(&:name)
     end
 
     before do

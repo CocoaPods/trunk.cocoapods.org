@@ -11,29 +11,29 @@ module Pod
       module Import
         DATA_URL_TEMPLATE = "https://raw.github.com/#{ENV['GH_REPO']}/%s/Specs/%s"
 
-        def self.log_failed_spec_fetch(url)
+        def self.log_failed_spec_fetch(url, message, data)
           LogMessage.create(
-            :message => "There was an issue fetching the spec at #{url}",
-            :level => :error
+            :message => "There was an issue fetching the spec at #{url}: #{message}",
+            :level => :error,
+            :data => data
           )
-          nil
         end
 
         # TODO: handle network/request failures
         #
         def self.fetch_spec(commit_sha, file)
           url = DATA_URL_TEMPLATE % [commit_sha, file]
-          begin
-            response = REST.get(url)
-            if response.ok?
-              data = response.body
-              return ::Pod::Specification.from_string(data, file)
-            else
-              log_failed_spec_fetch(url)
-            end
-          rescue REST::Error => e
-            log_failed_spec_fetch(url)
+          response = REST.get(url)
+          data = response.body
+          if response.ok?
+            ::Pod::Specification.from_string(data, file)
+          else
+            log_failed_spec_fetch(url, response.status_code.to_s, data)
+            nil
           end
+        rescue REST::Error => e
+          log_failed_spec_fetch(url, "#{e.class.name} - #{e.message}", e.backtrace.join("\n\t\t"))
+          nil
         end
 
         # For each changed file, get its data (if it's a podspec).
