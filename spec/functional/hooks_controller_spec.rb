@@ -44,10 +44,8 @@ module Pod::TrunkApp
       last_response.status.should == 415
     end
 
-    rest_response = Struct.new(:body)
-
     it 'processes payload data and creates a new pod (if one does not exist)' do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
       lambda do
         post_raw_hook_json_data
       end.should.change { Pod.count }
@@ -72,7 +70,7 @@ module Pod::TrunkApp
     end
 
     it 'does add the add commit and a version if missing and version does not exist' do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
       post_raw_hook_json_data
       last_response.status.should == 200
 
@@ -94,7 +92,7 @@ module Pod::TrunkApp
     end
 
     it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
       post_raw_hook_json_data
       last_response.status.should == 200
       @existing_pod.reload
@@ -120,7 +118,7 @@ module Pod::TrunkApp
     # Stub data for the existing pod version
     #
     before do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
     end
 
     it 'processes payload data and creates a new submission job (because the version exists)' do
@@ -226,7 +224,7 @@ module Pod::TrunkApp
 
       PodVersion.any_instance.expects(:add_commit).never
 
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
       post_raw_hook_json_data
     end
 

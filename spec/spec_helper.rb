@@ -90,6 +90,15 @@ class Bacon::Context
     YAML.load(fixture_read("GitHub/#{name}.yaml"))
   end
 
+  def rest_response(body_or_fixture_name, code = 200, header = nil)
+    begin
+      body = fixture_read(body_or_fixture_name)
+    rescue
+      body = body_or_fixture_name
+    end
+    REST::Response.new(code, header, body)
+  end
+
   def fixture_new_commit_sha
     @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['commit']['sha']
   end
