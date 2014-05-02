@@ -62,7 +62,7 @@ module Pod::TrunkApp
     end
 
     it 'creates a LogMessage the request raises' do
-      REST.stubs(:get).raises(REST::DisconnectedError)
+      REST.stubs(:get).raises(Timeout::Error)
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
       lambda do

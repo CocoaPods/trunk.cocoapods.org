@@ -31,7 +31,7 @@ module Pod
             else
               log_failed_spec_fetch(url)
             end
-          rescue
+          rescue REST::Error => e
             log_failed_spec_fetch(url)
           end
         end
