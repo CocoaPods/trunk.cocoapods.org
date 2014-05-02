@@ -22,19 +22,17 @@ module Pod::TrunkApp
       )
     end
 
-    rest_response = Struct.new(:body)
-
     it 'gets the podspec data from the right URL' do
       expected_url = 'https://raw.github.com/CocoaPods/Specs/' \
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
       REST.expects(:get).with(expected_url).twice
-        .returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
+        .returns(rest_response('GitHub/ABContactHelper.podspec.json'))
 
       trigger_commit_with_fake_data
     end
 
     it 'processes payload data and creates a new pod (if one does not exist)' do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/ABContactHelper.podspec.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
       lambda do
         trigger_commit_with_fake_data
       end.should.change { Pod.count }
@@ -50,6 +48,36 @@ module Pod::TrunkApp
       last_log_message.message.should == "Pod `ABContactHelper' and version `0.1' created via Github hook."
     end
 
+    it 'creates a LogMessage if no spec is fetched' do
+      REST.stubs(:get).returns(rest_response('Bad Request', 400))
+      sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
+      path = 'KFData/1.0.1/KFData.podspec.json'
+      lambda do
+        spec = Commit::Import.fetch_spec(sha, path)
+        spec.should.be.nil?
+      end.should.change { LogMessage.count }
+      log_message = LogMessage.last
+      log_message.level.should == :error
+      log_message.message.should.match /(#{sha})*(#{path})*(400)/
+      log_message.data.should == 'Bad Request'
+    end
+
+    it 'creates a LogMessage the request raises' do
+      error = Timeout::Error.new('execution expired')
+      p error
+      REST.stubs(:get).raises(error)
+      sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
+      path = 'KFData/1.0.1/KFData.podspec.json'
+      lambda do
+        spec = Commit::Import.fetch_spec(sha, path)
+        spec.should.be.nil?
+      end.should.change { LogMessage.count }
+      log_message = LogMessage.last
+      log_message.level.should == :error
+      log_message.message.should.match /(#{sha})*(#{path})*(Timeout::Error - execution expired)/
+      log_message.data.should == error.backtrace.join("\n\t\t")
+    end
+
     # Create existing pod.
     #
     before do
@@ -58,7 +86,7 @@ module Pod::TrunkApp
     end
 
     it 'does add the add commit and a version if missing and version does not exist' do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
       trigger_commit_with_fake_data
 
       # Did log a big fat warning.
@@ -73,7 +101,7 @@ module Pod::TrunkApp
     end
 
     it 'marks a commit as being imported' do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
       trigger_commit_with_fake_data
       last_version = @existing_pod.reload.versions.last
       commit = last_version.last_published_by
@@ -87,7 +115,7 @@ module Pod::TrunkApp
     end
 
     it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
 
       trigger_commit_with_fake_data
 
@@ -114,7 +142,7 @@ module Pod::TrunkApp
     # Stub data for the existing pod version
     #
     before do
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.json')))
+      REST.stubs(:get).returns(rest_response(fixture_read('GitHub/KFData.podspec.json')))
     end
 
     it 'processes payload data and creates a new submission job (because the version exists)' do
@@ -216,7 +244,7 @@ module Pod::TrunkApp
       )
 
       PodVersion.any_instance.expects(:add_commit).never
-      REST.stubs(:get).returns(rest_response.new(fixture_read('GitHub/KFData.podspec.new.json')))
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
 
       trigger_commit_with_fake_data
     end
