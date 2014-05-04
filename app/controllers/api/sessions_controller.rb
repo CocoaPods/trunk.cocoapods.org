@@ -12,7 +12,7 @@ module Pod
         DB.test_safe_transaction do
           owner_email, owner_name = owner_params.values_at('email', 'name')
           owner = Owner.find_or_create_by_email_and_update_name(owner_email, owner_name)
-          session = owner.create_session!(url('/sessions/verify/%s'))
+          session = owner.create_session!("#{request.scheme}://#{request.host_with_port}/sessions/verify/%s")
           session_attributes = session.public_attributes
           session_attributes['token'] = session.token
           json_message(201, session_attributes)
