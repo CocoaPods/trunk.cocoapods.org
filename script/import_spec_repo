@@ -215,6 +215,13 @@ Dir.chdir(REPO.workdir) do
   end
 end
 
+# Mark the OpenSSL pod as being owned.
+# See https://github.com/CocoaPods/trunk.cocoapods.org/issues/52
+openssl = Pod::TrunkApp::Pod.find(:name => 'OpenSSL')
+openssl_owner = Pod::TrunkApp::Owner.find_by_email('github@fredericjacobs.com')
+openssl_owner.add_pod(openssl)
+openssl.remove_owner(unclaimed_owner)
+
 # Finally, clear all log messages that were generated during importing and are
 # only relavent when actually receiving a webhook POST from GitHub.
 Pod::TrunkApp::LogMessage.where('pod_version_id != 0').delete
