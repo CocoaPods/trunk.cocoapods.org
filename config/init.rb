@@ -66,6 +66,20 @@ end
 
 require 'mail'
 
+if ENV['RACK_ENV'] != 'production'
+  module Pod
+    module TrunkApp
+      class TestMailer < Mail::TestMailer
+        def deliver!(mail)
+          super
+          TRUNK_APP_LOGGER.debug(mail.to_s)
+          mail
+        end
+      end
+    end
+  end
+end
+
 Mail.defaults do
   case ENV['RACK_ENV']
   when 'production'
@@ -79,7 +93,7 @@ Mail.defaults do
                     :enable_starttls_auto => true
 
   else
-    delivery_method :test
+    delivery_method Pod::TrunkApp::TestMailer
   end
 end
 
