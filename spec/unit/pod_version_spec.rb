@@ -90,7 +90,7 @@ module Pod::TrunkApp
       end
 
       it 'returns the resource path for this version' do
-        @version.resource_path.should == '/pods/AFNetworking/versions/1.2.0'
+        @version.resource_path.should == '/AFNetworking/versions/1.2.0'
       end
 
       it 'is published if it has commits' do

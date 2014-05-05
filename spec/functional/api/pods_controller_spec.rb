@@ -103,7 +103,7 @@ module Pod::TrunkApp
         post '/', spec.to_json
       end.should.not.change { Pod.count + PodVersion.count }
       last_response.status.should == 409
-      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
     end
 
     it 'creates new pod and version records, then redirects' do
@@ -113,7 +113,7 @@ module Pod::TrunkApp
         end.should.change { Pod.count }
       end.should.change { PodVersion.count }
       last_response.status.should == 302
-      last_response.location.should == 'https://example.org/pods/AFNetworking/versions/1.2.0'
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
       Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
     end
 

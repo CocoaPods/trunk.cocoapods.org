@@ -54,7 +54,7 @@ module Pod
       end
 
       def resource_path
-        URI.escape("/pods/#{pod.name}/versions/#{name}")
+        URI.escape("/#{pod.name}/versions/#{name}")
       end
 
       def description
