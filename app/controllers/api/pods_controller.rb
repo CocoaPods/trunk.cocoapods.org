@@ -49,18 +49,24 @@ module Pod
           message = 'You are not allowed to push new versions for this pod.'
           json_error(403, message)
         end
-        unless pod
-          pod = Pod.create(:name => specification.name)
-        end
 
-        if version = pod.versions_dataset.where(:name => specification.version).first
-          if version.published?
-            headers 'Location' => url(version.resource_path)
-            message = "Unable to accept duplicate entry for: #{specification}"
-            json_error(409, message)
+        version = nil
+
+        DB.transaction do
+          unless pod
+            pod = Pod.create(:name => specification.name)
+            pod.add_owner(@owner)
           end
-        else
-          version = pod.add_version(:name => specification.version)
+
+          if version = pod.versions_dataset.where(:name => specification.version).first
+            if version.published?
+              headers 'Location' => url(version.resource_path)
+              message = "Unable to accept duplicate entry for: #{specification}"
+              json_error(409, message)
+            end
+          else
+            version = pod.add_version(:name => specification.version)
+          end
         end
 
         response = version.push!(@owner, JSON.pretty_generate(specification))

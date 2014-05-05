@@ -134,6 +134,12 @@ module Pod::TrunkApp
       last_response.status.should == 500
     end
 
+    it 'still has the owner set if a push fails' do
+      PushJob.any_instance.stubs(:push!).returns(response(500))
+      post '/', spec.to_json
+      Pod.find(:name => spec.name).owners.should == [@owner]
+    end
+
     it 'informs the user if an exception occurs' do
       PushJob.any_instance.stubs(:push!).raises('Oh noes!')
       should.raise { post '/', spec.to_json } # This will return a 500 in dev/prod.
