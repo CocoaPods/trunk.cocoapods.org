@@ -32,7 +32,10 @@ class WebHook
 
   # Used in the worker process to process hook calls.
   #
-  # Reads from
+  # Reads from the fifo queue.
+  #
+  # Note: This absolutely needs to run in the current design,
+  # as the self.call above will block on fifo until it's read.
   #
   def self.run
     loop do
@@ -41,10 +44,10 @@ class WebHook
       #
       message = `cat #{fifo}`
 
-      # Contact web hooks in a child process.
+      # Contact each web hook in a child process.
       #
-      fork do
-        URLS.each do |url|
+      URLS.each do |url|
+        fork do
           `curl #{url} -d"#{message}" --max-time 1`
         end
       end
