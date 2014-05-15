@@ -15,7 +15,7 @@ module Pod
 
       many_to_one :owner
 
-      subset(:valid) { valid_until > Time.now }
+      subset(:valid) { valid_until > Time.current }
       subset(:verified, :verified => true)
 
       alias_method :verified?, :verified
@@ -48,7 +48,7 @@ module Pod
       end
 
       def prolong!
-        raise 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.now && verified
+        raise 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.current && verified
         update(:valid_for => VALIDITY_LENGTH)
       end
 
