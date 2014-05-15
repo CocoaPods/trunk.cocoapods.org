@@ -8,10 +8,13 @@
 class Webhook
   # List of attached web hook URLs.
   #
+  # Warning: Do not add non-existing domains.
+  #
+  garbled_hook_path = ENV['OUTGOING_HOOK_PATH']
   URLS = [
-    "http://cocoadocs.org/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}",
-    # "http://metrics.cocoapods.org/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}",
-    "http://search.cocoapods.org/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
+    "http://cocoadocs.org/hooks/trunk/#{garbled_hook_path}",
+    # "http://metrics.cocoapods.org/hooks/trunk/#{garbled_hook_path}",
+    "http://search.cocoapods.org/hooks/trunk/#{garbled_hook_path}"
   ]
 
   # Fifo file location.
@@ -56,7 +59,7 @@ class Webhook
 
       # Contact webhooks in a child process.
       #
-      command = %Q(curl -s -f -G --data "message=#{message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
+      command = %Q(curl -sfGL --data-urlencode "message=#{URI::encode(message)}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
       pids << fork { exec command }
     end
   end
