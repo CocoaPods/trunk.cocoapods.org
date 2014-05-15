@@ -17,10 +17,17 @@ class Webhook
     "http://search.cocoapods.org/hooks/trunk/#{garbled_hook_path}"
   ]
 
+  class << self
+    attr_writer :directory
+  end
+  def self.directory
+    @directory || './tmp'
+  end
+
   # Fifo file location.
   #
   def self.fifo
-    './tmp/webhook_calls'
+    "#{directory}/webhook_calls"
   end
 
   # Set up FIFO file (the "queue").
@@ -59,8 +66,15 @@ class Webhook
 
       # Contact webhooks in a child process.
       #
-      command = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
+      encoded_message = URI.encode(message)
+      command = %Q(curl -X POST -vGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
       pids << fork { exec command }
     end
   end
+
+  def self.clean
+    `rm #{fifo}` if File.exist?(fifo)
+  end
 end
+
+at_exit { Webhook.clean }
