@@ -64,7 +64,6 @@ module Pod::TrunkApp
 
     it 'creates a LogMessage the request raises' do
       error = Timeout::Error.new('execution expired')
-      p error
       REST.stubs(:get).raises(error)
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
