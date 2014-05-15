@@ -19,7 +19,7 @@ module Pod::TrunkApp
       end
 
       it 'sets a default expiration date' do
-        expected = Time.now + 128.days
+        expected = Time.current + 128.days
         Session.new.valid_until.to_s.should == expected.to_s
       end
     end

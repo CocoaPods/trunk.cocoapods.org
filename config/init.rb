@@ -15,6 +15,10 @@ I18n.enforce_available_locales = false
 require 'active_support/core_ext/numeric/time'
 require 'active_support/core_ext/date/calculations'
 
+require 'active_support/core_ext/time/zones'
+require 'active_support/core_ext/time/calculations'
+Time.zone = 'UTC'
+
 # Explicitly load the C-ext version.
 require 'json/ext'
 
@@ -51,6 +55,7 @@ require 'pg'
 db_loggers = []
 db_loggers << TRUNK_APP_LOGGER # TODO: For now also enable DB logger in production. unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
+DB.timezone = :utc
 Sequel.extension :core_extensions, :migration
 
 class << DB
