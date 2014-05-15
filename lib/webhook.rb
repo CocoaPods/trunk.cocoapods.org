@@ -67,7 +67,7 @@ class Webhook
       # Contact webhooks in a child process.
       #
       encoded_message = URI.encode(message)
-      command = %Q(curl -X POST -vGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
+      command = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
       pids << fork { exec command }
     end
   end
