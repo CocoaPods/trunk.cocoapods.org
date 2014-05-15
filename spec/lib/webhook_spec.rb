@@ -31,7 +31,7 @@ describe 'Webhook' do
 
     # verify expectation.
     #
-    duration.should < 0.005
+    duration.should < 0.01
   end
 
 end
