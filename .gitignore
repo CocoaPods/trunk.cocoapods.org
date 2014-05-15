@@ -3,3 +3,4 @@ tmp
 dev
 trunk.cocoapods.org-test
 .sass-cache
+!tmp/README
