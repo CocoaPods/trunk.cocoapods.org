@@ -30,7 +30,11 @@ module Pod
 
       get '/', :requires_owner => true do
         owner_attributes = @owner.public_attributes
-        owner_attributes['sessions'] = @owner.sessions.map(&:public_attributes)
+        owner_attributes['sessions'] = @owner.sessions.map do |session|
+          attrs = session.public_attributes
+          attrs[:current] = session.id == @session.id
+          attrs
+        end
         json_message(200, owner_attributes)
       end
 

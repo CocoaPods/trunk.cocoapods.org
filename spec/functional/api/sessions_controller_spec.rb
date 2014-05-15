@@ -137,6 +137,8 @@ module Pod::TrunkApp
       get '/'
       last_response.status.should == 200
       attributes = owner.public_attributes.merge('sessions' => owner.sessions.map(&:public_attributes))
+      attributes['sessions'].first['current'] = true
+      attributes['sessions'].last['current'] = false
       json_response.should == JSON.parse(attributes.to_json)
     end
 

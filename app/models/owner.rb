@@ -12,7 +12,7 @@ module Pod
       plugin :timestamps
       plugin :validation_helpers
 
-      one_to_many :sessions
+      one_to_many :sessions, :order => Sequel.asc(:created_at)
       many_to_many :pods
 
       UNCLAIMED_OWNER_EMAIL = 'unclaimed-pods@cocoapods.org'
