@@ -56,7 +56,7 @@ class Webhook
 
       # Contact webhooks in a child process.
       #
-      command = %Q{curl -s -f -G --data "message=#{message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}}}
+      command = %Q(curl -s -f -G --data "message=#{message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
       pids << fork { exec command }
     end
   end
