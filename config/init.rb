@@ -108,3 +108,7 @@ if defined?(IRB)
   end
   include Pod::TrunkApp
 end
+
+# -- Webhooks -----------------------------------------------------------------
+
+require 'lib/webhook'
