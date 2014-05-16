@@ -6,17 +6,18 @@
 # Note that Webhook.call will currently block if there is no worker process.
 #
 class Webhook
-  # List of attached web hook URLs.
-  #
-  # Warning: Do not add non-existing domains.
-  #
-  garbled_hook_path = ENV['OUTGOING_HOOK_PATH']
-  URLS = [
-    "http://cocoadocs.org/hooks/trunk/#{garbled_hook_path}",
-    # "http://metrics.cocoapods.org/hooks/trunk/#{garbled_hook_path}",
-    "http://search.cocoapods.org/hooks/trunk/#{garbled_hook_path}"
-  ]
+  class << self
+    attr_writer :urls
 
+    # By default, we have no services to ping.
+    #
+    def urls
+      @urls || []
+    end
+  end
+
+  # Fifo file directory
+  #
   def self.directory
     './tmp'
   end
@@ -75,9 +76,11 @@ class Webhook
 
       # Contact webhooks in a child process.
       #
-      encoded_message = URI.encode(message)
-      command = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
-      pids << fork { exec command }
+      if urls && !urls.empty?
+        encoded_message = URI.encode(message)
+        command = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{urls.join(',')}})
+        pids << fork { exec command }
+      end
     end
   end
 
