@@ -70,8 +70,8 @@ module Pod
         @was_created = true
       end
 
-      def create_session!(confirmation_url_template)
-        session = add_session({})
+      def create_session!(from_ip, confirmation_url_template, session_description = nil)
+        session = add_session(:created_from_ip => from_ip, :description => session_description)
         was_created = @was_created
         confirmation_url = confirmation_url_template % session.verification_token
 

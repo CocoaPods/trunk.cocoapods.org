@@ -31,7 +31,7 @@ module Pod::TrunkApp
 
     it 'creates a new session on first registration' do
       lambda do
-        post '/', { 'email' => @email, 'name' => @name }.to_json
+        post '/', { 'email' => @email, 'name' => @name, 'description' => 'office Mac' }.to_json
       end.should.change { Session.count }
       last_response.status.should == 201
 
@@ -39,6 +39,8 @@ module Pod::TrunkApp
       json_response['token'].should == session.token
       json_response['valid_until'].should == session.valid_until.to_s
       json_response['verified'].should == false
+      json_response['created_from_ip'].should == '127.0.0.1'
+      json_response['description'].should == 'office Mac'
     end
 
     it 'shows validation errors if creating an owner fails' do
@@ -60,7 +62,7 @@ module Pod::TrunkApp
 
     it 'creates only a new session on subsequent registrations' do
       owner = Owner.create(:email => @email, :name => @name)
-      owner.add_session({})
+      owner.add_session(:created_from_ip => '1.2.3.4')
       lambda do
         lambda do
           post '/', { 'email' => @email, 'name' => nil }.to_json
@@ -105,10 +107,11 @@ module Pod::TrunkApp
 
     before do
       header 'Content-Type', 'application/json'
+      @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
     end
 
     it 'verifies a session and nulls the verification token' do
-      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       get "/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.verified.should == true
@@ -117,7 +120,7 @@ module Pod::TrunkApp
     end
 
     it 'does not verify an invalid session' do
-      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       session.update(:valid_until => 1.second.ago)
       get "/verify/#{session.verification_token}"
       last_response.status.should == 404
@@ -132,7 +135,7 @@ module Pod::TrunkApp
     it 'shows an overview of all active sessions' do
       session = sign_in!
       owner = session.owner
-      owner.add_session({})
+      owner.add_session(:created_from_ip => '1.2.3.4')
 
       get '/'
       last_response.status.should == 200
@@ -145,7 +148,8 @@ module Pod::TrunkApp
     it 'clears all active sessions except the currently used one' do
       session = sign_in!
       owner = session.owner
-      owner.add_session({})
+      owner.add_session(:created_from_ip => '1.2.3.4')
+
       lambda do
         delete '/'
       end.should.change { Session.count }

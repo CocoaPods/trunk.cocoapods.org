@@ -26,12 +26,17 @@ module Pod::TrunkApp
 
     describe 'concerning validations' do
       before do
-        @session = Session.new(:owner => @owner)
+        @session = Session.new(:owner => @owner, :created_from_ip => '1.2.3.4')
       end
 
       it 'needs a owner' do
         @session.should.not.validate_with(:owner_id, nil)
         @session.should.validate_with(:owner_id, 42)
+      end
+
+      it 'needs an IP address' do
+        @session.should.not.validate_with(:created_from_ip, nil)
+        @session.should.validate_with(:created_from_ip, '1.2.3.4')
       end
 
       describe 'at the DB level' do
@@ -63,11 +68,18 @@ module Pod::TrunkApp
           end
         end
 
+        it 'raises if an empty created_from_ip address gets inserted' do
+          should.raise Sequel::NotNullConstraintViolation do
+            @session.created_from_ip = nil
+            @session.save(:validate => false)
+          end
+        end
+
         %w(token verification_token).each do |attr|
           it "raises if a duplicate #{attr} gets inserted" do
-            Session.create(attr => 'secret', :owner => @owner)
+            Session.create(attr => 'secret', :owner => @owner, :created_from_ip => '1.2.3.4')
             should.raise Sequel::UniqueConstraintViolation do
-              Session.create(attr => 'secret', :owner => @owner)
+              Session.create(attr => 'secret', :owner => @owner, :created_from_ip => '1.2.3.4')
             end
           end
         end
@@ -76,7 +88,7 @@ module Pod::TrunkApp
 
     describe 'finders' do
       before do
-        @session = Session.new(:owner => @owner)
+        @session = Session.new(:owner => @owner, :created_from_ip => '1.2.3.4')
         @session.verified = true
         @session.save
       end
@@ -115,28 +127,28 @@ module Pod::TrunkApp
 
     it 'coerces to JSON' do
       json = JSON.parse(Session.new.to_json)
-      json.keys.sort.should == %w(created_at valid_until verified)
+      json.keys.sort.should == %w(created_at created_from_ip description valid_until verified)
     end
 
     it 'verifies a session' do
-      session = Session.create(:owner => @owner)
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       session.verify!
       session.reload.verified.should == true
       session.verification_token.should.be.nil
     end
 
     it 'extends the validity' do
-      session = Session.create(:owner => @owner)
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       session.update(:valid_until => 10.seconds.from_now, :verified => true)
       session.prolong!
       session.reload.valid_until.should > 10.seconds.from_now
     end
 
     it 'does not extend the validity of an invalid session' do
-      session = Session.create(:owner => @owner)
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       session.update(:valid_until => 10.seconds.ago, :verified => true)
       lambda { session.prolong! }.should.raise
-      session = Session.create(:owner => @owner)
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       session.update(:valid_until => 10.seconds.from_now, :verified => false)
       lambda { session.prolong! }.should.raise
     end

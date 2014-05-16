@@ -111,13 +111,13 @@ module Pod::TrunkApp
       it 'adds a new session' do
         session = nil
         lambda do
-          session = @owner.create_session!('https://example.com/%s')
+          session = @owner.create_session!('1.2.3.4', 'https://example.com/%s')
         end.should.change { Session.count }
         @owner.sessions_dataset.valid.to_a.should == [session]
       end
 
       it 'sends a registration confirmation email if the owner was just created' do
-        @owner.reload.create_session!('https://example.com/%s')
+        @owner.reload.create_session!('1.2.3.4', 'https://example.com/%s')
         mail = Mail::TestMailer.deliveries.last
         mail.to.should == [@owner.email]
         mail.subject.should == '[CocoaPods] Confirm your registration.'
@@ -127,7 +127,7 @@ module Pod::TrunkApp
 
       it 'sends a new session confirmation email if the owner was not just created' do
         owner = Owner.find(:id => @owner.id)
-        owner.create_session!('https://example.com/%s')
+        owner.create_session!('1.2.3.4', 'https://example.com/%s')
         mail = Mail::TestMailer.deliveries.last
         mail.to.should == [@owner.email]
         mail.subject.should == '[CocoaPods] Confirm your session.'

@@ -4,10 +4,11 @@ module Pod::TrunkApp
   describe SessionVerificationController do
     before do
       header 'Content-Type', 'text/html'
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
     end
 
     it 'verifies a session and nulls the verification token' do
-      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       get "/verify/#{session.verification_token}"
       last_response.status.should == 200
       session.reload.should.be.verified
@@ -16,7 +17,7 @@ module Pod::TrunkApp
     end
 
     it 'does not verify an invalid session' do
-      session = Session.create(:owner => Owner.create(:email => 'appie@example.com', :name => 'Appie Duran'))
+      session = Session.create(:owner => @owner, :created_from_ip => '1.2.3.4')
       session.update(:valid_until => 1.second.ago)
       get "/verify/#{session.verification_token}"
       last_response.status.should == 404
