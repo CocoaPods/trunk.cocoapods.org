@@ -42,11 +42,26 @@ module Pod
       end
 
       delete '/', :requires_owner => true do
-        @owner.sessions.each do |session|
-          next if session.id == @session.id
+        sessions_except_current.each do |session|
+          next if session.active?
           session.destroy
         end
         json_message(200, @session)
+      end
+
+      delete '/all', :requires_owner => true do
+        sessions_except_current.each do |session|
+          session.destroy
+        end
+        json_message(200, @session)
+      end
+
+      private
+
+      def sessions_except_current
+        @owner.sessions.reject do |session|
+          session.id == @session.id
+        end
       end
     end
   end

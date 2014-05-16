@@ -54,8 +54,12 @@ module Pod
       end
 
       def prolong!
-        raise 'Unable to prolong an invalid/unverified session.' unless valid_until > Time.current && verified
+        raise 'Unable to prolong an invalid/unverified session.' unless active?
         update(:valid_for => VALIDITY_LENGTH)
+      end
+
+      def active?
+        verified && valid_until > Time.current
       end
 
       def self.with_token(token)

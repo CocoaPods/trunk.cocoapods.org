@@ -145,13 +145,32 @@ module Pod::TrunkApp
       json_response.should == JSON.parse(attributes.to_json)
     end
 
-    it 'clears all active sessions except the currently used one' do
+    it 'clears all expired and unverified sessions, except the currently used one' do
       session = sign_in!
       owner = session.owner
-      owner.add_session(:created_from_ip => '1.2.3.4')
+      active_sessions = [session]
+      active_sessions << owner.add_session(:created_from_ip => '1.2.3.4', :verified => true).tap(&:verify!)
+      owner.add_session(:created_from_ip => '1.2.3.4', :verified => false)
+      owner.add_session(:created_from_ip => '1.2.3.4', :verified => true, :valid_until => 1.day.ago)
 
       lambda do
         delete '/'
+      end.should.change { Session.count }
+      last_response.status.should == 200
+
+      owner.sessions.should == active_sessions.map(&:reload)
+      json_response.should == JSON.parse(session.public_attributes.to_json)
+    end
+
+    it 'clears all sessions, except the currently used one' do
+      session = sign_in!
+      owner = session.owner
+      owner.add_session(:created_from_ip => '1.2.3.4', :verified => true).tap(&:verify!)
+      owner.add_session(:created_from_ip => '1.2.3.4', :verified => false)
+      owner.add_session(:created_from_ip => '1.2.3.4', :verified => true, :valid_until => 1.day.ago)
+
+      lambda do
+        delete '/all'
       end.should.change { Session.count }
       last_response.status.should == 200
 
