@@ -5,10 +5,6 @@ require 'webhook'
 describe 'Webhook' do
 
   it 'does only block for a short time' do
-    # Set up webhook directory.
-    #
-    Webhook.directory = '.'
-
     # Run webhooks in a child.
     #
     pid = fork do

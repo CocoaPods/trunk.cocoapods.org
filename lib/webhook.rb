@@ -17,22 +17,22 @@ class Webhook
     "http://search.cocoapods.org/hooks/trunk/#{garbled_hook_path}"
   ]
 
-  class << self
-    attr_writer :directory
-  end
   def self.directory
-    @directory || './tmp'
+    './tmp'
+  end
+
+  # Set up FIFO file (the "queue").
+  #
+  def self.setup
+    Dir.mkdir(directory) unless File.exist?(directory)
+    `mkfifo #{fifo}` unless File.exist?(fifo)
   end
 
   # Fifo file location.
   #
   def self.fifo
-    "#{directory}/webhook_calls"
+    @fifo ||= "#{directory}/webhook_calls"
   end
-
-  # Set up FIFO file (the "queue").
-  #
-  `mkfifo #{fifo}` unless File.exist?(fifo)
 
   # Use in Trunk to notify all attached services.
   #
@@ -63,6 +63,8 @@ class Webhook
       # Clean up old zombie children as soon as our queue is larger than 10.
       #
       Process.wait2(pids.shift, Process::WNOHANG) if pids.size > 10
+
+      p message
 
       # Contact webhooks in a child process.
       #

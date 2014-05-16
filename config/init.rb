@@ -117,3 +117,4 @@ end
 # -- Webhooks -----------------------------------------------------------------
 
 require 'lib/webhook'
+Webhook.setup
