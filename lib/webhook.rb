@@ -64,8 +64,6 @@ class Webhook
       #
       Process.wait2(pids.shift, Process::WNOHANG) if pids.size > 10
 
-      p message
-
       # Contact webhooks in a child process.
       #
       encoded_message = URI.encode(message)
