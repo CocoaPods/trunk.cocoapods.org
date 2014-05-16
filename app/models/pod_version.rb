@@ -28,7 +28,7 @@ module Pod
 
       def after_commit
         super
-        Webhook.call('version')
+        Webhook.call("version #{created_at}")
       end
 
       attr_reader :was_created
