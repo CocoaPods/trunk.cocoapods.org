@@ -58,7 +58,16 @@ class Webhook
     loop do
       # Block and wait for messages.
       #
-      message = `cat #{fifo}`.chomp
+      message = `cat #{fifo} 2>/dev/null`
+
+      # Check if it was an actual message.
+      # Empty if it's not.
+      #
+      next if message == ''
+
+      # Remove \n from message.
+      #
+      message.chomp!
 
       # Clean up old zombie children as soon as our queue is larger than 10.
       #
