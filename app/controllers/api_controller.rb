@@ -28,6 +28,11 @@ module Pod
 
       # --- Errors --------------------------------------------------------------------------------
 
+      configure :development do
+        # Otherwise our handlers below aren't used in development mode.
+        set :show_exceptions, :after_handler
+      end
+
       error JSON::ParserError do
         json_error(400, 'Invalid JSON data provided.')
       end
