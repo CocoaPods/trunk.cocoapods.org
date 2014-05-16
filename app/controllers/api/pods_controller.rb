@@ -111,7 +111,10 @@ module Pod
           json_error(404, 'No owner found with the specified email address.')
         end
 
-        pod.add_owner(other_owner)
+        unless pod.owners.include?(other_owner)
+          pod.add_owner(other_owner)
+        end
+
         json_message(200, pod.owners.map(&:public_attributes))
       end
     end

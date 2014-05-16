@@ -239,6 +239,14 @@ module Pod::TrunkApp
       pod.owners.sort_by(&:name).should == [@owner, @other_owner].sort_by(&:name)
     end
 
+    it 'does nothing when the owner is already an owner' do
+      pod = @owner.add_pod(:name => spec.name)
+      @other_owner.add_pod(pod)
+      patch '/AFNetworking/owners', { 'email' => @other_owner.email }.to_json
+      last_response.status.should == 200
+      pod.owners.sort_by(&:name).should == [@owner, @other_owner].sort_by(&:name)
+    end
+
     before do
       @other_pod = @other_owner.add_pod(:name => spec.name)
     end
