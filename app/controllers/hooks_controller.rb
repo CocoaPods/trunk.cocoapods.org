@@ -49,8 +49,10 @@ module Pod
           #
           next if head_commit_id == commit_sha && manual_commit['message'].start_with?('Merge pull request #')
 
-          committer_email = manual_commit['committer']['email']
-          committer_name = manual_commit['committer']['name']
+          # TODO: Add test that we really use `author` and not `committer`.
+          #
+          committer_email = manual_commit['author']['email']
+          committer_name = manual_commit['author']['name']
 
           # Get all changed (added + modified) files.
           #
