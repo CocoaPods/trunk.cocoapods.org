@@ -19,7 +19,7 @@ class Webhook
   # Fifo file directory
   #
   def self.directory
-    './tmp'
+    File.expand_path('./tmp')
   end
 
   # Set up FIFO file (the "queue").
