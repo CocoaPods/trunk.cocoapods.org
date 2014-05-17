@@ -38,6 +38,11 @@ module Pod
         # TODO: Add a test.
         return 200 if payload['head_commit'].blank? || payload['head_commit']['id'].blank?
 
+        # Only handle commits on the ‘master’ branch.
+        #
+        # TODO: Add a test.
+        return 200 unless payload['ref'] == 'refs/heads/master'
+
         head_commit_id = payload['head_commit']['id']
 
         # Go through each of the commits and get the commit data.
