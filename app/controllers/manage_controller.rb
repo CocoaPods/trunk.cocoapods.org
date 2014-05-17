@@ -36,7 +36,7 @@ module Pod
       end
 
       get '/commits' do
-        @collection = Commit.page(params[:page])
+        @collection = Commit.page(params[:page]).order(Sequel.desc(:created_at))
         erb :'commits/index'
       end
 
