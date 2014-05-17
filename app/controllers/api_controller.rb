@@ -84,7 +84,9 @@ module Pod
             if authentication_token.blank?
               json_error(401, 'Please supply an authentication token.')
             else
-              json_error(401, 'Authentication token is invalid or unverified.')
+              json_error(401, 'Authentication token is invalid or ' \
+                              'unverified. Either verify it with the email ' \
+                              'that was sent or register a new session.')
             end
           end
         end

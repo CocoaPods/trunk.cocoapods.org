@@ -91,7 +91,7 @@ module Pod::TrunkApp
     it 'does not allow access when an invalid authentication token is supplied' do
       get '/owner_required', nil,  'HTTP_AUTHORIZATION' => 'Token invalid'
       last_response.status.should == 401
-      json_response['error'].should == 'Authentication token is invalid or unverified.'
+      json_response['error'].should.match /Authentication token is invalid or unverified/
     end
 
     it 'does not allow access when an unverified authentication token is supplied' do
@@ -99,7 +99,7 @@ module Pod::TrunkApp
       session.update(:verified => false)
       get '/owner_required', nil,  'HTTP_AUTHORIZATION' => "Token #{session.token}"
       last_response.status.should == 401
-      json_response['error'].should == 'Authentication token is invalid or unverified.'
+      json_response['error'].should.match /Authentication token is invalid or unverified/
     end
   end
 end
