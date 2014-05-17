@@ -9,7 +9,7 @@ module Pod
   module TrunkApp
     class Commit
       module Import
-        DATA_URL_TEMPLATE = "https://raw.github.com/#{ENV['GH_REPO']}/%s/Specs/%s"
+        DATA_URL_TEMPLATE = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
 
         def self.log_failed_spec_fetch(url, message, data)
           LogMessage.create(

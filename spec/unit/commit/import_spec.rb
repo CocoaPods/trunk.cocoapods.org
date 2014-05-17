@@ -9,21 +9,21 @@ module Pod::TrunkApp
       Commit::Import.import(
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         :modified,
-        ['KFData/1.0.1/KFData.podspec.json'],
+        ['Specs/KFData/1.0.1/KFData.podspec.json'],
         'test.user@example.com',
         'Test User'
       )
       Commit::Import.import(
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         :added,
-        ['KFData/1.0.1/KFData.podspec.json'],
+        ['Specs/KFData/1.0.1/KFData.podspec.json'],
         'test.user@example.com',
         'Keith Smiley'
       )
     end
 
     it 'gets the podspec data from the right URL' do
-      expected_url = 'https://raw.github.com/CocoaPods/Specs/' \
+      expected_url = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/" \
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
       REST.expects(:get).with(expected_url).twice
         .returns(rest_response('GitHub/ABContactHelper.podspec.json'))
