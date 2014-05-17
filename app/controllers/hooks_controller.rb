@@ -33,6 +33,11 @@ module Pod
         #
         return 422 unless payload.respond_to?(:to_h)
 
+        # Possibly a ping from GitHub
+        #
+        # TODO: Add a test.
+        return 200 if payload['head_commit'].blank? || payload['head_commit']['id'].blank?
+
         head_commit_id = payload['head_commit']['id']
 
         # Go through each of the commits and get the commit data.
