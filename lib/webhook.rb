@@ -2,33 +2,25 @@
 #
 # Use Webhook.setup, then Webhook.call("message") in the server.
 #
-# Note that Webhook.call will currently block if there is no worker process.
-#
 class Webhook
-
-  # List of attached web hook URLs.
-  #
-  # Warning: Do not add non-existing domains.
-  #
-  garbled_hook_path = ENV['OUTGOING_HOOK_PATH']
-  URLS = [
-    # For testing purposes.
-    #
-    'http://requestb.in/1d8wrju1'
-
-    # "http://cocoadocs.org/hooks/trunk/#{garbled_hook_path}",
-    # "http://metrics.cocoapods.org/hooks/trunk/#{garbled_hook_path}",
-    # "http://search.cocoapods.org/hooks/trunk/#{garbled_hook_path}"
-  ]
+  class << self
+    attr_reader :urls
+  end
 
   # Create a pipe from parent to worker child.
   #
-  def self.setup
+  def self.setup(*urls)
     @parent, @child = IO.pipe
+    self.urls = urls
+  end
+
+  def self.urls=(urls)
+    @urls = urls
+    cleanup
     start_child_process_thread
   end
 
-  #
+  # Kill child, wait and remove.
   #
   def self.cleanup
     Process.kill 'KILL', @child_pid if @child_pid
@@ -42,7 +34,7 @@ class Webhook
       loop do
         # Wait for input from the child.
         #
-        IO.select([@parent], nil) or next
+        IO.select([@parent], nil) || next
 
         # Get all data up to the newline.
         #
@@ -50,10 +42,12 @@ class Webhook
 
         # Send a message to all URLs.
         #
+        # Spawn a worker, then wait for it to finish.
+        #
         if message
           encoded_message = URI.encode(message)
-          command = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
-          fork { exec command }
+          cmd = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{urls.join(',')}})
+          fork { exec cmd }
           Process.waitall
         end
       end
@@ -62,7 +56,7 @@ class Webhook
 
   # Write the worker child.
   #
-  def self.call message
+  def self.call(message)
     @child.write "#{message}\n"
   end
 end
