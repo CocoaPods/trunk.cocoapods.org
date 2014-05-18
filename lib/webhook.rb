@@ -1,92 +1,70 @@
 # A minimal web hook implementation.
 #
-# Use Webhook.call("message") in the server.
-# Use Webhook.run in a worker process.
+# Use Webhook.setup, then Webhook.call("message") in the server.
 #
 # Note that Webhook.call will currently block if there is no worker process.
 #
 class Webhook
-  class << self
-    attr_writer :urls
 
-    # By default, we have no services to ping.
-    #
-    def urls
-      @urls || []
-    end
-  end
-
-  # Fifo file directory
+  # List of attached web hook URLs.
   #
-  def self.directory
-    File.expand_path('./tmp')
-  end
+  # Warning: Do not add non-existing domains.
+  #
+  garbled_hook_path = ENV['OUTGOING_HOOK_PATH']
+  URLS = [
+    # For testing purposes.
+    #
+    'http://requestb.in/1d8wrju1'
 
-  # Set up FIFO file (the "queue").
+    # "http://cocoadocs.org/hooks/trunk/#{garbled_hook_path}",
+    # "http://metrics.cocoapods.org/hooks/trunk/#{garbled_hook_path}",
+    # "http://search.cocoapods.org/hooks/trunk/#{garbled_hook_path}"
+  ]
+
+  # Create a pipe from parent to worker child.
   #
   def self.setup
-    Dir.mkdir(directory) unless File.exist?(directory)
-    `mkfifo #{fifo}` unless File.exist?(fifo)
+    @parent, @child = IO.pipe
+    start_child_process_thread
   end
 
-  # Fifo file location.
   #
-  def self.fifo
-    @fifo ||= "#{directory}/webhook_calls"
+  #
+  def self.cleanup
+    Process.kill 'KILL', @child_pid if @child_pid
+    Process.waitall
   end
 
-  # Use in Trunk to notify all attached services.
+  # This runs a thread that listens to the master process.
   #
-  # Blocks until message is read.
-  # With the below implementation, blocks on average 0.004 s
-  # if this method is called 10 times per second on average.
-  #
-  def self.call(message)
-    `echo #{message} > #{fifo}`
-  end
+  def self.start_child_process_thread
+    @child_pid = fork do
+      loop do
+        # Wait for input from the child.
+        #
+        IO.select([@parent], nil) or next
 
-  # Used in the worker process to process hook calls.
-  #
-  # Reads from the fifo queue.
-  #
-  # This absolutely needs to run in the current design,
-  # as the self.call above will block on fifo until it's read.
-  #
-  def self.run
-    # Remember zombie children.
-    #
-    pids = []
-    loop do
-      # Block and wait for messages.
-      #
-      message = `cat #{fifo} 2>/dev/null`
+        # Get all data up to the newline.
+        #
+        message = @parent.gets("\n").chomp
 
-      # Check if it was an actual message.
-      # Empty if it's not.
-      #
-      next if message == ''
-
-      # Remove \n from message.
-      #
-      message.chomp!
-
-      # Clean up old zombie children as soon as our queue is larger than 10.
-      #
-      Process.wait2(pids.shift, Process::WNOHANG) if pids.size > 10
-
-      # Contact webhooks in a child process.
-      #
-      if urls && !urls.empty?
-        encoded_message = URI.encode(message)
-        command = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{urls.join(',')}})
-        pids << fork { exec command }
+        # Send a message to all URLs.
+        #
+        if message
+          encoded_message = URI.encode(message)
+          command = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{URLS.join(',')}})
+          fork { exec command }
+          Process.waitall
+        end
       end
     end
   end
 
-  def self.clean
-    `rm #{fifo}` if File.exist?(fifo)
+  # Write the worker child.
+  #
+  def self.call message
+    @child.write "#{message}\n"
   end
 end
 
-at_exit { Webhook.clean }
+at_exit { Webhook.cleanup }
