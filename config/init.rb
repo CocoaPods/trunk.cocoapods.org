@@ -29,6 +29,11 @@ end
 # require 'new_relic/rack/developer_mode'
 # use NewRelic::Rack::DeveloperMode
 
+# -- Webhooks -----------------------------------------------------------------
+
+require 'lib/webhook'
+Webhook.setup
+
 # -- Logging ------------------------------------------------------------------
 
 require 'logger'
@@ -113,8 +118,3 @@ if defined?(IRB)
   end
   include Pod::TrunkApp
 end
-
-# -- Webhooks -----------------------------------------------------------------
-
-require 'lib/webhook'
-Webhook.setup
