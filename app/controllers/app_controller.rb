@@ -34,6 +34,7 @@ module Pod
     class AppController < Sinatra::Base
       configure do
         set :root, ROOT
+        set :views, settings.root + '/app/views/app'
       end
 
       configure :production do
@@ -45,8 +46,13 @@ module Pod
       end
 
       not_found do
-        "Your page cannot be found"
+        slim :'not_found' 
       end
+      
+      error do
+        slim :'error' 
+      end
+      
 
       use Rack::SSL unless ENV['RACK_ENV'] == 'development'
     end
