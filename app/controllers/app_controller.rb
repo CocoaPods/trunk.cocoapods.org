@@ -44,6 +44,10 @@ module Pod
         use RequestLogger
       end
 
+      not_found do
+        "Your page cannot be found"
+      end
+
       use Rack::SSL unless ENV['RACK_ENV'] == 'development'
     end
   end
@@ -55,6 +59,8 @@ require 'app/controllers/api/sessions_controller'
 require 'app/controllers/session_verification_controller'
 require 'app/controllers/hooks_controller'
 require 'app/controllers/manage_controller'
+require 'app/controllers/assets_controller'
+require 'app/controllers/redirect_controller'
 
 # TODO: Temporary controller while we transition to the trunk app.
 require 'app/controllers/claims_controller'
@@ -62,6 +68,7 @@ require 'app/controllers/claims_controller'
 # And assemble base routes to controllers map.
 module Pod
   module TrunkApp
+    
     App = Rack::URLMap.new(
       '/api/v1/pods'     => PodsController,
       # TODO: namespace controllers in API and HTML namespaces?
@@ -69,9 +76,12 @@ module Pod
       '/sessions'        => SessionVerificationController,
       '/hooks'           => HooksController,
       '/manage'          => ManageController,
+      '/assets'          => AssetsController,
+      
       # TODO: Temporary routes while we transition to the trunk app.
       '/claims'          => ClaimsController,
-      '/'                => lambda { |_| [303, { 'Location' => '/claims/new' }, ''] }
+      '/'                => RedirectController,
     )
+        
   end
 end
