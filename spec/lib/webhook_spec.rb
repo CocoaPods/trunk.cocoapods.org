@@ -4,12 +4,8 @@ require 'webhook'
 
 describe 'Webhook' do
 
-  it 'does only block for a short time' do
-    # Run webhooks in a child.
-    #
-    pid = fork do
-      Webhook.run
-    end
+  it 'does not take long to send a message' do
+    Webhook.urls = []
 
     # Measure time waiting for webhook (blocks).
     #
@@ -17,19 +13,7 @@ describe 'Webhook' do
     Webhook.call('testing')
     duration = Time.now - t
 
-    # Kill the child process.
-    #
-    Process.kill 'KILL', pid
-
-    # Collect the remains.
-    #
-    Process.waitall
-
-    # Verify expectation.
-    #
-    # Usually below 0.004, but set to 0.5 for Travis.
-    #
-    duration.should < 0.5
+    duration.should < 0.001
   end
 
 end
