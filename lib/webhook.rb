@@ -1,19 +1,38 @@
 # A minimal web hook implementation.
 #
-# Use Webhook.setup, then Webhook.call("message") in the server.
+# Usage:
+#   Use Webhook.setup, then Webhook.call("message") in the server.
+#
+# Explanation:
+# * The web hook spawns a child process where work is done.
+# * The parent and child process are connected via a pipe.
+# * The child will immediately wait for a message from the parent using select.
+# * If Webhook.call('example message') is called, then
+#   the child will read the message up to the first \n.
+# * The child will then put together a curl call and execute it in another fork.
+# * After forking the work, it will wait for the child to finish.
+# * With the child finished and cleaned up, it will wait for the next
+#   message from the parent (which might already have arrived).
 #
 class Webhook
   class << self
     attr_reader :urls
   end
 
-  # Create a pipe from parent to worker child.
+  # Setup the Webhooks. Needs to be called once.
+  #
+  # Creates a pipe from parent to worker child.
   #
   def self.setup(*urls)
     @parent, @child = IO.pipe
     self.urls = urls
   end
 
+  # Set the URLs the Webhook service should be using.
+  #
+  # This will stop the old worker process,
+  # and restart a new one using the new URLs.
+  #
   def self.urls=(urls)
     @urls = urls
     cleanup
@@ -65,4 +84,6 @@ class Webhook
   end
 end
 
+# Before exiting, kill the worker child.
+#
 at_exit { Webhook.cleanup }
