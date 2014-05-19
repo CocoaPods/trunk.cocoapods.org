@@ -92,7 +92,6 @@ module Pod
         @dispute.update(params[:dispute])
         redirect to("/disputes/#{@dispute.id}")
       end
-      
     end
   end
 end

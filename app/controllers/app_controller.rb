@@ -45,15 +45,6 @@ module Pod
         use RequestLogger
       end
 
-      not_found do
-        slim :'not_found' 
-      end
-      
-      error do
-        slim :'error' 
-      end
-      
-
       use Rack::SSL unless ENV['RACK_ENV'] == 'development'
     end
   end
@@ -74,7 +65,6 @@ require 'app/controllers/claims_controller'
 # And assemble base routes to controllers map.
 module Pod
   module TrunkApp
-    
     App = Rack::URLMap.new(
       '/api/v1/pods'     => PodsController,
       # TODO: namespace controllers in API and HTML namespaces?
@@ -83,11 +73,10 @@ module Pod
       '/hooks'           => HooksController,
       '/manage'          => ManageController,
       '/assets'          => AssetsController,
-      
+
       # TODO: Temporary routes while we transition to the trunk app.
       '/claims'          => ClaimsController,
       '/'                => RedirectController,
     )
-        
   end
 end
