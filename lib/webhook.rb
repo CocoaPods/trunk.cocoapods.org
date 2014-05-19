@@ -56,8 +56,12 @@ class Webhook
 
   # Write the worker child.
   #
+  # Important:
+  # Messages can't contain newlines.
+  # If they do, they will be replaced by a single space.
+  #
   def self.call(message)
-    @child.write "#{message}\n"
+    @child.write "#{message.gsub("\n", ' ')}\n"
   end
 end
 
