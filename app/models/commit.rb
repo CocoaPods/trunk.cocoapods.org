@@ -23,6 +23,16 @@ module Pod
 
       alias_method :imported?, :imported
 
+      def after_commit
+        super
+        message = {
+          :type => 'commit',
+          :created_at => created_at,
+          :data_url => pod_version.data_url
+        }.to_json
+        Webhook.call(message)
+      end
+
       protected
 
       def validate
