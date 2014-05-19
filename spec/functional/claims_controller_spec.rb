@@ -114,7 +114,7 @@ module Pod::TrunkApp
       last_response.body.should.include 'AFNetworking'
       last_response.body.should.include 'JSONKit'
 
-      link = response_doc.css('article p a').first
+      link = response_doc.css('article p a')[1]
       query = { :claimer_email => 'appie@example.com', :pods => ['JSONKit'] }
       link['href'].should == "https://example.org/disputes/new?#{query.to_query}"
     end
