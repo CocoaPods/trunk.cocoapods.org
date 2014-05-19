@@ -38,8 +38,7 @@ require 'lib/webhook'
 # Warning: Do not add non-existing domains.
 #
 garbled_hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
-Webhook.setup 'http://requestb.in/1a7qs5c1',
-              "http://199.229.252.197:4567#{garbled_hook_path}" # Cocoadocs
+Webhook.setup "http://199.229.252.197:4567#{garbled_hook_path}" # Cocoadocs
               # "http://metrics.cocoapods.org#{garbled_hook_path}",
               # "http://search.cocoapods.org#{garbled_hook_path}"
 
