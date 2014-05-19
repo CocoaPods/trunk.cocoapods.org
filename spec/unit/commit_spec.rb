@@ -90,5 +90,32 @@ module Pod::TrunkApp
         end
       end
     end
+
+    describe 'concerning webhooks' do
+      it 'sends off a Webhook message' do
+        Webhook.urls = []
+
+        sha = '7f694a5c1e43543a803b5d20d8892512aae375f3'
+        version = '1.0.0'
+
+        @pod = Pod.create(:name => 'Webhook')
+        @version = PodVersion.create(:pod => @pod, :name => version)
+        @committer = Owner.create(:email => 'appie-webhook@example.com', :name => 'Appie Duran')
+
+        Webhook.expects(:call).once.with do |parameter|
+          parameter.should.match(/"type":"commit"/)
+          parameter.should.match(/"created_at":/)
+          expected = 'https://raw.github.com/CocoaPods/Specs/' \
+            '7f694a5c1e43543a803b5d20d8892512aae375f3/Specs/Webhook/' \
+            '1.0.0/Webhook.podspec.json'
+          parameter.should.match(/"data_url":"#{expected}"/)
+        end
+
+        Commit.send :alias_method, :after_save, :after_commit
+        @version.add_commit(:committer => @committer, :sha => sha, :specification_data => 'DATA')
+        Commit.send :remove_method, :after_save
+      end
+    end
+
   end
 end
