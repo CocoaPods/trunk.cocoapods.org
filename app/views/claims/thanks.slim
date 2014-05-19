@@ -5,7 +5,7 @@ ruby:
 - if claimed_pods
   p You have successfully claimed the following #{ pod_message } and are now registered as #{params[:successfully_claimed].size == 1 ? 'its' : 'their'} ‘owner’: #{params[:successfully_claimed].to_sentence}.
 
-  p If you have any co-maintainers, you can now add them as ‘owners’ as well. For information on how to do this see the [TODO] guide.
+  p If you have any co-maintainers, you can now add them as ‘owners’ as well. For information on how to do this see the <a href = "http://guides.cocoapods.org/making/getting-setup-with-trunk">getting started with Trunk</a> guide.
 
   p Once we have finished the transition period, you will be able to push new versions of #{params[:successfully_claimed].size == 1 ? 'these pods' : 'this pod'} directly from the command-line. For more details see [TODO].
 - else
