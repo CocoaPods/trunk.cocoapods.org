@@ -3,8 +3,7 @@
 <head>
   <title>Push • <%= @title %></title>
   <link rel="stylesheet" media="screen, projection" type="text/css" href="/assets/app.css">
-  <link rel="stylesheet" media="screen, projection" type="text/css" href="/manage/trunk.css">
-  
+
   <% if @refresh_automatically %>
     <meta http-equiv="refresh" content="6">
   <% end %>
@@ -18,7 +17,7 @@
       <span class="sr-only">Toggle navigation</span><span class="glyphicon-plus"></span>
     </button>
     <a class="navbar-brand" href="http://cocoapods.org"></a></div>
-  
+
     <div class="collapse navbar-collapse navbar-header-collapse">
       <ul class="nav navbar-nav navbar-right">
           <li><a href="<%= url('/pods') %>">Pods &amp; Owners</a></li>
