@@ -2,29 +2,34 @@
 <html>
 <head>
   <title>Push • <%= @title %></title>
+  <link rel="stylesheet" media="screen, projection" type="text/css" href="/assets/app.css">
   <link rel="stylesheet" media="screen, projection" type="text/css" href="/manage/trunk.css">
+  
   <% if @refresh_automatically %>
     <meta http-equiv="refresh" content="6">
   <% end %>
 </head>
-<body style="padding-top: 50px;">
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="brand" href="#">
-          Push
-        </a>
 
-        <ul class="nav">
+
+<body style="">
+  <nav class="navbar navbar-static-top" role="navigation"><section class="container">
+    <div class="navbar-header">
+    <button class="navbar-toggle" data-target=".navbar-header-collapse" data-toggle="collapse" type="button">
+      <span class="sr-only">Toggle navigation</span><span class="glyphicon-plus"></span>
+    </button>
+    <a class="navbar-brand" href="http://cocoapods.org"></a></div>
+  
+    <div class="collapse navbar-collapse navbar-header-collapse">
+      <ul class="nav navbar-nav navbar-right">
           <li><a href="<%= url('/pods') %>">Pods &amp; Owners</a></li>
           <li><a href="<%= url('/versions') %>">Versions</a></li>
           <li><a href="<%= url('/commits') %>">Commits</a></li>
           <li><a href="<%= url('/log_messages') %>">Log Messages</a></li>
           <li><a href="<%= url('/disputes?scope=unsettled') %>">Disputes</a></li>
-        </ul>
-      </div>
+      </ul>
     </div>
-  </div>
+  </nav>
+
 
   <div class="container">
     <%= yield %>
@@ -36,5 +41,6 @@
       <% end %>
     <% end %>
   </div>
+  <script src="/assets/app.js" type="text/javascript"></script
 </body>
 </html>
