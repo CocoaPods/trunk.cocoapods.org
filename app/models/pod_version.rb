@@ -8,7 +8,7 @@ module Pod
     class PodVersion < Sequel::Model
       include Concerns::GitCommitSHAValidator
 
-      DATA_URL = "https://raw.github.com/#{ENV['GH_REPO']}/%s/%s"
+      DATA_URL = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
 
       self.dataset = :pod_versions
 

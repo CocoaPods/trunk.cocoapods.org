@@ -13,7 +13,7 @@ describe 'Webhook' do
     Webhook.call('testing')
     duration = Time.now - t
 
-    duration.should < 0.001
+    duration.should < 0.01
   end
 
 end
