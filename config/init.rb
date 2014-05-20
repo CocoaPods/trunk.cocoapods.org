@@ -40,7 +40,7 @@ require 'lib/webhook'
 hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 if ENV['WEBHOOKS_ENABLED']
   hook_urls = [
-    "http://requestb.in/13vkhac1", # Testing
+    # 'http://requestb.in/13vkhac1', # Testing
     "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
     "http://search.cocoapods.org#{hook_path}"
   ]
