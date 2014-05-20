@@ -11,7 +11,7 @@ module Pod
     class HooksController < AppController
       # --- Post Receive Hook ---------------------------------------------------------------------
 
-      post "/github-post-receive/#{ENV['HOOK_PATH']}" do
+      post "/github-post-receive/#{ENV['INCOMING_HOOK_PATH']}" do
         halt 415 unless request.media_type == 'application/x-www-form-urlencoded'
 
         # We don't get the right body structure.
