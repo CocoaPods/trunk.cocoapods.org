@@ -51,7 +51,8 @@ class Webhook
   def self.cleanup
     Process.kill 'KILL', @child_pid if @child_pid
   rescue Errno::ESRCH
-    # Process wasn't there anymore.
+    # Process wasn't there anymore, we don't need to kill it.
+    'RuboCop: Do not suppress exceptions.'
   ensure
     Process.waitall
   end
