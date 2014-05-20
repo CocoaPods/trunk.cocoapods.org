@@ -34,7 +34,7 @@ module Pod
     class AppController < Sinatra::Base
       configure do
         set :root, ROOT
-        set :views, settings.root + '/app/views/app'
+        set :views, settings.root + '/app/views'
       end
 
       configure :production do
@@ -57,7 +57,6 @@ require 'app/controllers/session_verification_controller'
 require 'app/controllers/hooks_controller'
 require 'app/controllers/manage_controller'
 require 'app/controllers/assets_controller'
-require 'app/controllers/redirect_controller'
 
 # TODO: Temporary controller while we transition to the trunk app.
 require 'app/controllers/claims_controller'
@@ -67,7 +66,6 @@ module Pod
   module TrunkApp
     App = Rack::URLMap.new(
       '/api/v1/pods'     => PodsController,
-      # TODO: namespace controllers in API and HTML namespaces?
       '/api/v1/sessions' => SessionsController,
       '/sessions'        => SessionVerificationController,
       '/hooks'           => HooksController,
@@ -76,7 +74,7 @@ module Pod
 
       # TODO: Temporary routes while we transition to the trunk app.
       '/claims'          => ClaimsController,
-      '/'                => RedirectController,
+      '/'                => HTMLController,
     )
   end
 end
