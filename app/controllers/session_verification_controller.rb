@@ -1,14 +1,15 @@
+require 'app/controllers/html_controller'
 require 'sinatra/twitter-bootstrap'
 
 module Pod
   module TrunkApp
-    class SessionVerificationController < AppController
-      configure do
-        set :views, settings.root + '/app/views/session_verification'
-      end
-
+    class SessionVerificationController < HTMLController
       configure :development do
         register Sinatra::Reloader
+      end
+
+      configure do
+        set :views, settings.root + '/app/views/session_verification'
       end
 
       register Sinatra::Twitter::Bootstrap::Assets

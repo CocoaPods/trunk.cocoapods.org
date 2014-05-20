@@ -7,7 +7,7 @@ require 'slim'
 
 module Pod
   module TrunkApp
-    class ClaimsController < AppController
+    class ClaimsController < HTMLController
       configure do
         set :views, settings.root + '/app/views/claims'
       end

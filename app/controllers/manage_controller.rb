@@ -1,4 +1,4 @@
-require 'app/controllers/app_controller'
+require 'app/controllers/html_controller'
 require 'app/helpers/manage_helper'
 require 'app/models/pod'
 
@@ -9,7 +9,7 @@ require 'sinatra/url_for'
 
 module Pod
   module TrunkApp
-    class ManageController < AppController
+    class ManageController < HTMLController
       def self.hash_password(password)
         Digest::SHA2.hexdigest(password)
       end

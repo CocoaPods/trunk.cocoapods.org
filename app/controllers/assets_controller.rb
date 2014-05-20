@@ -1,6 +1,8 @@
+require 'app/controllers/html_controller'
+
 module Pod
   module TrunkApp
-    class AssetsController < AppController
+    class AssetsController < HTMLController
       get '/app.css' do
         send_file File.join(settings.public_folder, 'app.css')
       end
@@ -11,10 +13,6 @@ module Pod
 
       get '/manage.css' do
         send_file File.join(settings.public_folder, 'manage.css')
-      end
-
-      not_found do
-        slim :'not_found', :status => 404
       end
     end
   end
