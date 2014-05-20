@@ -63,7 +63,7 @@ class Webhook
         #
         # Spawn a worker, then wait for it to finish.
         #
-        if message
+        if message && !urls.empty?
           encoded_message = URI.encode(message)
           cmd = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{urls.join(',')}})
           fork { exec cmd }
