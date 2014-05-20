@@ -16,4 +16,12 @@ describe 'Webhook' do
     duration.should < 0.01
   end
 
+  it 'sets enabled? correctly' do
+    Webhook.urls = ['hello']
+    Webhook.enabled?.should == true
+
+    Webhook.urls = []
+    Webhook.enabled?.should == false
+  end
+
 end

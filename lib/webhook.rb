@@ -23,9 +23,9 @@ class Webhook
   #
   # Creates a pipe from parent to worker child.
   #
-  def self.setup(*urls)
+  def self.setup(urls = [])
     @parent, @child = IO.pipe
-    self.urls = urls
+    self.urls = urls || []
   end
 
   # Set the URLs the Webhook service should be using.
@@ -36,13 +36,23 @@ class Webhook
   def self.urls=(urls)
     @urls = urls
     cleanup
-    start_child_process_thread
+    if enabled?
+      start_child_process_thread
+    end
+  end
+  # It is enabled if it has any URLs to write to.
+  #
+  def self.enabled?
+    !urls.empty?
   end
 
   # Kill child, wait and remove.
   #
   def self.cleanup
     Process.kill 'KILL', @child_pid if @child_pid
+  rescue Errno::ESRCH
+    # Process wasn't there anymore.
+  ensure
     Process.waitall
   end
 
@@ -79,7 +89,10 @@ class Webhook
   # Messages can't contain newlines.
   # If they do, they will be replaced by a single space.
   #
+  # If there are no URLs, this call will be ignored.
+  #
   def self.call(message)
+    return unless enabled?
     @child.write "#{message.gsub("\n", ' ')}\n"
   end
 end
