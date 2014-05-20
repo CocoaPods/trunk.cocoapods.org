@@ -50,6 +50,15 @@ module Pod
         erb :'pods/index'
       end
 
+      get '/pods/:name' do
+        @pod = Pod.find(:name => params[:name])
+        if @pod
+          erb :'pods/detail'
+        else
+          halt 404
+        end
+      end
+
       post '/owners/delete' do
         owner = Owner.find(:id => params[:owner])
         pod = Pod.find(:id => params[:pod])

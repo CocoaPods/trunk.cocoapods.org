@@ -12,7 +12,7 @@
   <tbody>
     <% @collection.each do |pod| %>
       <tr>
-        <td><%= pod.name %></td>
+        <td><a href="pods/<%= pod.name %>"><%= pod.name %></a></td>
         <td>
           <% pod.owners.each do |owner| %>
             <input type="hidden" name="pod" value="<%= pod.id %>" />

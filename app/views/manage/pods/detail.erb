@@ -1,0 +1,51 @@
+<% @title = @pod.name %>
+
+<h2><%= @pod.name %></h2>
+
+<h3>Versions</h3>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Version</th>
+      <th>Commit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @pod.versions.each do |version| %>
+      <tr>
+        <td><%= version.name %></td>
+        <td>
+          <% if version.published? %>
+            <a href="<%= version.data_url %>"><%= version.commit_sha %></a>
+          <% else %>
+            Unpublished
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<h3>Owners</h3>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @pod.owners.each do |owner| %>
+      <tr>
+        <td><%= owner.id %></td>
+        <td><%= owner.name %></td>
+        <td><a href="mailto:<%= owner.email %>"><%= owner.email %></a></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
