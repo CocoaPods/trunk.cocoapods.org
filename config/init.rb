@@ -37,10 +37,14 @@ require 'lib/webhook'
 #
 # Warning: Do not add non-existing domains.
 #
-garbled_hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
-Webhook.setup "http://199.229.252.197:4567#{garbled_hook_path}" # Cocoadocs
-              # "http://metrics.cocoapods.org#{garbled_hook_path}",
-              # "http://search.cocoapods.org#{garbled_hook_path}"
+hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
+if ENV['WEBHOOKS_ENABLED']
+  hook_urls = [
+    "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
+    "http://search.cocoapods.org#{hook_path}"
+  ]
+end
+Webhook.setup(hook_urls || [])
 
 # -- Logging ------------------------------------------------------------------
 
