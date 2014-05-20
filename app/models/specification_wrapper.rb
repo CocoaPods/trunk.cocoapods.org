@@ -39,8 +39,8 @@ module Pod
 
       def validation_errors
         results = {}
-        results['warnings'] = linter.warnings.map(&:message) unless linter.warnings.empty?
-        results['errors']   = linter.errors.map(&:message)   unless linter.errors.empty?
+        results['warnings'] = remove_prefixes(linter.warnings) unless linter.warnings.empty?
+        results['errors']   = remove_prefixes(linter.errors)   unless linter.errors.empty?
         results
       end
 
@@ -48,6 +48,12 @@ module Pod
 
       def linter
         @linter ||= Specification::Linter.new(@specification)
+      end
+
+      def remove_prefixes(results)
+        results.map do |result|
+          result.message.sub(/^\[.+?\]\s*/, '')
+        end
       end
     end
   end
