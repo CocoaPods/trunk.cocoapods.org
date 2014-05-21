@@ -11,13 +11,17 @@ gem 'newrelic_rpm'
 gem 'peiji-san', :git => 'https://github.com/alloy/peiji-san.git'
 gem 'pg'
 gem 'rack-ssl'
-gem 'rake'
 gem 'rfc-822'
 gem 'sequel'
 gem 'sinatra'
 gem 'sinatra-twitter-bootstrap'
 gem 'slim', '< 2.0'
 gem 'sass'
+
+group :rake do
+  gem 'rake'
+  gem 'terminal-table'
+end
 
 group :development, :production do
   gem 'foreman'
@@ -27,7 +31,6 @@ end
 group :development do
   gem 'kicker'
   gem 'saga'
-  gem 'terminal-table'
 
   # Only needed for importing existing spec repo data into DB.
   gem 'rugged'
