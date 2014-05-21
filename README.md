@@ -43,3 +43,30 @@ Optional environment variables are:
 
 * `RACK_ENV`: Can be test, development, or production.
 * `DATABASE_URL`: The URL to the PostgreSQL database.
+
+## Webhook
+
+The webhook sends messages to other services when events in trunk happen.
+
+These events trigger the webhook and send a message.
+
+* Successful creation of a Commit: `{ type: 'commit', created_at: <date>, data_url: <URL> }`
+
+Environment variables are:
+
+* `OUTGOING_HOOK_PATH`: The garbled path used at the end of `<schema>://<domain>/hooks/trunk/<OUTGOING_HOOK_PATH>`.
+* `WEBHOOKS_ENABLED`: If set to `true`, the webhook is enabled.
+
+### Programmatic usage
+
+Trigger a message explicitly:
+
+    Webhook.call(message)
+
+Change the webhook service URLs:
+
+    Webhook.urls = [...]
+
+Check if it is enabled:
+
+    Webhook.enabled?
