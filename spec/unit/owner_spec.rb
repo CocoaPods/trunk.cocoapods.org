@@ -83,7 +83,7 @@ module Pod::TrunkApp
     describe 'in general' do
       it 'coerces to JSON' do
         json = JSON.parse(@owner.to_json)
-        json.keys.sort.should == %w(created_at email name)
+        json.keys.sort.should == %w(created_at email name pods)
       end
 
       it 'finds itself with an email address' do
