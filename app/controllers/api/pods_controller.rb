@@ -31,7 +31,11 @@ module Pod
 
       post '/', :requires_owner => true do
         unless ENV['TRUNK_APP_PUSH_ALLOWED'] == 'true'
-          json_error(503, 'Push access is currently disabled.')
+          json_error(503, 'Push access is currently disabled while we allow ' \
+                          'for owners to claim their Pods. Please read our ' \
+                          'blog posts: ' \
+                          'http://blog.cocoapods.org/CocoaPods-Trunk/ and ' \
+                          'http://blog.cocoapods.org/Claim-Your-Pods/')
         end
 
         specification = SpecificationWrapper.from_json(request.body.read)

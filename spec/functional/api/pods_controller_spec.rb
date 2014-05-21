@@ -57,7 +57,7 @@ module Pod::TrunkApp
             post '/', spec.to_json
           end.should.not.change { Pod.count + PodVersion.count }
           last_response.status.should == 503
-          json_response['error'].should == 'Push access is currently disabled.'
+          json_response['error'].should.match /Push access is currently disabled/
         end
       ensure
         ENV['TRUNK_APP_PUSH_ALLOWED'] = 'true'
