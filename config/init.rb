@@ -38,7 +38,7 @@ require 'lib/webhook'
 # Warning: Do not add non-existing domains.
 #
 hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
-if ENV['WEBHOOKS_ENABLED']
+if ENV['WEBHOOKS_ENABLED'] == 'true'
   hook_urls = [
     # 'http://requestb.in/13vkhac1', # Testing
     "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
