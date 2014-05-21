@@ -32,18 +32,24 @@ begin
   end
 
   namespace :db do
-    desc 'Show schema'
-    task :schema => :env do
+    def schema
       require 'terminal-table'
+      result = ''
       DB.tables.each do |table|
-        p table
+        result << "#{table}\n"
         schema = DB.schema(table)
-        puts Terminal::Table.new(
-          :headings => [:name, *schema[0][1].keys],
-          :rows => schema.map { |c| [c[0], *c[1].values.map(&:inspect)] }
+        terminal_table = Terminal::Table.new(
+          headings: [:name, *schema[0][1].keys],
+          rows: schema.map { |c| [c[0], *c[1].values.map(&:inspect)] }
         )
-        puts
+        result << "#{terminal_table}\n\n"
       end
+      result
+    end
+
+    desc 'Show schema'
+    task schema: :env do
+      puts schema
     end
 
     desc 'Run migrations'
@@ -52,6 +58,7 @@ begin
       Rake::Task[:env].invoke
       version = ENV['VERSION'].to_i if ENV['VERSION']
       Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'), :target => version)
+      File.open('db/schema.txt', 'w') { |file| file.write(schema) }
     end
 
     desc 'Drop DB for RACK_ENV'
