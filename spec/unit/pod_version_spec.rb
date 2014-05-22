@@ -85,7 +85,7 @@ module Pod::TrunkApp
       it 'returns a URL from where the spec data can be retrieved' do
         @version.add_commit(@valid_commit_attrs)
         expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
-          "3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
+          "master/#{@version.destination_path}"
         @version.data_url.should == expected
       end
 
