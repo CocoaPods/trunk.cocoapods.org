@@ -12,6 +12,8 @@ module Pod
     class Commit < Sequel::Model
       include Concerns::GitCommitSHAValidator
 
+      DATA_URL = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
+
       self.dataset = :commits
 
       extend PeijiSan
@@ -28,9 +30,13 @@ module Pod
         message = {
           :type => 'commit',
           :created_at => created_at,
-          :data_url => pod_version.data_url
+          :data_url => data_url
         }.to_json
         Webhook.call(message)
+      end
+
+      def data_url
+        format(DATA_URL, sha, pod_version.destination_path)
       end
 
       protected
