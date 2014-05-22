@@ -91,9 +91,9 @@ class Bacon::Context
   end
 
   def rest_response(body_or_fixture_name, code = 200, header = nil)
-    begin
+    if File.exist?(fixture(body_or_fixture_name))
       body = fixture_read(body_or_fixture_name)
-    rescue
+    else
       body = body_or_fixture_name
     end
     REST::Response.new(code, header, body)
