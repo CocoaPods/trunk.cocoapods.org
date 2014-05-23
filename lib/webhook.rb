@@ -23,9 +23,9 @@ class Webhook
   #
   # Creates a pipe from parent to worker child.
   #
-  def self.setup(urls = [])
+  def self.setup(urls = {})
     @parent, @child = IO.pipe
-    self.urls = urls || []
+    self.urls = urls || {}
   end
 
   # Set the URLs the Webhook service should be using.
@@ -68,13 +68,17 @@ class Webhook
 
         # Get all data up to the newline.
         #
-        message = @parent.gets("\n").chomp
+        string = @parent.gets("\n").chomp
+        type, action, message = string.split(':', 2)
+
+        p [type, action, message]
 
         # Send a message to all URLs.
         #
         # Spawn a worker, then wait for it to finish.
         #
         if message && !urls.empty?
+          targets = urls[type.to_sym][action.to_sym]
           encoded_message = URI.encode(message)
           cmd = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{urls.join(',')}})
           fork { exec cmd }
@@ -95,6 +99,33 @@ class Webhook
   def self.call(message)
     return unless enabled?
     @child.write "#{message.gsub("\n", ' ')}\n"
+  end
+  def self.call_convenience(type, action, timestamp, data_url)
+    hash = {
+      :type => type,
+      :action => action,
+      :timestamp => timestamp,
+      :data_url => data_url
+    }
+    call("#{type}:#{action}:#{hash.to_json}")
+  end
+
+  # Convenience methods.
+  #
+  def self.pod_created(created_at, data_url)
+    call_convenience('pod', 'create', created_at, data_url)
+  end
+  def self.pod_updated(updated_at, data_url)
+    call_convenience('pod', 'update', updated_at, data_url)
+  end
+  def self.version_created(created_at, data_url)
+    call_convenience('version', 'create', created_at, data_url)
+  end
+  def self.version_updated(updated_at, data_url)
+    call_convenience('version', 'update', updated_at, data_url)
+  end
+  def self.commit_created(created_at, data_url)
+    call_convenience('commit', 'create', created_at, data_url)
   end
 end
 
