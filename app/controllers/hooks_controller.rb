@@ -70,8 +70,12 @@ module Pod
             :added => manual_commit['added'],
             :modified => manual_commit['modified']
           }.each do |type, files|
-            next if files.empty?
-            Commit::Import.import(commit_sha, type, files, committer_email, committer_name)
+            # Only allow .json files.
+            #
+            json_files = files.select { |file| file =~ /\.json\z/ }
+
+            next if json_files.empty?
+            Commit::Import.import(commit_sha, type, json_files, committer_email, committer_name)
           end
         end
 
