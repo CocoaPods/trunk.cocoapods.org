@@ -39,13 +39,28 @@ require 'lib/webhook'
 #
 hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 if ENV['WEBHOOKS_ENABLED'] == 'true'
-  hook_urls = [
-    'http://requestb.in/152lwjc1', # Testing
-    "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
-    "http://search.cocoapods.org#{hook_path}"
-  ]
+  hook_urls = {
+    :pod => {
+      :create => [
+
+      ],
+      :update => [
+
+      ]
+    },
+    :version => {
+      :create => [
+
+      ],
+      :update => [
+        'http://requestb.in/152lwjc1', # Testing
+        "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
+        "http://search.cocoapods.org#{hook_path}"
+      ]
+    }
+  }
 end
-Webhook.setup(hook_urls || [])
+Webhook.setup(hook_urls)
 
 # -- Logging ------------------------------------------------------------------
 

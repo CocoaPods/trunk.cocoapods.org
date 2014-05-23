@@ -104,7 +104,7 @@ module Pod::TrunkApp
 
         Webhook.expects(:call).once.with do |parameter|
           parameter.should.match(/"type":"commit"/)
-          parameter.should.match(/"created_at":/)
+          parameter.should.match(/"timestamp":/)
           expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
             '7f694a5c1e43543a803b5d20d8892512aae375f3/Specs/Webhook/' \
             '1.0.0/Webhook.podspec.json'
