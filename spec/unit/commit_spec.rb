@@ -92,9 +92,13 @@ module Pod::TrunkApp
     end
 
     describe 'concerning webhooks' do
+      before do
+        Webhook.spec_updated = %w(spec_updated_url1 spec_updated_url2)
+      end
+      after do
+        Webhook.spec_updated = []
+      end
       it 'sends off a Webhook message' do
-        Webhook.urls = []
-
         sha = '7f694a5c1e43543a803b5d20d8892512aae375f3'
         version = '1.0.0'
 
@@ -102,13 +106,16 @@ module Pod::TrunkApp
         @version = PodVersion.create(:pod => @pod, :name => version)
         @committer = Owner.create(:email => 'appie-webhook@example.com', :name => 'Appie Duran')
 
-        Webhook.expects(:call).once.with do |parameter|
-          parameter.should.match(/"type":"commit"/)
-          parameter.should.match(/"timestamp":/)
+        Webhook.expects(:call).once.with do |type, action, json|
+          type.should == 'spec'
+          action.should == 'update'
+          json.should.match(/"type":"spec"/)
+          json.should.match(/"action":"update"/)
+          json.should.match(/"timestamp":/)
           expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
             '7f694a5c1e43543a803b5d20d8892512aae375f3/Specs/Webhook/' \
             '1.0.0/Webhook.podspec.json'
-          parameter.should.match(/"data_url":"#{expected}"/)
+          json.should.match(/"data_url":"#{expected}"/)
         end
 
         Commit.send :alias_method, :after_save, :after_commit

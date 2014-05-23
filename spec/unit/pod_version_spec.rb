@@ -197,5 +197,31 @@ module Pod::TrunkApp
       end
 
     end
+
+    describe 'concerning webhooks' do
+      before do
+        Webhook.version_created = %w(version_created_url1 version_created_url2)
+      end
+      after do
+        Webhook.version_created = []
+      end
+      it 'sends off a Webhook message' do
+        version = '1.0.0'
+
+        Webhook.expects(:call).once.with do |type, action, json|
+          type.should == 'version'
+          action.should == 'create'
+          json.should.match(/"type":"version"/)
+          json.should.match(/"action":"create"/)
+          json.should.match(/"timestamp":/)
+          json.should.match(/"data_url":"TODO"/)
+        end
+
+        PodVersion.send :alias_method, :after_save, :after_commit
+        @pod = Pod.create(:name => 'Webhook')
+        @version = PodVersion.create(:pod => @pod, :name => version)
+        PodVersion.send :remove_method, :after_save
+      end
+    end
   end
 end

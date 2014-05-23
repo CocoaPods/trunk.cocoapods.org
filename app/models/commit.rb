@@ -25,7 +25,7 @@ module Pod
 
       def after_commit
         super
-        Webhook.commit_created(created_at, pod_version.data_url)
+        Webhook.spec_updated(created_at, pod_version.data_url)
       end
 
       protected
