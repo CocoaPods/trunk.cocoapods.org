@@ -20,6 +20,12 @@ module Pod::TrunkApp
         @commit.save(:raise_on_save_failure => true)
         @commit.reload.should.not.be.imported
       end
+
+      it 'returns a URL from where the spec data can be retrieved' do
+        expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
+          "3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
+        @commit.data_url.should == expected
+      end
     end
 
     describe 'concerning validations' do
