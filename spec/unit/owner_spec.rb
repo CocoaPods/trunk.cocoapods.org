@@ -111,16 +111,16 @@ module Pod::TrunkApp
         json = JSON.parse(@owner.to_json)
         json['pods'].should == [
           {
-            "id" => pod1.id,
-            "name" => "Test1",
-            "created_at" => pod1.created_at.to_s,
-            "updated_at" => pod1.updated_at
+            'id' => pod1.id,
+            'name' => 'Test1',
+            'created_at' => pod1.created_at.to_s,
+            'updated_at' => pod1.updated_at
           },
           {
-            "id" => pod2.id,
-            "name" => "Test2",
-            "created_at" => pod2.created_at.to_s,
-            "updated_at" => pod2.updated_at
+            'id' => pod2.id,
+            'name' => 'Test2',
+            'created_at' => pod2.created_at.to_s,
+            'updated_at' => pod2.updated_at
           }
         ]
       end
