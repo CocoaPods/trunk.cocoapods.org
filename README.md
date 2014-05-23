@@ -57,7 +57,7 @@ Environment variables are:
 * `OUTGOING_HOOK_PATH`: The garbled path used at the end of `<schema>://<domain>/hooks/trunk/<OUTGOING_HOOK_PATH>`.
 * `WEBHOOKS_ENABLED`: If set to `true`, the webhook is enabled.
 
-### Programmatic usage
+### Usage in Trunk
 
 Trigger a message explicitly:
 
@@ -70,3 +70,11 @@ Change the webhook service URLs:
 Check if it is enabled:
 
     Webhook.enabled?
+
+### Usage in interested web services
+
+Currently you get a ping on each commit. We will add more hooks, and you will be able to choose which you'd like, but for now it's just commits.
+
+1. Add your URL wherever `Webhook.setup` is called (currently `ìnit.rb`).
+2. We recommend you add `OUTGOING_HOOK_PATH` to the path to at least obscure your path.
+3. Install a POST route in your service that corresponds to the URL. Note: You MUST NOT use the value in `OUTGOING_HOOK_PATH` inside your public code. Instead, use an ENV variable as well, and set it to correspond to `OUTGOING_HOOK_PATH`.
