@@ -61,6 +61,11 @@ module Pod
         "#{pod.name} #{name}"
       end
 
+      def after_commit
+        super
+        Webhook.version_created(created_at, 'TODO')
+      end
+
       def push!(committer, specification_data)
         response = PushJob.new(self, committer, specification_data).push!
         if response.success?

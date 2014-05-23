@@ -50,7 +50,9 @@ The webhook sends messages to other services when events in trunk happen.
 
 These events trigger the webhook and send a message.
 
-* Successful creation of a Commit: `{ type: 'commit', created_at: <date>, data_url: <URL> }`
+* Successful create of a pod: `{'type':'pod','action':'create','timestamp':'<date>','data_url':'<URL>'}`
+* Successful create of a version: `{'type':'version','action':'create','timestamp':'<date>','data_url':'<URL>'}`
+* Successful update of a spec: `{'type':'spec','action':'update','timestamp':'<date>','data_url':'<URL>'}`
 
 Environment variables are:
 
@@ -59,13 +61,25 @@ Environment variables are:
 
 ### Usage in Trunk
 
+Enable:
+
+    Webhook.enable
+
+Disable:
+
+    Webhook.disable
+
 Trigger a message explicitly:
 
-    Webhook.call(message)
+    Webhook.pod_created(created_at, data_url)
+    Webhook.version_created(created_at, data_url)
+    Webhook.spec_updated(updated_at, data_url)
 
-Change the webhook service URLs:
+Change the webhook service URLs with the hook config methods:
 
-    Webhook.urls = [...]
+    Webhook.pod_created = [urls]
+    Webhook.version_created = [urls]
+    Webhook.spec_updated = [urls]
 
 Check if it is enabled:
 
@@ -75,6 +89,6 @@ Check if it is enabled:
 
 Currently you get a ping on each commit. We will add more hooks, and you will be able to choose which you'd like, but for now it's just commits.
 
-1. Add your URL wherever `Webhook.setup` is called (currently `ìnit.rb`).
+1. Add your URL wherever one of the hook config methods (see above) is called (currently `ìnit.rb`).
 2. We recommend you add `OUTGOING_HOOK_PATH` to the path to at least obscure your path.
 3. Install a POST route in your service that corresponds to the URL. Note: You MUST NOT use the value in `OUTGOING_HOOK_PATH` inside your public code. Instead, use an ENV variable as well, and set it to correspond to `OUTGOING_HOOK_PATH`.
