@@ -40,10 +40,11 @@ require 'lib/webhook'
 hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 if ENV['WEBHOOKS_ENABLED'] == 'true'
   Webhook.pod_created = [
+    'http://requestb.in/152lwjc1' # Testing
     # TODO: Add Feeds.
   ]
   Webhook.version_created = [
-
+    'http://requestb.in/152lwjc1' # Testing
   ]
   Webhook.spec_updated = [
     'http://requestb.in/152lwjc1', # Testing
