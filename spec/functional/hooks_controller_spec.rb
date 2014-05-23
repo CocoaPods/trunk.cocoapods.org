@@ -15,6 +15,12 @@ module Pod::TrunkApp
       post '/github-post-receive/', payload
     end
 
+    def post_raw_merge_commit_hook_non_json_data
+      header 'Content-Type', 'application/x-www-form-urlencoded'
+      payload = fixture_read('GitHub/post_receive_hook_non_json_data_merge_commit.raw')
+      post '/github-post-receive/', payload
+    end
+
     before do
       header 'X-Github-Delivery', '37ac017e-902c-11e3-8115-655d22cdc2ab'
       header 'User-Agent', 'GitHub Hookshot 7e04da1'
@@ -233,12 +239,18 @@ module Pod::TrunkApp
         .with(
           'a919e8abd40ea9b8f2e4cdd38d58966b92aba94c',
           :added,
-          ['PromiseKit/0.9.0/PromiseKit.podspec'],
+          ['PromiseKit/0.9.0/PromiseKit.podspec.json'],
           'test.user@example.com',
           'Test User'
         ).once
 
       post_raw_merge_commit_hook_json_data
+    end
+
+    it 'does not process a commit file which does not end in .json' do
+      Commit::Import.expects(:import).never
+
+      post_raw_merge_commit_hook_non_json_data
     end
 
   end
