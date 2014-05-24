@@ -17,9 +17,19 @@ module Pod
       plugin :validation_helpers
       plugin :after_initialize
 
+      trigger_webhooks = proc do |version, commit|
+        pod = version.pod
+        data_url = version.data_url
+        Webhook.pod_created(pod.created_at, data_url) if pod.was_created?
+        Webhook.version_created(version.created_at, data_url) if version.was_created?
+        Webhook.spec_updated(commit.created_at, data_url)
+      end
+
       many_to_one :pod
-      one_to_many :commits, :order => Sequel.asc([:updated_at, :created_at])
       one_to_many :log_messages, :order => Sequel.asc([:updated_at, :created_at])
+      one_to_many :commits,
+                  :order => Sequel.asc([:updated_at, :created_at]),
+                  :after_add => trigger_webhooks
 
       def after_initialize
         super
@@ -59,11 +69,6 @@ module Pod
 
       def description
         "#{pod.name} #{name}"
-      end
-
-      def after_commit
-        super
-        Webhook.version_created(created_at, 'TODO')
       end
 
       def push!(committer, specification_data)

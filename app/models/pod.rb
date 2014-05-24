@@ -36,11 +36,6 @@ module Pod
         @was_created = new?
       end
 
-      def after_commit
-        super
-        Webhook.pod_created(created_at, 'TODO')
-      end
-
       attr_reader :was_created
       alias_method :was_created?, :was_created
 

@@ -77,31 +77,5 @@ module Pod::TrunkApp
         yielded.should == true
       end
     end
-
-    describe 'concerning webhooks' do
-      before do
-        Webhook.pod_created = %w(pod_created_url1 pod_created_url2)
-      end
-      after do
-        Webhook.pod_created = []
-      end
-      it 'sends off a Webhook message' do
-        sha = '7f694a5c1e43543a803b5d20d8892512aae375f3'
-        version = '1.0.0'
-
-        Webhook.expects(:call).once.with do |type, action, json|
-          type.should == 'pod'
-          action.should == 'create'
-          json.should.match(/"type":"pod"/)
-          json.should.match(/"action":"create"/)
-          json.should.match(/"timestamp":/)
-          json.should.match(/"data_url":"TODO"/)
-        end
-
-        Pod.send :alias_method, :after_save, :after_commit
-        @pod = Pod.create(:name => 'Webhook')
-        Pod.send :remove_method, :after_save
-      end
-    end
   end
 end

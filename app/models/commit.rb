@@ -23,11 +23,6 @@ module Pod
 
       alias_method :imported?, :imported
 
-      def after_commit
-        super
-        Webhook.spec_updated(created_at, pod_version.data_url)
-      end
-
       protected
 
       def validate
