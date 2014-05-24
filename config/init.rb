@@ -37,8 +37,9 @@ require 'lib/webhook'
 #
 # Warning: Do not add non-existing domains.
 #
-hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 if ENV['WEBHOOKS_ENABLED'] == 'true'
+  hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
+
   Webhook.pod_created = [
     'http://requestb.in/152lwjc1' # Testing
     # TODO: Add Feeds.
@@ -51,6 +52,7 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
     "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
     "http://search.cocoapods.org#{hook_path}"
   ]
+
   Webhook.enable
 end
 
