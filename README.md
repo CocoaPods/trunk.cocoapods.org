@@ -87,8 +87,6 @@ Check if it is enabled:
 
 ### Usage in interested web services
 
-Currently you get a ping on each commit. We will add more hooks, and you will be able to choose which you'd like, but for now it's just commits.
-
-1. Add your URL wherever one of the hook config methods (see above) is called (currently `ìnit.rb`).
+1. Add your URL wherever one of the hook config methods (see above) is called (currently in `ìnit.rb`).
 2. We recommend you add `OUTGOING_HOOK_PATH` to the path to at least obscure your path.
 3. Install a POST route in your service that corresponds to the URL. Note: You MUST NOT use the value in `OUTGOING_HOOK_PATH` inside your public code. Instead, use an ENV variable as well, and set it to correspond to `OUTGOING_HOOK_PATH`.
