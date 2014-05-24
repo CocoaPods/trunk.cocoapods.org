@@ -130,7 +130,7 @@ class Webhook
         #
         if message && !targets.empty?
           encoded_message = URI.encode(message)
-          cmd = %Q(curl -X POST -sfGL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{targets}})
+          cmd = %Q(curl -X POST -sfL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{targets}})
           fork { exec cmd }
           Process.waitall
         end
