@@ -41,14 +41,10 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
   hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 
   Webhook.pod_created = [
-    'http://requestb.in/yxfrw0yx' # Testing
-    # TODO: Add Feeds.
   ]
   Webhook.version_created = [
-    'http://requestb.in/yxfrw0yx' # Testing
   ]
   Webhook.spec_updated = [
-    'http://requestb.in/yxfrw0yx', # Testing
     "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
     "http://search.cocoapods.org#{hook_path}"
   ]
