@@ -53,6 +53,7 @@ end
 # Now load subclass controllers.
 require 'app/controllers/api/pods_controller'
 require 'app/controllers/api/sessions_controller'
+require 'app/controllers/api/owners_controller'
 require 'app/controllers/session_verification_controller'
 require 'app/controllers/hooks_controller'
 require 'app/controllers/manage_controller'
@@ -67,6 +68,7 @@ module Pod
     App = Rack::URLMap.new(
       '/api/v1/pods'     => PodsController,
       '/api/v1/sessions' => SessionsController,
+      '/api/v1/owners'   => OwnersController,
       '/sessions'        => SessionVerificationController,
       '/hooks'           => HooksController,
       '/manage'          => ManageController,
