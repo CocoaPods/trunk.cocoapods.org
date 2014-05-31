@@ -16,5 +16,10 @@ module Pod::TrunkApp
       attributes = owner.public_attributes
       json_response.should == JSON.parse(attributes.to_json)
     end
+
+    it '404s if no such owner is found' do
+      get '/not-even-a-valid-email'
+      last_response.status.should == 404
+    end
   end
 end
