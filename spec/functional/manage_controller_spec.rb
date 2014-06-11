@@ -92,6 +92,7 @@ module Pod::TrunkApp
     end
 
     before do
+      Dispute.dataset.destroy
       @disputes = [
         Dispute.create(:claimer => @owner, :message => 'unsetled'),
         Dispute.create(:claimer => @owner, :message => 'settled', :settled => true)
