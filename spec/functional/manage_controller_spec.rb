@@ -122,4 +122,29 @@ module Pod::TrunkApp
       @disputes.first.reload.should.be.settled
     end
   end
+
+  describe ManageController, 'concerning deleting owners' do
+    before do
+      authorize 'admin', 'secret'
+
+      @appie = Owner.create(:email => 'appie@example.com', :name => 'Appie')
+      @apple = Owner.create(:email => 'apple@example.com', :name => 'Apple')
+      @pod = Pod.create(:name => 'AFNetworking')
+      @pod.add_owner(@appie)
+      @pod.add_owner(@apple)
+    end
+
+    it 'removes the given owner from the given pod' do
+      post '/owners/delete', :pod => @pod.id, :owner => @apple.id
+      last_response.status.should == 200
+      @pod.owners.should == [@appie]
+    end
+
+    it 'removes the given owners from the given pod and add the unclaimed owner' do
+      post '/owners/delete', :pod => @pod.id, :owner => @apple.id
+      post '/owners/delete', :pod => @pod.id, :owner => @appie.id
+      last_response.status.should == 200
+      @pod.owners.should == [Owner.unclaimed]
+    end
+  end
 end

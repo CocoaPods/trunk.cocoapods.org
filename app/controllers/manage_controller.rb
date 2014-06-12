@@ -65,6 +65,8 @@ module Pod
 
         pod.remove_owner owner
 
+        pod.add_owner(Owner.unclaimed) if pod.owners.empty?
+
         body owner.to_json
       end
 
