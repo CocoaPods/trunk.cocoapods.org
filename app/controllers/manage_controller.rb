@@ -49,7 +49,7 @@ module Pod
 
       get '/pods' do
         pods = Pod.page(params[:page])
-        pods = pods.where(Sequel.like(:name, /#{params[:name]}/)) if params[:name]
+        pods = pods.where(Sequel.like(:name, /#{params[:name]}/i)) if params[:name]
         @collection = pods.order(Sequel.asc(:name))
 
         erb :'pods/index'

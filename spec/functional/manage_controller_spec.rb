@@ -66,7 +66,7 @@ module Pod::TrunkApp
     end
 
     it 'can filter by regexp' do
-      get '/pods?name=AF.et*'
+      get '/pods?name=af.et*'
       last_response.should.be.ok
       last_response.body.should.include @pod.name
     end
