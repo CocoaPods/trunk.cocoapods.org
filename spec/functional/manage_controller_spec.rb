@@ -53,6 +53,24 @@ module Pod::TrunkApp
       end
     end
 
+    it 'shows a filtered list of all matching pods' do
+      get '/pods?name=AFNetwo'
+      last_response.should.be.ok
+      last_response.body.should.include @pod.name
+    end
+
+    it 'shows a filtered list of all matching pods' do
+      get '/pods?name=ANfetwo'
+      last_response.should.be.ok
+      last_response.body.should.not.include @pod.name
+    end
+
+    it 'can filter by regexp' do
+      get '/pods?name=AF.et*'
+      last_response.should.be.ok
+      last_response.body.should.include @pod.name
+    end
+
     it "shows a detail screen of a pod with all it's owners" do
       get "/pods/#{@pod.name}"
       last_response.should.be.ok

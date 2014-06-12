@@ -37,16 +37,21 @@ module Pod
 
       get '/commits' do
         @collection = Commit.page(params[:page]).order(Sequel.desc(:created_at))
+
         erb :'commits/index'
       end
 
       get '/commits/:id' do
         @commit = Commit.find(:id => params[:id])
+
         erb :'commits/show'
       end
 
       get '/pods' do
-        @collection = Pod.page(params[:page]).order(Sequel.asc(:name))
+        pods = Pod.page(params[:page])
+        pods = pods.where(Sequel.like(:name, %r{#{params[:name]}})) if params[:name]
+        @collection = pods.order(Sequel.asc(:name))
+
         erb :'pods/index'
       end
 
