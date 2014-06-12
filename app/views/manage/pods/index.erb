@@ -17,7 +17,7 @@
           <% pod.owners.each do |owner| %>
             <input type="hidden" name="pod" value="<%= pod.id %>" />
             <input type="hidden" name="owner" value="<%= owner.id %>" />
-            <input class="btn btn-small" type="submit" value="Remove <%= "#{owner.name} &lt;#{owner.email}&gt;" %> (disabled)" />
+            <input class="btn btn-small" type="submit" value="Remove <%= "#{owner.name} &lt;#{owner.email}&gt;" %>" />
           <% end %>
         </td>
       </tr>
