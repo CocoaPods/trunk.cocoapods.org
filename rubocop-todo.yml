@@ -23,3 +23,6 @@ MethodLength:
 UnusedMethodArgument:
   Exclude:
     - script/import_spec_repo
+
+ParameterLists:
+  Max: 7

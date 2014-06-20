@@ -20,9 +20,9 @@ module Pod
       trigger_webhooks = proc do |version, commit|
         pod = version.pod
         data_url = version.data_url
-        Webhook.pod_created(pod.created_at, data_url) if pod.was_created?
-        Webhook.version_created(version.created_at, data_url) if version.was_created?
-        Webhook.spec_updated(commit.created_at, data_url)
+        Webhook.pod_created(pod.created_at, pod.name, name, commit.sha, data_url) if pod.was_created?
+        Webhook.version_created(version.created_at, pod.name, name, commit.sha, data_url) if version.was_created?
+        Webhook.spec_updated(commit.created_at, pod.name, name, commit.sha, data_url)
       end
 
       many_to_one :pod

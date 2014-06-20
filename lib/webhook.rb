@@ -20,22 +20,22 @@ class Webhook
   def self.pod_created=(targets)
     urls[:pod][:create] = targets
   end
-  def self.pod_created(created_at, data_url)
-    call_convenience('pod', 'create', created_at, data_url)
+  def self.pod_created(created_at, pod_name, version_name, commit_sha, data_url)
+    call_convenience('pod', 'create', created_at, pod_name, version_name, commit_sha, data_url)
   end
   #
   def self.version_created=(targets)
     urls[:version][:create] = targets
   end
-  def self.version_created(created_at, data_url)
-    call_convenience('version', 'create', created_at, data_url)
+  def self.version_created(created_at, pod_name, version_name, commit_sha, data_url)
+    call_convenience('version', 'create', created_at, pod_name, version_name, commit_sha, data_url)
   end
   #
   def self.spec_updated=(targets)
     urls[:spec][:update] = targets
   end
-  def self.spec_updated(updated_at, data_url)
-    call_convenience('spec', 'update', updated_at, data_url)
+  def self.spec_updated(updated_at, pod_name, version_name, commit_sha, data_url)
+    call_convenience('spec', 'update', updated_at, pod_name, version_name, commit_sha, data_url)
   end
 
   # URLs is a two-level self-initialising Hash structure.
@@ -100,11 +100,14 @@ class Webhook
   def self.write_child(message)
     @child.write message
   end
-  def self.call_convenience(type, action, timestamp, data_url)
+  def self.call_convenience(type, action, timestamp, pod_name, version_name, sha, data_url)
     hash = {
       :type => type,
       :action => action,
       :timestamp => timestamp,
+      :pod => pod_name,
+      :version => version_name,
+      :commit => sha,
       :data_url => data_url
     }
     call(type, action, hash.to_json)

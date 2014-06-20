@@ -51,23 +51,26 @@ describe 'Webhook' do
         it 'pod_created calls call correctly' do
           Webhook.expects(:write_child).once.with(
             %Q(pod;create;{"type":"pod","action":"create","timestamp":"2001-01-01 00:00:00 ) +
-            %Q(UTC","data_url":"some_url"};pod_created_url1,pod_created_url2\n)
+            %Q(UTC","pod":"pod_name","version":"version_name","commit":"commit_sha",) +
+            %Q("data_url":"some_url"};pod_created_url1,pod_created_url2\n)
           )
-          Webhook.pod_created(@time, 'some_url')
+          Webhook.pod_created(@time, 'pod_name', 'version_name', 'commit_sha', 'some_url')
         end
         it 'version_created calls call correctly' do
           Webhook.expects(:write_child).once.with(
             %Q(version;create;{"type":"version","action":"create","timestamp":"2001-01-01 00:00:00 ) +
-            %Q(UTC","data_url":"some_url"};version_created_url1,version_created_url2\n)
+            %Q(UTC","pod":"pod_name","version":"version_name","commit":"commit_sha",) +
+            %Q("data_url":"some_url"};version_created_url1,version_created_url2\n)
           )
-          Webhook.version_created(@time, 'some_url')
+          Webhook.version_created(@time, 'pod_name', 'version_name', 'commit_sha', 'some_url')
         end
         it 'spec_updated calls call correctly' do
           Webhook.expects(:write_child).once.with(
             %Q(spec;update;{"type":"spec","action":"update","timestamp":"2001-01-01 00:00:00 ) +
-            %Q(UTC","data_url":"some_url"};spec_updated_url1,spec_updated_url2\n)
+            %Q(UTC","pod":"pod_name","version":"version_name","commit":"commit_sha",) +
+            %Q("data_url":"some_url"};spec_updated_url1,spec_updated_url2\n)
           )
-          Webhook.spec_updated(@time, 'some_url')
+          Webhook.spec_updated(@time, 'pod_name', 'version_name', 'commit_sha', 'some_url')
         end
       end
       describe 'without URLs' do
@@ -79,15 +82,15 @@ describe 'Webhook' do
         end
         it 'pod_created calls call correctly' do
           Webhook.expects(:write_child).never
-          Webhook.pod_created(@time, 'some_url')
+          Webhook.pod_created(@time, 'pod_name', 'version_name', 'commit_sha', 'some_url')
         end
         it 'version_created calls call correctly' do
           Webhook.expects(:write_child).never
-          Webhook.version_created(@time, 'some_url')
+          Webhook.version_created(@time, 'pod_name', 'version_name', 'commit_sha', 'some_url')
         end
         it 'spec_updated calls call correctly' do
           Webhook.expects(:write_child).never
-          Webhook.spec_updated(@time, 'some_url')
+          Webhook.spec_updated(@time, 'pod_name', 'version_name', 'commit_sha', 'some_url')
         end
       end
     end
