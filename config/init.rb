@@ -46,7 +46,8 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
   ]
   Webhook.spec_updated = [
     "http://199.229.252.197:4567#{hook_path}", # CocoaDocs
-    "http://search.cocoapods.org#{hook_path}"
+    "http://search.cocoapods.org#{hook_path}",
+    "http://metrics.cocoapods.org#{hook_path}"
   ]
 
   Webhook.enable
