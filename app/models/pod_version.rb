@@ -28,7 +28,7 @@ module Pod
       many_to_one :pod
       one_to_many :log_messages, :order => Sequel.asc(:created_at)
       one_to_many :commits,
-                  :order => Sequel.asc([:updated_at, :created_at]),
+                  :order => Sequel.asc(:created_at),
                   :after_add => trigger_webhooks
 
       def after_initialize
