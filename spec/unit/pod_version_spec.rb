@@ -99,6 +99,27 @@ module Pod::TrunkApp
       end
     end
 
+    describe 'concerning URL encoding' do
+      before do
+        @pod = Pod.create(:name => 'NSAttributedString-@+CCLFormat')
+        @version = PodVersion.create(:pod => @pod, :name => '1.2.0')
+        @committer = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
+        @valid_commit_attrs = {
+          :committer => @committer,
+          :sha => '3ca23060197547eef92983f15590b5a87270615f',
+          :specification_data => 'DATA'
+        }
+      end
+
+      it 'returns a URL from where the spec data can be retrieved' do
+        @version.add_commit(@valid_commit_attrs)
+        expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
+          '3ca23060197547eef92983f15590b5a87270615f/Specs/' \
+          'NSAttributedString-@+CCLFormat/1.2.0/NSAttributedString-@+CCLFormat.podspec.json'
+        @version.data_url.should == expected
+      end
+    end
+
     describe 'concerning its methods' do
       before do
         @pod = Pod.create(:name => 'AFNetworking')
