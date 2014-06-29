@@ -1,3 +1,5 @@
+require 'rest'
+
 # A minimal web hook implementation.
 #
 # Usage:
@@ -132,9 +134,14 @@ class Webhook
         # Spawn a worker, then wait for it to finish.
         #
         if message && !targets.empty?
-          encoded_message = URI.encode(message)
-          cmd = %Q(curl -X POST -sfL --data "message=#{encoded_message}" --connect-timeout 1 --max-time 1 {#{targets}})
-          fork { exec cmd }
+          targets.each do |target|
+            fork do
+              REST.post(target, message) do |http|
+                http.open_timeout = 1
+                http.read_timeout = 1
+              end
+            end
+          end
           Process.waitall
         end
       end
