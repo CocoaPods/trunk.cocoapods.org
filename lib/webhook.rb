@@ -136,7 +136,7 @@ class Webhook
         if message && !targets.empty?
           targets.each do |target|
             fork do
-              REST.post(target, message) do |http|
+              REST.post(target, "message=#{message}") do |http| # TODO: Remove message=.
                 http.open_timeout = 1
                 http.read_timeout = 1
               end
