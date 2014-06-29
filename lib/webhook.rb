@@ -120,7 +120,7 @@ class Webhook
   def self.start_child_process_thread
     @child_pid = fork do
       loop do
-        
+
         # Wait for input from the parent.
         #
         IO.select([@parent], nil) || next
