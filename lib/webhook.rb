@@ -120,7 +120,8 @@ class Webhook
   def self.start_child_process_thread
     @child_pid = fork do
       loop do
-        # Wait for input from the child.
+        
+        # Wait for input from the parent.
         #
         IO.select([@parent], nil) || next
 
@@ -128,15 +129,17 @@ class Webhook
         #
         string = @parent.gets("\n").chomp
         type, action, message, targets = string.split(';', 4)
+        targets = targets.split(',')
 
         # Send a message to all URLs.
         #
         # Spawn a worker, then wait for it to finish.
         #
         if message && !targets.empty?
+          headers = { 'Content-Type' => 'application/json' }
           targets.each do |target|
             fork do
-              REST.post(target, "message=#{message}") do |http| # TODO: Remove message=.
+              REST.post(target, message, headers) do |http|
                 http.open_timeout = 1
                 http.read_timeout = 1
               end
