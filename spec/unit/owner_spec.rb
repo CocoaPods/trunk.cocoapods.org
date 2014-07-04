@@ -83,7 +83,7 @@ module Pod::TrunkApp
     describe 'in general' do
       it 'coerces to JSON' do
         json = JSON.parse(@owner.to_json)
-        json.keys.sort.should == %w(created_at email name pods)
+        json.keys.sort.should == %w(created_at email name)
       end
 
       it 'finds itself with an email address' do
@@ -100,29 +100,6 @@ module Pod::TrunkApp
         email = 'janny@example.com'
         owner = Owner.new(:email => " #{email.upcase} ")
         owner.email.should == email
-      end
-
-      it 'contains a list of pods' do
-        pod1 = Pod.new(:name => 'Test1')
-        pod2 = Pod.new(:name => 'Test2')
-        @owner.add_pod(pod1)
-        @owner.add_pod(pod2)
-
-        json = JSON.parse(@owner.to_json)
-        json['pods'].should == [
-          {
-            'id' => pod1.id,
-            'name' => 'Test1',
-            'created_at' => pod1.created_at.to_s,
-            'updated_at' => pod1.updated_at
-          },
-          {
-            'id' => pod2.id,
-            'name' => 'Test2',
-            'created_at' => pod2.created_at.to_s,
-            'updated_at' => pod2.updated_at
-          }
-        ]
       end
     end
 

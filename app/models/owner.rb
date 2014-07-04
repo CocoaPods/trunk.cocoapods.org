@@ -44,11 +44,7 @@ module Pod
       end
 
       def public_attributes
-        attributes = {
-          'created_at' => created_at,
-          'email' => email,
-          'pods' => pods.map(&:values)
-        }
+        attributes = { 'created_at' => created_at, 'email' => email }
         attributes['name'] = name if name
         attributes
       end

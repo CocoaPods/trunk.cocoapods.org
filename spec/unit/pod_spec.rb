@@ -47,6 +47,11 @@ module Pod::TrunkApp
         @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       end
 
+      it 'returns public attributes' do
+        pod = @owner.add_pod(:name => 'AFNetworking')
+        pod.public_attributes.keys.should == %w(name created_at updated_at)
+      end
+
       it 'adds an owner' do
         owner2 = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
         pod = @owner.add_pod(:name => 'AFNetworking')

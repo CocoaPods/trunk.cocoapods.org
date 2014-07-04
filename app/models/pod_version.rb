@@ -52,7 +52,7 @@ module Pod
       end
 
       def public_attributes
-        { 'created_at' => created_at, 'name' => name }
+        { 'name' => name, 'created_at' => created_at }
       end
 
       def destination_path

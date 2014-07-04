@@ -39,6 +39,14 @@ module Pod
       attr_reader :was_created
       alias_method :was_created?, :was_created
 
+      def public_attributes
+        {
+          'name' => name,
+          'created_at' => created_at,
+          'updated_at' => updated_at,
+        }
+      end
+
       protected
 
       def validate

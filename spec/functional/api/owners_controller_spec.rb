@@ -11,9 +11,16 @@ module Pod::TrunkApp
 
     it 'shows an owners public attributes' do
       owner = Owner.unclaimed
+      pod1 = Pod.new(:name => 'Test1')
+      pod2 = Pod.new(:name => 'Test2')
+      owner.add_pod(pod1)
+      owner.add_pod(pod2)
+
       get "/#{owner.email}"
       last_response.status.should == 200
+
       attributes = owner.public_attributes
+      attributes['pods'] = [pod1.public_attributes, pod2.public_attributes]
       json_response.should == JSON.parse(attributes.to_json)
     end
 
