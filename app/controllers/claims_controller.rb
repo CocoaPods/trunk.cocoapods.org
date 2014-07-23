@@ -153,6 +153,7 @@ module Pod
                       }]
                     }]
                   }.to_json)
+      rescue REST::Error
       end
     end
   end
