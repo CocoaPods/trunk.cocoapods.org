@@ -140,19 +140,19 @@ module Pod
       def notify_slack_of_dispute(dispute)
         link = "https://trunk.cocoapods.org/manage/disputes/#{dispute.id}"
         REST.post(SLACK_DISPUTE_URL,
-          {
-            attachments: [{
-              fallback: "New dispute on trunk [Urgent]: <#{link}>",
-              pretext: "There's a new dispute on trunk [Urgent]: <#{link}>",
-              color: :warning,
-              fields: [{
-                title: 'Dispute by ' \
-                  "#{dispute.claimer.name} (#{dispute.claimer.email})",
-                value: dispute.message,
-                short: false
-              }]
-            }]
-          }.to_json)
+                  {
+                    :attachments => [{
+                      :fallback => "New dispute on trunk [Urgent]: <#{link}>",
+                      :pretext => "There's a new dispute on trunk [Urgent]: <#{link}>",
+                      :color => :warning,
+                      :fields => [{
+                        :title => 'Dispute by ' \
+                          "#{dispute.claimer.name} (#{dispute.claimer.email})",
+                        :value => dispute.message,
+                        :short => false
+                      }]
+                    }]
+                  }.to_json)
       end
     end
   end
