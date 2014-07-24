@@ -154,6 +154,7 @@ module Pod
                     }]
                   }.to_json)
       rescue REST::Error
+        "RuboCop: If REST has problems POSTing to Slack, we don't care."
       end
     end
   end
