@@ -34,6 +34,13 @@ module Pod::TrunkApp
             Pod.new(:name => 'AFNetworking').save(:validate => false)
           end
         end
+
+        xit 'raises if a duplicate name with different case gets inserted' do
+          Pod.create(:name => 'AFNetworking')
+          should.raise Sequel::UniqueConstraintViolation do
+            Pod.new(:name => 'afnetworking').save(:validate => false)
+          end
+        end
       end
     end
 
