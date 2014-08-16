@@ -95,6 +95,15 @@ module Pod::TrunkApp
       }
     end
 
+    it "does not allow a push for an existing pod with different case" do
+      @owner.add_pod(:name => spec.name.upcase)
+      lambda do
+        post '/', spec.to_json
+      end.should.not.change { Pod.count }
+      last_response.status.should == 422
+      json_response.should == { 'error' => { 'name' => ['is already taken'] } }
+    end
+
     it "does not allow a push for an existing pod version if it's published" do
       @owner.add_pod(:name => spec.name)
             .add_version(:name => spec.version.to_s)

@@ -15,9 +15,10 @@ module Pod::TrunkApp
         @pod.should.validate_with(:name, 'AFNetworking')
       end
 
-      it 'needs a unique name' do
+      it 'needs a case-insensitive unique name' do
         Pod.create(:name => 'AFNetworking')
         @pod.should.not.validate_with(:name, 'AFNetworking')
+        @pod.should.not.validate_with(:name, 'afnetworking')
       end
 
       describe 'at the DB level' do
@@ -45,6 +46,11 @@ module Pod::TrunkApp
 
       before do
         @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
+      end
+
+      it 'stores a down-cased version of the pod name' do
+        pod = @owner.add_pod(:name => 'AFNetworking')
+        pod.normalized_name.should == 'afnetworking'
       end
 
       it 'returns public attributes' do

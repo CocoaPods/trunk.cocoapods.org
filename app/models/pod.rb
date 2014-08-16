@@ -47,12 +47,20 @@ module Pod
         }
       end
 
+      def name=(name)
+        self.normalized_name = name.downcase if name
+        super
+      end
+
       protected
 
       def validate
         super
         validates_presence :name
-        validates_unique :name
+        validates_unique :normalized_name
+        if error = errors.delete(:normalized_name)
+          errors.add(:name, error.first)
+        end
       end
     end
   end
