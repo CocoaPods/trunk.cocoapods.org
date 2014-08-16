@@ -95,7 +95,7 @@ module Pod::TrunkApp
       }
     end
 
-    it "does not allow a push for an existing pod with different case" do
+    it 'does not allow a push for an existing pod with different case' do
       @owner.add_pod(:name => spec.name.upcase)
       lambda do
         post '/', spec.to_json
