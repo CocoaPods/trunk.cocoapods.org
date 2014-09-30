@@ -55,6 +55,26 @@ module Pod
         erb :'pods/index'
       end
 
+      post '/pods/:name/owners' do
+        pod = Pod.find(:name => params[:name])
+        owner = Owner.find(:email => params[:email])
+        if pod && owner
+          unclaimed_owner = Owner.unclaimed
+
+          DB.test_safe_transaction do
+            if pod.owners == [unclaimed_owner]
+              pod.remove_owner(unclaimed_owner)
+            end
+
+            pod.add_owner(owner)
+          end
+
+          redirect to('/pods/' + pod.name)
+        else
+          halt 404
+        end
+      end
+
       get '/pods/:name' do
         @pod = Pod.find(:name => params[:name])
         if @pod

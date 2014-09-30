@@ -49,3 +49,10 @@
   </tbody>
 </table>
 
+<h4>Add Owner</h4>
+
+<form action="/manage/pods/<%= @pod.name %>/owners" method="post">
+  <input type="email" name="email" placeholder="Owner's Email"></input>
+  <input type="submit" value="Add">
+</form>
+
