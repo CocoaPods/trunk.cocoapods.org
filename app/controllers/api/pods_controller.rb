@@ -30,7 +30,7 @@ module Pod
         json_error(404, 'No pod found with the specified version.')
       end
 
-      get '/:name/spec', :requires_owner => false do
+      get '/:name/specs/latest', :requires_owner => false do
         if pod = Pod.find(:name => params[:name])
           if version = pod.versions.select(&:published?).sort_by { |v| Version.new(v.name) }.last
             redirect version.data_url
@@ -39,7 +39,7 @@ module Pod
         json_error(404, 'No pod found with the specified name.')
       end
 
-      get '/:name/spec/:version', :requires_owner => false do
+      get '/:name/specs/:version', :requires_owner => false do
         if pod = Pod.find(:name => params[:name])
           if version = pod.versions_dataset.where(:name => params[:version]).first
             if version.published?
