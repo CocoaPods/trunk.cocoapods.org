@@ -271,4 +271,37 @@ module Pod::TrunkApp
       { 'email' => @owner.email }.to_json
     end
   end
+
+  describe PodsController, 'concerning specs' do
+    extend SpecHelpers::PodsController
+
+    before do
+      create_pod_version!
+      create_session_with_owner
+      @pod.add_owner(@owner)
+      @pod.add_version(:name => '0.2.1')
+      @version.add_commit(valid_commit_attrs)
+    end
+
+    it "returns a 404 when a pod or version can't be found" do
+      get '/FANetworking/specs/1.2.0'
+      last_response.status.should == 404
+      get '/FANetworking/specs/latest'
+      last_response.status.should == 404
+      get '/AFNetworking/specs/0.2.1'
+      last_response.status.should == 404
+    end
+
+    it 'redirects to GitHub when a version is found' do
+      get '/AFNetworking/specs/latest'
+      last_response.should.be.redirect?
+      last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
+        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+
+      get '/AFNetworking/specs/1.2.0'
+      last_response.should.be.redirect?
+      last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
+        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+    end
+  end
 end

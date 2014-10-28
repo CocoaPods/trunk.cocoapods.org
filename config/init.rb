@@ -5,6 +5,7 @@ $LOAD_PATH.unshift File.join(ROOT, 'lib')
 
 ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
+ENV['GH_REPO'] ||= 'CocoaPods/Specs'
 
 if ENV['RACK_ENV'] == 'development'
   require 'sinatra/reloader'

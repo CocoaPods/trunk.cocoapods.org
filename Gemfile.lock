@@ -1,15 +1,15 @@
 GIT
-  remote: https://github.com/alloy/peiji-san.git
-  revision: eca485d8dc95f12aaec1a434b49d295c7e91844b
-  specs:
-    peiji-san (1.2.0)
-
-GIT
   remote: https://github.com/alloy/nap.git
   revision: 0b417cbd51c82392208f46db049f203b7067bf83
   branch: error
   specs:
     nap (0.7.0)
+
+GIT
+  remote: https://github.com/alloy/peiji-san.git
+  revision: eca485d8dc95f12aaec1a434b49d295c7e91844b
+  specs:
+    peiji-san (1.2.0)
 
 GEM
   remote: https://rubygems.org/
