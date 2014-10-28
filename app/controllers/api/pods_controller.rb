@@ -2,6 +2,7 @@ require 'app/controllers/api_controller'
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/specification_wrapper'
+require 'cocoapods-core/version'
 
 module Pod
   module TrunkApp
@@ -27,6 +28,26 @@ module Pod
           end
         end
         json_error(404, 'No pod found with the specified version.')
+      end
+
+      get '/:name/spec', :requires_owner => false do
+        if pod = Pod.find(:name => params[:name])
+          if version = pod.versions.select(&:published?).sort_by { |v| Version.new(v.name) }.last
+            redirect version.data_url
+          end
+        end
+        json_error(404, 'No pod found with the specified name.')
+      end
+
+      get '/:name/spec/:version', :requires_owner => false do
+        if pod = Pod.find(:name => params[:name])
+          if version = pod.versions_dataset.where(:name => params[:version]).first
+            if version.published?
+              redirect version.data_url
+            end
+          end
+        end
+        json_error(404, 'No pod found with the specified name and version.')
       end
 
       post '/', :requires_owner => true do
