@@ -184,7 +184,7 @@ module Pod::TrunkApp
       last_response.status.should == 404
     end
 
-    it 'considers a pod non-existant if no version is published yet' do
+    it 'considers a pod nonexistent if no version is published yet' do
       get '/AFNetworking'
       last_response.status.should == 404
       last_response.body.should == { 'error' => 'No pod found with the specified name.' }.to_json
@@ -202,7 +202,7 @@ module Pod::TrunkApp
       }.to_json
     end
 
-    it "considers a pod version non-existant if it's not yet published" do
+    it "considers a pod version nonexistent if it's not yet published" do
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 404
       last_response.body.should == { 'error' => 'No pod found with the specified version.' }.to_json
