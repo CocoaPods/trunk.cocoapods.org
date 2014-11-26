@@ -160,6 +160,8 @@ module Pod
         end
 
         pod.remove_owner(other_owner)
+        pod.add_owner(Owner.unclaimed) if pod.owners.empty?
+
         json_message(200, pod.owners.map(&:public_attributes))
       end
     end

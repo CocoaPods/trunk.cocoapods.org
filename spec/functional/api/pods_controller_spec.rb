@@ -273,6 +273,12 @@ module Pod::TrunkApp
       last_response.body.should.match /does not own this pod/
     end
 
+    it 'marks the pod as unclaimed when the last owner removes themself' do
+      pod = @owner.add_pod(:name => spec.name)
+      delete "/AFNetworking/owners/#{@owner.email}"
+      pod.owners.should == [Owner.unclaimed]
+    end
+
     before do
       @other_pod = @other_owner.add_pod(:name => spec.name)
     end
