@@ -175,6 +175,8 @@ module Pod::TrunkApp
       { 'email' => 'other@example.com' }.to_json
     end
 
+    should_require_login.delete('/AFNetworking/owners/other@example.com') { '' }
+
     it "returns a 404 when a pod or version can't be found" do
       get '/FANetworking/versions/1.2.0'
       last_response.status.should == 404
@@ -254,6 +256,21 @@ module Pod::TrunkApp
       patch '/AFNetworking/owners', { 'email' => @other_owner.email }.to_json
       last_response.status.should == 200
       pod.owners.sort_by(&:name).should == [@owner, @other_owner].sort_by(&:name)
+    end
+
+    it 'removes an owner from a pod' do
+      pod = @owner.add_pod(:name => spec.name)
+      @other_owner.add_pod(pod)
+      delete "/AFNetworking/owners/#{@other_owner.email}"
+      last_response.status.should == 200
+      pod.owners.sort_by(&:name).should == [@owner].sort_by(&:name)
+    end
+
+    it 'errors when attempting to remove an owner who does not own the pod' do
+      pod = @owner.add_pod(:name => spec.name)
+      delete "/AFNetworking/owners/#{@other_owner.email}"
+      last_response.status.should == 404
+      last_response.body.should.match /does not own this pod/
     end
 
     before do
