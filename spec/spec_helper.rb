@@ -23,6 +23,8 @@ $LOAD_PATH.unshift File.expand_path('../../', __FILE__)
 require 'config/init'
 require 'app/controllers/app_controller'
 
+require 'db/seeds'
+
 def DB.test_safe_transaction(&block)
   DB.transaction(:savepoint => true, &block)
 end
