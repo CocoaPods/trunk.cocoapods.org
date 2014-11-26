@@ -278,6 +278,13 @@ module Pod::TrunkApp
     end
 
     # TODO: see if changes (or the lack of) can be detected from the macro, besides just count.
+    it "does not allow to remove an owner from a pod that's not owned by the authenticated owner" do
+      delete "/AFNetworking/owners/#{@other_owner.email}"
+      last_response.status.should == 403
+      @other_pod.owners.should == [@other_owner]
+    end
+
+    # TODO: see if changes (or the lack of) can be detected from the macro, besides just count.
     it "does not allow to add an owner to a pod that's not owned by the authenticated owner" do
       patch '/AFNetworking/owners', { 'email' => @owner.email }.to_json
       @other_pod.owners.should == [@other_owner]
