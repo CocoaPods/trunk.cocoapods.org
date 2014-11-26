@@ -175,6 +175,8 @@ module Pod::TrunkApp
       { 'email' => 'other@example.com' }.to_json
     end
 
+    should_require_login.delete('/AFNetworking/owners/other@example.com') { '' }
+
     it "returns a 404 when a pod or version can't be found" do
       get '/FANetworking/versions/1.2.0'
       last_response.status.should == 404
@@ -182,7 +184,7 @@ module Pod::TrunkApp
       last_response.status.should == 404
     end
 
-    it 'considers a pod non-existant if no version is published yet' do
+    it 'considers a pod nonexistent if no version is published yet' do
       get '/AFNetworking'
       last_response.status.should == 404
       last_response.body.should == { 'error' => 'No pod found with the specified name.' }.to_json
@@ -200,7 +202,7 @@ module Pod::TrunkApp
       }.to_json
     end
 
-    it "considers a pod version non-existant if it's not yet published" do
+    it "considers a pod version nonexistent if it's not yet published" do
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 404
       last_response.body.should == { 'error' => 'No pod found with the specified version.' }.to_json
@@ -256,8 +258,36 @@ module Pod::TrunkApp
       pod.owners.sort_by(&:name).should == [@owner, @other_owner].sort_by(&:name)
     end
 
+    it 'removes an owner from a pod' do
+      pod = @owner.add_pod(:name => spec.name)
+      @other_owner.add_pod(pod)
+      delete "/AFNetworking/owners/#{@other_owner.email}"
+      last_response.status.should == 200
+      pod.owners.sort_by(&:name).should == [@owner].sort_by(&:name)
+    end
+
+    it 'errors when attempting to remove an owner who does not own the pod' do
+      pod = @owner.add_pod(:name => spec.name)
+      delete "/AFNetworking/owners/#{@other_owner.email}"
+      last_response.status.should == 404
+      last_response.body.should.match /does not own this pod/
+    end
+
+    it 'marks the pod as unclaimed when the last owner removes themself' do
+      pod = @owner.add_pod(:name => spec.name)
+      delete "/AFNetworking/owners/#{@owner.email}"
+      pod.owners.should == [Owner.unclaimed]
+    end
+
     before do
       @other_pod = @other_owner.add_pod(:name => spec.name)
+    end
+
+    # TODO: see if changes (or the lack of) can be detected from the macro, besides just count.
+    it "does not allow to remove an owner from a pod that's not owned by the authenticated owner" do
+      delete "/AFNetworking/owners/#{@other_owner.email}"
+      last_response.status.should == 403
+      @other_pod.owners.should == [@other_owner]
     end
 
     # TODO: see if changes (or the lack of) can be detected from the macro, besides just count.

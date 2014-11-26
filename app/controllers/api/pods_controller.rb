@@ -142,6 +142,28 @@ module Pod
 
         json_message(200, pod.owners.map(&:public_attributes))
       end
+
+      delete '/:name/owners/:email', :requires_owner => true do
+        pod = Pod.find_by_name_and_owner(params[:name], @owner) do
+          json_error(403, 'You are not allowed to remove owners from this pod.')
+        end
+        unless pod
+          json_error(404, 'No pod found with the specified name.')
+        end
+
+        unless other_owner = Owner.find_by_email(params[:email])
+          json_error(404, 'No owner found with the specified email address.')
+        end
+
+        unless pod.owners.include?(other_owner)
+          json_error(404, 'The owner with the specified email does not own this pod.')
+        end
+
+        pod.remove_owner(other_owner)
+        pod.add_owner(Owner.unclaimed) if pod.owners.empty?
+
+        json_message(200, pod.owners.map(&:public_attributes))
+      end
     end
   end
 end
