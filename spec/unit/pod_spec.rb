@@ -94,6 +94,13 @@ module Pod::TrunkApp
         Pod.find_by_name_and_owner('AFNetworking', @owner) { yielded = true }
         yielded.should == true
       end
+
+      it 'does not find deleted pods' do
+        pod = Pod.create(:name => 'AFNetworking')
+        Pod.find_by_name('AFNetworking').should == pod
+        pod.update(:deleted => true)
+        Pod.find_by_name('AFNetworking').should.be.nil
+      end
     end
   end
 end

@@ -15,7 +15,13 @@ module Pod
       one_to_many :versions, :class => 'Pod::TrunkApp::PodVersion'
       many_to_many :owners
 
-      # Finds a pod by name.
+      # Finds a pod by name that has *not* been deleted.
+      #
+      def self.find_by_name(name)
+        find(:deleted => false, :name => name)
+      end
+
+      # Finds a pod by name that has *not* been deleted.
       #
       # If the pod has owners but the specified user is not one of the owners the 'no access
       # allowed' block will be called.

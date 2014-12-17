@@ -48,7 +48,7 @@ begin
     end
 
     desc 'Show schema'
-    task schema: :env do
+    task :schema => :env do
       puts schema
     end
 

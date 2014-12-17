@@ -38,6 +38,7 @@ pods
 | created_at      | 1114 | "timestamp without time zone" | nil                                | false      | false       | :datetime | nil          |
 | updated_at      | 1114 | "timestamp without time zone" | nil                                | true       | false       | :datetime | nil          |
 | normalized_name | 1043 | "character varying(255)"      | nil                                | true       | false       | :string   | nil          |
+| deleted         | 16   | "boolean"                     | "false"                            | true       | false       | :boolean  | false        |
 +-----------------+------+-------------------------------+------------------------------------+------------+-------------+-----------+--------------+
 
 pod_versions
