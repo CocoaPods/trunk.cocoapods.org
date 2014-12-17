@@ -56,7 +56,7 @@ module Pod
       # --- Disputes ------------------------------------------------------------------------------
 
       get '/disputes/new' do
-        @pods = params[:pods].map { |name| Pod.find(:name => name) }
+        @pods = params[:pods].map { |name| Pod.find_by_name(name) }
         slim :'disputes/new'
       end
 
@@ -90,7 +90,7 @@ module Pod
         unless params[:pods].blank?
           params[:pods].map(&:strip).uniq.each do |pod_name|
             next if pod_name.blank?
-            if pod = Pod.find(:name => pod_name)
+            if pod = Pod.find_by_name(pod_name)
               @pods << pod
             else
               @invalid_pods << pod_name

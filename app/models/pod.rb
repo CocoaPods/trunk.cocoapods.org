@@ -27,7 +27,7 @@ module Pod
       # allowed' block will be called.
       #
       def self.find_by_name_and_owner(name, owner)
-        if pod = find(:name => name)
+        if pod = find_by_name(name)
           if pod.owners.include?(owner)
             return pod
           else

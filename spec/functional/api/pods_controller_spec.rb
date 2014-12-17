@@ -208,15 +208,28 @@ module Pod::TrunkApp
       last_response.body.should == { 'error' => 'No pod found with the specified version.' }.to_json
     end
 
-    it 'returns an overview of a published pod version' do
+    before do
       @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @version.add_commit(valid_commit_attrs)
+    end
+
+    it 'returns an overview of a published pod version' do
       get '/AFNetworking/versions/1.2.0'
       last_response.status.should == 200
       last_response.body.should == {
         'messages' => @version.log_messages.map(&:public_attributes),
         'data_url' => @version.data_url
       }.to_json
+    end
+
+    it "considers a pod version nonexistent if it's marked as being deleted" do
+      @pod.update(:deleted => true)
+      get '/AFNetworking'
+      last_response.status.should == 404
+      last_response.body.should == { 'error' => 'No pod found with the specified name.' }.to_json
+      get '/AFNetworking/versions/1.2.0'
+      last_response.status.should == 404
+      last_response.body.should == { 'error' => 'No pod found with the specified version.' }.to_json
     end
   end
 

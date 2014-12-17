@@ -8,7 +8,7 @@ module Pod
   module TrunkApp
     class PodsController < APIController
       get '/:name', :requires_owner => false do
-        if pod = Pod.find(:name => params[:name])
+        if pod = Pod.find_by_name(params[:name])
           versions = pod.versions.select(&:published?)
           unless versions.empty?
             json_message(200, 'versions' => versions.map(&:public_attributes),
@@ -19,7 +19,7 @@ module Pod
       end
 
       get '/:name/versions/:version', :requires_owner => false do
-        if pod = Pod.find(:name => params[:name])
+        if pod = Pod.find_by_name(params[:name])
           if version = pod.versions_dataset.where(:name => params[:version]).first
             if version.published?
               json_message(200, 'messages' => version.log_messages.map(&:public_attributes),
@@ -31,7 +31,7 @@ module Pod
       end
 
       get '/:name/specs/latest', :requires_owner => false do
-        if pod = Pod.find(:name => params[:name])
+        if pod = Pod.find_by_name(params[:name])
           if version = pod.versions.select(&:published?).sort_by { |v| Version.new(v.name) }.last
             redirect version.data_url
           end
@@ -40,7 +40,7 @@ module Pod
       end
 
       get '/:name/specs/:version', :requires_owner => false do
-        if pod = Pod.find(:name => params[:name])
+        if pod = Pod.find_by_name(params[:name])
           if version = pod.versions_dataset.where(:name => params[:version]).first
             if version.published?
               redirect version.data_url
