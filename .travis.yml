@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-- 2.1.2
+- 2.1.3
 before_script:
 - env RACK_ENV=test bundle exec rake db:bootstrap
 install: bundle install --deployment --without development production
