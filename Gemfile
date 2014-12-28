@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby File.read('.ruby-version').strip
+ruby File.read('.ruby-version').chomp
 
 gem 'activesupport'
 gem 'cocoapods-core' #, :git => 'https://github.com/CocoaPods/Core.git'
