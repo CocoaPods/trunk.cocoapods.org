@@ -21,6 +21,7 @@ GEM
       fuzzy_match (~> 2.0.4)
       nap (~> 0.8.0)
     daemons (1.1.9)
+    diff_matcher (2.7.0)
     dotenv (0.7.0)
     erubis (2.7.0)
     eventmachine (1.0.3)
@@ -131,6 +132,7 @@ DEPENDENCIES
   activesupport
   bacon
   cocoapods-core
+  diff_matcher
   foreman
   json (~> 1.8)
   kicker
