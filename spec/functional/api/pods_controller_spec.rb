@@ -89,8 +89,8 @@ module Pod::TrunkApp
       expected_response = {
         'error' => 'The Pod Specification did not pass validation.',
         'data' => {
-          'errors'   => ['Missing required attribute `name`.', 'A version is required.'],
-          'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
+          'errors'   => ['Missing required attribute`name`.', 'A version is required.'],
+          'warnings' => ['Missing required attribute`license`.', 'Missing license type.']
         }
       }
       json_response.should.json_eq expected_response
