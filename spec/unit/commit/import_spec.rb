@@ -158,7 +158,7 @@ module Pod::TrunkApp
       commit = @existing_pod.versions.last.commits.last
       commit.committer.should == Owner.first(:email => 'test.user@example.com') # Owner.unclaimed
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
-      commit.specification_data.should == fixture_read('GitHub/KFData.podspec.json')
+      commit.specification_data.should.json_eq fixture_read('GitHub/KFData.podspec.json')
 
       # Updated the version correctly.
       #

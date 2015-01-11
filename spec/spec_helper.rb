@@ -1,5 +1,6 @@
 require 'bacon'
 require 'pretty_bacon'
+require 'diff_matcher'
 
 require 'rack/test'
 require 'digest'
@@ -34,6 +35,13 @@ end
 
 class Should
   include SpecHelpers::ModelAssertions
+
+  def json_eq(expected)
+    expected = expected.is_a?(String) ? JSON.parse(expected) : expected
+    actual   = @object.is_a?(String)  ? JSON.parse(@object)  : @object
+    diff = DiffMatcher.difference(expected, actual, :color_scheme => :black_background)
+    satisfy(diff) { diff.nil? }
+  end
 end
 
 module Bacon
