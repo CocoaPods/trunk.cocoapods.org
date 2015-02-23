@@ -33,6 +33,10 @@ module Pod
         @specification.to_json(*a)
       end
 
+      def to_pretty_json(*a)
+        @specification.to_pretty_json(*a)
+      end
+
       def valid?
         linter.lint
       end

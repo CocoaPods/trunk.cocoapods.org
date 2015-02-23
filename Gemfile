@@ -2,11 +2,10 @@ source 'https://rubygems.org'
 ruby File.read('.ruby-version').chomp
 
 gem 'activesupport'
-gem 'cocoapods-core' #, :git => 'https://github.com/CocoaPods/Core.git'
+gem 'cocoapods-core', '0.36.0.beta.2'
 gem 'tobias-sinatra-url-for'
 gem 'json', '~> 1.8'
 gem 'mail'
-gem 'nap', :git => 'https://github.com/alloy/nap.git', :branch => 'error'
 gem 'newrelic_rpm'
 gem 'peiji-san', :git => 'https://github.com/alloy/peiji-san.git'
 gem 'pg'

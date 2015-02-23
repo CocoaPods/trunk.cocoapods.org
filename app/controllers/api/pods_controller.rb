@@ -94,7 +94,7 @@ module Pod
           end
         end
 
-        response = version.push!(@owner, JSON.pretty_generate(specification))
+        response = version.push!(@owner, specification.to_pretty_json)
         if response.success?
           redirect url(version.resource_path)
         elsif response.failed_on_our_side?
