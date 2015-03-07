@@ -137,7 +137,7 @@ module Pod
           end
         end
 
-        response = version.push!(@owner, specification.to_pretty_json)
+        response = version.push!(@owner, specification.to_pretty_json, 'Add')
         if response.success?
           redirect url(version.resource_path)
         elsif response.failed_on_our_side?
@@ -156,6 +156,54 @@ module Pod
                           'https://status.github.com and try again later in case the pod is ' \
                           'still not published.')
         elsif response.failed_due_to_timeout?
+          json_error(504, 'Calling the GitHub commit API timed out. Please check GitHub’s ' \
+                          'status at https://status.github.com and try again later.')
+        end
+      end
+
+      patch '/:name/deprecated', :requires_owner => true do
+        pod = Pod.find_by_name_and_owner(params[:name], @owner) do
+          json_error(403, 'You are not allowed to deprecate this pod.')
+        end
+        unless pod
+          json_error(404, 'No pod found with the specified name.')
+        end
+
+        deprecated_params = JSON.parse(request.body.read)
+        if !deprecated_params.kind_of?(Hash) || deprecated_params.empty?
+          message = 'Please send the deprecation in the body of your post.'
+          json_error(422, message)
+        end
+
+        if in_favor_of = deprecated_params['in_favor_of']
+          unless Pod.find_by_name(in_favor_of)
+            json_error(422, 'You cannot deprecate a pod in favor of a pod that does not exist.')
+          end
+        end
+
+        responses = DeprecateJob.new(pod, @owner, in_favor_of).deprecate!
+        unless responses.any?
+          json(422, 'There were no published versions to deprecate.')
+        end
+
+        if response.all(&:success?)
+          redirect pod.versions.last.resource_path
+        elsif responses.any?(&:failed_on_our_side?)
+          throw_internal_server_error!
+        elsif responses.any?(&:failed_on_their_side?)
+          # In case of a 5xx at GitHub’s side, this might not mean the commit
+          # didn’t get created, it can also indicate an error occurred while
+          # rendering the response, hence asking for some patience in case we
+          # still update the PodVersion with a new Commit from the GitHub
+          # post-commit hook.
+          #
+          # TODO: Ask GitHub if they have some form of transaction system in
+          # place that rolls back a commit in case an error occurs during
+          # response rendering.
+          json_error(500, 'An error occurred on GitHub’s side. Please check GitHub’s status at ' \
+                          'https://status.github.com and try again later in case the pod is ' \
+                          'still not published.')
+        elsif responses.any(&:failed_due_to_timeout?)
           json_error(504, 'Calling the GitHub commit API timed out. Please check GitHub’s ' \
                           'status at https://status.github.com and try again later.')
         end

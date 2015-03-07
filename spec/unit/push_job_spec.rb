@@ -8,7 +8,7 @@ module Pod::TrunkApp
         @pod = Pod.create(:name => 'AFNetworking')
         @version = @pod.add_version(:name => '1.2.0')
         @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
-        @job = PushJob.new(@version, @owner, fixture_read('GitHub/KFData.podspec.json'))
+        @job = PushJob.new(@version, @owner, fixture_read('GitHub/KFData.podspec.json'), 'Add')
       end
 
       before do
