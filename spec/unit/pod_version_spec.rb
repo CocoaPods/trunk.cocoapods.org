@@ -181,19 +181,19 @@ module Pod::TrunkApp
 
       it 'adds the committer as the owner of the pod if the pod has no owners yet' do
         @pod.reload.owners.should == []
-        @version.push! @committer, 'DATA'
+        @version.push! @committer, 'DATA', 'Add'
         @pod.reload.owners.should == [@committer]
       end
 
       it 'adds a commit' do
         @version.commits.should == []
-        @version.push! @committer, 'DATA'
+        @version.push! @committer, 'DATA', 'Add'
         @version.commits.size.should == 1
         @version.commits.last.sha.should == '3ca23060197547eef92983f15590b5a87270615f'
       end
 
       it 'returns truthy' do
-        @version.push!(@committer, 'DATA').should == @response
+        @version.push!(@committer, 'DATA', 'Add').should == @response
       end
 
       before do
@@ -203,18 +203,18 @@ module Pod::TrunkApp
 
       it 'does not add the committer as the owner of the pod if the pod pushing fails' do
         @pod.reload.owners.should == []
-        @version.push! @committer, 'DATA'
+        @version.push! @committer, 'DATA', 'Add'
         @pod.reload.owners.should == []
       end
 
       it 'does not add a commit' do
         @version.commits.should == []
-        @version.push! @committer, 'DATA'
+        @version.push! @committer, 'DATA', 'Add'
         @version.commits.should == []
       end
 
       it 'returns falsy' do
-        @version.push!(@committer, 'DATA').should.not.be.success
+        @version.push!(@committer, 'DATA', 'Add').should.not.be.success
       end
 
     end

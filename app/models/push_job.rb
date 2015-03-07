@@ -7,14 +7,14 @@ require 'app/models/pod_version'
 module Pod
   module TrunkApp
     class PushJob
-      attr_reader :pod_version, :committer, :specification_data, :duration
+      attr_reader :pod_version, :committer, :specification_data, :job_type, :duration
 
-      def initialize(pod_version, committer, specification_data)
-        @pod_version, @committer, @specification_data = pod_version, committer, specification_data
+      def initialize(pod_version, committer, specification_data, job_type)
+        @pod_version, @committer, @specification_data, @job_type = pod_version, committer, specification_data, job_type
       end
 
       def commit_message
-        "[Add] #{pod_version.description}"
+        "[#{job_type}] #{pod_version.description}"
       end
 
       def push!
