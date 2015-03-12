@@ -322,7 +322,9 @@ module Pod::TrunkApp
       create_pod_version!
       create_session_with_owner
       @pod.add_owner(@owner)
-      @pod.add_version(:name => '0.2.1')
+      @pod.add_version(:name => '0.2.1').add_commit(valid_commit_attrs)
+      @pod.add_version(:name => '1.2.0-beta1').add_commit(valid_commit_attrs)
+      @pod.add_version(:name => '6.2.1')
       @version.add_commit(valid_commit_attrs)
     end
 
@@ -331,7 +333,7 @@ module Pod::TrunkApp
       last_response.status.should == 404
       get '/FANetworking/specs/latest'
       last_response.status.should == 404
-      get '/AFNetworking/specs/0.2.1'
+      get '/AFNetworking/specs/6.2.1'
       last_response.status.should == 404
     end
 
