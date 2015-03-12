@@ -32,7 +32,7 @@ module Pod
 
       get '/:name/specs/latest', :requires_owner => false do
         if pod = Pod.find_by_name(params[:name])
-          if version = pod.versions.select(&:published?).sort_by { |v| Version.new(v.name) }.last
+          if version = pod.versions { |ds| ds.eager :commits }.select(&:published?).max_by { |v| Version.new(v.name) }
             redirect version.data_url
           end
         end
