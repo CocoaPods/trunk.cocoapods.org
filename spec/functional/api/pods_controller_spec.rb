@@ -76,6 +76,15 @@ module Pod::TrunkApp
       last_response.status.should == 422
     end
 
+    it 'fails when the client CocoaPods version is lower than the minimum' do
+      lambda do
+        post '/', spec.to_json, 'User-Agent' => 'CocoaPods/0.1.0.pre.1'
+      end.should.not.change { Pod.count + PodVersion.count }
+
+      last_response.status.should == 422
+      json_response['error'].should.match /minimum CocoaPods version/
+    end
+
     it 'fails with a spec that does not pass a quick lint' do
       spec.name = nil
       spec.version = nil

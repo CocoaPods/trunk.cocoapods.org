@@ -7,6 +7,8 @@ require 'cocoapods-core/version'
 module Pod
   module TrunkApp
     class PodsController < APIController
+      MINIMUM_COCOAPODS_VERSION = Version.new(ENV['TRUNK_MINIMUM_COCOAPODS_VERSION'] || '0.36.0')
+
       get '/:name', :requires_owner => false do
         if pod = Pod.find_by_name(params[:name])
           versions = pod.versions.select(&:published?)
@@ -57,6 +59,15 @@ module Pod
                           'blog posts: ' \
                           'http://blog.cocoapods.org/CocoaPods-Trunk/ and ' \
                           'http://blog.cocoapods.org/Claim-Your-Pods/')
+        end
+
+        if version = /CocoaPods\/([0-9a-z\.]+)/i.match(env['User-Agent'])
+          if Version.new(version[1]) < MINIMUM_COCOAPODS_VERSION
+            message = 'The minimum CocoaPods version allowed to push new ' \
+                      "specs is `#{MINIMUM_COCOAPODS_VERSION}`. Please update " \
+                      'your version of CocoaPods to push this specification.'
+            json_error(422, message)
+          end
         end
 
         specification = SpecificationWrapper.from_json(request.body.read)
