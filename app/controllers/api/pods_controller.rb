@@ -7,7 +7,7 @@ require 'cocoapods-core/version'
 module Pod
   module TrunkApp
     class PodsController < APIController
-      MINIMUM_COCOAPODS_VERSION = Version.new(ENV['TRUNK_MINIMUM_COCOAPODS_VERSION'] || '0.36.0')
+      MINIMUM_COCOAPODS_VERSION = Version.new(ENV['TRUNK_MINIMUM_COCOAPODS_VERSION'].dup || '0.36.0')
 
       get '/:name', :requires_owner => false do
         if pod = Pod.find_by_name(params[:name])
