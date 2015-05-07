@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby File.read('.ruby-version').chomp
 
 gem 'activesupport'
-gem 'cocoapods-core', '0.36.0'
+gem 'cocoapods-core'
 gem 'tobias-sinatra-url-for'
 gem 'json', '~> 1.8'
 gem 'mail'
