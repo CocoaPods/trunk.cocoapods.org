@@ -42,6 +42,7 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
   hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 
   Webhook.pod_created = [
+    "https://feeds-cocoapods-org.herokuapp.com#{hook_path}"
   ]
   Webhook.version_created = [
   ]
