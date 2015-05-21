@@ -1,7 +1,6 @@
 script src="/assets/app.js"
 script src="/claims/javascript/typeahead.bundle.min.js"
 
-
 h1 Claim your Pod
 
 p You can use the form below to claim all the Pods you have already published to be registered as being ‘owned’ by you.
@@ -38,6 +37,7 @@ form.form-horizontal role="form" action="/claims" method="POST"
     .col-sm-offset-3.col-sm-4
       input.btn.btn-default type="submit" name="button" id="button" value="SEND"
 
+p Note you can use <code>pod trunk info [pod]</code> to get information on a pod and <code>pod trunk me</code> can be used to verify your local account.
 
 javascript:
   var cocoapods = function(query, cb) {
