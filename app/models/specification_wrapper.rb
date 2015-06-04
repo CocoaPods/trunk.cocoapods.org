@@ -1,4 +1,5 @@
 require 'cocoapods-core'
+require 'shellwords'
 
 module Pod
   module TrunkApp
@@ -46,6 +47,20 @@ module Pod
         results['warnings'] = remove_prefixes(linter.warnings) unless linter.warnings.empty?
         results['errors']   = remove_prefixes(linter.errors)   unless linter.errors.empty?
         results
+      end
+
+      def validate_public_access
+        return validate_http if @specification.source[:http]
+        return validate_git if @specification.source[:git]
+        true
+      end
+
+      def validate_http
+        system("curl -IL #{ Shellwords.escape @specification.source[:http] } -f")
+      end
+
+      def validate_git
+        system("git ls-remote #{ Shellwords.escape @specification.source[:git] } HEAD")
       end
 
       private

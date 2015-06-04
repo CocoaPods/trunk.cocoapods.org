@@ -39,6 +39,7 @@ module Pod::TrunkApp
     before do
       response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
+      SpecificationWrapper.any_instance.stubs(:validate_public_access).returns(true)
 
       sign_in!
     end
@@ -123,6 +124,22 @@ module Pod::TrunkApp
       last_response.status.should == 409
       last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
     end
+
+    # pending "does a HTTP check for http sources" do
+    #
+    # end
+    #
+    # pending "does a git ls-remote check for git sources" do
+    #
+    # end
+    #
+    # pending "gives an error if http check fails" do
+    #
+    # end
+    #
+    # pending "gives an error if git check fails" do
+    #
+    # end
 
     it 'creates new pod and version records, then redirects' do
       lambda do

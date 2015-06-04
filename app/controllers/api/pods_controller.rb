@@ -75,6 +75,11 @@ module Pod
           message = 'Unable to load a Pod Specification from the provided input.'
           json_error(400, message)
         end
+
+        unless specification.validate_public_access
+          json_error(403, 'Source code for pod not found.')
+        end
+
         unless specification.valid?
           message = 'The Pod Specification did not pass validation.'
           data = specification.validation_errors
