@@ -57,7 +57,7 @@ module Pod
       end
 
       def validate_http
-        wrap_timeout proc { Pod::HTTP.validate_url(@specification.source[:http]) }
+        wrap_timeout proc { HTTP.validate_url(@specification.source[:http]) }
       end
 
       def validate_git
