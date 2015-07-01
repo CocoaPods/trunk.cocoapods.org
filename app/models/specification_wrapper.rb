@@ -61,17 +61,21 @@ module Pod
       end
 
       def validate_git
-        wrap_timeout proc { system('git', 'ls-remote', @specification.source[:git], 'HEAD') }
+        ref = @specification.source[:tag] ||
+          @specification.source[:commit] ||
+          @specification.source[:branch] ||
+          'HEAD'
+        wrap_timeout proc { system('git', 'ls-remote', @specification.source[:git], ref) }
       end
 
       private
 
       def wrap_timeout(closure)
         Timeout.timeout(5) do
-          return closure.call
+          closure.call
         end
       rescue Timeout::Error
-          return false
+        false
       end
 
       def linter

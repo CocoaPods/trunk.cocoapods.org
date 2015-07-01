@@ -208,7 +208,9 @@ module Pod::TrunkApp
         post '/', spec.to_json
       end.should.not.change { Commit.count }
       last_response.status.should == 403
-      json_response.should == { 'error' => 'Source code for pod not found.' }
+      error_msg = 'Source code for your Pod was not accessible to CocoaPods Trunk. '\
+        'Is it a private repo or behind a username/password on http?'
+      json_response.should == { 'error' => error_msg }
     end
 
     it 'gives an error if git check fails' do
@@ -217,7 +219,9 @@ module Pod::TrunkApp
         post '/', spec.to_json
       end.should.not.change { Commit.count }
       last_response.status.should == 403
-      json_response.should == { 'error' => 'Source code for pod not found.' }
+      error_msg = 'Source code for your Pod was not accessible to CocoaPods Trunk. '\
+        'Is it a private repo or behind a username/password on http?'
+      json_response.should == { 'error' => error_msg }
     end
 
     # pending "uses the CocoaPods HTTP validation api" do
@@ -229,7 +233,7 @@ module Pod::TrunkApp
 
     it 'uses git ls for a git source' do
       SpecificationWrapper.any_instance.expects(:system)
-        .with('git', 'ls-remote', 'https://github.com/AFNetworking/AFNetworking.git', 'HEAD')
+        .with('git', 'ls-remote', 'https://github.com/AFNetworking/AFNetworking.git', '1.2.0')
         .returns(true)
       post '/', spec.to_json
     end
