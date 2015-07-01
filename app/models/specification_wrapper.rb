@@ -56,11 +56,11 @@ module Pod
       end
 
       def validate_http
-        system("curl -IL #{ Shellwords.escape @specification.source[:http] } -f")
+        Pod::HTTP.validate_url @specification.source[:http]
       end
 
       def validate_git
-        system("git ls-remote #{ Shellwords.escape @specification.source[:git] } HEAD")
+        system("git", "ls-remote", @specification.source[:git], "HEAD")
       end
 
       private
