@@ -39,7 +39,7 @@ module Pod::TrunkApp
     before do
       response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
-      SpecificationWrapper.any_instance.stubs(:validate_public_access).returns(true)
+      SpecificationWrapper.any_instance.stubs(:publicly_accessible?).returns(true)
 
       sign_in!
     end

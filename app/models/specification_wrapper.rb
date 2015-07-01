@@ -49,7 +49,7 @@ module Pod
         results
       end
 
-      def validate_public_access
+      def publicly_accessible?
         return validate_http if @specification.source[:http]
         return validate_git if @specification.source[:git]
         true

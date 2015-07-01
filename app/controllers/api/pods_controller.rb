@@ -76,7 +76,7 @@ module Pod
           json_error(400, message)
         end
 
-        unless specification.validate_public_access
+        unless specification.publicly_accessible?
           json_error(403, 'Source code for pod not found.')
         end
 
