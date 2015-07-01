@@ -1,5 +1,6 @@
 require 'cocoapods-core'
 require 'shellwords'
+require 'timeout'
 
 module Pod
   module TrunkApp
@@ -56,14 +57,24 @@ module Pod
       end
 
       def validate_http
-        Pod::HTTP.validate_url @specification.source[:http]
+       wrap_timeout Proc.new({ Pod::HTTP.validate_url @specification.source[:http] })
       end
 
       def validate_git
-        system("git", "ls-remote", @specification.source[:git], "HEAD")
+        wrap_timeout Proc.new({ system('git', 'ls-remote', @specification.source[:git], 'HEAD') })
       end
 
       private
+
+      def wrap_timeout proc
+        begin
+          Timeout.timeout(5) do
+           return proc.call
+          end
+        rescue Timeout::Error
+          return false
+        end
+      end
 
       def linter
         @linter ||= Specification::Linter.new(@specification)
