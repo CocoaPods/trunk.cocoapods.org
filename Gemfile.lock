@@ -16,7 +16,7 @@ GEM
     ast (2.0.0)
     backports (3.6.0)
     bacon (1.2.0)
-    cocoapods-core (0.37.1)
+    cocoapods-core (0.38.0.beta.1)
       activesupport (>= 3.2.15)
       fuzzy_match (~> 2.0.4)
       nap (~> 0.8.0)
@@ -130,7 +130,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   bacon
-  cocoapods-core
+  cocoapods-core (>= 0.38.0.beta.1)
   foreman
   json (~> 1.8)
   kicker
@@ -157,3 +157,6 @@ DEPENDENCIES
   terminal-table
   thin
   tobias-sinatra-url-for
+
+BUNDLED WITH
+   1.10.5
