@@ -1,4 +1,6 @@
 require 'cocoapods-core'
+require 'shellwords'
+require 'timeout'
 
 module Pod
   module TrunkApp
@@ -48,7 +50,33 @@ module Pod
         results
       end
 
+      def publicly_accessible?
+        return validate_http if @specification.source[:http]
+        return validate_git if @specification.source[:git]
+        true
+      end
+
       private
+
+      def wrap_timeout(&blk)
+        Timeout.timeout(5) do
+          blk.call
+        end
+      rescue Timeout::Error
+        false
+      end
+
+      def validate_http
+        wrap_timeout { HTTP.validate_url(@specification.source[:http]) }
+      end
+
+      def validate_git
+        ref = @specification.source[:tag] ||
+          @specification.source[:commit] ||
+          @specification.source[:branch] ||
+          'HEAD'
+        wrap_timeout { system('git', 'ls-remote', @specification.source[:git], ref) }
+      end
 
       def linter
         @linter ||= Specification::Linter.new(@specification)

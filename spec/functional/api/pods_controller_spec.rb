@@ -1,5 +1,6 @@
 require File.expand_path('../../../spec_helper', __FILE__)
 require 'app/controllers/api/pods_controller'
+require 'cocoapods-core'
 
 module SpecHelpers::PodsController
   include SpecHelpers::CommitResponse
@@ -39,6 +40,7 @@ module Pod::TrunkApp
     before do
       response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
+      SpecificationWrapper.any_instance.stubs(:publicly_accessible?).returns(true)
 
       sign_in!
     end
@@ -171,6 +173,73 @@ module Pod::TrunkApp
     end
   end
 
+  describe PodsController, 'when POSTing pod versions with an authenticated owner with validation' do
+    extend SpecHelpers::PodsController
+
+    before do
+      response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      PushJob.any_instance.stubs(:push!).returns(response)
+
+      sign_in!
+    end
+
+    it 'does a HTTP check for http sources' do
+      SpecificationWrapper.any_instance.stubs(:validate_http).returns(true)
+
+      spec.source = { :http => 'https://hello.com' }
+      lambda do
+        post '/', spec.to_json
+      end.should.change { Commit.count }
+    end
+
+    it 'does a git ls-remote check for git sources' do
+      SpecificationWrapper.any_instance.stubs(:validate_git).returns(true)
+
+      lambda do
+        post '/', spec.to_json
+      end.should.change { Commit.count }
+    end
+
+    it 'gives an error if http check fails' do
+      SpecificationWrapper.any_instance.stubs(:validate_http).returns(false)
+
+      spec.source = { :http => 'hello' }
+      lambda do
+        post '/', spec.to_json
+      end.should.not.change { Commit.count }
+      last_response.status.should == 403
+      error_msg = 'Source code for your Pod was not accessible to CocoaPods Trunk. '\
+        'Is it a private repo or behind a username/password on http?'
+      json_response.should == { 'error' => error_msg }
+    end
+
+    it 'gives an error if git check fails' do
+      SpecificationWrapper.any_instance.stubs(:validate_git).returns(false)
+      lambda do
+        post '/', spec.to_json
+      end.should.not.change { Commit.count }
+      last_response.status.should == 403
+      error_msg = 'Source code for your Pod was not accessible to CocoaPods Trunk. '\
+        'Is it a private repo or behind a username/password on http?'
+      json_response.should == { 'error' => error_msg }
+    end
+
+    # pending "uses the CocoaPods HTTP validation api" do
+    #   spec.source = { :http => "http://hello.com" }
+    #   # Can't figure out how to do this
+    #   HTTP.expects(:validate_url).with("http://hello.com").returns(true)
+    #   post '/', spec.to_json
+    # end
+
+    it 'uses git ls for a git source' do
+      SpecificationWrapper.any_instance.expects(:system)
+        .with('git', 'ls-remote', 'https://github.com/AFNetworking/AFNetworking.git', '1.2.0')
+        .returns(true)
+      post '/', spec.to_json
+    end
+
+  end
+
   describe PodsController, 'with an unauthenticated consumer' do
     extend SpecHelpers::PodsController
 
@@ -248,6 +317,7 @@ module Pod::TrunkApp
     before do
       response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
       PushJob.any_instance.stubs(:push!).returns(response)
+      SpecificationWrapper.any_instance.stubs(:publicly_accessible?).returns(true)
 
       sign_in!
     end
