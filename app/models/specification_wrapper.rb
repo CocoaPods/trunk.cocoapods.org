@@ -56,8 +56,18 @@ module Pod
         true
       end
 
+      private
+
+      def wrap_timeout(&blk)
+        Timeout.timeout(5) do
+          blk.call
+        end
+      rescue Timeout::Error
+        false
+      end
+
       def validate_http
-        wrap_timeout proc { HTTP.validate_url(@specification.source[:http]) }
+        wrap_timeout { HTTP.validate_url(@specification.source[:http]) }
       end
 
       def validate_git
@@ -65,17 +75,7 @@ module Pod
           @specification.source[:commit] ||
           @specification.source[:branch] ||
           'HEAD'
-        wrap_timeout proc { system('git', 'ls-remote', @specification.source[:git], ref) }
-      end
-
-      private
-
-      def wrap_timeout(closure)
-        Timeout.timeout(5) do
-          closure.call
-        end
-      rescue Timeout::Error
-        false
+        wrap_timeout { system('git', 'ls-remote', @specification.source[:git], ref) }
       end
 
       def linter
