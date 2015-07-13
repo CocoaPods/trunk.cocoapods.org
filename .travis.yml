@@ -2,9 +2,3 @@ language: ruby
 before_script:
 - env RACK_ENV=test bundle exec rake db:bootstrap
 install: bundle install --deployment --without development production
-notifications:
-  campfire:
-    on_success: change
-    on_failure: always
-    rooms:
-      secure: YbYdWUr8JEXZsHWMW58TWq1I3fE1fig4nFFINBPEVeL0HDK3DmLXvVnVf74+/aVMCU+PK1n6TqT15WqJO2dGC5de0VkPlPJJ3ubpxVZiAW6qg0GJjs3NejFou8Q2/BJ9CiTQ5LfDEpMBVLtYdRZmLDJ3WAiwvkUS4BnhR9Xhj5U=
