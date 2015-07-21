@@ -33,10 +33,26 @@ module Pod
       end
 
       get '/:name/specs/latest', :requires_owner => false do
-        if pod = Pod.find_by_name(params[:name])
-          if version = pod.versions { |ds| ds.eager :commits }.select(&:published?).max_by { |v| Version.new(v.name) }
-            redirect version.data_url
-          end
+
+        commits = DB[<<-SQL, params[:name]].all
+          SELECT DISTINCT ON (pod_versions.id)
+              pods.name         "name",
+              pod_versions.name "version",
+              commits.sha       "sha"
+          FROM
+              pods
+          LEFT JOIN
+              pod_versions ON pods.id = pod_versions.pod_id
+          INNER JOIN
+              commits      ON pod_versions.id = commits.pod_version_id
+          WHERE
+              pods.name = ? AND pods.deleted is false
+          ORDER BY
+              pod_versions.id
+        SQL
+        if commit = commits.max_by { |c| Version.new(c[:version]) }
+          name = commit[:name]
+          redirect format(PodVersion::DATA_URL, commit[:sha], File.join('Specs', name, commit[:version], "#{name}.podspec.json"))
         end
         json_error(404, 'No pod found with the specified name.')
       end
