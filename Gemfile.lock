@@ -16,7 +16,7 @@ GEM
     ast (2.0.0)
     backports (3.6.0)
     bacon (1.2.0)
-    cocoapods-core (0.38.0)
+    cocoapods-core (0.38.2)
       activesupport (>= 3.2.15)
       fuzzy_match (~> 2.0.4)
       nap (~> 0.8.0)
@@ -159,4 +159,4 @@ DEPENDENCIES
   tobias-sinatra-url-for
 
 BUNDLED WITH
-   1.10.5
+   1.10.6
