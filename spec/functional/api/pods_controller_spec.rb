@@ -238,6 +238,15 @@ module Pod::TrunkApp
       post '/', spec.to_json
     end
 
+    it 'uses git ls for a BitBucket git source' do
+      SpecificationWrapper.any_instance.expects(:system)
+        .with('git', 'ls-remote', 'https://bitbucket.org/technologyastronauts/oss_flounder.git', '1.2.0')
+        .returns(true)
+      spec.source = { :git => 'https://bitbucket.org/technologyastronauts/oss_flounder.git', :tag => '1.2.0' }
+
+      post '/', spec.to_json
+    end
+
     it 'does not not run git ls for a non-GitHub git source' do
       SpecificationWrapper.any_instance.expects(:system).never
       spec.source = { :git => 'https://orta.io/thingy.git', :tag => '0.1.2' }
