@@ -71,6 +71,10 @@ module Pod
       end
 
       def validate_git
+        # We've had trouble with Heroku's git install, see trunk.cocoapods.org/pull/141
+        url = @specification.source[:git]
+        return true unless url.include?('github.com') || url.include?('bitbucket.org')
+
         ref = @specification.source[:tag] ||
           @specification.source[:commit] ||
           @specification.source[:branch] ||
