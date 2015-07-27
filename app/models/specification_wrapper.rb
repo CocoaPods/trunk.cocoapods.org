@@ -71,6 +71,9 @@ module Pod
       end
 
       def validate_git
+        # We've had trouble with Heroku's git install
+        return true unless @specification.source[:git].include? 'github.com'
+
         ref = @specification.source[:tag] ||
           @specification.source[:commit] ||
           @specification.source[:branch] ||
