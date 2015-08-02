@@ -92,6 +92,18 @@ module Pod
             handle_modified(spec, pod, committer, commit_sha)
           end
         end
+
+        def self.handle_removed(spec, pod, committer, commit_sha)
+          if version = PodVersion.find(:pod => pod, :name => spec.version.to_s)
+            LogMessage.create(
+              :message => "Version `#{version.description}' deleted via Github hook.",
+              :level => :warning,
+              :owner => committer
+            )
+            version.commits_dataset.delete
+            version.delete
+          end
+        end
       end
     end
   end

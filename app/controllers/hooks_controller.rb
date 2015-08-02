@@ -68,7 +68,8 @@ module Pod
           #
           {
             :added => manual_commit['added'],
-            :modified => manual_commit['modified']
+            :modified => manual_commit['modified'],
+            :removed => manual_commit['removed'],
           }.each do |type, files|
             # Only allow .json files.
             #
