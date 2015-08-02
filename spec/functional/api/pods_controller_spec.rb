@@ -106,6 +106,19 @@ module Pod::TrunkApp
       }
     end
 
+    it 'succeeds with a spec that has warnings when allow warnings has been specified' do
+      spec.license = nil
+
+      lambda do
+        lambda do
+          post '/?allow_warnings=true', spec.to_json
+        end.should.change { Pod.count }
+      end.should.change { PodVersion.count }
+      last_response.status.should == 302
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
+      Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
+    end
+
     it 'does not allow a push for an existing pod with different case' do
       @owner.add_pod(:name => spec.name.upcase)
       lambda do

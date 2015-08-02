@@ -97,9 +97,10 @@ module Pod
           ' CocoaPods Trunk. Is it a private repo or behind a username/password on http?')
         end
 
-        unless specification.valid?
+        allow_warnings = params['allow_warnings'] == 'true'
+        unless specification.valid?(:allow_warnings => allow_warnings)
           message = 'The Pod Specification did not pass validation.'
-          data = specification.validation_errors
+          data = specification.validation_errors(:allow_warnings => allow_warnings)
           error(422, { 'error' => message, 'data' => data }.to_json)
         end
 

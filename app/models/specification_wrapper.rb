@@ -39,13 +39,14 @@ module Pod
         @specification.to_pretty_json(*a)
       end
 
-      def valid?
+      def valid?(allow_warnings: false)
         linter.lint
+        allow_warnings ? linter.errors.empty? : linter.results.empty?
       end
 
-      def validation_errors
+      def validation_errors(allow_warnings: false)
         results = {}
-        results['warnings'] = remove_prefixes(linter.warnings) unless linter.warnings.empty?
+        results['warnings'] = remove_prefixes(linter.warnings) unless allow_warnings || linter.warnings.empty?
         results['errors']   = remove_prefixes(linter.errors)   unless linter.errors.empty?
         results
       end
