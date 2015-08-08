@@ -50,6 +50,8 @@ module Pod
             end
 
             pod = Pod.find_or_create(:name => spec.name)
+            
+            # TODO Move this into handle_added ?
             pod.add_owner(committer) if pod.was_created?
 
             send(:"handle_#{type}", spec, pod, committer, commit_sha)
@@ -93,6 +95,13 @@ module Pod
           end
         end
 
+        # If we have a version for the given pod and spec, we remove it.
+        #
+        # @param spec [Pod::Specification] The removed podspec.
+        # @param pod [Pod] The removed version's pod.
+        # @param committer [Owner] The committer.
+        # @param commit_sha [String] The git commit SHA-1.
+        #
         def self.handle_removed(spec, pod, committer, commit_sha)
           if version = PodVersion.find(:pod => pod, :name => spec.version.to_s)
             LogMessage.create(
