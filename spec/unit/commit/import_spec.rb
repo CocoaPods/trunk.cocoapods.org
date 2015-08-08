@@ -3,38 +3,29 @@ require File.expand_path('../../../spec_helper', __FILE__)
 module Pod::TrunkApp
   describe Commit::Import, 'when importing' do
 
-    # TODO: This is a bad sign.
-    #
-    def trigger_commit_with_fake_data
+    def trigger_commit_with_fake_data(type)
       Commit::Import.import(
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
-        :modified,
+        type,
         ['Specs/KFData/1.0.1/KFData.podspec.json'],
         'test.user@example.com',
         'Test User'
-      )
-      Commit::Import.import(
-        '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
-        :added,
-        ['Specs/KFData/1.0.1/KFData.podspec.json'],
-        'test.user@example.com',
-        'Keith Smiley'
       )
     end
 
     it 'gets the podspec data from the right URL' do
       expected_url = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/" \
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
-      REST.expects(:get).with(expected_url).twice
+      REST.expects(:get).with(expected_url).once
         .returns(rest_response('GitHub/ABContactHelper.podspec.json'))
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
     end
 
     it 'processes payload data and creates a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(:added)
       end.should.change { Pod.count }
 
       pod = Pod.find(:name => 'ABContactHelper')
@@ -86,7 +77,7 @@ module Pod::TrunkApp
 
     it 'does add the add commit and a version if missing and version does not exist' do
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
 
       # Did log a big fat warning.
       #
@@ -101,7 +92,7 @@ module Pod::TrunkApp
 
     it 'marks a commit as being imported' do
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
       last_version = @existing_pod.reload.versions.last
       commit = last_version.last_published_by
       commit.should.be.imported
@@ -116,7 +107,7 @@ module Pod::TrunkApp
     it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
 
       @existing_pod.reload
 
@@ -145,7 +136,7 @@ module Pod::TrunkApp
     end
 
     it 'processes payload data and creates a new submission job (because the version exists)' do
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
 
       @existing_pod.reload
 
@@ -172,7 +163,7 @@ module Pod::TrunkApp
       committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
 
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(:modified)
       end.should.not.change { Owner.count }
 
       commit = @existing_pod.reload.versions.last.last_published_by
@@ -182,14 +173,14 @@ module Pod::TrunkApp
     it 'does not update the committer name if the committer existed' do
       committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
 
       committer.reload.name.should == 'Test User'
     end
 
     it 'adds a new committer to the commit' do
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(:modified)
       end.should.change { Owner.count }
 
       committer = Owner.first(:email => 'test.user@example.com')
@@ -204,13 +195,13 @@ module Pod::TrunkApp
       @existing_version.delete
       @existing_pod.delete
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
 
       Pod.find(:name => 'KFData').owners.map(&:email).should == ['test.user@example.com']
     end
 
     it 'does *not* set the committer as the pod owner if the pod already existed' do
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
 
       @existing_pod.reload.owners.map(&:email).should.not.include 'test.user@example.com'
     end
@@ -226,7 +217,7 @@ module Pod::TrunkApp
       )
 
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(:added)
       end.should.change { Commit.count }
 
       commit = @existing_pod.reload.versions.last.last_published_by
@@ -245,7 +236,7 @@ module Pod::TrunkApp
       PodVersion.any_instance.expects(:add_commit).never
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
     end
 
   end
