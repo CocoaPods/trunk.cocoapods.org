@@ -50,8 +50,8 @@ module Pod
             end
 
             pod = Pod.find_or_create(:name => spec.name)
-            
-            # TODO Move this into handle_added ?
+
+            # TODO: Move this into handle_added ?
             pod.add_owner(committer) if pod.was_created?
 
             send(:"handle_#{type}", spec, pod, committer, commit_sha)
