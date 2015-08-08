@@ -1,0 +1,202 @@
+{
+  "ref": "refs/heads/master",
+  "before": "954827860b5a6da6a60909acc350019d46535447",
+  "after": "d54a12e8a5954735406166c7c1ca64e4300589cb",
+  "created": false,
+  "deleted": false,
+  "forced": false,
+  "base_ref": null,
+  "compare": "https://github.com/CocoaPods/Specs/compare/954827860b5a...d54a12e8a595",
+  "commits": [
+    {
+      "id": "c1947f722b29c919cb8bcd16f5db27866ae2ce09",
+      "distinct": true,
+      "message": "Remove obsolete versions of Intercom",
+      "timestamp": "2015-08-06T17:46:18+01:00",
+      "url": "https://github.com/CocoaPods/Specs/commit/c1947f722b29c919cb8bcd16f5db27866ae2ce09",
+      "author": {
+        "name": "James Treanor",
+        "email": "james@intercom.io",
+        "username": "jtreanor"
+      },
+      "committer": {
+        "name": "James Treanor",
+        "email": "james@intercom.io",
+        "username": "jtreanor"
+      },
+      "added": [
+
+      ],
+      "removed": [
+        "Specs/Intercom/1.1.6/Intercom.podspec.json",
+        "Specs/Intercom/1.1.8/Intercom.podspec.json"
+      ],
+      "modified": [
+
+      ]
+    },
+    {
+      "id": "d54a12e8a5954735406166c7c1ca64e4300589cb",
+      "distinct": true,
+      "message": "Merge pull request #13374 from intercom/jtreanor/remove_old_intercom_versions\n\nRemove obsolete versions of Intercom",
+      "timestamp": "2015-08-07T14:15:57+01:00",
+      "url": "https://github.com/CocoaPods/Specs/commit/d54a12e8a5954735406166c7c1ca64e4300589cb",
+      "author": {
+        "name": "Kyle Fuller",
+        "email": "inbox@kylefuller.co.uk",
+        "username": "kylef"
+      },
+      "committer": {
+        "name": "Kyle Fuller",
+        "email": "inbox@kylefuller.co.uk",
+        "username": "kylef"
+      },
+      "added": [
+
+      ],
+      "removed": [
+        "Specs/Intercom/1.1.6/Intercom.podspec.json",
+        "Specs/Intercom/1.1.8/Intercom.podspec.json"
+      ],
+      "modified": [
+
+      ]
+    }
+  ],
+  "head_commit": {
+    "id": "d54a12e8a5954735406166c7c1ca64e4300589cb",
+    "distinct": true,
+    "message": "Merge pull request #13374 from intercom/jtreanor/remove_old_intercom_versions\n\nRemove obsolete versions of Intercom",
+    "timestamp": "2015-08-07T14:15:57+01:00",
+    "url": "https://github.com/CocoaPods/Specs/commit/d54a12e8a5954735406166c7c1ca64e4300589cb",
+    "author": {
+      "name": "Kyle Fuller",
+      "email": "inbox@kylefuller.co.uk",
+      "username": "kylef"
+    },
+    "committer": {
+      "name": "Kyle Fuller",
+      "email": "inbox@kylefuller.co.uk",
+      "username": "kylef"
+    },
+    "added": [
+
+    ],
+    "removed": [
+      "Specs/Intercom/1.1.6/Intercom.podspec.json",
+      "Specs/Intercom/1.1.8/Intercom.podspec.json"
+    ],
+    "modified": [
+
+    ]
+  },
+  "repository": {
+    "id": 2365549,
+    "name": "Specs",
+    "full_name": "CocoaPods/Specs",
+    "owner": {
+      "name": "CocoaPods",
+      "email": ""
+    },
+    "private": false,
+    "html_url": "https://github.com/CocoaPods/Specs",
+    "description": "The CocoaPods Master Repo",
+    "fork": false,
+    "url": "https://github.com/CocoaPods/Specs",
+    "forks_url": "https://api.github.com/repos/CocoaPods/Specs/forks",
+    "keys_url": "https://api.github.com/repos/CocoaPods/Specs/keys{/key_id}",
+    "collaborators_url": "https://api.github.com/repos/CocoaPods/Specs/collaborators{/collaborator}",
+    "teams_url": "https://api.github.com/repos/CocoaPods/Specs/teams",
+    "hooks_url": "https://api.github.com/repos/CocoaPods/Specs/hooks",
+    "issue_events_url": "https://api.github.com/repos/CocoaPods/Specs/issues/events{/number}",
+    "events_url": "https://api.github.com/repos/CocoaPods/Specs/events",
+    "assignees_url": "https://api.github.com/repos/CocoaPods/Specs/assignees{/user}",
+    "branches_url": "https://api.github.com/repos/CocoaPods/Specs/branches{/branch}",
+    "tags_url": "https://api.github.com/repos/CocoaPods/Specs/tags",
+    "blobs_url": "https://api.github.com/repos/CocoaPods/Specs/git/blobs{/sha}",
+    "git_tags_url": "https://api.github.com/repos/CocoaPods/Specs/git/tags{/sha}",
+    "git_refs_url": "https://api.github.com/repos/CocoaPods/Specs/git/refs{/sha}",
+    "trees_url": "https://api.github.com/repos/CocoaPods/Specs/git/trees{/sha}",
+    "statuses_url": "https://api.github.com/repos/CocoaPods/Specs/statuses/{sha}",
+    "languages_url": "https://api.github.com/repos/CocoaPods/Specs/languages",
+    "stargazers_url": "https://api.github.com/repos/CocoaPods/Specs/stargazers",
+    "contributors_url": "https://api.github.com/repos/CocoaPods/Specs/contributors",
+    "subscribers_url": "https://api.github.com/repos/CocoaPods/Specs/subscribers",
+    "subscription_url": "https://api.github.com/repos/CocoaPods/Specs/subscription",
+    "commits_url": "https://api.github.com/repos/CocoaPods/Specs/commits{/sha}",
+    "git_commits_url": "https://api.github.com/repos/CocoaPods/Specs/git/commits{/sha}",
+    "comments_url": "https://api.github.com/repos/CocoaPods/Specs/comments{/number}",
+    "issue_comment_url": "https://api.github.com/repos/CocoaPods/Specs/issues/comments{/number}",
+    "contents_url": "https://api.github.com/repos/CocoaPods/Specs/contents/{+path}",
+    "compare_url": "https://api.github.com/repos/CocoaPods/Specs/compare/{base}...{head}",
+    "merges_url": "https://api.github.com/repos/CocoaPods/Specs/merges",
+    "archive_url": "https://api.github.com/repos/CocoaPods/Specs/{archive_format}{/ref}",
+    "downloads_url": "https://api.github.com/repos/CocoaPods/Specs/downloads",
+    "issues_url": "https://api.github.com/repos/CocoaPods/Specs/issues{/number}",
+    "pulls_url": "https://api.github.com/repos/CocoaPods/Specs/pulls{/number}",
+    "milestones_url": "https://api.github.com/repos/CocoaPods/Specs/milestones{/number}",
+    "notifications_url": "https://api.github.com/repos/CocoaPods/Specs/notifications{?since,all,participating}",
+    "labels_url": "https://api.github.com/repos/CocoaPods/Specs/labels{/name}",
+    "releases_url": "https://api.github.com/repos/CocoaPods/Specs/releases{/id}",
+    "created_at": 1315748830,
+    "updated_at": "2015-08-07T07:42:20Z",
+    "pushed_at": 1438953357,
+    "git_url": "git://github.com/CocoaPods/Specs.git",
+    "ssh_url": "git@github.com:CocoaPods/Specs.git",
+    "clone_url": "https://github.com/CocoaPods/Specs.git",
+    "svn_url": "https://github.com/CocoaPods/Specs",
+    "homepage": "cocoapods.org",
+    "size": 839224,
+    "stargazers_count": 2477,
+    "watchers_count": 2477,
+    "language": "Groff",
+    "has_issues": true,
+    "has_downloads": true,
+    "has_wiki": false,
+    "has_pages": false,
+    "forks_count": 4456,
+    "mirror_url": null,
+    "open_issues_count": 7,
+    "forks": 4456,
+    "open_issues": 7,
+    "watchers": 2477,
+    "default_branch": "master",
+    "stargazers": 2477,
+    "master_branch": "master",
+    "organization": "CocoaPods"
+  },
+  "pusher": {
+    "name": "kylef",
+    "email": "inbox@kylefuller.co.uk"
+  },
+  "organization": {
+    "login": "CocoaPods",
+    "id": 1189714,
+    "url": "https://api.github.com/orgs/CocoaPods",
+    "repos_url": "https://api.github.com/orgs/CocoaPods/repos",
+    "events_url": "https://api.github.com/orgs/CocoaPods/events",
+    "members_url": "https://api.github.com/orgs/CocoaPods/members{/member}",
+    "public_members_url": "https://api.github.com/orgs/CocoaPods/public_members{/member}",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1189714?v=3",
+    "description": "The Swift & Objective C Dependency Manager"
+  },
+  "sender": {
+    "login": "kylef",
+    "id": 44164,
+    "avatar_url": "https://avatars.githubusercontent.com/u/44164?v=3",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/kylef",
+    "html_url": "https://github.com/kylef",
+    "followers_url": "https://api.github.com/users/kylef/followers",
+    "following_url": "https://api.github.com/users/kylef/following{/other_user}",
+    "gists_url": "https://api.github.com/users/kylef/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/kylef/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/kylef/subscriptions",
+    "organizations_url": "https://api.github.com/users/kylef/orgs",
+    "repos_url": "https://api.github.com/users/kylef/repos",
+    "events_url": "https://api.github.com/users/kylef/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/kylef/received_events",
+    "type": "User",
+    "site_admin": false
+  }
+}
