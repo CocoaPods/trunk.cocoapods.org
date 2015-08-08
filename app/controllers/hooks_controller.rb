@@ -63,9 +63,6 @@ module Pod
           #
           # TODO: We ignore renamed specs.
           #
-          # TODO: We ignore deleted specs.
-          # https://github.com/CocoaPods/trunk.cocoapods.org/issues/46
-          #
           {
             :added => manual_commit['added'],
             :modified => manual_commit['modified'],

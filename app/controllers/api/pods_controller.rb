@@ -46,7 +46,7 @@ module Pod
           INNER JOIN
               commits      ON pod_versions.id = commits.pod_version_id
           WHERE
-              pods.name = ? AND pods.deleted is false
+              pods.name = ? AND pods.deleted is false AND pod_versions.deleted is false
           ORDER BY
               pod_versions.id
         SQL

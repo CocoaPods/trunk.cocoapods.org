@@ -42,7 +42,11 @@ module Pod
           files.each do |file|
             next unless file =~ /\.podspec(.json)?\z/
 
+            _, name, version, = file.split(File::SEPARATOR)
+            stub_spec = ::Pod::Specification.new(nil, name) { |s| s.version = version }
+
             spec = fetch_spec(commit_sha, file)
+            spec = stub_spec if type == :removed
             next unless spec
 
             unless committer = Owner.find_by_email(committer_email)
@@ -83,6 +87,7 @@ module Pod
             :committer => committer,
             :imported => true
           )
+          version.update(:deleted => false)
         end
 
         # We only check if we have a commit for this pod and version and,
@@ -109,8 +114,7 @@ module Pod
               :level => :warning,
               :owner => committer
             )
-            version.commits_dataset.delete
-            version.delete
+            version.update(:deleted => true)
           end
         end
       end
