@@ -91,7 +91,7 @@ module Pod::TrunkApp
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
 
-    # Create existing pod version
+    # Create existing pod version.
     #
     before do
       @existing_version = PodVersion.create(:pod => @existing_pod, :name => @existing_spec.version.version)
