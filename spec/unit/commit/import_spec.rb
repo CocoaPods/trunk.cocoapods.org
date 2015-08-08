@@ -239,5 +239,25 @@ module Pod::TrunkApp
       trigger_commit_with_fake_data(:modified)
     end
 
+    it 'marks removed pod versions as deleted' do
+      pod = Pod.create(:name => 'Intercom')
+      PodVersion.create(:pod => pod, :name => '1.1.6')
+      PodVersion.create(:pod => pod, :name => '1.1.8')
+      undeleted = PodVersion.create(:pod => pod, :name => '2.0.0')
+
+      REST.stubs(:get).returns(rest_response('GitHub/Intercom.podspec.remove.json'))
+
+      Commit::Import.import(
+        'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
+        :removed,
+        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json),
+        'test.user@example.com',
+        'Test User'
+      )
+
+      pod.versions_dataset.all.reject(&:deleted?).should == [undeleted]
+      pod.versions_dataset.all.select(&:deleted?).map(&:name).should == %w(1.1.6 1.1.8)
+    end
+
   end
 end

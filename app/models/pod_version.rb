@@ -31,6 +31,8 @@ module Pod
                   :order => Sequel.asc(:created_at),
                   :after_add => trigger_webhooks
 
+      alias_method :deleted?, :deleted
+
       def after_initialize
         super
         @was_created = new?
@@ -40,7 +42,7 @@ module Pod
       alias_method :was_created?, :was_created
 
       def published?
-        commits.any?
+        !deleted? && commits.any?
       end
 
       def last_published_by
@@ -72,6 +74,7 @@ module Pod
       end
 
       def push!(committer, specification_data)
+        update(:deleted => false)
         response = PushJob.new(self, committer, specification_data).push!
         if response.success?
           add_commit(:committer => committer, :sha => response.commit_sha, :specification_data => specification_data)
