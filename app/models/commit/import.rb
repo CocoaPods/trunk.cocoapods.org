@@ -100,9 +100,9 @@ module Pod
         # @param spec [Pod::Specification] The removed podspec.
         # @param pod [Pod] The removed version's pod.
         # @param committer [Owner] The committer.
-        # @param commit_sha [String] The git commit SHA-1.
+        # @param _commit_sha [String] The git commit SHA-1. Not used.
         #
-        def self.handle_removed(spec, pod, committer, commit_sha)
+        def self.handle_removed(spec, pod, committer, _commit_sha)
           if version = PodVersion.find(:pod => pod, :name => spec.version.to_s)
             LogMessage.create(
               :message => "Version `#{version.description}' deleted via Github hook.",
