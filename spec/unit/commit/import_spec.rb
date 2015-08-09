@@ -278,7 +278,7 @@ module Pod::TrunkApp
       pod.versions_dataset.all.reject(&:deleted?).should == [undeleted]
       pod.versions_dataset.all.select(&:deleted?).map(&:name).should == %w(1.1.6 1.1.8)
     end
-    
+
     it 'marks pods as deleted when all versions are deleted' do
       pod = Pod.create(:name => 'Intercom')
       PodVersion.create(:pod => pod, :name => '1.1.6')
@@ -297,7 +297,7 @@ module Pod::TrunkApp
 
       # Assert all versions are deleted.
       pod.versions_dataset.all.reject(&:deleted?).should == []
-      
+
       pod.reload.deleted.should == true
     end
 
