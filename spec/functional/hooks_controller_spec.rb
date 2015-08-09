@@ -51,13 +51,16 @@ module Pod::TrunkApp
     end
 
     it 'processes payload data and creates a new pod (if one does not exist)' do
-      REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
+      pod = Pod.find(:name => 'KFData')
+      pod.should.be.nil
+      
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
       lambda do
         post_raw_hook_json_data
       end.should.change { Pod.count }
       last_response.status.should == 200
 
-      pod = Pod.find(:name => 'ABContactHelper')
+      pod = Pod.find(:name => 'KFData')
       pod.should.not.be.nil
 
       # Did log a big fat warning.
@@ -65,7 +68,7 @@ module Pod::TrunkApp
       last_version = pod.versions.last
       last_log_message = last_version.log_messages.last
       last_log_message.pod_version.should == last_version
-      last_log_message.message.should == "Pod `ABContactHelper' and version `0.1' created via Github hook."
+      last_log_message.message.should == "Pod `KFData' and version `1.0.1' created via Github hook."
     end
 
     # Create existing pod.
