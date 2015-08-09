@@ -235,20 +235,18 @@ module Pod::TrunkApp
     end
 
     it 'does not process the merge commit - only the merged commit' do
-      Commit::Import.expects(:import)
+      Commit::Import.any_instance.expects(:import)
         .with(
           'a919e8abd40ea9b8f2e4cdd38d58966b92aba94c',
           :added,
-          ['PromiseKit/0.9.0/PromiseKit.podspec.json'],
-          'test.user@example.com',
-          'Test User'
+          ['PromiseKit/0.9.0/PromiseKit.podspec.json']
         ).once
 
       post_raw_merge_commit_hook_json_data
     end
 
     it 'does not process a commit file which does not end in .json' do
-      Commit::Import.expects(:import).never
+      Commit::Import.any_instance.expects(:import).never
 
       post_raw_merge_commit_hook_non_json_data
     end
