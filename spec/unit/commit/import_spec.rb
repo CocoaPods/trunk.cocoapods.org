@@ -3,14 +3,33 @@ require File.expand_path('../../../spec_helper', __FILE__)
 module Pod::TrunkApp
   describe Commit::Import, 'when importing' do
 
-    def trigger_commit_with_fake_data(type)
-      Commit::Import.import(
+    def instance
+      Commit::Import.new('test.user@example.com', 'Test User')
+    end
+
+    def trigger_commit_with_fake_data(type, files = ['Specs/KFData/1.0.1/KFData.podspec.json'])
+      instance.import(
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         type,
-        ['Specs/KFData/1.0.1/KFData.podspec.json'],
-        'test.user@example.com',
-        'Test User'
+        files
       )
+    end
+    
+    describe '#extract_name_and_version' do
+      it 'handles a normal example' do
+        name, version_name = instance.
+          extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
+        
+        name.should == 'KFData'
+        version_name.should == '1.0.1'
+      end
+      it 'handles an example without Specs' do
+        name, version_name = instance.
+          extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
+        
+        name.should == 'KFData'
+        version_name.should == '1.0.1'
+      end
     end
 
     it 'gets the podspec data from the right URL' do
@@ -24,8 +43,11 @@ module Pod::TrunkApp
 
     it 'processes payload data and creates a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
+      
       lambda do
-        trigger_commit_with_fake_data(:added)
+        trigger_commit_with_fake_data(
+          :added,
+          ['ABContactHelper/0.1/ABContactHelper.podspec/json'])
       end.should.change { Pod.count }
 
       pod = Pod.find(:name => 'ABContactHelper')
@@ -44,7 +66,7 @@ module Pod::TrunkApp
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
       lambda do
-        spec = Commit::Import.fetch_spec(sha, path)
+        spec = instance.fetch_spec(sha, path)
         spec.should.be.nil?
       end.should.change { LogMessage.count }
       log_message = LogMessage.last
@@ -59,7 +81,7 @@ module Pod::TrunkApp
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
       lambda do
-        spec = Commit::Import.fetch_spec(sha, path)
+        spec = instance.fetch_spec(sha, path)
         spec.should.be.nil?
       end.should.change { LogMessage.count }
       log_message = LogMessage.last
@@ -247,12 +269,10 @@ module Pod::TrunkApp
 
       REST.stubs(:get).returns(rest_response('GitHub/Intercom.podspec.remove.json'))
 
-      Commit::Import.import(
+      instance.import(
         'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
         :removed,
-        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json),
-        'test.user@example.com',
-        'Test User'
+        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json)
       )
 
       pod.versions_dataset.all.reject(&:deleted?).should == [undeleted]
