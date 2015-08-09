@@ -278,6 +278,28 @@ module Pod::TrunkApp
       pod.versions_dataset.all.reject(&:deleted?).should == [undeleted]
       pod.versions_dataset.all.select(&:deleted?).map(&:name).should == %w(1.1.6 1.1.8)
     end
+    
+    it 'marks pods as deleted when all versions are deleted' do
+      pod = Pod.create(:name => 'Intercom')
+      PodVersion.create(:pod => pod, :name => '1.1.6')
+      PodVersion.create(:pod => pod, :name => '1.1.8')
+
+      REST.stubs(:get).returns(rest_response('GitHub/Intercom.podspec.remove.json'))
+
+      # Assert pod is not deleted.
+      pod.reload.deleted.should == false
+
+      instance.import(
+        'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
+        :removed,
+        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json)
+      )
+
+      # Assert all versions are deleted.
+      pod.versions_dataset.all.reject(&:deleted?).should == []
+      
+      pod.reload.deleted.should == true
+    end
 
   end
 end
