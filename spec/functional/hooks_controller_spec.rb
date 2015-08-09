@@ -53,7 +53,7 @@ module Pod::TrunkApp
     it 'processes payload data and creates a new pod (if one does not exist)' do
       pod = Pod.find(:name => 'KFData')
       pod.should.be.nil
-      
+
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
       lambda do
         post_raw_hook_json_data

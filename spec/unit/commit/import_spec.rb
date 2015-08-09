@@ -14,19 +14,19 @@ module Pod::TrunkApp
         files
       )
     end
-    
+
     describe '#extract_name_and_version' do
       it 'handles a normal example' do
-        name, version_name = instance.
-          extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
-        
+        name, version_name = instance
+          .extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
+
         name.should == 'KFData'
         version_name.should == '1.0.1'
       end
       it 'handles an example without Specs' do
-        name, version_name = instance.
-          extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
-        
+        name, version_name = instance
+          .extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
+
         name.should == 'KFData'
         version_name.should == '1.0.1'
       end
@@ -43,7 +43,7 @@ module Pod::TrunkApp
 
     it 'processes payload data and creates a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
-      
+
       lambda do
         trigger_commit_with_fake_data(
           :added,
