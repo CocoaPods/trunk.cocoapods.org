@@ -47,7 +47,7 @@ module Pod::TrunkApp
       lambda do
         trigger_commit_with_fake_data(
           :added,
-          ['ABContactHelper/0.1/ABContactHelper.podspec/json'])
+          ['ABContactHelper/0.1/ABContactHelper.podspec.json'])
       end.should.change { Pod.count }
 
       pod = Pod.find(:name => 'ABContactHelper')
