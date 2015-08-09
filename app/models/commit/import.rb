@@ -110,7 +110,7 @@ module Pod
         #
         def handle_removed(pod, version_name, committer, commit_sha)
           if version = PodVersion.find(:pod => pod, :name => version_name)
-            
+
             # Delete the version.
             log_deleted_version(version, committer)
             version.update(:deleted => true)
@@ -122,7 +122,7 @@ module Pod
             first_or_add_commit(version, commit_sha, {}, committer)
           end
         end
-        
+
         # Deletes the pod if it has no undeleted versions left.
         #
         def delete_versionless(pod)
