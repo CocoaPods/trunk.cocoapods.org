@@ -26,34 +26,34 @@ module Pod
             next unless file =~ /\.podspec(.json)?\z/
 
             pod_name, version_name = extract_name_and_version file
-            
+
             pod = Pod.find_or_create(:name => pod_name)
-            
+
             committer = find_or_create_committer
-            
+
             if type == :removed
               handle_removed(pod, version_name, committer, commit_sha)
             else
               spec = fetch_spec(commit_sha, file)
-              
+
               next unless spec
-              
+
               pod.add_owner(committer) if pod.was_created?
-              
+
               handle_with_existing_spec(type, spec, pod, committer, commit_sha)
             end
           end
         end
-        
+
         # Extracts the pod name and the version name from the file name.
         #
-        def extract_name_and_version file_name
-          _, name, version_name, _ = *file_name.
-            match(/([^\/]+)\/([^\/]+)\/[^\.]+\.podspec(.json)?\z/)
-          
+        def extract_name_and_version(file_name)
+          _, name, version_name, _ = *file_name
+            .match(%r{([^\/]+)\/([^\/]+)\/[^\.]+\.podspec(.json)?\z})
+
           [name, version_name]
         end
-        
+
         # Create a committer if needed.
         #
         def find_or_create_committer
@@ -64,7 +64,7 @@ module Pod
 
         # If a commit is added or modified, the spec for it can be downloaded.
         #
-        def handle_with_existing_spec type, spec, pod, committer, commit_sha
+        def handle_with_existing_spec(type, spec, pod, committer, commit_sha)
           send(:"handle_#{type}", spec, pod, committer, commit_sha)
         end
 
@@ -78,22 +78,12 @@ module Pod
             else
               message = "Version `#{version.description}' created via Github hook."
             end
-            version.add_log_message(
-              :reference => "Github hook call to temporary ID: #{object_id}",
-              :level => :warning,
-              :message => message,
-              :owner => committer
-            )
+            log_github_hook_call(version, message, committer)
           end
 
-          commit = version.commits_dataset.first(:sha => commit_sha) || version.add_commit(
-            :sha => commit_sha,
-            :specification_data => JSON.pretty_generate(spec),
-            :committer => committer,
-            :imported => true
-          )
+          commit = first_or_add_commit(version, commit_sha, spec, committer)
           version.update(:deleted => false)
-          
+
           # TODO: add test for returning commit
           commit
         end
@@ -115,16 +105,18 @@ module Pod
         # @param committer [Owner] The committer.
         # @param commit_sha [String] The git commit SHA-1.
         #
-        # TODO Needs big fat logging (a log message on version).
-        # TODO Needs a commit attached to the version.
+        # TODO: Needs big fat logging (a log message on version).
+        # TODO: Needs a commit attached to the version.
         #
         def handle_removed(pod, version_name, committer, commit_sha)
           if version = PodVersion.find(:pod => pod, :name => version_name)
             log_deleted_version(version, committer)
             version.update(:deleted => true)
+            
+            first_or_add_commit(version, commit_sha, {}, committer)
           end
         end
-        
+
         # Fetches the spec from GitHub.
         #
         # TODO: handle network/request failures
@@ -143,20 +135,47 @@ module Pod
           log_failed_spec_fetch(url, "#{e.class.name} - #{e.message}", e.backtrace.join("\n\t\t"))
           nil
         end
-        
+
+        # Either adds a commit or returns the first found.
+        #
+        def first_or_add_commit version, commit_sha, spec, committer
+          version.commits_dataset.first(:sha => commit_sha) ||
+            version.add_commit(
+              :sha => commit_sha,
+              :specification_data => JSON.pretty_generate(spec),
+              :committer => committer,
+              :imported => true
+            )
+        end
+
+        # Records a github hook call.
+        #
+        # @param version [PodVersion] The deleted version.
+        # @param message [String] The message that is stored.
+        # @param committer [Owner] The committer who enacted the deletion.
+        #
+        def log_github_hook_call(version, message, committer)
+          version.add_log_message(
+            :reference => "Github hook call to temporary ID: #{object_id}",
+            :level => :warning,
+            :message => message,
+            :owner => committer
+          )
+        end
+
         # Records a successfully deleted version.
         #
         # @param version [PodVersion] The deleted version.
         # @param committer [Owner] The committer who enacted the deletion.
         #
-        def log_deleted_version version, committer
+        def log_deleted_version(version, committer)
           LogMessage.create(
             :message => "Version `#{version.description}' deleted via Github hook.",
             :level => :warning,
             :owner => committer
           )
         end
-        
+
         # Records a failure when fetching a spec.
         #
         def log_failed_spec_fetch(url, message, data)
@@ -166,7 +185,6 @@ module Pod
             :data => data
           )
         end
-        
       end
     end
   end
