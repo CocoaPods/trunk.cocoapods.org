@@ -105,8 +105,7 @@ module Pod
         # @param committer [Owner] The committer.
         # @param commit_sha [String] The git commit SHA-1.
         #
-        # TODO: Needs big fat logging (a log message on version).
-        # TODO: Needs a commit attached to the version.
+        # TODO: Needs big fat logging (an informative log message on version).
         #
         def handle_removed(pod, version_name, committer, commit_sha)
           if version = PodVersion.find(:pod => pod, :name => version_name)
