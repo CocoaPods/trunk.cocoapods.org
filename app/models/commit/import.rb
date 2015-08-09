@@ -112,7 +112,7 @@ module Pod
           if version = PodVersion.find(:pod => pod, :name => version_name)
             log_deleted_version(version, committer)
             version.update(:deleted => true)
-            
+
             first_or_add_commit(version, commit_sha, {}, committer)
           end
         end
@@ -138,7 +138,7 @@ module Pod
 
         # Either adds a commit or returns the first found.
         #
-        def first_or_add_commit version, commit_sha, spec, committer
+        def first_or_add_commit(version, commit_sha, spec, committer)
           version.commits_dataset.first(:sha => commit_sha) ||
             version.add_commit(
               :sha => commit_sha,
