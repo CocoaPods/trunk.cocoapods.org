@@ -73,7 +73,9 @@ module Pod
             json_files = files.select { |file| file =~ /\.json\z/ }
 
             next if json_files.empty?
-            Commit::Import.import(commit_sha, type, json_files, committer_email, committer_name)
+            
+            import = Commit::Import.new(committer_email, committer_name)
+            import.import(commit_sha, type, json_files)
           end
         end
 
