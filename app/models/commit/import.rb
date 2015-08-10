@@ -10,6 +10,7 @@ module Pod
     class Commit
       class Import
         DATA_URL_TEMPLATE = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
+        PODSPEC_FILE_EXT_REGEX = /\.podspec(.json)?\z/
 
         attr_reader :committer_email
         attr_reader :committer_name
@@ -23,7 +24,7 @@ module Pod
         #
         def import(commit_sha, type, files)
           files.each do |file|
-            next unless file =~ /\.podspec(.json)?\z/
+            next unless file =~ PODSPEC_FILE_EXT_REGEX
 
             pod_name, version_name = extract_name_and_version file
 
@@ -49,7 +50,7 @@ module Pod
         #
         def extract_name_and_version(file_name)
           _, name, version_name, _ = *file_name
-            .match(%r{([^\/]+)\/([^\/]+)\/[^\.]+\.podspec(.json)?\z})
+            .match(%r{([^\/]+)\/([^\/]+)\/[^\.]+#{PODSPEC_FILE_EXT_REGEX}})
 
           [name, version_name]
         end
@@ -105,7 +106,7 @@ module Pod
         # @param committer [Owner] The committer.
         # @param commit_sha [String] The git commit SHA-1.
         #
-        # TODO: Needs big fat logging (an informative log message on version).
+        # TODO: Needs logging (an informative log message on version).
         #
         def handle_removed(pod, version_name, committer, commit_sha)
           if version = PodVersion.find(:pod => pod, :name => version_name)
