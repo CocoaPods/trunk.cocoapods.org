@@ -103,6 +103,9 @@ module Pod
           error(422, { 'error' => message, 'data' => data }.to_json)
         end
 
+        lifecycle = Pod::Lifecycle.new(@owner)
+        lifecycle.push!(specification)
+
         pod = Pod.find_by_name_and_owner(specification.name, @owner) do
           message = 'You are not allowed to push new versions for this pod.'
           json_error(403, message)
