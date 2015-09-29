@@ -77,7 +77,7 @@ module Pod
 
         mail = Mail.new
         mail.charset = 'UTF-8'
-        mail.from    = 'info@cocoapods.org'
+        mail.from    = 'no-reply@cocoapods.org'
         mail.to      = email
         mail.subject = @was_created ? '[CocoaPods] Confirm your registration.' : '[CocoaPods] Confirm your session.'
         mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/create_session.erb'))).result(binding)
