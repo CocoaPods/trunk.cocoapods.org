@@ -41,7 +41,7 @@ module Pod::TrunkApp
       @pod.reload.owners.should == [owner]
     end
 
-    it 'finds an existing owner and doesn\'t update its name' do
+    it "finds an existing owner and doesn't update its name" do
       owner = Owner.create(:email => 'appie@example.com', :name => 'Appie Duran')
       post '/', :owner => { :email => 'appie@example.com', :name => 'Appiepocalypse' }, :pods => ['AFNetworking']
       owner.reload.name.should == 'Appie Duran'
