@@ -81,7 +81,7 @@ module Pod
 
       def find_owner
         owner_email, owner_name = params[:owner].values_at('email', 'name')
-        @owner = Owner.find_or_initialize_by_email_and_update_name(owner_email, owner_name)
+        @owner = Owner.find_or_initialize_by_email_and_name(owner_email, owner_name)
       end
 
       def find_pods

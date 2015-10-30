@@ -73,9 +73,15 @@ module Pod::TrunkApp
     end
 
     it "updates the owner's name in case it is specified on subsequent registrations" do
+      sign_in!
+      post '/', { 'email' => @owner.email, 'name' => 'Changed' }.to_json
+      @owner.reload.name.should == 'Changed'
+    end
+
+    it "does not update the owner's name for unauthenticated users" do
       owner = Owner.create(:email => @email, :name => @name)
       post '/', { 'email' => @email, 'name' => 'Changed' }.to_json
-      owner.reload.name.should == 'Changed'
+      owner.reload.name.should == @name
     end
 
     it 'does not create a new session in case emailing raises an error' do

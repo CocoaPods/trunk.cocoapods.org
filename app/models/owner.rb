@@ -28,19 +28,8 @@ module Pod
         first(:email => normalize_email(email))
       end
 
-      def self.find_or_initialize_by_email_and_update_name(email, name)
-        if owner = Owner.find_by_email(email)
-          owner.name = name unless name.blank?
-          owner
-        else
-          Owner.new(:email => email, :name => name)
-        end
-      end
-
-      def self.find_or_create_by_email_and_update_name(email, name)
-        owner = find_or_initialize_by_email_and_update_name(email, name)
-        owner.save_changes(:raise_on_save_failure => true)
-        owner
+      def self.find_or_initialize_by_email_and_name(email, name)
+        Owner.find_by_email(email) || Owner.new(:email => email, :name => name)
       end
 
       def public_attributes
