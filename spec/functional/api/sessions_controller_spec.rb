@@ -78,6 +78,13 @@ module Pod::TrunkApp
       @owner.reload.name.should == 'Changed'
     end
 
+    it "does not update the owner's name in case it is missing on subsequent registrations" do
+      sign_in!
+      old_name = @owner.name
+      post '/', { 'email' => @owner.email, 'name' => ' ' }.to_json
+      @owner.reload.name.should == old_name
+    end
+
     it "does not update the owner's name for unauthenticated users" do
       owner = Owner.create(:email => @email, :name => @name)
       post '/', { 'email' => @email, 'name' => 'Changed' }.to_json
