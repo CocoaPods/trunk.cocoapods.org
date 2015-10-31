@@ -9,9 +9,14 @@ module Pod
     class SessionsController < APIController
       post '/', :requires_owner => false do
         owner_params = JSON.parse(request.body.read)
+        authorized = @owner.present?
+
         DB.test_safe_transaction do
           owner_email, owner_name, session_description = owner_params.values_at('email', 'name', 'description')
-          owner = Owner.find_or_create_by_email_and_update_name(owner_email, owner_name)
+          owner = Owner.find_or_initialize_by_email_and_name(owner_email, owner_name).tap do |o|
+            o.name = owner_name if authorized && owner_name.present?
+            o.save
+          end
 
           url_template = "#{request.scheme}://#{request.host_with_port}/sessions/verify/%s"
           session = owner.create_session!(request.ip, url_template, session_description)
