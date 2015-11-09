@@ -11,6 +11,5 @@ ruby:
 - else
   p All of your choosen Pods are already claimed.
 
-- unless params[:already_claimed] == ['']
+- unless params[:already_claimed] == [''] || params[:already_claimed] == nil
   p The following #{params[:already_claimed].size == 1 ? 'pod has' : 'pods have'} already been claimed: #{params[:already_claimed].to_sentence}. If you disagree with this please <a href="#{url("/disputes/new?#{{ :claimer_email => params[:claimer_email], :pods => params[:already_claimed] }.to_query}")}">file a dispute</a>.
-
