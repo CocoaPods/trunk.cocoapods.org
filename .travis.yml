@@ -1,8 +1,6 @@
 sudo: false
 language: ruby
-before_script:
-- 'env git clone https://github.com/CocoaPods/Humus.git'
-- 'env RACK_ENV=test cd Humus && bundle exec rake db:bootstrap'
+before_script: .travis/before.sh
 install: bundle install --deployment --without development production
 rvm: 2.1.3
 cache: bundle
