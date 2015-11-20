@@ -166,6 +166,17 @@ module RFC822
   end
 end
 
+# Create Owners.unclaimed owner.
+#
+def seed_unclaimed
+  before do
+    Pod::TrunkApp::Owner.create(:email => Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL, :name => 'Unclaimed')
+  end
+  after do
+    Pod::TrunkApp::Owner.unclaimed.delete
+  end
+end
+
 # Used in GitHub fixtures
 DESTINATION_PATH = 'AFNetworking/1.2.0/AFNetworking.podspec.yaml'
 MESSAGE = '[Add] AFNetworking 1.2.0'
