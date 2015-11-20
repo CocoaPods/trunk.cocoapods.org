@@ -111,7 +111,7 @@ module Pod
 
         version = nil
 
-        # TODO Move this code into a call akin to:
+        # TODO: Move this code into a call akin to
         #   lifecycle = Pod::Lifecycle.new
         #   lifecycle.handle(@owner, specification)
         # And also move the

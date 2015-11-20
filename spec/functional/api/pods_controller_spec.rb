@@ -45,6 +45,8 @@ module Pod::TrunkApp
       sign_in!
     end
 
+    seed_unclaimed
+
     it 'only accepts JSON' do
       header 'Content-Type', 'text/yaml'
       post '/', {},  'HTTPS' => 'on'
@@ -362,6 +364,8 @@ module Pod::TrunkApp
     before do
       @other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny')
     end
+
+    seed_unclaimed
 
     it "adds an owner to the pod's owners" do
       pod = @owner.add_pod(:name => spec.name)
