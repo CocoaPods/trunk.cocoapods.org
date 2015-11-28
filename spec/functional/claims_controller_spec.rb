@@ -2,6 +2,8 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
   describe ClaimsController, 'when claiming pods' do
+    seed_unclaimed
+
     it 'renders a new claim form' do
       get '/new'
       last_response.status.should == 200

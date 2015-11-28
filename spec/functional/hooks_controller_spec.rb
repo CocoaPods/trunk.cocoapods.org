@@ -51,13 +51,16 @@ module Pod::TrunkApp
     end
 
     it 'processes payload data and creates a new pod (if one does not exist)' do
-      REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
+      pod = Pod.find(:name => 'KFData')
+      pod.should.be.nil
+
+      REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
       lambda do
         post_raw_hook_json_data
       end.should.change { Pod.count }
       last_response.status.should == 200
 
-      pod = Pod.find(:name => 'ABContactHelper')
+      pod = Pod.find(:name => 'KFData')
       pod.should.not.be.nil
 
       # Did log a big fat warning.
@@ -65,7 +68,7 @@ module Pod::TrunkApp
       last_version = pod.versions.last
       last_log_message = last_version.log_messages.last
       last_log_message.pod_version.should == last_version
-      last_log_message.message.should == "Pod `ABContactHelper' and version `0.1' created via Github hook."
+      last_log_message.message.should == "Pod `KFData' and version `1.0.1' created via Github hook."
     end
 
     # Create existing pod.
@@ -91,7 +94,7 @@ module Pod::TrunkApp
       commit.sha.should == '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
     end
 
-    # Create existing pod version
+    # Create existing pod version.
     #
     before do
       @existing_version = PodVersion.create(:pod => @existing_pod, :name => @existing_spec.version.version)
@@ -235,20 +238,18 @@ module Pod::TrunkApp
     end
 
     it 'does not process the merge commit - only the merged commit' do
-      Commit::Import.expects(:import)
+      Commit::Import.any_instance.expects(:import)
         .with(
           'a919e8abd40ea9b8f2e4cdd38d58966b92aba94c',
           :added,
-          ['PromiseKit/0.9.0/PromiseKit.podspec.json'],
-          'test.user@example.com',
-          'Test User'
+          ['PromiseKit/0.9.0/PromiseKit.podspec.json']
         ).once
 
       post_raw_merge_commit_hook_json_data
     end
 
     it 'does not process a commit file which does not end in .json' do
-      Commit::Import.expects(:import).never
+      Commit::Import.any_instance.expects(:import).never
 
       post_raw_merge_commit_hook_non_json_data
     end

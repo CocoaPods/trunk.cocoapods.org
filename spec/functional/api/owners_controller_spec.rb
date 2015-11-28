@@ -9,6 +9,8 @@ module Pod::TrunkApp
       header 'Content-Type', 'application/json'
     end
 
+    seed_unclaimed
+
     it 'shows an owners public attributes' do
       owner = Owner.unclaimed
       pod1 = Pod.new(:name => 'Test1')

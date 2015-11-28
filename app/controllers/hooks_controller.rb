@@ -63,19 +63,19 @@ module Pod
           #
           # TODO: We ignore renamed specs.
           #
-          # TODO: We ignore deleted specs.
-          # https://github.com/CocoaPods/trunk.cocoapods.org/issues/46
-          #
           {
             :added => manual_commit['added'],
-            :modified => manual_commit['modified']
+            :modified => manual_commit['modified'],
+            :removed => manual_commit['removed'],
           }.each do |type, files|
             # Only allow .json files.
             #
             json_files = files.select { |file| file =~ /\.json\z/ }
 
             next if json_files.empty?
-            Commit::Import.import(commit_sha, type, json_files, committer_email, committer_name)
+
+            import = Commit::Import.new(committer_email, committer_name)
+            import.import(commit_sha, type, json_files)
           end
         end
 

@@ -152,6 +152,8 @@ module Pod::TrunkApp
       @pod.add_owner(@apple)
     end
 
+    seed_unclaimed
+
     it 'removes the given owner from the given pod' do
       post '/owners/delete', :pod => @pod.id, :owner => @apple.id
       last_response.status.should == 200

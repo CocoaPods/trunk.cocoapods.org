@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby File.read('.ruby-version').chomp
+ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
 gem 'activesupport'
 gem 'cocoapods-core', '>= 0.38.0.beta.1'

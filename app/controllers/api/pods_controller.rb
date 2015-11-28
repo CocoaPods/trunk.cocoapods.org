@@ -46,7 +46,7 @@ module Pod
           INNER JOIN
               commits      ON pod_versions.id = commits.pod_version_id
           WHERE
-              pods.name = ? AND pods.deleted is false
+              pods.name = ? AND pods.deleted is false AND pod_versions.deleted is false
           ORDER BY
               pod_versions.id
         SQL
@@ -111,6 +111,15 @@ module Pod
 
         version = nil
 
+        # TODO: Move this code into a call akin to
+        #   lifecycle = Pod::Lifecycle.new
+        #   lifecycle.handle(@owner, specification)
+        # And also move the
+        #   version.push!(@owner, specification.to_pretty_json)
+        # bit below into it.
+        #
+        # Then centrally and explicitly define all pod/version/commit
+        # deleted etc. transitions in the "Lifecycle".
         DB.transaction do
           unless pod
             pod = Pod.create(:name => specification.name)

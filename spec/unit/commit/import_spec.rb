@@ -3,38 +3,51 @@ require File.expand_path('../../../spec_helper', __FILE__)
 module Pod::TrunkApp
   describe Commit::Import, 'when importing' do
 
-    # TODO: This is a bad sign.
-    #
-    def trigger_commit_with_fake_data
-      Commit::Import.import(
+    def instance
+      Commit::Import.new('test.user@example.com', 'Test User')
+    end
+
+    def trigger_commit_with_fake_data(type, files = ['Specs/KFData/1.0.1/KFData.podspec.json'])
+      instance.import(
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
-        :modified,
-        ['Specs/KFData/1.0.1/KFData.podspec.json'],
-        'test.user@example.com',
-        'Test User'
+        type,
+        files
       )
-      Commit::Import.import(
-        '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
-        :added,
-        ['Specs/KFData/1.0.1/KFData.podspec.json'],
-        'test.user@example.com',
-        'Keith Smiley'
-      )
+    end
+
+    describe '#extract_name_and_version' do
+      it 'handles a normal example' do
+        name, version_name = instance
+          .extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
+
+        name.should == 'KFData'
+        version_name.should == '1.0.1'
+      end
+      it 'handles an example without Specs' do
+        name, version_name = instance
+          .extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
+
+        name.should == 'KFData'
+        version_name.should == '1.0.1'
+      end
     end
 
     it 'gets the podspec data from the right URL' do
       expected_url = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/" \
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
-      REST.expects(:get).with(expected_url).twice
+      REST.expects(:get).with(expected_url).once
         .returns(rest_response('GitHub/ABContactHelper.podspec.json'))
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
     end
 
     it 'processes payload data and creates a new pod (if one does not exist)' do
       REST.stubs(:get).returns(rest_response('GitHub/ABContactHelper.podspec.json'))
+
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(
+          :added,
+          ['ABContactHelper/0.1/ABContactHelper.podspec.json'])
       end.should.change { Pod.count }
 
       pod = Pod.find(:name => 'ABContactHelper')
@@ -53,7 +66,7 @@ module Pod::TrunkApp
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
       lambda do
-        spec = Commit::Import.fetch_spec(sha, path)
+        spec = instance.fetch_spec(sha, path)
         spec.should.be.nil?
       end.should.change { LogMessage.count }
       log_message = LogMessage.last
@@ -68,7 +81,7 @@ module Pod::TrunkApp
       sha = '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f'
       path = 'KFData/1.0.1/KFData.podspec.json'
       lambda do
-        spec = Commit::Import.fetch_spec(sha, path)
+        spec = instance.fetch_spec(sha, path)
         spec.should.be.nil?
       end.should.change { LogMessage.count }
       log_message = LogMessage.last
@@ -86,7 +99,7 @@ module Pod::TrunkApp
 
     it 'does add the add commit and a version if missing and version does not exist' do
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
 
       # Did log a big fat warning.
       #
@@ -101,7 +114,7 @@ module Pod::TrunkApp
 
     it 'marks a commit as being imported' do
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.json'))
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
       last_version = @existing_pod.reload.versions.last
       commit = last_version.last_published_by
       commit.should.be.imported
@@ -116,7 +129,7 @@ module Pod::TrunkApp
     it 'processes payload data and adds a new version, logs warning and commit (if the pod version does not exist)' do
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
 
       @existing_pod.reload
 
@@ -145,7 +158,7 @@ module Pod::TrunkApp
     end
 
     it 'processes payload data and creates a new submission job (because the version exists)' do
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
 
       @existing_pod.reload
 
@@ -172,7 +185,7 @@ module Pod::TrunkApp
       committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
 
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(:modified)
       end.should.not.change { Owner.count }
 
       commit = @existing_pod.reload.versions.last.last_published_by
@@ -182,14 +195,14 @@ module Pod::TrunkApp
     it 'does not update the committer name if the committer existed' do
       committer = Owner.create(:email => 'test.user@example.com', :name => 'Test User')
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
 
       committer.reload.name.should == 'Test User'
     end
 
     it 'adds a new committer to the commit' do
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(:modified)
       end.should.change { Owner.count }
 
       committer = Owner.first(:email => 'test.user@example.com')
@@ -204,13 +217,13 @@ module Pod::TrunkApp
       @existing_version.delete
       @existing_pod.delete
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
 
       Pod.find(:name => 'KFData').owners.map(&:email).should == ['test.user@example.com']
     end
 
     it 'does *not* set the committer as the pod owner if the pod already existed' do
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:added)
 
       @existing_pod.reload.owners.map(&:email).should.not.include 'test.user@example.com'
     end
@@ -226,7 +239,7 @@ module Pod::TrunkApp
       )
 
       lambda do
-        trigger_commit_with_fake_data
+        trigger_commit_with_fake_data(:added)
       end.should.change { Commit.count }
 
       commit = @existing_pod.reload.versions.last.last_published_by
@@ -245,7 +258,47 @@ module Pod::TrunkApp
       PodVersion.any_instance.expects(:add_commit).never
       REST.stubs(:get).returns(rest_response('GitHub/KFData.podspec.new.json'))
 
-      trigger_commit_with_fake_data
+      trigger_commit_with_fake_data(:modified)
+    end
+
+    it 'marks removed pod versions as deleted' do
+      pod = Pod.create(:name => 'Intercom')
+      PodVersion.create(:pod => pod, :name => '1.1.6')
+      PodVersion.create(:pod => pod, :name => '1.1.8')
+      undeleted = PodVersion.create(:pod => pod, :name => '2.0.0')
+
+      REST.stubs(:get).returns(rest_response('GitHub/Intercom.podspec.remove.json'))
+
+      instance.import(
+        'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
+        :removed,
+        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json)
+      )
+
+      pod.versions_dataset.all.reject(&:deleted?).should == [undeleted]
+      pod.versions_dataset.all.select(&:deleted?).map(&:name).should == %w(1.1.6 1.1.8)
+    end
+
+    it 'marks pods as deleted when all versions are deleted' do
+      pod = Pod.create(:name => 'Intercom')
+      PodVersion.create(:pod => pod, :name => '1.1.6')
+      PodVersion.create(:pod => pod, :name => '1.1.8')
+
+      REST.stubs(:get).returns(rest_response('GitHub/Intercom.podspec.remove.json'))
+
+      # Assert pod is not deleted.
+      pod.reload.deleted.should == false
+
+      instance.import(
+        'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
+        :removed,
+        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json)
+      )
+
+      # Assert all versions are deleted.
+      pod.versions_dataset.all.reject(&:deleted?).should == []
+
+      pod.reload.deleted.should == true
     end
 
   end
