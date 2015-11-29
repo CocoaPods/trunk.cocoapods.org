@@ -21,13 +21,7 @@ module Pod
         log(:info, 'initiated', committer, specification_data)
 
         response, duration = measure_duration do
-          self.class.github.create_new_commit(
-            pod_version.destination_path,
-            specification_data,
-            commit_message,
-            committer.name,
-            committer.email
-          )
+          perform_action
         end
 
         log_response(response, committer, duration)
@@ -40,6 +34,27 @@ module Pod
       end
 
       protected
+
+      def perform_action
+        if job_type == 'Add'
+          return self.class.github.create_new_commit(
+            pod_version.destination_path,
+            specification_data,
+            commit_message,
+            committer.name,
+            committer.email
+          )
+        end
+
+        if job_type == 'Delete'
+          return self.class.github.delete_file_at_path(
+            pod_version.destination_path,
+            commit_message,
+            committer.name,
+            committer.email
+          )
+        end
+      end
 
       def log_response(response, committer, duration)
         if response.success?
