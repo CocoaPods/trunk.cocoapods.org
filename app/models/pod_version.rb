@@ -96,6 +96,10 @@ module Pod
         push!(committer, spec.to_pretty_json, 'Deprecate')
       end
 
+      def delete!(committer)
+        PushJob.new(self, committer, nil, 'Delete').push!
+      end
+
       protected
 
       UNIQUE_VERSION = [:pod_id, :name]
