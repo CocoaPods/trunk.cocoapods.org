@@ -4,7 +4,7 @@ module SpecHelpers
       unless block
         block = lambda { REST::Response.new(status, {}, body) }
       end
-      Pod::TrunkApp::GitHub::CreateCommitResponse.new(&block)
+      Pod::TrunkApp::GitHub::CommitResponse.new(&block)
     end
   end
 end

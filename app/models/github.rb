@@ -19,16 +19,28 @@ module Pod
         @basic_auth = basic_auth
       end
 
-      # @return [CreateCommitResponse] A encapsulated response object that parses the `commit_sha`.
+      # @return [CommitResponse] A encapsulated response object that parses the `commit_sha`.
       #
       def create_new_commit(destination_path, data, message, author_name, author_email)
-        CreateCommitResponse.new do
+        CommitResponse.new do
           put(File.join('contents', URI.escape(destination_path)),
               :message   => message,
               :branch    => BRANCH,
               :content   => Base64.encode64(data).delete("\r\n"),
               :author    => { :name => author_name,        :email => author_email },
               :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
+          )
+        end
+      end
+
+      def delete_file_at_path(destination_path, message, author_name, author_email)
+        CommitResponse.new do
+          delete(File.join('contents', URI.escape(destination_path)),
+                 :message   => message,
+                 :branch    => BRANCH,
+                 :content   => Base64.encode64(data).delete("\r\n"),
+                 :author    => { :name => author_name,        :email => author_email },
+                 :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
           )
         end
       end
@@ -48,7 +60,15 @@ module Pod
         end
       end
 
-      class CreateCommitResponse
+      # TODO: De-Duplication with above
+      def delete(path, body)
+        REST.delete(url_for(path), body.to_json, HEADERS, @basic_auth) do |http_request|
+          http_request.open_timeout = 3
+          http_request.read_timeout = 7
+        end
+      end
+
+      class CommitResponse
         attr_reader :timeout_error
 
         def initialize
