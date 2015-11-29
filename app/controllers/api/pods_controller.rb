@@ -186,7 +186,7 @@ module Pod
           json(422, 'There were no published versions to deprecate.')
         end
 
-        if response.all(&:success?)
+        if responses.all(&:success?)
           redirect pod.versions.last.resource_path
         elsif responses.any?(&:failed_on_our_side?)
           throw_internal_server_error!
