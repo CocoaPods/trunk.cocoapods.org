@@ -415,8 +415,8 @@ module Pod::TrunkApp
       lambda do
         delete @endpoint
       end.should.change { Commit.count }
-      last_response.status.should == 200
-      json_response.should == [{ '1.2.0' => 'deleted' }]
+      last_response.status.should == 302
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
       Pod.first(:name => spec.name).versions.map(&:deleted?).should == [true]
       Pod.first(:name => spec.name).versions.map { |v| v.last_published_by.specification_data }.should == ['{}']
     end
