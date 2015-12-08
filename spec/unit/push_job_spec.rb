@@ -47,6 +47,11 @@ module Pod::TrunkApp
         @version.log_messages.last.message.should.match(/has been pushed/)
       end
 
+      it 'prefixes the commit message with the job type' do
+        @job.stubs(:job_type).returns('JOB TYPE')
+        @job.commit_message.should == '[JOB TYPE] AFNetworking 1.2.0'
+      end
+
       describe 'when creating a commit in the spec repo fails' do
         extend SpecHelpers::CommitResponse
 
