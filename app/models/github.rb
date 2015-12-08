@@ -38,7 +38,6 @@ module Pod
           delete(File.join('contents', URI.escape(destination_path)),
                  :message   => message,
                  :branch    => BRANCH,
-                 :content   => Base64.encode64(data).delete("\r\n"),
                  :author    => { :name => author_name,        :email => author_email },
                  :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
           )
@@ -49,20 +48,24 @@ module Pod
         File.join(@base_url, path)
       end
 
-      # Performs a PUT request with a max timeout of 10 seconds.
-      #
-      # TODO: timeout could probably even be less.
+      # Performs a PUT request.
       #
       def put(path, body)
-        REST.put(url_for(path), body.to_json, HEADERS, @basic_auth) do |http_request|
-          http_request.open_timeout = 3
-          http_request.read_timeout = 7
-        end
+        perform_request(:put, path, body)
       end
 
-      # TODO: De-Duplication with above
+      # Performs a DELETE request.
+      #
       def delete(path, body)
-        REST.delete(url_for(path), body.to_json, HEADERS, @basic_auth) do |http_request|
+        perform_request(:delete, path, body)
+      end
+
+      private
+
+      # Performs an HTTP request with a max timeout of 10 seconds
+      # TODO: timeout could probably even be less.
+      def perform_request(method, path, body)
+        REST::Request.perform(method, URI.parse(url_for(path)), body.to_json, HEADERS, @basic_auth) do |http_request|
           http_request.open_timeout = 3
           http_request.read_timeout = 7
         end
@@ -110,7 +113,7 @@ module Pod
         end
 
         def commit_sha
-          @commit_sha ||= JSON.parse(@response.body)['commit']['sha']
+          @commit_sha ||= JSON.parse(body)['commit']['sha']
         end
       end
     end
