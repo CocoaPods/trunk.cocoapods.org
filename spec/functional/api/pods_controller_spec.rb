@@ -370,7 +370,91 @@ module Pod::TrunkApp
       patch @endpoint, @in_favor_of
       last_response.status.should == 504
     end
+  end
 
+  describe PodsController, 'when DELETEing to delete a pod version' do
+    extend SpecHelpers::PodsController
+
+    before do
+      PushJob.any_instance.stubs(:push!).returns(*5.times.map do
+        response(201, { :commit => { :sha => SecureRandom.hex(20) } }.to_json)
+      end)
+
+      @endpoint = '/AFNetworking/1.2.0'
+      sign_in!
+    end
+
+    it 'errors when deleting a non-existent pod' do
+      delete @endpoint
+      last_response.status.should == 404
+      json_response['error'].should == 'No pod found with the specified name.'
+    end
+
+    before do
+      create_pod_version!
+    end
+
+    it 'errors when deleting a deleted version' do
+      @version.update(:deleted => true)
+      delete @endpoint
+      last_response.status.should == 422
+      json_response['error'].should == 'The version is already deleted.'
+    end
+
+    it 'errors when deleting a non-existent version' do
+      delete @endpoint + '-pre'
+      last_response.status.should == 404
+      json_response['error'].should == 'No pod version found with the specified version.'
+    end
+
+    before do
+      @version.push!(@owner, spec.to_pretty_json, 'Add')
+    end
+
+    it 'deletes the version, then responds' do
+      lambda do
+        delete @endpoint
+      end.should.change { Commit.count }
+      last_response.status.should == 200
+      json_response.should == [{"1.2.0"=>"deleted"}]
+      Pod.first(:name => spec.name).versions.map(&:deleted?).should == [true]
+      Pod.first(:name => spec.name).versions.map { |v| v.last_published_by.specification_data }.should == ['{}']
+    end
+
+    it 'creates a commit once a push succeeds' do
+      lambda do
+        delete @endpoint
+      end.should.change { Commit.count }
+      commit = Commit.last
+      commit.committer.should == @owner
+      commit.specification_data.should == '{}'
+    end
+
+    it 'does not create a commit if a push fails' do
+      PushJob.any_instance.stubs(:push!).returns(response(500))
+      lambda do
+        delete @endpoint
+      end.should.not.change { Commit.count }
+      last_response.status.should == 500
+    end
+
+    it 'still has the owner set if a push fails' do
+      PushJob.any_instance.stubs(:push!).returns(response(500))
+      delete @endpoint
+      Pod.find(:name => spec.name).owners.should == [@owner]
+    end
+
+    it 'informs the user if an exception occurs' do
+      PushJob.any_instance.stubs(:push!).raises('Oh noes!')
+      should.raise { delete @endpoint } # This will return a 500 in dev/prod.
+    end
+
+    it 'informs the user if a timeout occurs' do
+      response = response { raise Timeout::Error, 'execution expired' }
+      PushJob.any_instance.stubs(:push!).returns(response)
+      delete @endpoint
+      last_response.status.should == 504
+    end
   end
 
   describe PodsController, 'with an unauthenticated consumer' do

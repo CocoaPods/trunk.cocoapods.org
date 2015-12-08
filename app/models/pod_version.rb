@@ -76,7 +76,7 @@ module Pod
       def push!(committer, specification_data, change_type)
         response = PushJob.new(self, committer, specification_data, change_type).push!
         if response.success?
-          update(:deleted => specification_data.nil?)
+          update(:deleted => change_type == 'Delete')
           add_commit(:committer => committer, :sha => response.commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
         end
@@ -98,7 +98,7 @@ module Pod
 
       def delete!(committer)
         return if deleted?
-        push!(committer, nil, 'Delete')
+        push!(committer, '{}', 'Delete')
       end
 
       protected

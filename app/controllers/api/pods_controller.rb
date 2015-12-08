@@ -209,6 +209,9 @@ module Pod
         unless version
           json_error(404, 'No pod version found with the specified version.')
         end
+        if version.deleted?
+          json_error(422, 'The version is already deleted.')
+        end
 
         response = version.delete!(@owner)
         json_message(200, [{ version.name => 'deleted' }]) if verify_github_responses!(response)
