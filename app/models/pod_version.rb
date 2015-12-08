@@ -88,8 +88,11 @@ module Pod
         spec = Specification.from_json(last_published_by.specification_data)
         raise "Unable to find a podspec to deprecate: #{self}" unless spec
         return if spec.deprecated?
-        spec.deprecated_in_favor_of = in_favor_of
-        spec.deprecated = true unless in_favor_of
+        if in_favor_of
+          spec.deprecated_in_favor_of = in_favor_of
+        else
+          spec.deprecated = true
+        end
         push!(committer, spec.to_pretty_json, 'Deprecate')
       end
 
