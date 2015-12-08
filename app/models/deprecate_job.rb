@@ -10,7 +10,8 @@ module Pod
       end
 
       def deprecate!
-        pod.versions.map { |version| version.deprecate!(committer, in_favor_of) }.compact
+        versions = pod.versions.reject(&:deleted?)
+        versions.map { |version| version.deprecate!(committer, in_favor_of) }.compact
       end
     end
   end

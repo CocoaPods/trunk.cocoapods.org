@@ -84,7 +84,9 @@ module Pod
       end
 
       def deprecate!(committer, in_favor_of = nil)
+        raise "Can't deprecate a deleted spec: #{self}" if deleted?
         spec = Specification.from_json(last_published_by.specification_data)
+        raise "Unable to find a podspec to deprecate: #{self}" unless spec
         return if spec.deprecated?
         spec.deprecated_in_favor_of = in_favor_of
         spec.deprecated = true unless in_favor_of
