@@ -270,6 +270,109 @@ module Pod::TrunkApp
 
   end
 
+  describe PodsController, 'when PATCHing to deprecate a pod' do
+    extend SpecHelpers::PodsController
+
+    before do
+      PushJob.any_instance.stubs(:push!).returns(*5.times.map do
+        response(201, { :commit => { :sha => SecureRandom.hex(20) } }.to_json)
+      end)
+
+      @endpoint = '/AFNetworking/deprecated'
+      @in_favor_of = { 'in_favor_of' => 'Alamofire' }.to_json
+      @in_favor_of_nothing = { 'in_favor_of' => nil }.to_json
+      sign_in!
+    end
+
+    it 'errors when deprecating a non-existent spec' do
+      patch @endpoint, @in_favor_of
+      last_response.status.should == 404
+      json_response['error'].should == 'No pod found with the specified name.'
+    end
+
+    before do
+      create_pod_version!
+      @version.push!(@owner, spec.to_pretty_json, 'Add')
+    end
+
+    it 'errors when deprecating in favor of a non-existent pod' do
+      lambda do
+        patch @endpoint, @in_favor_of
+      end.should.not.change { Commit.count }
+      last_response.status.should == 422
+      json_response['error'].should == 'You cannot deprecate a pod in favor of a pod that does not exist.'
+    end
+
+    it 'errors when there are no versions to deprecate' do
+      DeprecateJob.any_instance.expects(:deprecate!).once.returns([])
+      lambda do
+        patch @endpoint, @in_favor_of_nothing
+      end.should.not.change { Commit.count }
+      last_response.status.should == 422
+      json_response['error'].should == 'There were no published versions to deprecate.'
+    end
+
+    before do
+      pod = Pod.create(:name => 'Alamofire')
+      pod.add_owner(@owner) if @owner
+      version = pod.add_version(:name => '1.0.0')
+    end
+
+    it 'deprecates the pod, then redirects' do
+      lambda do
+        patch @endpoint, @in_favor_of
+      end.should.change { Commit.count }
+      last_response.status.should == 302
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
+      Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
+    end
+
+    it 'creates a commit once a push succeeds' do
+      lambda do
+        patch @endpoint, @in_favor_of
+      end.should.change { Commit.count }
+      commit = Commit.last
+      commit.committer.should == @owner
+      commit.specification_data.should == JSON.pretty_generate(spec.dup.tap { |s| s.deprecated_in_favor_of = 'Alamofire' })
+    end
+
+    it 'creates a commit once a push succeeds' do
+      lambda do
+        patch @endpoint, @in_favor_of_nothing
+      end.should.change { Commit.count }
+      commit = Commit.last
+      commit.committer.should == @owner
+      commit.specification_data.should == JSON.pretty_generate(spec.dup.tap { |s| s.deprecated = true })
+    end
+
+    it 'does not create a commit if a push fails' do
+      PushJob.any_instance.stubs(:push!).returns(response(500))
+      lambda do
+        patch @endpoint, @in_favor_of
+      end.should.not.change { Commit.count }
+      last_response.status.should == 500
+    end
+
+    it 'still has the owner set if a push fails' do
+      PushJob.any_instance.stubs(:push!).returns(response(500))
+      patch @endpoint, @in_favor_of
+      Pod.find(:name => spec.name).owners.should == [@owner]
+    end
+
+    it 'informs the user if an exception occurs' do
+      PushJob.any_instance.stubs(:push!).raises('Oh noes!')
+      should.raise { patch @endpoint, @in_favor_of } # This will return a 500 in dev/prod.
+    end
+
+    it 'informs the user if a timeout occurs' do
+      response = response { raise Timeout::Error, 'execution expired' }
+      PushJob.any_instance.stubs(:push!).returns(response)
+      patch @endpoint, @in_favor_of
+      last_response.status.should == 504
+    end
+
+  end
+
   describe PodsController, 'with an unauthenticated consumer' do
     extend SpecHelpers::PodsController
 

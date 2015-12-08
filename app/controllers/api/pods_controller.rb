@@ -1,4 +1,5 @@
 require 'app/controllers/api_controller'
+require 'app/models/deprecate_job'
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/specification_wrapper'
@@ -190,7 +191,7 @@ module Pod
 
         responses = DeprecateJob.new(pod, @owner, in_favor_of).deprecate!
         unless responses.any?
-          json(422, 'There were no published versions to deprecate.')
+          json_error(422, 'There were no published versions to deprecate.')
         end
 
         redirect pod.versions.last.resource_path if verify_github_responses!(responses)
