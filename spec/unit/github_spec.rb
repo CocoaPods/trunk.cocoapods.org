@@ -23,7 +23,7 @@ module Pod::TrunkApp
     it 'creates a new commit' do
       # Capture the args so we can assert on them after the call.
       args = nil
-      REST::Request.stubs(:perform).with do |method, url, body, headers, auth|
+      REST::Request.stubs(:perform).with do |_method, url, body, headers, auth|
         args = [url.to_s, body, headers, auth]
       end.returns(fixture_response('create_new_commit'))
 
