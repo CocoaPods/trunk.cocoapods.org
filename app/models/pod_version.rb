@@ -73,14 +73,32 @@ module Pod
         "#{pod.name} #{name}"
       end
 
-      def push!(committer, specification_data)
-        update(:deleted => false)
-        response = PushJob.new(self, committer, specification_data).push!
+      def push!(committer, specification_data, change_type)
+        response = PushJob.new(self, committer, specification_data, change_type).push!
         if response.success?
+          update(:deleted => change_type == 'Delete')
           add_commit(:committer => committer, :sha => response.commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
         end
         response
+      end
+
+      def deprecate!(committer, in_favor_of = nil)
+        raise "Can't deprecate a deleted spec: #{self}" if deleted?
+        spec = Specification.from_json(last_published_by.specification_data)
+        raise "Unable to find a podspec to deprecate: #{self}" unless spec
+        return if spec.deprecated?
+        if in_favor_of
+          spec.deprecated_in_favor_of = in_favor_of
+        else
+          spec.deprecated = true
+        end
+        push!(committer, spec.to_pretty_json, 'Deprecate')
+      end
+
+      def delete!(committer)
+        return if deleted?
+        push!(committer, '{}', 'Delete')
       end
 
       protected

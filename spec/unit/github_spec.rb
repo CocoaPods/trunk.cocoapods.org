@@ -20,12 +20,17 @@ module Pod::TrunkApp
       http_request.read_timeout.should == 7
     end
 
+    def stub_request
+      args = Array.new(5)
+      REST::Request.stubs(:perform).with do |method, url, body, headers, auth|
+        args.replace [method, url.to_s, body, headers, auth]
+      end.returns(fixture_response('create_new_commit'))
+      args
+    end
+
     it 'creates a new commit' do
       # Capture the args so we can assert on them after the call.
-      args = nil
-      REST.stubs(:put).with do |url, body, headers, auth|
-        args = [url, body, headers, auth]
-      end.returns(fixture_response('create_new_commit'))
+      args = stub_request
 
       response = @github.create_new_commit(DESTINATION_PATH,
                                            fixture_read('AFNetworking.podspec'),
@@ -35,8 +40,9 @@ module Pod::TrunkApp
       response.should.be.success
       response.commit_sha.should == fixture_new_commit_sha
 
-      url, body, headers, auth = args
+      method, url, body, headers, auth = args
 
+      method.should == :put
       url.should == @github.url_for(File.join('contents', DESTINATION_PATH))
       headers.should == GitHub::HEADERS
       auth.should == @auth
@@ -44,6 +50,33 @@ module Pod::TrunkApp
       body = JSON.parse(body)
       Base64.decode64(body['content']).should == fixture_read('AFNetworking.podspec')
       body.delete('content')
+      body.should == {
+        'message'   => MESSAGE,
+        'branch'    => 'master',
+        'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
+        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' }
+      }
+    end
+
+    it 'deletes a file' do
+      # Capture the args so we can assert on them after the call.
+      args = stub_request
+
+      response = @github.delete_file_at_path(DESTINATION_PATH,
+                                             '[Add] AFNetworking 1.2.0',
+                                             'Eloy Durán',
+                                             'eloy@example.com')
+      response.should.be.success
+      response.commit_sha.should == fixture_new_commit_sha
+
+      method, url, body, headers, auth = args
+
+      method.should == :delete
+      url.should == @github.url_for(File.join('contents', DESTINATION_PATH))
+      headers.should == GitHub::HEADERS
+      auth.should == @auth
+
+      body = JSON.parse(body)
       body.should == {
         'message'   => MESSAGE,
         'branch'    => 'master',

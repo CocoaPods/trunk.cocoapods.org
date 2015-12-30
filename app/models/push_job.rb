@@ -7,32 +7,25 @@ require 'app/models/pod_version'
 module Pod
   module TrunkApp
     class PushJob
-      attr_reader :pod_version, :committer, :specification_data, :duration
+      attr_reader :pod_version, :committer, :specification_data, :job_type, :duration
 
-      def initialize(pod_version, committer, specification_data)
-        @pod_version, @committer, @specification_data = pod_version, committer, specification_data
+      def initialize(pod_version, committer, specification_data, job_type)
+        @pod_version, @committer, @specification_data, @job_type = pod_version, committer, specification_data, job_type
       end
 
       def commit_message
-        "[Add] #{pod_version.description}"
+        "[#{job_type}] #{pod_version.description}"
       end
 
       def push!
         log(:info, 'initiated', committer, specification_data)
 
         response, duration = measure_duration do
-          self.class.github.create_new_commit(
-            pod_version.destination_path,
-            specification_data,
-            commit_message,
-            committer.name,
-            committer.email
-          )
+          perform_action
         end
 
         log_response(response, committer, duration)
-        return response
-
+        response
       rescue Object => error
         message = "failed with error: #{error.message}."
         log(:error, message, committer, error.backtrace.join("\n\t\t"))
@@ -40,6 +33,28 @@ module Pod
       end
 
       protected
+
+      def perform_action
+        case job_type
+        when 'Add', 'Deprecate'
+          self.class.github.create_new_commit(
+            pod_version.destination_path,
+            specification_data,
+            commit_message,
+            committer.name,
+            committer.email
+          )
+        when 'Delete'
+          self.class.github.delete_file_at_path(
+            pod_version.destination_path,
+            commit_message,
+            committer.name,
+            committer.email
+          )
+        else
+          raise "Unknown push job type: #{job_type}"
+        end
+      end
 
       def log_response(response, committer, duration)
         if response.success?

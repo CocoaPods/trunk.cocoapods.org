@@ -19,10 +19,10 @@ module Pod
         @basic_auth = basic_auth
       end
 
-      # @return [CreateCommitResponse] A encapsulated response object that parses the `commit_sha`.
+      # @return [CommitResponse] A encapsulated response object that parses the `commit_sha`.
       #
       def create_new_commit(destination_path, data, message, author_name, author_email)
-        CreateCommitResponse.new do
+        CommitResponse.new do
           put(File.join('contents', URI.escape(destination_path)),
               :message   => message,
               :branch    => BRANCH,
@@ -33,22 +33,45 @@ module Pod
         end
       end
 
+      def delete_file_at_path(destination_path, message, author_name, author_email)
+        CommitResponse.new do
+          delete(File.join('contents', URI.escape(destination_path)),
+                 :message   => message,
+                 :branch    => BRANCH,
+                 :author    => { :name => author_name,        :email => author_email },
+                 :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
+          )
+        end
+      end
+
       def url_for(path)
         File.join(@base_url, path)
       end
 
-      # Performs a PUT request with a max timeout of 10 seconds.
-      #
-      # TODO: timeout could probably even be less.
+      # Performs a PUT request.
       #
       def put(path, body)
-        REST.put(url_for(path), body.to_json, HEADERS, @basic_auth) do |http_request|
+        perform_request(:put, path, body)
+      end
+
+      # Performs a DELETE request.
+      #
+      def delete(path, body)
+        perform_request(:delete, path, body)
+      end
+
+      private
+
+      # Performs an HTTP request with a max timeout of 10 seconds
+      # TODO: timeout could probably even be less.
+      def perform_request(method, path, body)
+        REST::Request.perform(method, URI.parse(url_for(path)), body.to_json, HEADERS, @basic_auth) do |http_request|
           http_request.open_timeout = 3
           http_request.read_timeout = 7
         end
       end
 
-      class CreateCommitResponse
+      class CommitResponse
         attr_reader :timeout_error
 
         def initialize
@@ -90,7 +113,7 @@ module Pod
         end
 
         def commit_sha
-          @commit_sha ||= JSON.parse(@response.body)['commit']['sha']
+          @commit_sha ||= JSON.parse(body)['commit']['sha']
         end
       end
     end
