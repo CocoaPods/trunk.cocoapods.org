@@ -7,7 +7,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.4)
+    activesupport (4.2.5)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -16,7 +16,7 @@ GEM
     ast (2.0.0)
     backports (3.6.0)
     bacon (1.2.0)
-    cocoapods-core (0.39.0)
+    cocoapods-core (1.0.0.beta.1)
       activesupport (>= 4.0.2)
       fuzzy_match (~> 2.0.4)
       nap (~> 1.0)
@@ -44,7 +44,7 @@ GEM
     metaclass (0.0.4)
     mime-types (1.25.1)
     mini_portile (0.6.2)
-    minitest (5.8.1)
+    minitest (5.8.3)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     mocha-on-bacon (0.2.2)
@@ -159,4 +159,4 @@ DEPENDENCIES
   tobias-sinatra-url-for
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
