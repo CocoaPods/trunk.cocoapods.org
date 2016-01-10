@@ -33,19 +33,31 @@ module Pod
         end
       end
 
-      def delete_file_at_path(destination_path, message, author_name, author_email)
+      def delete_file_at_path(destination_path, message, sha, author_name, author_email)
         CommitResponse.new do
           delete(File.join('contents', URI.escape(destination_path)),
-                 :message   => message,
-                 :branch    => BRANCH,
+                 :Message   => message,
+                 :sha => sha,
                  :author    => { :name => author_name,        :email => author_email },
                  :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
           )
         end
       end
 
+      def sha_for_path(path)
+        CommitResponse.new do
+          get(File.join('contents', URI.escape(destination_path), ".json")
+        end
+      end
+
       def url_for(path)
         File.join(@base_url, path)
+      end
+
+      # Perform a GET request.
+      #
+      def get(path)
+        perform_request(:get, path, "")
       end
 
       # Performs a PUT request.
@@ -96,6 +108,10 @@ module Pod
 
         def body
           @response.body
+        end
+
+        def header(name)
+          @response[name]
         end
 
         attr_reader :failed_on_our_side

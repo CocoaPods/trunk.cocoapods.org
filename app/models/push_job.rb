@@ -1,8 +1,10 @@
+# coding: utf-8
 require 'app/models/github'
 require 'app/models/log_message'
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/pod_version'
+require 'json'
 
 module Pod
   module TrunkApp
@@ -45,9 +47,12 @@ module Pod
             committer.email
           )
         when 'Delete'
+          contents_response = self.class.github.sha_for_path(pod_version.destination_path).body
+          sha = JSON.parse(contents_response)['sha']
           self.class.github.delete_file_at_path(
             pod_version.destination_path,
             commit_message,
+            sha,
             committer.name,
             committer.email
           )

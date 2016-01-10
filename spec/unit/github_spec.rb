@@ -64,6 +64,7 @@ module Pod::TrunkApp
 
       response = @github.delete_file_at_path(DESTINATION_PATH,
                                              '[Add] AFNetworking 1.2.0',
+                                             '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b',
                                              'Eloy Durán',
                                              'eloy@example.com')
       response.should.be.success
@@ -79,7 +80,7 @@ module Pod::TrunkApp
       body = JSON.parse(body)
       body.should == {
         'message'   => MESSAGE,
-        'branch'    => 'master',
+        'sha'       => '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b',
         'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
         'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' }
       }
