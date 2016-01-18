@@ -33,23 +33,29 @@ module Pod
         end
       end
 
+      # @return [CommitResponse] A encapsulated response object that deletes a file at a path
+      #
       def delete_file_at_path(destination_path, message, sha, author_name, author_email)
         CommitResponse.new do
           delete(File.join('contents', URI.escape(destination_path)),
-                 :Message   => message,
-                 :sha => sha,
+                 :message   => message,
+                 :sha       => sha,
                  :author    => { :name => author_name,        :email => author_email },
                  :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
           )
         end
       end
 
+      # @return [CommitResponse] A encapsulated response object that gets the SHA associated with a file at a path
+      #
       def sha_for_path(path)
         CommitResponse.new do
-          get(File.join('contents', URI.escape(destination_path), ".json")
+          get(File.join('contents', URI.escape(path), ".json"))
         end
       end
 
+      # @return [String] A full API route for a path
+      #
       def url_for(path)
         File.join(@base_url, path)
       end
