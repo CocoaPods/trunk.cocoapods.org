@@ -50,7 +50,7 @@ module Pod
       #
       def sha_for_path(path)
         CommitResponse.new do
-          get(File.join('contents', URI.escape(path), ".json"))
+          get(File.join('contents', URI.escape(path), '.json'))
         end
       end
 
@@ -63,7 +63,7 @@ module Pod
       # Perform a GET request.
       #
       def get(path)
-        perform_request(:get, path, "")
+        perform_request(:get, path, '')
       end
 
       # Performs a PUT request.
