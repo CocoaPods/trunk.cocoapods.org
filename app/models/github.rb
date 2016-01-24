@@ -108,14 +108,17 @@ module Pod
           @timeout_error = "[#{e.class.name}] #{e.message}"
         end
 
+        # @return [Number] The status code for the HTTP response
         def status_code
           @response.status_code
         end
 
+        # @return [String] The body for the HTTP response
         def body
           @response.body
         end
 
+        # @return [String] The header value for a specific key on the HTTP response
         def header(name)
           @response[name]
         end
@@ -130,6 +133,7 @@ module Pod
           !@timeout_error.nil?
         end
 
+        # @return [Bool] Was the HTTP request successful?
         def success?
           !failed_on_our_side? && !failed_on_their_side? && !failed_due_to_timeout?
         end
