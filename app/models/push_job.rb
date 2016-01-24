@@ -1,4 +1,3 @@
-# coding: utf-8
 require 'app/models/github'
 require 'app/models/log_message'
 require 'app/models/owner'
@@ -53,7 +52,8 @@ module Pod
             commit_message,
             sha,
             committer.name,
-            committer.email)
+            committer.email
+          )
         else
           raise "Unknown push job type: #{job_type}"
         end
