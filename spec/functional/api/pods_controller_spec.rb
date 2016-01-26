@@ -264,6 +264,7 @@ module Pod::TrunkApp
 
     it 'does not not run git ls for a non-GitHub git source' do
       SpecificationWrapper.any_instance.expects(:system).never
+
       spec.source = { :git => 'https://orta.io/thingy.git', :tag => '0.1.2' }
       post '/', spec.to_json
     end

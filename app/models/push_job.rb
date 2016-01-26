@@ -3,6 +3,7 @@ require 'app/models/log_message'
 require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/pod_version'
+require 'json'
 
 module Pod
   module TrunkApp
@@ -37,23 +38,36 @@ module Pod
       def perform_action
         case job_type
         when 'Add', 'Deprecate'
-          self.class.github.create_new_commit(
-            pod_version.destination_path,
-            specification_data,
-            commit_message,
-            committer.name,
-            committer.email
-          )
+          new_commit
+
         when 'Delete'
-          self.class.github.delete_file_at_path(
-            pod_version.destination_path,
-            commit_message,
-            committer.name,
-            committer.email
-          )
+          contents_response = self.class.github.file_for_path(pod_version.destination_path).body
+          sha = JSON.parse(contents_response)['sha']
+          delete_file(sha)
+
         else
           raise "Unknown push job type: #{job_type}"
         end
+      end
+
+      def new_commit
+        self.class.github.create_new_commit(
+          pod_version.destination_path,
+          specification_data,
+          commit_message,
+          committer.name,
+          committer.email
+        )
+      end
+
+      def delete_file(sha)
+        self.class.github.delete_file_at_path(
+          pod_version.destination_path,
+          commit_message,
+          sha,
+          committer.name,
+          committer.email
+        )
       end
 
       def log_response(response, committer, duration)

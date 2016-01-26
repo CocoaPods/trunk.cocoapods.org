@@ -33,19 +33,37 @@ module Pod
         end
       end
 
-      def delete_file_at_path(destination_path, message, author_name, author_email)
+      # @return [CommitResponse] A encapsulated response object that deletes a file at a path
+      #
+      def delete_file_at_path(destination_path, message, sha, author_name, author_email)
         CommitResponse.new do
           delete(File.join('contents', URI.escape(destination_path)),
                  :message   => message,
-                 :branch    => BRANCH,
+                 :sha       => sha,
                  :author    => { :name => author_name,        :email => author_email },
                  :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
           )
         end
       end
 
+      # @return [CommitResponse] A encapsulated response object that gets the SHA associated with a file at a path
+      #
+      def file_for_path(path)
+        CommitResponse.new do
+          get(File.join('contents', URI.escape(path)))
+        end
+      end
+
+      # @return [String] A full API route for a path
+      #
       def url_for(path)
         File.join(@base_url, path)
+      end
+
+      # Perform a GET request.
+      #
+      def get(path)
+        perform_request(:get, path, '')
       end
 
       # Performs a PUT request.
@@ -90,12 +108,19 @@ module Pod
           @timeout_error = "[#{e.class.name}] #{e.message}"
         end
 
+        # @return [Number] The status code for the HTTP response
         def status_code
           @response.status_code
         end
 
+        # @return [String] The body for the HTTP response
         def body
           @response.body
+        end
+
+        # @return [String] The header value for a specific key on the HTTP response
+        def header(name)
+          @response[name]
         end
 
         attr_reader :failed_on_our_side
@@ -108,6 +133,7 @@ module Pod
           !@timeout_error.nil?
         end
 
+        # @return [Bool] Was the HTTP request successful?
         def success?
           !failed_on_our_side? && !failed_on_their_side? && !failed_due_to_timeout?
         end
