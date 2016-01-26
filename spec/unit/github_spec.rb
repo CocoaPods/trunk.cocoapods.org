@@ -58,6 +58,27 @@ module Pod::TrunkApp
       }
     end
 
+    it 'requests the sha for the deleted file' do
+      extend SpecHelpers::CommitResponse
+
+      @owner = Owner.new
+      @pod = Pod.create(:name => 'MyPod')
+      @version = PodVersion.create(:pod => @pod, :name => '1.0.3')
+
+      job = PushJob.new(@version, @owner, '', 'Delete')
+      github = job.class.github
+      github.stubs(:delete_file_at_path).returns(nil)
+
+      args = stub_request
+      job.send(:perform_action)
+
+      method, url, body, headers, auth = args
+
+      method.should == :get
+      url.should == 'https://api.github.com/repos/CocoaPods/Specs/contents/Specs/MyPod/1.0.3/MyPod.podspec.json'
+      headers.should == GitHub::HEADERS
+    end
+
     it 'deletes a file' do
       # Capture the args so we can assert on them after the call.
       args = stub_request

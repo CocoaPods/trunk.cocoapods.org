@@ -43,9 +43,10 @@ module Pod
             specification_data,
             commit_message,
             committer.name,
-            committer.email)
+            committer.email
+          )
         when 'Delete'
-          contents_response = self.class.github.sha_for_path(pod_version.destination_path).body
+          contents_response = self.class.github.file_for_path(pod_version.destination_path).body
           sha = JSON.parse(contents_response)['sha']
           self.class.github.delete_file_at_path(
             pod_version.destination_path,

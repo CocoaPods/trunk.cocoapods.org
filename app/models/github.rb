@@ -48,9 +48,9 @@ module Pod
 
       # @return [CommitResponse] A encapsulated response object that gets the SHA associated with a file at a path
       #
-      def sha_for_path(path)
+      def file_for_path(path)
         CommitResponse.new do
-          get(File.join('contents', URI.escape(path), '.json'))
+          get(File.join('contents', URI.escape(path)))
         end
       end
 
