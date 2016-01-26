@@ -43,5 +43,5 @@ group :test do
   gem 'nokogiri'
   gem 'prettybacon'
   gem 'rack-test'
-  gem 'rubocop'
+  gem 'rubocop', '0.34.2'
 end
