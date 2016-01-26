@@ -34,7 +34,7 @@ module Pod
         :day => 24 * 60 * 60,
         :hour => 60 * 60,
         :minute => 60,
-        :second => 1
+        :second => 1,
       }
 
       def unit_seconds(unit)

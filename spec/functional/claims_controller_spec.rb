@@ -85,7 +85,7 @@ module Pod::TrunkApp
                :owner => {
                  :email => 'appie@example.com',
                  :name => 'Appie Duran' },
-               :pods => ['AFNetworking']
+               :pods => ['AFNetworking'],
               )
         end
       end.should.not.change { Owner.count }
@@ -95,7 +95,7 @@ module Pod::TrunkApp
     it 'shows validation errors' do
       post('/',
            :owner => { :email => 'appie@example.com', :name => '' },
-           :pods => %w(AFNetworking EYFNetworking JAYSONKit)
+           :pods => %w(AFNetworking EYFNetworking JAYSONKit),
           )
       last_response.status.should == 200
       @pod.reload.owners.should == [Owner.unclaimed]
@@ -108,7 +108,7 @@ module Pod::TrunkApp
       get('/thanks',
           :claimer_email => 'appie@example.com',
           :successfully_claimed => ['AFNetworking'],
-          :already_claimed => ['JSONKit']
+          :already_claimed => ['JSONKit'],
          )
       last_response.status.should == 200
       last_response.body.should.include 'AFNetworking'

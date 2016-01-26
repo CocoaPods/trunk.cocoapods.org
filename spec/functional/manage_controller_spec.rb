@@ -21,7 +21,7 @@ module Pod::TrunkApp
       @commit = @version.add_commit(
         :committer => @owner,
         :sha => '3ca23060197547eef92983f15590b5a87270615f',
-        :specification_data => 'DATA'
+        :specification_data => 'DATA',
       )
     end
 
@@ -113,7 +113,7 @@ module Pod::TrunkApp
       Dispute.dataset.destroy
       @disputes = [
         Dispute.create(:claimer => @owner, :message => 'unsetled'),
-        Dispute.create(:claimer => @owner, :message => 'settled', :settled => true)
+        Dispute.create(:claimer => @owner, :message => 'settled', :settled => true),
       ]
     end
 

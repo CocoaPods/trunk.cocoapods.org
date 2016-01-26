@@ -9,7 +9,8 @@ module Pod
     class RequestLogger < Rack::CommonLogger
       class AppendLogger
         def initialize(logger, message)
-          @logger, @message = logger, message
+          @logger = logger
+          @message = message
         end
 
         def write(msg)

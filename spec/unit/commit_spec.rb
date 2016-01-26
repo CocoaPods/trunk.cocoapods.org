@@ -11,7 +11,7 @@ module Pod::TrunkApp
         :pod_version => @version,
         :committer => @owner,
         :sha => '3ca23060197547eef92983f15590b5a87270615f',
-        :specification_data => fixture_read('AFNetworking.podspec')
+        :specification_data => fixture_read('AFNetworking.podspec'),
       )
     end
 
@@ -82,7 +82,7 @@ module Pod::TrunkApp
             :pod_version => @version,
             :committer => @owner,
             :sha => '3ca23060197547eef92983f15590b5a87270615f',
-            :specification_data => fixture_read('AFNetworking.podspec')
+            :specification_data => fixture_read('AFNetworking.podspec'),
           )
           should.raise Sequel::UniqueConstraintViolation do
             @commit.save(:validate => false)
@@ -90,6 +90,5 @@ module Pod::TrunkApp
         end
       end
     end
-
   end
 end

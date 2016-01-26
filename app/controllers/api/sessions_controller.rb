@@ -55,9 +55,7 @@ module Pod
       end
 
       delete '/all', :requires_owner => true do
-        sessions_except_current.each do |session|
-          session.destroy
-        end
+        sessions_except_current.each(&:destroy)
         json_message(200, @session)
       end
 

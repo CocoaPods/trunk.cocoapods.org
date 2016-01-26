@@ -28,8 +28,8 @@ module Pod
               :branch    => BRANCH,
               :content   => Base64.encode64(data).delete("\r\n"),
               :author    => { :name => author_name,        :email => author_email },
-              :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
-          )
+              :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
+             )
         end
       end
 
@@ -41,8 +41,8 @@ module Pod
                  :message   => message,
                  :sha       => sha,
                  :author    => { :name => author_name,        :email => author_email },
-                 :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] }
-          )
+                 :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
+                )
         end
       end
 

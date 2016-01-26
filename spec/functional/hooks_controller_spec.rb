@@ -2,7 +2,6 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
   describe HooksController, 'when receiving push updates from the repository' do
-
     def post_raw_hook_json_data
       header 'Content-Type', 'application/x-www-form-urlencoded'
       payload = fixture_read('GitHub/post_receive_hook_json_data.raw')
@@ -210,7 +209,7 @@ module Pod::TrunkApp
       other_version.add_commit(
         :sha => '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         :specification_data => 'DATA',
-        :committer => other_committer
+        :committer => other_committer,
       )
 
       lambda do
@@ -228,7 +227,7 @@ module Pod::TrunkApp
       commit = version.add_commit(
         :sha => '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         :specification_data => 'DATA',
-        :committer => committer
+        :committer => committer,
       )
 
       PodVersion.any_instance.expects(:add_commit).never
@@ -238,11 +237,11 @@ module Pod::TrunkApp
     end
 
     it 'does not process the merge commit - only the merged commit' do
-      Commit::Import.any_instance.expects(:import)
-        .with(
+      Commit::Import.any_instance.expects(:import).
+        with(
           'a919e8abd40ea9b8f2e4cdd38d58966b92aba94c',
           :added,
-          ['PromiseKit/0.9.0/PromiseKit.podspec.json']
+          ['PromiseKit/0.9.0/PromiseKit.podspec.json'],
         ).once
 
       post_raw_merge_commit_hook_json_data
@@ -253,6 +252,5 @@ module Pod::TrunkApp
 
       post_raw_merge_commit_hook_non_json_data
     end
-
   end
 end

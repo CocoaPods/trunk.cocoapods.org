@@ -11,6 +11,7 @@ module REST
   def self.mock_response(status, headers, body)
     @mock_response = Response.new(status, headers, body)
   end
+
   def self.put(url, body, headers, auth)
     @mock_response
   ensure

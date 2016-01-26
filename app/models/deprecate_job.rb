@@ -6,7 +6,9 @@ module Pod
       attr_reader :pod, :committer, :in_favor_of
 
       def initialize(pod, committer, in_favor_of = nil)
-        @pod, @committer, @in_favor_of = pod, committer, in_favor_of
+        @pod = pod
+        @committer = committer
+        @in_favor_of = in_favor_of
       end
 
       def deprecate!

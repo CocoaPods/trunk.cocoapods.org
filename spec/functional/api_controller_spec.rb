@@ -59,7 +59,7 @@ module Pod::TrunkApp
       NewRelic::Agent.expects(:notice_error).with(error, :uri => '/raise_test_error',
                                                          :referer => 'http://example.com',
                                                          :request_params => { 'key' => 'value' })
-      get '/raise_test_error', { 'key' => 'value' },  'HTTP_REFERER' => 'http://example.com'
+      get '/raise_test_error', { 'key' => 'value' }, 'HTTP_REFERER' => 'http://example.com'
     end
   end
 
@@ -78,7 +78,7 @@ module Pod::TrunkApp
 
     it 'allows access with a valid verified session belonging to an owner' do
       session = create_session_with_owner
-      get '/owner_required', nil,  'HTTP_AUTHORIZATION' => "Token #{session.token}"
+      get '/owner_required', nil, 'HTTP_AUTHORIZATION' => "Token #{session.token}"
       last_response.status.should == 200
     end
 
@@ -97,7 +97,7 @@ module Pod::TrunkApp
     it 'does not allow access when an unverified authentication token is supplied' do
       session = create_session_with_owner
       session.update(:verified => false)
-      get '/owner_required', nil,  'HTTP_AUTHORIZATION' => "Token #{session.token}"
+      get '/owner_required', nil, 'HTTP_AUTHORIZATION' => "Token #{session.token}"
       last_response.status.should == 401
       json_response['error'].should.match /Authentication token is invalid or unverified/
     end

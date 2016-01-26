@@ -2,7 +2,6 @@ require File.expand_path('../../../spec_helper', __FILE__)
 
 module Pod::TrunkApp
   describe Commit::Import, 'when importing' do
-
     def instance
       Commit::Import.new('test.user@example.com', 'Test User')
     end
@@ -11,21 +10,21 @@ module Pod::TrunkApp
       instance.import(
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         type,
-        files
+        files,
       )
     end
 
     describe '#extract_name_and_version' do
       it 'handles a normal example' do
-        name, version_name = instance
-          .extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
+        name, version_name = instance.
+          extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
 
         name.should == 'KFData'
         version_name.should == '1.0.1'
       end
       it 'handles an example without Specs' do
-        name, version_name = instance
-          .extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
+        name, version_name = instance.
+          extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
 
         name.should == 'KFData'
         version_name.should == '1.0.1'
@@ -35,8 +34,8 @@ module Pod::TrunkApp
     it 'gets the podspec data from the right URL' do
       expected_url = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/" \
         '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
-      REST.expects(:get).with(expected_url).once
-        .returns(rest_response('GitHub/ABContactHelper.podspec.json'))
+      REST.expects(:get).with(expected_url).once.
+        returns(rest_response('GitHub/ABContactHelper.podspec.json'))
 
       trigger_commit_with_fake_data(:added)
     end
@@ -235,7 +234,7 @@ module Pod::TrunkApp
       other_version.add_commit(
         :sha => '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         :specification_data => 'DATA',
-        :committer => other_committer
+        :committer => other_committer,
       )
 
       lambda do
@@ -252,7 +251,7 @@ module Pod::TrunkApp
       commit = version.add_commit(
         :sha => '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f',
         :specification_data => 'DATA',
-        :committer => committer
+        :committer => committer,
       )
 
       PodVersion.any_instance.expects(:add_commit).never
@@ -272,7 +271,7 @@ module Pod::TrunkApp
       instance.import(
         'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
         :removed,
-        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json)
+        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json),
       )
 
       pod.versions_dataset.all.reject(&:deleted?).should == [undeleted]
@@ -292,7 +291,7 @@ module Pod::TrunkApp
       instance.import(
         'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
         :removed,
-        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json)
+        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json),
       )
 
       # Assert all versions are deleted.
@@ -300,6 +299,5 @@ module Pod::TrunkApp
 
       pod.reload.deleted.should == true
     end
-
   end
 end

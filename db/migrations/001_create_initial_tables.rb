@@ -20,7 +20,7 @@ Sequel.migration do
     end
 
     # create_table(:schema_info) do
-      # Integer :version, :default=>0, :null=>false
+    # Integer :version, :default=>0, :null=>false
     # end
 
     create_table(:owners_pods) do
