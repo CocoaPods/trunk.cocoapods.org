@@ -20,11 +20,11 @@ module Pod::TrunkApp
       http_request.read_timeout.should == 7
     end
 
-    def stub_request
+    def stub_request(response = fixture_response('create_new_commit'))
       args = Array.new(5)
       REST::Request.stubs(:perform).with do |method, url, body, headers, auth|
         args.replace [method, url.to_s, body, headers, auth]
-      end.returns(fixture_response('create_new_commit'))
+      end.returns(response)
       args
     end
 
@@ -61,15 +61,21 @@ module Pod::TrunkApp
     it 'requests the sha for the deleted file' do
       extend SpecHelpers::CommitResponse
 
-      @owner = Owner.new
+      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
       @pod = Pod.create(:name => 'MyPod')
       @version = PodVersion.create(:pod => @pod, :name => '1.0.3')
 
+      # Create our push job
       job = PushJob.new(@version, @owner, '', 'Delete')
       github = job.class.github
-      github.stubs(:delete_file_at_path).returns(nil)
 
-      args = stub_request
+      # This gets called after we get the right response
+      github.stubs(:delete_file_at_path).with('Specs/MyPod/1.0.3/MyPod.podspec.json',
+                                              '[Delete] MyPod 1.0.3', '123434324242', 'Appie', 'appie@example.com')
+
+      response = REST::Response.new(200, {}, '{ "sha": "123434324242" }')
+      args = stub_request(response)
+
       job.send(:perform_action)
 
       method, url, body, headers, auth = args

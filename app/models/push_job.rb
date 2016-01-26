@@ -44,6 +44,7 @@ module Pod
           contents_response = self.class.github.file_for_path(pod_version.destination_path).body
           sha = JSON.parse(contents_response)['sha']
           delete_file(sha)
+
         else
           raise "Unknown push job type: #{job_type}"
         end
