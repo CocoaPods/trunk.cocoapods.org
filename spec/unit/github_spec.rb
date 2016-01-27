@@ -14,7 +14,7 @@ module Pod::TrunkApp
 
     it 'configures timeouts' do
       Net::HTTP.last_started_request = nil
-      @github.put('/',  :foo => 'bar')
+      @github.put('/', :foo => 'bar')
       http_request = Net::HTTP.last_started_request
       http_request.open_timeout.should == 3
       http_request.read_timeout.should == 7
@@ -54,7 +54,7 @@ module Pod::TrunkApp
         'message'   => MESSAGE,
         'branch'    => 'master',
         'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
-        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' }
+        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
       }
     end
 
@@ -78,7 +78,7 @@ module Pod::TrunkApp
 
       job.send(:perform_action)
 
-      method, url, body, headers, auth = args
+      method, url, _body, headers, _auth = args
 
       method.should == :get
       url.should == 'https://api.github.com/repos/CocoaPods/Specs/contents/Specs/MyPod/1.0.3/MyPod.podspec.json'
@@ -109,7 +109,7 @@ module Pod::TrunkApp
         'message'   => MESSAGE,
         'sha'       => '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b',
         'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
-        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' }
+        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
       }
     end
 
@@ -148,7 +148,7 @@ module Pod::TrunkApp
           Errno::ETIMEDOUT => 'Connection timed out - connect(2)',
           Net::OpenTimeout => 'execution expired',
           Net::ReadTimeout => 'Does not have a message',
-          Timeout::Error   => 'execution expired'
+          Timeout::Error   => 'execution expired',
         }.each do |error_class, message|
           res = response do
             error = error_class.new

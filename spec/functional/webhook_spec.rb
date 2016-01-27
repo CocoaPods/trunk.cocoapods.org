@@ -7,7 +7,6 @@ require 'webhook'
 
 module Pod::TrunkApp
   describe 'Webhook' do
-
     before do
       Webhook.pod_created = %w(pod_created_url1 pod_created_url2)
       Webhook.version_created = %w(version_created_url1 version_created_url2)
@@ -22,9 +21,11 @@ module Pod::TrunkApp
     def self.name
       'Webhook'
     end
+
     def self.sha
       '7f694a5c1e43543a803b5d20d8892512aae375f3'
     end
+
     def self.version_name
       '1.0.0'
     end
@@ -88,6 +89,5 @@ module Pod::TrunkApp
         end
       end
     end
-
   end
 end

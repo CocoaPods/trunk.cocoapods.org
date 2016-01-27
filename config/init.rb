@@ -42,14 +42,14 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
   hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 
   Webhook.pod_created = [
-    "https://feeds-cocoapods-org.herokuapp.com#{hook_path}"
+    "https://feeds-cocoapods-org.herokuapp.com#{hook_path}",
   ]
   Webhook.version_created = [
   ]
   Webhook.spec_updated = [
     "http://api.cocoadocs.org:4567#{hook_path}",
     "http://search.cocoapods.org#{hook_path}",
-    "http://metrics.cocoapods.org#{hook_path}"
+    "http://metrics.cocoapods.org#{hook_path}",
   ]
 
   Webhook.enable

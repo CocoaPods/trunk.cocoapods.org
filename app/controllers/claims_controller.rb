@@ -22,7 +22,7 @@ module Pod
       get '/new' do
         @owner = Owner.new
         @pods = []
-        slim :'new'
+        slim :new
       end
 
       post '/' do
@@ -33,24 +33,24 @@ module Pod
           if all_pods_already_claimed?
             query = {
               :claimer_email => @owner.email,
-              :pods => @already_claimed_pods
+              :pods => @already_claimed_pods,
             }
             redirect to("/disputes/new?#{query.to_query}")
           else
             query = {
               :claimer_email => @owner.email,
               :successfully_claimed => @successfully_claimed_pods,
-              :already_claimed => @already_claimed_pods
+              :already_claimed => @already_claimed_pods,
             }
             redirect to("/thanks?#{query.to_query}")
           end
         end
         prepare_errors
-        slim :'new'
+        slim :new
       end
 
       get '/thanks' do
-        slim :'thanks'
+        slim :thanks
       end
 
       # --- Disputes ------------------------------------------------------------------------------
@@ -149,9 +149,9 @@ module Pod
                         :title => 'Dispute by ' \
                           "#{dispute.claimer.name} (#{dispute.claimer.email})",
                         :value => dispute.message,
-                        :short => false
-                      }]
-                    }]
+                        :short => false,
+                      }],
+                    }],
                   }.to_json)
       rescue REST::Error
         "RuboCop: If REST has problems POSTing to Slack, we don't care."

@@ -49,8 +49,8 @@ module Pod
         # Extracts the pod name and the version name from the file name.
         #
         def extract_name_and_version(file_name)
-          _, name, version_name, _ = *file_name
-            .match(%r{([^\/]+)\/([^\/]+)\/[^\.]+#{PODSPEC_FILE_EXT_REGEX}})
+          _, name, version_name, = *file_name.
+            match(%r{([^\/]+)\/([^\/]+)\/[^\.]+#{PODSPEC_FILE_EXT_REGEX}})
 
           [name, version_name]
         end
@@ -160,7 +160,7 @@ module Pod
               :sha => commit_sha,
               :specification_data => JSON.pretty_generate(spec),
               :committer => committer,
-              :imported => true
+              :imported => true,
             )
         end
 
@@ -175,7 +175,7 @@ module Pod
             :reference => "Github hook call to temporary ID: #{object_id}",
             :level => :warning,
             :message => message,
-            :owner => committer
+            :owner => committer,
           )
         end
 
@@ -188,7 +188,7 @@ module Pod
           LogMessage.create(
             :message => "Version `#{version.description}' deleted via Github hook.",
             :level => :warning,
-            :owner => committer
+            :owner => committer,
           )
         end
 
@@ -198,7 +198,7 @@ module Pod
           LogMessage.create(
             :message => "There was an issue fetching the spec at #{url}: #{message}",
             :level => :error,
-            :data => data
+            :data => data,
           )
         end
       end

@@ -61,7 +61,6 @@ module Pod
       end
 
       get '/:name/specs/latest', :requires_owner => false do
-
         commits = DB[<<-SQL, params[:name]].all
           SELECT DISTINCT ON (pod_versions.id)
               pods.name         "name",
@@ -105,7 +104,7 @@ module Pod
                           'http://blog.cocoapods.org/Claim-Your-Pods/')
         end
 
-        if version = /CocoaPods\/([0-9a-z\.]+)/i.match(env['User-Agent'])
+        if version = %r{CocoaPods/([0-9a-z\.]+)}i.match(env['User-Agent'])
           if Version.new(version[1]) < MINIMUM_COCOAPODS_VERSION
             message = 'The minimum CocoaPods version allowed to push new ' \
                       "specs is `#{MINIMUM_COCOAPODS_VERSION}`. Please update " \
@@ -178,7 +177,7 @@ module Pod
         end
 
         deprecated_params = JSON.parse(request.body.read)
-        if !deprecated_params.kind_of?(Hash) || deprecated_params.empty?
+        if !deprecated_params.is_a?(Hash) || deprecated_params.empty?
           message = 'Please send the deprecation in the body of your post.'
           json_error(422, message)
         end
@@ -226,7 +225,7 @@ module Pod
         end
 
         owner_params = JSON.parse(request.body.read)
-        if !owner_params.kind_of?(Hash) || owner_params.empty?
+        if !owner_params.is_a?(Hash) || owner_params.empty?
           message = 'Please send the owner email address in the body of your post.'
           json_error(422, message)
         end

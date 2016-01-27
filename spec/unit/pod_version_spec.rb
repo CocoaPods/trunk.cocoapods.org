@@ -70,7 +70,7 @@ module Pod::TrunkApp
         @valid_commit_attrs = {
           :committer => @committer,
           :sha => '3ca23060197547eef92983f15590b5a87270615f',
-          :specification_data => 'DATA'
+          :specification_data => 'DATA',
         }
       end
 
@@ -107,7 +107,7 @@ module Pod::TrunkApp
         @valid_commit_attrs = {
           :committer => @committer,
           :sha => '3ca23060197547eef92983f15590b5a87270615f',
-          :specification_data => 'DATA'
+          :specification_data => 'DATA',
         }
       end
 
@@ -128,7 +128,7 @@ module Pod::TrunkApp
         @valid_commit_attrs = {
           :committer => @committer,
           :sha => '3ca23060197547eef92983f15590b5a87270615f',
-          :specification_data => 'DATA'
+          :specification_data => 'DATA',
         }
       end
 
@@ -150,7 +150,7 @@ module Pod::TrunkApp
         @valid_commit_attrs = {
           :committer => @committer,
           :sha => '3ca23060197547eef92983f15590b5a87270615f',
-          :specification_data => 'DATA'
+          :specification_data => 'DATA',
         }
       end
 
@@ -216,7 +216,6 @@ module Pod::TrunkApp
       it 'returns falsy' do
         @version.push!(@committer, 'DATA', 'Add').should.not.be.success
       end
-
     end
   end
 end

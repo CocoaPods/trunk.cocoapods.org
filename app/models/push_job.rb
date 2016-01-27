@@ -11,7 +11,10 @@ module Pod
       attr_reader :pod_version, :committer, :specification_data, :job_type, :duration
 
       def initialize(pod_version, committer, specification_data, job_type)
-        @pod_version, @committer, @specification_data, @job_type = pod_version, committer, specification_data, job_type
+        @pod_version = pod_version
+        @committer = committer
+        @specification_data = specification_data
+        @job_type = job_type
       end
 
       def commit_message
@@ -56,7 +59,7 @@ module Pod
           specification_data,
           commit_message,
           committer.name,
-          committer.email
+          committer.email,
         )
       end
 
@@ -66,7 +69,7 @@ module Pod
           commit_message,
           sha,
           committer.name,
-          committer.email
+          committer.email,
         )
       end
 
@@ -93,7 +96,7 @@ module Pod
           :level => level,
           :message => "Push for `#{pod_version.description}' #{message}.",
           :owner => committer,
-          :data => data
+          :data => data,
         )
       end
 
@@ -107,7 +110,7 @@ module Pod
         @github ||= GitHub.new(
           ENV['GH_REPO'],
           :username => ENV['GH_TOKEN'],
-          :password => 'x-oauth-basic'
+          :password => 'x-oauth-basic',
         )
       end
     end

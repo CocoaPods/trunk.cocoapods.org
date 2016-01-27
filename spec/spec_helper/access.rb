@@ -2,7 +2,9 @@ module SpecHelpers
   module Access
     class Macro
       def initialize(context, status_code, desc)
-        @context, @status_code, @desc = context, status_code, desc
+        @context = context
+        @status_code = status_code
+        @desc = desc
       end
 
       [:get, :post, :put, :patch, :delete].each do |method|

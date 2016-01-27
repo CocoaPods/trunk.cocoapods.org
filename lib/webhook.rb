@@ -22,20 +22,25 @@ class Webhook
   def self.pod_created=(targets)
     urls[:pod][:create] = targets
   end
+
   def self.pod_created(created_at, pod_name, version_name, commit_sha, data_url)
     call_convenience('pod', 'create', created_at, pod_name, version_name, commit_sha, data_url)
   end
+
   #
   def self.version_created=(targets)
     urls[:version][:create] = targets
   end
+
   def self.version_created(created_at, pod_name, version_name, commit_sha, data_url)
     call_convenience('version', 'create', created_at, pod_name, version_name, commit_sha, data_url)
   end
+
   #
   def self.spec_updated=(targets)
     urls[:spec][:update] = targets
   end
+
   def self.spec_updated(updated_at, pod_name, version_name, commit_sha, data_url)
     call_convenience('spec', 'update', updated_at, pod_name, version_name, commit_sha, data_url)
   end
@@ -56,6 +61,7 @@ class Webhook
     @parent, @child = IO.pipe
     start_child_process_thread
   end
+
   def self.enabled?
     !(@parent.nil? || @child.nil?)
   end
@@ -74,12 +80,14 @@ class Webhook
     dispose_child
     dispose_parent
   end
+
   def self.dispose_child
     if @child
       @child.close unless @child.closed?
       @child = nil
     end
   end
+
   def self.dispose_parent
     if @parent
       @parent.close unless @parent.closed?
@@ -96,12 +104,14 @@ class Webhook
     return unless enabled?
     targets = urls[type.to_sym][action.to_sym]
     return if targets.empty?
-    targets = targets.join(',').gsub("\n", '')
-    write_child "#{type};#{action};#{message.gsub("\n", ' ')};#{targets}\n"
+    targets = targets.join(',').delete("\n")
+    write_child "#{type};#{action};#{message.tr("\n", ' ')};#{targets}\n"
   end
+
   def self.write_child(message)
     @child.write message
   end
+
   def self.call_convenience(type, action, timestamp, pod_name, version_name, sha, data_url)
     hash = {
       :type => type,
@@ -110,7 +120,7 @@ class Webhook
       :pod => pod_name,
       :version => version_name,
       :commit => sha,
-      :data_url => data_url
+      :data_url => data_url,
     }
     call(type, action, hash.to_json)
   end
@@ -120,7 +130,6 @@ class Webhook
   def self.start_child_process_thread
     @child_pid = fork do
       loop do
-
         # Wait for input from the parent.
         #
         IO.select([@parent], nil) || next

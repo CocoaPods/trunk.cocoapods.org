@@ -22,7 +22,7 @@ module SpecHelpers::PodsController
     {
       :committer => @owner,
       :sha => '3ca23060197547eef92983f15590b5a87270615f',
-      :specification_data => 'DATA'
+      :specification_data => 'DATA',
     }
   end
 
@@ -49,7 +49,7 @@ module Pod::TrunkApp
 
     it 'only accepts JSON' do
       header 'Content-Type', 'text/yaml'
-      post '/', {},  'HTTPS' => 'on'
+      post '/', {}, 'HTTPS' => 'on'
       last_response.status.should == 415
     end
 
@@ -103,8 +103,8 @@ module Pod::TrunkApp
         'error' => 'The Pod Specification did not pass validation.',
         'data' => {
           'errors'   => ['Missing required attribute `name`.', 'A version is required.'],
-          'warnings' => ['Missing required attribute `license`.', 'Missing license type.']
-        }
+          'warnings' => ['Missing required attribute `license`.', 'Missing license type.'],
+        },
       }
     end
 
@@ -131,9 +131,9 @@ module Pod::TrunkApp
     end
 
     it "does not allow a push for an existing pod version if it's published" do
-      @owner.add_pod(:name => spec.name)
-            .add_version(:name => spec.version.to_s)
-            .add_commit(valid_commit_attrs)
+      @owner.add_pod(:name => spec.name).
+        add_version(:name => spec.version.to_s).
+        add_commit(valid_commit_attrs)
       lambda do
         post '/', spec.to_json
       end.should.not.change { Pod.count + PodVersion.count }
@@ -247,16 +247,16 @@ module Pod::TrunkApp
     # end
 
     it 'uses git ls for a GitHub git source' do
-      SpecificationWrapper.any_instance.expects(:system)
-        .with('git', 'ls-remote', 'https://github.com/AFNetworking/AFNetworking.git', '1.2.0')
-        .returns(true)
+      SpecificationWrapper.any_instance.expects(:system).
+        with('git', 'ls-remote', 'https://github.com/AFNetworking/AFNetworking.git', '1.2.0').
+        returns(true)
       post '/', spec.to_json
     end
 
     it 'uses git ls for a BitBucket git source' do
-      SpecificationWrapper.any_instance.expects(:system)
-        .with('git', 'ls-remote', 'https://bitbucket.org/technologyastronauts/oss_flounder.git', '1.2.0')
-        .returns(true)
+      SpecificationWrapper.any_instance.expects(:system).
+        with('git', 'ls-remote', 'https://bitbucket.org/technologyastronauts/oss_flounder.git', '1.2.0').
+        returns(true)
       spec.source = { :git => 'https://bitbucket.org/technologyastronauts/oss_flounder.git', :tag => '1.2.0' }
 
       post '/', spec.to_json
@@ -268,7 +268,6 @@ module Pod::TrunkApp
       spec.source = { :git => 'https://orta.io/thingy.git', :tag => '0.1.2' }
       post '/', spec.to_json
     end
-
   end
 
   describe PodsController, 'when PATCHing to deprecate a pod' do
@@ -494,7 +493,7 @@ module Pod::TrunkApp
       get '/AFNetworking'
       last_response.body.should == {
         'versions' => [@version.public_attributes],
-        'owners' => [@owner.public_attributes]
+        'owners' => [@owner.public_attributes],
       }.to_json
     end
 
@@ -514,7 +513,7 @@ module Pod::TrunkApp
       last_response.status.should == 200
       last_response.body.should == {
         'messages' => @version.log_messages.map(&:public_attributes),
-        'data_url' => @version.data_url
+        'data_url' => @version.data_url,
       }.to_json
     end
 
