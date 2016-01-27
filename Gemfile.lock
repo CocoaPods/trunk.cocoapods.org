@@ -4,6 +4,13 @@ GIT
   specs:
     peiji-san (1.2.0)
 
+GIT
+  remote: https://github.com/orta/nap/
+  revision: e3e94bb43a93935c7845b74cb323f0682891bcf1
+  branch: delete_body
+  specs:
+    nap (1.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -52,7 +59,6 @@ GEM
     mocha-on-bacon (0.2.2)
       mocha (>= 0.13.0)
     multi_json (1.10.1)
-    nap (1.0.0)
     newrelic_rpm (3.8.1.221)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -136,6 +142,7 @@ DEPENDENCIES
   kicker
   mail
   mocha-on-bacon
+  nap!
   newrelic_rpm
   nokogiri
   peiji-san!
