@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: https://github.com/orta/nap/
-  revision: e3e94bb43a93935c7845b74cb323f0682891bcf1
+  revision: 4ad1974beeb3b23b50fd7b254ab914f7c48b2117
   branch: delete_body
   specs:
     nap (1.0.0)
