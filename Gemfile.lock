@@ -4,17 +4,10 @@ GIT
   specs:
     peiji-san (1.2.0)
 
-GIT
-  remote: https://github.com/orta/nap/
-  revision: 4ad1974beeb3b23b50fd7b254ab914f7c48b2117
-  branch: delete_body
-  specs:
-    nap (1.0.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.5)
+    activesupport (4.2.5.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -25,7 +18,7 @@ GEM
       parser (~> 2.2)
     backports (3.6.0)
     bacon (1.2.0)
-    cocoapods-core (1.0.0.beta.2)
+    cocoapods-core (1.0.0.beta.3)
       activesupport (>= 4.0.2)
       fuzzy_match (~> 2.0.4)
       nap (~> 1.0)
@@ -53,12 +46,13 @@ GEM
     metaclass (0.0.4)
     mime-types (1.25.1)
     mini_portile (0.6.2)
-    minitest (5.8.3)
+    minitest (5.8.4)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     mocha-on-bacon (0.2.2)
       mocha (>= 0.13.0)
     multi_json (1.10.1)
+    nap (1.1.0)
     newrelic_rpm (3.8.1.221)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -136,13 +130,12 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   bacon
-  cocoapods-core (>= 0.38.0.beta.1)
+  cocoapods-core (>= 1.0.0.beta.3)
   foreman
   json (~> 1.8)
   kicker
   mail
   mocha-on-bacon
-  nap!
   newrelic_rpm
   nokogiri
   peiji-san!

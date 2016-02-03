@@ -3,10 +3,7 @@ ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
 gem 'activesupport'
 
-# Temporary until https://github.com/Fingertips/nap/pull/11 is merged / released
-gem 'nap', :git => "https://github.com/orta/nap/", :branch => "delete_body"
-
-gem 'cocoapods-core', '>= 0.38.0.beta.1'
+gem 'cocoapods-core', '>= 1.0.0.beta.3'
 gem 'tobias-sinatra-url-for'
 gem 'json', '~> 1.8'
 gem 'mail'
