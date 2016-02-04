@@ -39,7 +39,8 @@ module Pod::TrunkApp
                                                @job.specification_data,
                                                MESSAGE,
                                                'Appie',
-                                               'appie@example.com').returns(response)
+                                               'appie@example.com',
+                                               :update => false).returns(response)
 
         @job.push!.commit_sha.should == fixture_new_commit_sha
         @version.reload

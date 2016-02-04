@@ -21,11 +21,12 @@ module Pod
 
       # @return [CommitResponse] A encapsulated response object that parses the `commit_sha`.
       #
-      def create_new_commit(destination_path, data, message, author_name, author_email)
+      def create_new_commit(destination_path, data, message, author_name, author_email, update: false)
         CommitResponse.new do
           put(File.join('contents', URI.escape(destination_path)),
               :message   => message,
               :branch    => BRANCH,
+              :sha       => (sha_for_file_at_path(destination_path) if update),
               :content   => Base64.encode64(data).delete("\r\n"),
               :author    => { :name => author_name,        :email => author_email },
               :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
@@ -35,11 +36,11 @@ module Pod
 
       # @return [CommitResponse] A encapsulated response object that deletes a file at a path
       #
-      def delete_file_at_path(destination_path, message, sha, author_name, author_email)
+      def delete_file_at_path(destination_path, message, author_name, author_email)
         CommitResponse.new do
           delete(File.join('contents', URI.escape(destination_path)),
                  :message   => message,
-                 :sha       => sha,
+                 :sha       => sha_for_file_at_path(destination_path),
                  :author    => { :name => author_name,        :email => author_email },
                  :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
                 )
@@ -52,6 +53,14 @@ module Pod
         CommitResponse.new do
           get(File.join('contents', URI.escape(path)))
         end
+      end
+
+      # @return [String, Nil] The SHA for the file at the given path, or `nil`
+      #         if there is no file at the given path.
+      #
+      def sha_for_file_at_path(path)
+        response = file_for_path(path)
+        JSON.parse(response.body)['sha'] if response.success?
       end
 
       # @return [String] A full API route for a path
