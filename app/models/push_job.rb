@@ -40,34 +40,32 @@ module Pod
 
       def perform_action
         case job_type
-        when 'Add', 'Deprecate'
+        when 'Add'
           new_commit
-
+        when 'Deprecate'
+          new_commit(:update => true)
         when 'Delete'
-          contents_response = self.class.github.file_for_path(pod_version.destination_path).body
-          sha = JSON.parse(contents_response)['sha']
-          delete_file(sha)
-
+          delete_file
         else
           raise "Unknown push job type: #{job_type}"
         end
       end
 
-      def new_commit
+      def new_commit(update: false)
         self.class.github.create_new_commit(
           pod_version.destination_path,
           specification_data,
           commit_message,
           committer.name,
           committer.email,
+          :update => update,
         )
       end
 
-      def delete_file(sha)
+      def delete_file
         self.class.github.delete_file_at_path(
           pod_version.destination_path,
           commit_message,
-          sha,
           committer.name,
           committer.email,
         )

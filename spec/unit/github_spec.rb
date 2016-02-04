@@ -53,45 +53,36 @@ module Pod::TrunkApp
       body.should == {
         'message'   => MESSAGE,
         'branch'    => 'master',
+        'sha'       => nil,
         'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
         'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
       }
     end
 
-    it 'requests the sha for the deleted file' do
+    it 'requests the sha for a file' do
       extend SpecHelpers::CommitResponse
-
-      @owner = Owner.create(:email => 'appie@example.com', :name => 'Appie')
-      @pod = Pod.create(:name => 'MyPod')
-      @version = PodVersion.create(:pod => @pod, :name => '1.0.3')
-
-      # Create our push job
-      job = PushJob.new(@version, @owner, '', 'Delete')
-      github = job.class.github
-
-      # This gets called after we get the right response
-      github.stubs(:delete_file_at_path).with('Specs/MyPod/1.0.3/MyPod.podspec.json',
-                                              '[Delete] MyPod 1.0.3', '123434324242', 'Appie', 'appie@example.com')
 
       response = REST::Response.new(200, {}, '{ "sha": "123434324242" }')
       args = stub_request(response)
 
-      job.send(:perform_action)
+      @github.sha_for_file_at_path(DESTINATION_PATH).should == '123434324242'
 
       method, url, _body, headers, _auth = args
 
       method.should == :get
-      url.should == 'https://api.github.com/repos/CocoaPods/Specs/contents/Specs/MyPod/1.0.3/MyPod.podspec.json'
+      url.should == 'https://api.github.com/repos/CocoaPods/Specs/contents/AFNetworking/1.2.0/AFNetworking.podspec.yaml'
       headers.should == GitHub::HEADERS
     end
 
     it 'deletes a file' do
+      @github.expects(:sha_for_file_at_path).with(DESTINATION_PATH).
+        returns('2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b')
+
       # Capture the args so we can assert on them after the call.
       args = stub_request
 
       response = @github.delete_file_at_path(DESTINATION_PATH,
                                              '[Add] AFNetworking 1.2.0',
-                                             '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b',
                                              'Eloy Durán',
                                              'eloy@example.com')
       response.should.be.success
