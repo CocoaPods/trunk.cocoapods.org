@@ -29,8 +29,9 @@ options = {
   :namespace => 'cocoapods',
   :compress => true,
   :username => memcache_username,
-  :password => memcache_password
+  :password => memcache_password,
 }
+
 Rack::Attack.cache.store = Dalli::Client.new(memcache_hosts, options)
 # Always allow requests from localhost
 # (blacklist & throttles are skipped)
