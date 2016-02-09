@@ -23,6 +23,7 @@ GEM
       fuzzy_match (~> 2.0.4)
       nap (~> 1.0)
     daemons (1.1.9)
+    dalli (2.7.5)
     dotenv (0.7.0)
     erubis (2.7.0)
     eventmachine (1.0.3)
@@ -65,6 +66,8 @@ GEM
     prettybacon (0.0.2)
       bacon (~> 1.2)
     rack (1.5.2)
+    rack-attack (4.3.1)
+      rack
     rack-protection (1.5.3)
       rack
     rack-ssl (1.4.1)
@@ -131,6 +134,7 @@ DEPENDENCIES
   activesupport
   bacon
   cocoapods-core (>= 1.0.0.beta.3)
+  dalli (~> 2.7.5)
   foreman
   json (~> 1.8)
   kicker
@@ -141,6 +145,7 @@ DEPENDENCIES
   peiji-san!
   pg
   prettybacon
+  rack-attack (~> 4.3.1)
   rack-ssl
   rack-test
   rake
