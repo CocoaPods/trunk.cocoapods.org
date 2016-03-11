@@ -6,7 +6,7 @@ Disputes currently:
 > There's a new dispute on trunk [Urgent]: https://trunk.cocoapods.org/manage/disputes/272
 > Dispute by Orta Therox (orta.therox...)
 > ----------------
-> The following pod has been claimed by others but is in fact mine: PayPalMPL.
+> The following pod has been claimed by others but is in fact mine: ORStackView.
 
 > Here is a summary of how you can verify that I’m the rightful owner:
  
