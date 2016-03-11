@@ -23,5 +23,3 @@ To fix the dispute
 * Then with the pod page up, add the given email address to the pod. 
 * Then go back to the dispute linked in Slack, and hit the "Settled" tick box
 * Then send an email to the email address in the dispute saying what you've done
-
-
