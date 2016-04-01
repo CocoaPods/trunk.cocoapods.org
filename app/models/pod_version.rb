@@ -80,6 +80,7 @@ module Pod
           add_commit(:committer => committer, :sha => response.commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
         end
+        pod.update(:deleted => pod.versions_dataset.first(:deleted => false).nil?)
         response
       end
 
