@@ -23,6 +23,6 @@ sleep 5
     'NSAttributedString+CCLFormat',
     '1.0.1',
     '9745cbb65ebb35c4507aec902c93c9174953369f',
-    'https://raw.githubusercontent.com/CocoaPods/Specs/master/Specs/NSAttributedString+CCLFormat/1.0.1/NSAttributedString+CCLFormat.podspec.json'
+    'https://raw.githubusercontent.com/CocoaPods/Specs/master/Specs/NSAttributedString+CCLFormat/1.0.1/NSAttributedString+CCLFormat.podspec.json',
   )
 end
