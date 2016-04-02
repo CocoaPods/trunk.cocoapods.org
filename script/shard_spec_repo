@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+gemfile do
+  gem 'cocoapods', '> 0.a'
+  gem 'cocoapods-repo-shard'
+end
+
+# disable pushes
+
+Pod::Command.run(%w(repo update master))
+Pod::Command.run(%w(repo shard master --lengths=1,1,1))
+Dir.chdir(Pod::SourcesManager.master.first) do
+  Pod::Command.execute_command(:git, %w(push origin master), true)
+end
+
+# update the Source::Metadata to use new lengths
+
+# add new commit objects for the moved versions?
+
+# enable pushes

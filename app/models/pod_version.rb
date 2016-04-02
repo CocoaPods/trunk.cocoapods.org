@@ -10,6 +10,8 @@ module Pod
 
       DATA_URL = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
 
+      SOURCE_METADATA = Source::Metadata.new
+
       self.dataset = :pod_versions
 
       extend PeijiSan
@@ -58,7 +60,9 @@ module Pod
       end
 
       def destination_path
-        File.join('Specs', pod.name, name, "#{pod.name}.podspec.json")
+        File.join('Specs',
+                  SOURCE_METADATA.path_fragment(pod.name, name),
+                  "#{pod.name}.podspec.json")
       end
 
       def data_url
