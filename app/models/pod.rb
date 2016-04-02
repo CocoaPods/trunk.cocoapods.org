@@ -17,7 +17,8 @@ module Pod
 
       alias_method :deleted?, :deleted
 
-      # Finds a pod by name that has *not* been deleted.
+      # Finds a pod by name, only including deleted pods if `include_deleted` is
+      # true.
       #
       def self.find_by_name(name, include_deleted: false)
         if include_deleted
