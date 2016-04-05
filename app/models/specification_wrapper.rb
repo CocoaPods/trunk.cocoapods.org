@@ -80,7 +80,7 @@ module Pod
           @specification.source[:commit] ||
           @specification.source[:branch] ||
           'HEAD'
-        wrap_timeout { system('git', 'ls-remote', @specification.source[:git], ref) }
+        wrap_timeout { system('git', 'ls-remote', @specification.source[:git], ref.to_s) }
       end
 
       def linter
