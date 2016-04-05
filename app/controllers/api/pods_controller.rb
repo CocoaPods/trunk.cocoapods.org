@@ -131,8 +131,9 @@ module Pod
           error(422, { 'error' => message, 'data' => data }.to_json)
         end
 
-        pod = Pod.find_by_name_and_owner(specification.name, @owner, :include_deleted => true) do
-          message = 'You are not allowed to push new versions for this pod.'
+        pod = Pod.find_by_name_and_owner(specification.name, @owner, :include_deleted => true) do |unowned_pod|
+          message = "You (#{@owner.email}) are not allowed to push new versions " \
+                    "for this pod. The owners of this pod are #{unowned_pod.owners.map(&:email).to_sentence}."
           json_error(403, message)
         end
 
