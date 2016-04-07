@@ -139,6 +139,21 @@ module Pod::TrunkApp
       Pod.find_by_name(spec.name).should.not.be.deleted
     end
 
+    it 'does not allow a non-owner to push a new version' do
+      @pod = Pod.create(:name => spec.name)
+      @pod.add_owner(Owner.create(:email => 'someone@example.com', :name => 'Someone Else'))
+
+      lambda do
+        post '/', spec.to_json
+      end.should.not.change { [PodVersion.count, @pod.owners] }
+
+      last_response.status.should == 403
+      JSON.load(last_response.body).should == {
+        'error' => 'You (appie@example.com) are not allowed to push new versions for this pod. ' \
+                   'The owners of this pod are someone@example.com.',
+      }
+    end
+
     it "does not allow a push for an existing pod version if it's published" do
       @owner.add_pod(:name => spec.name).
         add_version(:name => spec.version.to_s).

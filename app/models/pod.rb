@@ -38,7 +38,7 @@ module Pod
           if pod.owners.include?(owner)
             return pod
           else
-            yield if block_given?
+            yield pod if block_given?
           end
         end
         nil
