@@ -18,7 +18,7 @@ GEM
       parser (~> 2.2)
     backports (3.6.0)
     bacon (1.2.0)
-    cocoapods-core (1.0.0.beta.8)
+    cocoapods-core (1.0.0.rc.1)
       activesupport (>= 4.0.2)
       fuzzy_match (~> 2.0.4)
       nap (~> 1.0)
