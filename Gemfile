@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
-gem 'activesupport'
+gem 'activesupport', '< 5'
 
 gem 'cocoapods-core', '>= 1.0.0.beta.3'
 gem 'tobias-sinatra-url-for'

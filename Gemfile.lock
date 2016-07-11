@@ -131,7 +131,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport
+  activesupport (< 5)
   bacon
   cocoapods-core (>= 1.0.0.beta.3)
   dalli (~> 2.7.5)
