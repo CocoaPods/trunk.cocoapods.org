@@ -59,6 +59,7 @@ require 'app/controllers/session_verification_controller'
 require 'app/controllers/hooks_controller'
 require 'app/controllers/manage_controller'
 require 'app/controllers/assets_controller'
+require 'app/controllers/letsencrypt_controller'
 
 # TODO: Temporary controller while we transition to the trunk app.
 require 'app/controllers/claims_controller'
@@ -74,6 +75,7 @@ module Pod
       '/hooks'           => HooksController,
       '/manage'          => ManageController,
       '/assets'          => AssetsController,
+      '/.well-known'     => LetsEncryptController,
 
       # TODO: Temporary routes while we transition to the trunk app.
       '/claims'          => ClaimsController,
