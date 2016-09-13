@@ -21,12 +21,13 @@ Pod::Executable.execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=fa
 Pod::Command.run(%w(repo update master))
 Pod::Command.run(%W(repo shard master --lengths=#{prefix_lengths.join(',')}))
 
-master.metadata.tap do |metadata|
+shard_sha = Dir.chdir(master.repo) { Pod::Executable.execute_command(:git, %w(rev-parse HEAD), true).strip }
+
+# creating from scratch to avoid re-serializing any stale data
+Pod::Source::Metadata.from_file(master.metadata_path).tap do |metadata|
   metadata.minimum_cocoapods_version = Pod::Version.new('1.0.0.beta.6')
   master.metadata_path.open('w') { |f| f.write(YAML.dump(metadata.to_hash)) }
 end
-
-shard_sha = Dir.chdir(master.repo) { Pod::Executable.execute_command(:git, %w(rev-parse HEAD), true).strip }
 
 Dir.chdir(master.repo) do
   Pod::Executable.execute_command(:git, %W(add #{master.metadata_path}), true)
