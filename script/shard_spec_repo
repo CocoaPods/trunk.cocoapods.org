@@ -26,7 +26,9 @@ shard_sha = Dir.chdir(master.repo) { Pod::Executable.execute_command(:git, %w(re
 # creating from scratch to avoid re-serializing any stale data
 Pod::Source::Metadata.from_file(master.metadata_path).tap do |metadata|
   metadata.minimum_cocoapods_version = Pod::Version.new('1.0.0.beta.6')
-  master.metadata_path.open('w') { |f| f.write(YAML.dump(metadata.to_hash)) }
+  yaml = YAML.dump(metadata.to_hash)
+  master.metadata_path.open('w') { |f| f.write(yaml) }
+  Pod::Executable.execute_command(:heroku, %W(config:set MASTER_SOURCE_METADATA=#{yaml}), true)
 end
 
 Dir.chdir(master.repo) do

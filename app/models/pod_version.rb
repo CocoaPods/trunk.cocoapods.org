@@ -10,7 +10,7 @@ module Pod
 
       DATA_URL = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
 
-      SOURCE_METADATA = Source::Metadata.new
+      SOURCE_METADATA = Source::Metadata.new YAML.load(ENV.fetch('MASTER_SOURCE_METADATA') { "---" })
 
       self.dataset = :pod_versions
 
