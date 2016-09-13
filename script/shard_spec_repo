@@ -3,20 +3,48 @@
 require 'bundler/inline'
 
 gemfile do
-  gem 'cocoapods', '> 0.a'
+  gem 'cocoapods', '>= 1.1.0.rc.1'
   gem 'cocoapods-repo-shard'
+
+  gem 'sequel'
 end
 
-# disable pushes
+Pod::Config.instance.verbose = true
+
+db = Sequel.connect(ENV['DATABASE_URL'])
+
+master = Pod::SourcesManager.master.first
+prefix_lengths = [1, 1, 1]
+
+Pod::Executable.execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=false), true)
 
 Pod::Command.run(%w(repo update master))
-Pod::Command.run(%w(repo shard master --lengths=1,1,1))
-Dir.chdir(Pod::SourcesManager.master.first) do
-  Pod::Command.execute_command(:git, %w(push origin master), true)
+Pod::Command.run(%W(repo shard master --lengths=#{prefix_lengths.join(',')}))
+
+master.metadata.tap do |metadata|
+  metadata.minimum_cocoapods_version = Pod::Version.new('1.0.0.beta.6')
+  master.metadata_path.open('w') { |f| f.write(YAML.dump(metadata.to_hash)) }
 end
 
-# update the Source::Metadata to use new lengths
+shard_sha = Dir.chdir(master.repo) { Pod::Executable.execute_command(:git, %w(rev-parse HEAD), true).strip }
 
-# add new commit objects for the moved versions?
+Dir.chdir(master.repo) do
+  Pod::Executable.execute_command(:git, %W(add #{master.metadata_path}), true)
+  Pod::Executable.execute_command(:git, ['commit',
+      '-m', 'Update the minimum cocoapods version to 1.0',
+      '-m', 'See http://blog.cocoapods.org/Master-Spec-Repo-Rate-Limiting-Post-Mortem/ for more information'],
+      true)
+  Pod::Executable.execute_command(:git, %w(push origin master), true)
+end
 
-# enable pushes
+# Create new commit objects
+
+# Two options here, and I'm not sure which is best:
+# 1) Update the `commits.sha` for the latest commit of each `pod_version`
+#    to be `shard_sha`, which destroys the fact that the `sha` generally points
+#    to the exact commit in which the version was added/updated
+# 2) Create a new `commit` row for all 100,000+ `pod_version`s.
+#    This is semantically more correct, but since each commit stores the spec
+#    JSON, this has the potential to significantly bloat the DB
+
+Pod::Executable.execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=false), true)
