@@ -8,7 +8,7 @@ require 'cocoapods-core/version'
 module Pod
   module TrunkApp
     class PodsController < APIController
-      MINIMUM_COCOAPODS_VERSION = Version.new((ENV['TRUNK_MINIMUM_COCOAPODS_VERSION'] || '0.36.0').dup)
+      MINIMUM_COCOAPODS_VERSION = Version.new(ENV.fetch('TRUNK_MINIMUM_COCOAPODS_VERSION') { '1.0.0' }.dup)
 
       def verify_github_responses!(responses)
         responses = Array(responses)
