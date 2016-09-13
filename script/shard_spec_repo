@@ -34,9 +34,9 @@ end
 Dir.chdir(master.repo) do
   Pod::Executable.execute_command(:git, %W(add #{master.metadata_path}), true)
   Pod::Executable.execute_command(:git, ['commit',
-      '-m', 'Update the minimum cocoapods version to 1.0',
-      '-m', 'See http://blog.cocoapods.org/Master-Spec-Repo-Rate-Limiting-Post-Mortem/ for more information'],
-      true)
+                                         '-m', 'Update the minimum cocoapods version to 1.0',
+                                         '-m', 'See http://blog.cocoapods.org/Master-Spec-Repo-Rate-Limiting-Post-Mortem/ for more information'],
+                                  true)
   Pod::Executable.execute_command(:git, %w(push origin master), true)
 end
 
