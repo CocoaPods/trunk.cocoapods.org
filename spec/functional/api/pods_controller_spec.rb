@@ -68,6 +68,18 @@ module Pod::TrunkApp
       end
     end
 
+    it 'allows a specific user through when explicitely disabled' do
+      ENV['TRUNK_APP_PUSH_ALLOWED'] = 'false'
+      ENV['TRUNK_PUSH_ALLOW_OWNER_ID'] = @owner.id.to_s
+
+      post '/', spec.to_json
+      last_response.status.should == 302
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
+
+      ENV['TRUNK_APP_PUSH_ALLOWED'] = 'true'
+      ENV['TRUNK_PUSH_ALLOW_OWNER_ID'] = nil
+    end
+
     it 'fails with data other than serialized spec data' do
       lambda do
         post '/', ''
