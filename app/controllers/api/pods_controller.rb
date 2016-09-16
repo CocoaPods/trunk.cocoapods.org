@@ -98,7 +98,7 @@ module Pod
       post '/', :requires_owner => true do
         if ENV['TRUNK_APP_PUSH_ALLOWED'] != 'true' && ENV['TRUNK_PUSH_ALLOW_OWNER_ID'].to_i != @owner.id
           json_error(503, 'We have closed pushing to CocoaPods trunk' \
-                          ', please see https://twitter.com/CocoaPods.org for details')
+                          ', please see https://twitter.com/CocoaPods for details')
         end
 
         if version = %r{CocoaPods/([0-9a-z\.]+)}i.match(env['User-Agent'])
