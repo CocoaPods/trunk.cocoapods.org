@@ -22,7 +22,6 @@ GEM
       activesupport (>= 4.0.2)
       fuzzy_match (~> 2.0.4)
       nap (~> 1.0)
-    concurrent-ruby (1.0.2)
     daemons (1.1.9)
     dalli (2.7.5)
     dotenv (0.7.0)
