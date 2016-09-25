@@ -84,6 +84,14 @@ DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 DB.timezone = :utc
 Sequel.extension :core_extensions, :migration
 
+module Sequel
+  class Model
+    class << self
+      alias_method :scoped, :dataset
+    end
+  end
+end
+
 class << DB
   # Save point is needed in testing, because tests already run in a
   # transaction, which means the transaction would be re-used and we can't test
