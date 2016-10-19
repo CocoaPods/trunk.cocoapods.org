@@ -32,7 +32,7 @@ module Pod
       register Sinatra::Twitter::Bootstrap::Assets
 
       get '/' do
-        redirect to('/log_messages')
+        redirect to('/disputes?scope=unsettled')
       end
 
       get '/commits' do
