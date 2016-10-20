@@ -120,6 +120,17 @@ module Pod::TrunkApp
       }
     end
 
+    it 'succeeds with a spec that has the pushed_with_swift_version attribute' do
+      lambda do
+        lambda do
+          post '/', JSON.load(spec.to_json).update('pushed_with_swift_version' => '3.0').to_json
+        end.should.change { Pod.count }
+      end.should.change { PodVersion.count }
+      last_response.status.should == 302
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
+      Pod.first(:name => spec.name).versions.map(&:name).should == [spec.version.to_s]
+    end
+
     it 'succeeds with a spec that has warnings when allow warnings has been specified' do
       spec.license = nil
 

@@ -41,6 +41,9 @@ module Pod
 
       def valid?(allow_warnings: false)
         linter.lint
+        linter.results.send(:results).reject! do |result|
+          result.type == :warning && result.attribute_name == 'attributes' && result.message == 'Unrecognized `pushed_with_swift_version` key.'
+        end
         allow_warnings ? linter.errors.empty? : linter.results.empty?
       end
 
