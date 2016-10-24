@@ -31,7 +31,9 @@ module Pod
                   :order => Sequel.asc(:created_at),
                   :after_add => trigger_webhooks
 
-      alias_method :deleted?, :deleted
+      def deleted?
+        false
+      end
 
       def after_initialize
         super
@@ -76,11 +78,11 @@ module Pod
       def push!(committer, specification_data, change_type)
         response = PushJob.new(self, committer, specification_data, change_type).push!
         if response.success?
-          update(:deleted => change_type == 'Delete')
+          # update(:deleted => change_type == 'Delete')
           add_commit(:committer => committer, :sha => response.commit_sha, :specification_data => specification_data)
           pod.add_owner(committer) if pod.owners.empty?
         end
-        pod.update(:deleted => pod.versions_dataset.count(:deleted => false).zero?)
+        # pod.update(:deleted => pod.versions_dataset.count(:deleted => false).zero?)
         response
       end
 

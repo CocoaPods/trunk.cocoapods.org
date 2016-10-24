@@ -15,7 +15,9 @@ module Pod
       one_to_many :versions, :class => 'Pod::TrunkApp::PodVersion'
       many_to_many :owners
 
-      alias_method :deleted?, :deleted
+      def deleted?
+        false
+      end
 
       # Finds a pod by name, only including deleted pods if `include_deleted` is
       # true.

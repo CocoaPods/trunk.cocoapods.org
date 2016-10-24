@@ -12,10 +12,12 @@ module REST
     @mock_response = Response.new(status, headers, body)
   end
 
-  def self.put(url, body, headers, auth)
-    @mock_response
-  ensure
-    @mock_response = nil
+  class Request
+    def self.perform(*)
+      REST.instance_variable_get(:@mock_response) || raise("no mocked response for #{self}")
+    ensure
+      REST.instance_variable_set(:@mock_response, nil)
+    end
   end
 end
 
@@ -83,26 +85,23 @@ module Pod
           source = ::Pod::Source.new(File.expand_path('~/.cocoapods/repos/master'))
           set = source.set(pod_name)
           set.versions.each do |version|
-            spec = set.specification
+            spec = source.specification(pod_name, version)
             create_from_spec(spec)
-            unless set.acceptable_versions.size == 1
-              set.required_by(::Pod::Dependency.new(pod_name, "< #{version}"), 'Seeds')
-            end
           end
           @push_count = nil
         end
 
         def create_from_spec(spec)
           puts "Pushing pod: #{spec.name} <#{spec.version}>"
-          commit_sha = nil
-          Dir.chdir(spec.defined_in_file.dirname) do
-            commit_sha = `git log -n 1 --pretty="%H" -- '#{spec.defined_in_file.basename}'`.strip
-          end
-          if commit_sha.blank?
-            raise 'Unable to determine commit sha!'
-          end
+          commit_sha = "ab" * 20
+          # Dir.chdir(spec.defined_in_file.dirname) do
+          #   commit_sha = `git log -n 1 --pretty="%H" -- '#{spec.defined_in_file.basename}'`.strip
+          # end
+          # if commit_sha.blank?
+          #   raise 'Unable to determine commit sha!'
+          # end
           # Every 4th push fails
-          if @push_count && (@push_count % 4) == 3
+          if false && @push_count && (@push_count % 4) == 3
             REST.mock_response([422, 500][rand(2)], {}, { :error => 'Oh noes!' }.to_json)
             perform(:post, '/', 500, spec)
           else
