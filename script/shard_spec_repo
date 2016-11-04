@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
 require 'bundler/inline'
+require 'tmpdir'
+require 'fileutils'
 
 gemfile do
   gem 'cocoapods', '>= 1.1.0.rc.1'
@@ -11,21 +13,36 @@ end
 
 Pod::Config.instance.verbose = true
 
-db = Sequel.connect(ENV['DATABASE_URL'])
-
 master = Pod::SourcesManager.master.first
 prefix_lengths = [1, 1, 1]
 
 Pod::Executable.execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=false), true)
 
 Pod::Command.run(%w(repo update master))
-Pod::Command.run(%W(repo shard master --lengths=#{prefix_lengths.join(',')}))
 
-shard_sha = Dir.chdir(master.repo) { Pod::Executable.execute_command(:git, %w(rev-parse HEAD), true).strip }
+Dir.chdir(master.repo) do
+  pre_shard_sha = Pod::Executable.execute_command(:git, %w(rev-parse HEAD), true).strip
+  Dir.mktmpdir do |old_specs|
+    Dir.chdir(old_specs) do
+      FileUtils.cp_r %w(Specs .gitignore README.md CocoaPods-version.yml), '.'
+      Pod::Executable.execute_command(:git, %w(init .), true)
+      Pod::Executable.execute_command(:git, %w(remote add old-specs https://github.com/CocoaPods/Old-Specs.git), true)
+      Pod::Executable.execute_command(:git, %w(add -A), true)
+      Pod::Executable.execute_command(:git, ['commit',
+                                             '-m', "Create a copy of CocoaPods/Specs@#{pre_shard_sha}",
+                                             '-m', 'Please see https://blog.cocoapods.org/Sharding/ for more information',
+                                             '-m', "Please use https://github.com/CocoaPods/Specs if you're running CocoaPods 1.0+"],
+                                      true)
+      Pod::Executable.execute_command(:git, %w(push old-specs master), true)
+    end
+  end
+end
+
+Pod::Command.run(%W(repo shard master --lengths=#{prefix_lengths.join(',')}))
 
 # creating from scratch to avoid re-serializing any stale data
 Pod::Source::Metadata.from_file(master.metadata_path).tap do |metadata|
-  metadata.minimum_cocoapods_version = Pod::Version.new('1.0.0.beta.6')
+  metadata.minimum_cocoapods_version = Pod::Version.new('1.0.0')
   yaml = YAML.dump(metadata.to_hash)
   master.metadata_path.open('w') { |f| f.write(yaml) }
   Pod::Executable.execute_command(:heroku, %W(config:set MASTER_SOURCE_METADATA=#{yaml}), true)
@@ -34,20 +51,16 @@ end
 Dir.chdir(master.repo) do
   Pod::Executable.execute_command(:git, %W(add #{master.metadata_path}), true)
   Pod::Executable.execute_command(:git, ['commit',
-                                         '-m', 'Update the minimum cocoapods version to 1.0',
-                                         '-m', 'See http://blog.cocoapods.org/Master-Spec-Repo-Rate-Limiting-Post-Mortem/ for more information'],
+                                         '-m', 'Update the minimum CocoaPods version to 1.0',
+                                         '-m', 'See http://blog.cocoapods.org/Master-Spec-Repo-Rate-Limiting-Post-Mortem/ for more information',
+                                         '-m', 'See http://blog.cocoapods.org/Sharding/ for the announcement of sharding',
+                                         '-m', "If you're stuck on CocoaPods < 1.0, use the `https://github.com/CocoaPods/Old-Specs.git` source from now on"],
                                   true)
   Pod::Executable.execute_command(:git, %w(push origin master), true)
 end
 
-# Create new commit objects
+# We purposefully don't create new commit objects, as the old commits will still
+# be available on the repo and we'd like to avoid severely bloating the
+# database.
 
-# Two options here, and I'm not sure which is best:
-# 1) Update the `commits.sha` for the latest commit of each `pod_version`
-#    to be `shard_sha`, which destroys the fact that the `sha` generally points
-#    to the exact commit in which the version was added/updated
-# 2) Create a new `commit` row for all 100,000+ `pod_version`s.
-#    This is semantically more correct, but since each commit stores the spec
-#    JSON, this has the potential to significantly bloat the DB
-
-Pod::Executable.execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=false), true)
+Pod::Executable.execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=true), true)
