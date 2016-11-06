@@ -8,7 +8,7 @@ require 'cocoapods-core/version'
 module Pod
   module TrunkApp
     class PodsController < APIController
-      MINIMUM_COCOAPODS_VERSION = Version.new((ENV['TRUNK_MINIMUM_COCOAPODS_VERSION'] || '0.36.0').dup)
+      MINIMUM_COCOAPODS_VERSION = Version.new(ENV.fetch('TRUNK_MINIMUM_COCOAPODS_VERSION') { '1.0.0' }.dup)
 
       def verify_github_responses!(responses)
         responses = Array(responses)
@@ -34,6 +34,13 @@ module Pod
             json_error(504, 'Calling the GitHub commit API timed out. Please check GitHub’s ' \
                             'status at https://status.github.com and try again later.')
           end
+        end
+      end
+
+      def verify_pushes_allowed!
+        if ENV['TRUNK_APP_PUSH_ALLOWED'] != 'true' && ENV['TRUNK_PUSH_ALLOW_OWNER_ID'].to_i != @owner.id
+          json_error(503, 'We have closed pushing to CocoaPods trunk' \
+                          ', please see https://twitter.com/CocoaPods for details')
         end
       end
 
@@ -96,10 +103,7 @@ module Pod
       end
 
       post '/', :requires_owner => true do
-        if ENV['TRUNK_APP_PUSH_ALLOWED'] != 'true' && ENV['TRUNK_PUSH_ALLOW_OWNER_ID'].to_i != @owner.id
-          json_error(503, 'We have closed pushing to CocoaPods trunk' \
-                          ', please see https://twitter.com/CocoaPods for details')
-        end
+        verify_pushes_allowed!
 
         if version = %r{CocoaPods/([0-9a-z\.]+)}i.match(env['User-Agent'])
           if Version.new(version[1]) < MINIMUM_COCOAPODS_VERSION
@@ -167,6 +171,8 @@ module Pod
       end
 
       patch '/:name/deprecated', :requires_owner => true do
+        verify_pushes_allowed!
+
         pod = Pod.find_by_name_and_owner(params[:name], @owner) do
           json_error(403, 'You are not allowed to deprecate this pod.')
         end
@@ -195,6 +201,8 @@ module Pod
       end
 
       delete '/:name/:version', :requires_owner => true do
+        verify_pushes_allowed!
+
         pod = Pod.find_by_name_and_owner(params[:name], @owner) do
           json_error(403, 'You are not allowed to delete this pod.')
         end

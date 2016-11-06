@@ -78,15 +78,21 @@ module Pod::TrunkApp
         @version.should.not.be.published
       end
 
-      it 'returns the destination path in the repo' do
-        @version.destination_path.should == 'Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
-      end
+      describe 'when prefix_lengths are set on the metadata' do
+        before do
+          PodVersion::SOURCE_METADATA.stubs(:prefix_lengths).returns([1, 1, 1])
+        end
 
-      it 'returns a URL from where the spec data can be retrieved' do
-        @version.add_commit(@valid_commit_attrs)
-        expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
-          "3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
-        @version.data_url.should == expected
+        it 'returns the destination path in the repo' do
+          @version.destination_path.should == 'Specs/a/7/5/AFNetworking/1.2.0/AFNetworking.podspec.json'
+        end
+
+        it 'returns a URL from where the spec data can be retrieved' do
+          @version.add_commit(@valid_commit_attrs)
+          expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
+            "3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
+          @version.data_url.should == expected
+        end
       end
 
       it 'returns the resource path for this version' do

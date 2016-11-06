@@ -1,0 +1,86 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+require 'tmpdir'
+require 'fileutils'
+
+gemfile do
+  gem 'cocoapods', '>= 1.1.0.rc.1'
+  gem 'cocoapods-repo-shard'
+
+  gem 'sequel'
+end
+
+def execute_command(command, args)
+  Pod::Executable.execute_command(command, args, true)
+rescue Pod::Informative => e
+  index = begin
+    Pod::UI.choose_from_array %w(retry fail skip), e.message
+  rescue Informative => e
+    Pod::UI.info e.message
+    retry
+  end
+
+  case index
+  when 0
+    retry
+  when 1
+    raise e
+  when 2
+    ''
+  end
+end
+
+Pod::Config.instance.verbose = true
+
+master = Pod::SourcesManager.master.first
+prefix_lengths = [1, 1, 1]
+
+execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=false))
+
+Pod::Command.run(%w(repo update master))
+
+Dir.chdir(master.repo) do
+  pre_shard_sha = execute_command(:git, %w(rev-parse HEAD)).strip
+  Dir.mktmpdir do |old_specs|
+    Dir.chdir(old_specs) do
+      FileUtils.cp_r %w(Specs .gitignore README.md CocoaPods-version.yml), '.'
+      execute_command(:git, %w(init .))
+      execute_command(:git, %w(remote add old-specs https://github.com/CocoaPods/Old-Specs.git))
+      execute_command(:git, %w(add -A))
+      execute_command(:git, ['commit',
+                             '-m', "Create a copy of CocoaPods/Specs@#{pre_shard_sha}",
+                             '-m', 'Please see https://blog.cocoapods.org/Sharding/ for more information',
+                             '-m', "Please use https://github.com/CocoaPods/Specs if you're running CocoaPods 1.0+"],
+                      true)
+      execute_command(:git, %w(push old-specs master))
+    end
+  end
+end
+
+Pod::Command.run(%W(repo shard master --lengths=#{prefix_lengths.join(',')}))
+
+# creating from scratch to avoid re-serializing any stale data
+Pod::Source::Metadata.from_file(master.metadata_path).tap do |metadata|
+  metadata.minimum_cocoapods_version = Pod::Version.new('1.0.0')
+  yaml = YAML.dump(metadata.to_hash)
+  master.metadata_path.open('w') { |f| f.write(yaml) }
+  execute_command(:heroku, %W(config:set MASTER_SOURCE_METADATA=#{yaml}))
+end
+
+Dir.chdir(master.repo) do
+  execute_command(:git, %W(add #{master.metadata_path}))
+  execute_command(:git, ['commit',
+                         '-m', 'Update the minimum CocoaPods version to 1.0',
+                         '-m', 'See http://blog.cocoapods.org/Master-Spec-Repo-Rate-Limiting-Post-Mortem/ for more information',
+                         '-m', 'See http://blog.cocoapods.org/Sharding/ for the announcement of sharding',
+                         '-m', "If you're stuck on CocoaPods < 1.0, use the `https://github.com/CocoaPods/Old-Specs.git` source from now on"],
+                  true)
+  execute_command(:git, %w(push origin master))
+end
+
+# We purposefully don't create new commit objects, as the old commits will still
+# be available on the repo and we'd like to avoid severely bloating the
+# database.
+
+execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=true))
