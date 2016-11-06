@@ -23,6 +23,8 @@ Time.zone = 'UTC'
 # Explicitly load the C-ext version.
 require 'json/ext'
 
+require 'cocoapods-core'
+
 if !defined?(IRB) && ENV['RACK_ENV'] == 'production'
   require 'newrelic_rpm'
 end
