@@ -41,6 +41,7 @@ execute_command(:heroku, %w(config:set TRUNK_APP_PUSH_ALLOWED=false))
 Pod::Command.run(%w(repo update master))
 
 Dir.chdir(master.repo) do
+  execute_command(:git, %W(add v#{master.metadata.minimum_cocoapods_version}))
   pre_shard_sha = execute_command(:git, %w(rev-parse HEAD)).strip
   Dir.mktmpdir do |old_specs|
     Dir.chdir(old_specs) do
