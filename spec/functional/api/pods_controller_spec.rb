@@ -693,5 +693,33 @@ module Pod::TrunkApp
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
         'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
     end
+
+    it 'redirects to GitHub when a post-shard version is found' do
+      PodVersion::SOURCE_METADATA.stubs(:prefix_lengths).returns([1, 1, 1])
+      Commit.dataset.update(:created_at => DateTime.now)
+      get '/AFNetworking/specs/latest'
+      last_response.should.be.redirect?
+      last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
+        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/a/7/5/AFNetworking/1.2.0/AFNetworking.podspec.json'
+
+      get '/AFNetworking/specs/1.2.0'
+      last_response.should.be.redirect?
+      last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
+        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/a/7/5/AFNetworking/1.2.0/AFNetworking.podspec.json'
+    end
+
+    it 'redirects to GitHub when a pre-shard version is found' do
+      PodVersion::SOURCE_METADATA.stubs(:prefix_lengths).returns([1, 1, 1])
+      Commit.dataset.update(:created_at => DateTime.new(1900))
+      get '/AFNetworking/specs/latest'
+      last_response.should.be.redirect?
+      last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
+        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+
+      get '/AFNetworking/specs/1.2.0'
+      last_response.should.be.redirect?
+      last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
+        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+    end
   end
 end

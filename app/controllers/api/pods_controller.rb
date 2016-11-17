@@ -70,9 +70,10 @@ module Pod
       get '/:name/specs/latest', :requires_owner => false do
         commits = DB[<<-SQL, params[:name]].all
           SELECT DISTINCT ON (pod_versions.id)
-              pods.name         "name",
-              pod_versions.name "version",
-              commits.sha       "sha"
+              pods.name          "name",
+              pod_versions.name  "version",
+              commits.sha        "sha",
+              commits.created_at "created_at"
           FROM
               pods
           LEFT JOIN
@@ -85,8 +86,8 @@ module Pod
               pod_versions.id
         SQL
         if commit = commits.max_by { |c| Version.new(c[:version]) }
-          name = commit[:name]
-          redirect format(PodVersion::DATA_URL, commit[:sha], File.join('Specs', name, commit[:version], "#{name}.podspec.json"))
+          path = PodVersion.destination_path(commit[:name], commit[:version], commit[:created_at])
+          redirect format(PodVersion::DATA_URL, commit[:sha], path)
         end
         json_error(404, 'No pod found with the specified name.')
       end

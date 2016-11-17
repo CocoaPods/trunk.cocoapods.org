@@ -11,6 +11,8 @@ module Pod
       DATA_URL = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
 
       SOURCE_METADATA = Source::Metadata.new YAML.load(ENV.fetch('MASTER_SOURCE_METADATA') { '{}' })
+      PRE_SHARD_SOURCE_METADATA = Source::Metadata.new({})
+      SHARD_TIME = DateTime.new(2016, 11, 11, 3, 8, 0, '-6')
 
       self.dataset = :pod_versions
 
@@ -60,10 +62,24 @@ module Pod
       end
 
       def destination_path
-        File.join('Specs',
-                  SOURCE_METADATA.path_fragment(pod.name, name),
-                  "#{pod.name}.podspec.json")
+        created_at = last_published_by.try(:created_at)
+        self.class.destination_path(pod.name, name, created_at)
       end
+
+      def self.destination_path(name, version, created_at = nil)
+        File.join('Specs',
+                  metadata(created_at).path_fragment(name, version),
+                  "#{name}.podspec.json")
+      end
+
+      def self.metadata(created_at)
+        if created_at.nil? || created_at > SHARD_TIME
+          SOURCE_METADATA
+        else
+          PRE_SHARD_SOURCE_METADATA
+        end
+      end
+      private_class_method :metadata
 
       def data_url
         format(DATA_URL, commit_sha, destination_path) if commit_sha
