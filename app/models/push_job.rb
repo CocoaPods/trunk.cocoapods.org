@@ -76,7 +76,7 @@ module Pod
           log(:info, "has been pushed (#{duration} s)")
         elsif response.failed_on_our_side?
           message = "failed with HTTP error `#{response.status_code}' on " \
-            "our side (#{duration} s)"
+            "our side (#{duration} s)\n#{response.body}"
           log(:error, message, committer, response.body)
         elsif response.failed_on_their_side?
           message = "failed with HTTP error `#{response.status_code}' on " \
