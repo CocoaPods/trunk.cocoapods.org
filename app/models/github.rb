@@ -25,14 +25,15 @@ module Pod
       #
       def create_new_commit(destination_path, data, message, author_name, author_email, update: false)
         CommitResponse.new do
-          put(File.join('contents', URI.escape(destination_path)),
-              :message   => message,
-              :branch    => BRANCH,
-              :sha       => (sha_for_file_at_path(destination_path) if update),
-              :content   => Base64.encode64(data).delete("\r\n"),
-              :author    => { :name => author_name,        :email => author_email },
-              :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
-             )
+          request_body = {
+            :message   => message,
+            :branch    => BRANCH,
+            :content   => Base64.encode64(data).delete("\r\n"),
+            :author    => { :name => author_name,        :email => author_email },
+            :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
+          }
+          request_body[:sha] = sha_for_file_at_path(destination_path) if update
+          put(File.join('contents', URI.escape(destination_path)), request_body)
         end
       end
 

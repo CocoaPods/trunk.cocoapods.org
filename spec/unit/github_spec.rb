@@ -53,7 +53,6 @@ module Pod::TrunkApp
       body.should == {
         'message'   => MESSAGE,
         'branch'    => 'master',
-        'sha'       => nil,
         'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
         'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
       }
