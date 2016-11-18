@@ -10,6 +10,8 @@ module Pod
       HEADERS  = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
       BRANCH   = 'master'
 
+      LOGGING_ENABLED = ENV.fetch('TRUNK_APP_LOG_GITHUB_REQUESTS', false)
+
       attr_reader :basic_auth
 
       # @param [String] repo_name  Should be in the form of 'owner/repo'.
@@ -92,10 +94,13 @@ module Pod
       # Performs an HTTP request with a max timeout of 10 seconds
       # TODO: timeout could probably even be less.
       def perform_request(method, path, body)
-        REST::Request.perform(method, URI.parse(url_for(path)), body.to_json, HEADERS, @basic_auth) do |http_request|
+        uri = URI.parse(url_for(path))
+        response = REST::Request.perform(method, uri, body.to_json, HEADERS, @basic_auth) do |http_request|
           http_request.open_timeout = 3
           http_request.read_timeout = 7
         end
+        puts "HTTP #{method} #{url_for(path)} #{body} => #{response.status_code} #{response.body}" if LOGGING_ENABLED
+        response
       end
 
       class CommitResponse
