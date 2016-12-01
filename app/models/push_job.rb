@@ -53,7 +53,7 @@ module Pod
 
       def new_commit(update: false)
         self.class.github.create_new_commit(
-          pod_version.destination_path,
+          pod_version.current_destination_path,
           specification_data,
           commit_message,
           committer.name,
@@ -64,7 +64,7 @@ module Pod
 
       def delete_file
         self.class.github.delete_file_at_path(
-          pod_version.destination_path,
+          pod_version.current_destination_path,
           commit_message,
           committer.name,
           committer.email,

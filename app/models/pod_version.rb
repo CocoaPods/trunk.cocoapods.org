@@ -61,6 +61,11 @@ module Pod
         { 'name' => name, 'created_at' => created_at }
       end
 
+      # Where should it go in the current state of the repo
+      def current_destination_path
+        self.class.destination_path(pod.name, name, DateTime.now)
+      end
+
       def destination_path
         created_at = last_published_by.try(:created_at)
         self.class.destination_path(pod.name, name, created_at)
