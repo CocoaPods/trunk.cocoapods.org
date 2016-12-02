@@ -463,7 +463,7 @@ module Pod::TrunkApp
         delete @endpoint
       end.should.change { Commit.count }
       last_response.status.should == 200
-      json_response['deleted'].should == true
+      json_response['messages'].should == @version.log_messages.map(&:public_attributes)
       Pod.first(:name => spec.name).versions.map(&:deleted?).should == [true]
       Pod.first(:name => spec.name).versions.map { |v| v.last_published_by.specification_data }.should == ['{}']
     end
