@@ -35,7 +35,7 @@ module Pod::TrunkApp
 
       it 'creates a new commit in the spec repo and returns its sha' do
         response = response(201, { :commit => { :sha => fixture_new_commit_sha } }.to_json)
-        @github.stubs(:create_new_commit).with(@version.destination_path,
+        @github.stubs(:create_new_commit).with(@version.current_destination_path,
                                                @job.specification_data,
                                                MESSAGE,
                                                'Appie',
@@ -89,14 +89,14 @@ module Pod::TrunkApp
         end
 
         it 'logs the duration' do
-          @github.stubs(:create_new_commit).returns(response(422))
+          @github.stubs(:create_new_commit).returns(response(422, 'body'))
           lambda do
             @job.push!
           end.should.change { LogMessage.count }
           @version.reload
           log = @version.log_messages.last
           log.level.should == :error
-          log.message.should.match(/\d\ss\).\z/)
+          log.message.should.match(/\d\ss\)\nbody.\z/)
         end
       end
     end

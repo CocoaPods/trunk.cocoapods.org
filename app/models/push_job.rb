@@ -53,7 +53,7 @@ module Pod
 
       def new_commit(update: false)
         self.class.github.create_new_commit(
-          pod_version.destination_path,
+          pod_version.current_destination_path,
           specification_data,
           commit_message,
           committer.name,
@@ -64,7 +64,7 @@ module Pod
 
       def delete_file
         self.class.github.delete_file_at_path(
-          pod_version.destination_path,
+          pod_version.current_destination_path,
           commit_message,
           committer.name,
           committer.email,
@@ -76,7 +76,7 @@ module Pod
           log(:info, "has been pushed (#{duration} s)")
         elsif response.failed_on_our_side?
           message = "failed with HTTP error `#{response.status_code}' on " \
-            "our side (#{duration} s)"
+            "our side (#{duration} s)\n#{response.body}"
           log(:error, message, committer, response.body)
         elsif response.failed_on_their_side?
           message = "failed with HTTP error `#{response.status_code}' on " \

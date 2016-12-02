@@ -10,6 +10,8 @@ module Pod
       HEADERS  = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }.freeze
       BRANCH   = 'master'
 
+      LOGGING_ENABLED = ENV.fetch('TRUNK_APP_LOG_GITHUB_REQUESTS', false)
+
       attr_reader :basic_auth
 
       # @param [String] repo_name  Should be in the form of 'owner/repo'.
@@ -23,14 +25,15 @@ module Pod
       #
       def create_new_commit(destination_path, data, message, author_name, author_email, update: false)
         CommitResponse.new do
-          put(File.join('contents', URI.escape(destination_path)),
-              :message   => message,
-              :branch    => BRANCH,
-              :sha       => (sha_for_file_at_path(destination_path) if update),
-              :content   => Base64.encode64(data).delete("\r\n"),
-              :author    => { :name => author_name,        :email => author_email },
-              :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
-             )
+          request_body = {
+            :message   => message,
+            :branch    => BRANCH,
+            :content   => Base64.encode64(data).delete("\r\n"),
+            :author    => { :name => author_name,        :email => author_email },
+            :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
+          }
+          request_body[:sha] = sha_for_file_at_path(destination_path) if update
+          put(File.join('contents', URI.escape(destination_path)), request_body)
         end
       end
 
@@ -92,10 +95,13 @@ module Pod
       # Performs an HTTP request with a max timeout of 10 seconds
       # TODO: timeout could probably even be less.
       def perform_request(method, path, body)
-        REST::Request.perform(method, URI.parse(url_for(path)), body.to_json, HEADERS, @basic_auth) do |http_request|
+        uri = URI.parse(url_for(path))
+        response = REST::Request.perform(method, uri, body.to_json, HEADERS, @basic_auth) do |http_request|
           http_request.open_timeout = 3
           http_request.read_timeout = 7
         end
+        puts "HTTP #{method} #{url_for(path)} #{body} => #{response.status_code} #{response.body}" if LOGGING_ENABLED
+        response
       end
 
       class CommitResponse
