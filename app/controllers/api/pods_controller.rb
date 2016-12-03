@@ -220,8 +220,7 @@ module Pod
         end
 
         response = version.delete!(@owner)
-        json_message(200, 'messages' => version.log_messages.map(&:public_attributes),
-                          'data_url' => version.data_url) if verify_github_responses!(response)
+        redirect version.resource_path if verify_github_responses!(response)
       end
 
       patch '/:name/owners', :requires_owner => true do
