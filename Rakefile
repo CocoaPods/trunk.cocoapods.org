@@ -90,6 +90,7 @@ begin
 
   desc 'Starts processes for local development'
   task :serve do
+    puts "Starting server at http://localhost:4567"
     exec 'env PORT=4567 RACK_ENV=development foreman start'
   end
 

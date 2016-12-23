@@ -1,3 +1,5 @@
+script src="/assets/app.js"
+
 css:
   input.email {
     color:grey;
@@ -41,10 +43,11 @@ ul.pods
   - for pod in @pods
     <li class="pod"><span class="name">#{pod.name}</span><span class="email"> &lt;#{pod.owners.map(&:email).to_sentence}&gt;</span></li>
 
-p If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ and ask to be added as an ‘owner’. (See the [TODO] guide to learn how to add ‘owners’.)
+p If you are one of many maintainers, this might mean that some of your co-maintainers have already claimed the pod. In this case, simply contact the mentioned ‘owner’ above and ask to be added as an ‘owner’. (See the <a href="https://guides.cocoapods.org/terminal/commands.html#group_trunk">guide</a> to learn how to add ‘owners’.)
 
-p If you belief your Pod has been claimed by someone who has not been maintaining the spec, please file a dispute with the following form. Please include as much details as possible that verifies that your email address belongs to a person that has clearly been maintaining the spec.
+p If you believe your Pod has been claimed by someone who has not been maintaining the spec, please file a dispute with the following form. Please include as many details as possible that verifies that your email address belongs to a person that has clearly been maintaining the library.
 
+p If you do not have a dispute, we will not respond - this is not a place to submit issues. Due to the number of non-disputes we also require that you write out a reasonable explaination of <span id="chars">over 100</span> characters.
 
 form.form-horizontal role="form" action="/claims/disputes" method="POST"
 
@@ -56,11 +59,34 @@ form.form-horizontal role="form" action="/claims/disputes" method="POST"
   .form-group
     label.col-sm-3.control-label for="dispute[message]" Message:
     .col-sm-9
-        textarea name="dispute[message]" rows="10"
+        textarea#validate_length name="dispute[message]" rows="10"
           | The following #{@pods.size == 1 ? 'pod has' : 'pods have'} been claimed by others but #{@pods.size == 1 ? 'is' : 'are'} in fact mine: #{@pods.map(&:name).to_sentence}.
 
             Here is a summary of how you can verify that I’m the rightful owner:
-
   .form-group
     .col-sm-offset-3.col-sm-4
       input.btn.btn-default type="submit" value="SEND"
+
+// Ensure that people write a useful dispute.
+javascript:
+  $(function() {
+      $('input[type="submit"]').prop('disabled', true);
+      
+      var length = $('#validate_length')[0].value.length
+      var charsLeft = 250 - length
+      $('#chars').text('over ' + charsLeft);
+
+      $('#validate_length').on('input propertychange', function(e) {
+        // default = ~140 (pod names can vary)
+        var length = $('#validate_length')[0].value.length
+        var charsLeft = 250 - length
+        var enabled = charsLeft < 0
+        if (enabled) {
+            $('input[type="submit"]').prop('disabled', false);
+            $('#chars').text('no more');
+        } else {
+            $('input[type="submit"]').prop('disabled', true);
+            $('#chars').text('over ' + charsLeft);
+          }
+      });
+  });
