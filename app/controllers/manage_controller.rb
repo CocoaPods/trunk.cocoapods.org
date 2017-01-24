@@ -1,6 +1,7 @@
 require 'app/controllers/html_controller'
 require 'app/helpers/manage_helper'
 require 'app/models/pod'
+require 'app/controllers/slack_controller'
 
 require 'active_support/core_ext/hash/except'
 require 'peiji_san/view_helper'
@@ -126,6 +127,7 @@ module Pod
       put '/disputes/:id' do
         @dispute = Dispute.find(:id => params[:id])
         @dispute.update(params[:dispute])
+        SlackController.notify_slack_of_resolved_dispute(@dispute) if params[:dispute][:settled]
         redirect to("/disputes/#{@dispute.id}")
       end
     end

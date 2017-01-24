@@ -1,5 +1,6 @@
 require 'app/controllers/app_controller'
 require 'app/models/dispute'
+require 'app/controllers/slack_controller'
 
 require 'active_support/core_ext/object/to_query'
 require 'sinatra/twitter-bootstrap'
@@ -63,7 +64,7 @@ module Pod
       post '/disputes' do
         claimer = Owner.find_by_email(params[:dispute][:claimer_email])
         dispute = Dispute.create(:claimer => claimer, :message => params[:dispute][:message])
-        notify_slack_of_dispute(dispute)
+        SlackController.notify_slack_of_new_dispute(dispute)
         redirect to('/disputes/thanks')
       end
 
@@ -132,29 +133,6 @@ module Pod
             end
           end
         end
-      end
-
-      SLACK_DISPUTE_URL = 'https://cocoapods.slack.com/services/hooks/' \
-        "incoming-webhook?token=#{ENV['SLACK_DISPUTE_TOKEN']}"
-
-      def notify_slack_of_dispute(dispute)
-        link = "https://trunk.cocoapods.org/manage/disputes/#{dispute.id}"
-        REST.post(SLACK_DISPUTE_URL,
-                  {
-                    :attachments => [{
-                      :fallback => "New dispute on trunk [Urgent]: <#{link}>",
-                      :pretext => "There's a new dispute on trunk [Urgent]: <#{link}>",
-                      :color => :warning,
-                      :fields => [{
-                        :title => 'Dispute by ' \
-                          "#{dispute.claimer.name} (#{dispute.claimer.email})",
-                        :value => dispute.message,
-                        :short => false,
-                      }],
-                    }],
-                  }.to_json)
-      rescue REST::Error
-        "RuboCop: If REST has problems POSTing to Slack, we don't care."
       end
     end
   end
