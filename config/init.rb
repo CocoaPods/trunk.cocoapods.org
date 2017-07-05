@@ -51,6 +51,7 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
   Webhook.spec_updated = [
     "http://api.cocoadocs.org:4567#{hook_path}",
     "http://search.cocoapods.org#{hook_path}",
+    "http://aws-search.cocoapods.org#{hook_path}",
     "http://metrics.cocoapods.org#{hook_path}",
   ]
 

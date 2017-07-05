@@ -42,7 +42,7 @@ p Note you can use <code>pod trunk info [pod]</code> to get information on a pod
 javascript:
   var cocoapods = function(query, cb) {
     if(query){
-      $.getJSON("http://search.cocoapods.org/api/v1/pods.flat.hash.json?query=name:" + query, cb);
+      $.getJSON("http://aws-search.cocoapods.org/api/v1/pods.flat.hash.json?query=name:" + query, cb);
     }
   };
 
