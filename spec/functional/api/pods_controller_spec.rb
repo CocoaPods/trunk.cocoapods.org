@@ -101,6 +101,15 @@ module Pod::TrunkApp
       json_response['error'].should.match /minimum CocoaPods version/
     end
 
+    it 'fails when the client CocoaPods version is 1.3.0 and the JSON includes the attribute "test_specs"' do
+      lambda do
+        post '/', spec.to_json, 'User-Agent' => 'CocoaPods/1.3.0'
+      end.should.not.change { Pod.count + PodVersion.count }
+
+      last_response.status.should == 422
+      json_response['error'].should.match /Please upgrade/
+    end
+
     it 'fails with a spec that does not pass a quick lint' do
       spec.name = nil
       spec.version = nil
