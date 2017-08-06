@@ -113,6 +113,13 @@ module Pod
                       'your version of CocoaPods to push this specification.'
             json_error(422, message)
           end
+
+          if Version.new(version[1]) == Version.new('1.3.0')
+            message = 'Due to a bug in CocoaPods 1.3.0, ' \
+                      'we have blocked this release from releasing to trunk. ' \
+                      'Please upgrade to 1.3.1 or higher, and re-submit.'
+            json_error(422, message)
+          end
         end
 
         specification = SpecificationWrapper.from_json(request.body.read)
