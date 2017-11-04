@@ -49,7 +49,9 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
   Webhook.version_created = [
   ]
   Webhook.spec_updated = [
-    "http://api.cocoadocs.org:4567#{hook_path}",
+    # This is the Mac mini that used to be be CocoaDocs
+    # but now just runs README/Stats
+    "http://199.19.84.242:4567#{hook_path}",
     "http://search.cocoapods.org#{hook_path}",
     "http://aws-search.cocoapods.org#{hook_path}",
     "http://metrics.cocoapods.org#{hook_path}",
