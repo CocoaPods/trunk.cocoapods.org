@@ -56,6 +56,7 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
     "http://aws-search.cocoapods.org#{hook_path}",
     "http://metrics.cocoapods.org#{hook_path}",
     "https://cocoadocs.buddybuild.com#{hook_path}",
+    "https://cocoapods-metadata-service.herokuapp.com/webhook/#{hook_path}",
   ]
 
   Webhook.enable
