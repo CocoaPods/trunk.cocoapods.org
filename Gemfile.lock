@@ -17,7 +17,7 @@ GEM
       parser (~> 2.2)
     backports (3.6.0)
     bacon (1.2.0)
-    cocoapods-core (1.4.0)
+    cocoapods-core (1.5.0)
       activesupport (>= 4.0.2, < 6)
       fuzzy_match (~> 2.0.4)
       nap (~> 1.0)
@@ -33,7 +33,7 @@ GEM
       dotenv (~> 0.7.0)
       thor (~> 0.17.0)
     fuzzy_match (2.0.4)
-    i18n (0.9.1)
+    i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     json (1.8.6)
     kicker (3.0.0)
@@ -50,7 +50,7 @@ GEM
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile (0.6.2)
-    minitest (5.11.1)
+    minitest (5.11.3)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     mocha-on-bacon (0.2.2)
@@ -132,7 +132,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (1.2.4)
+    tzinfo (1.2.5)
       thread_safe (~> 0.1)
 
 PLATFORMS
