@@ -55,10 +55,7 @@ begin
     desc 'Run migrations'
     task :migrate => :rack_env do
       ENV['TRUNK_APP_LOG_TO_STDOUT'] = 'true'
-      Rake::Task[:env].invoke
-      version = ENV['VERSION'].to_i if ENV['VERSION']
-      Sequel::Migrator.run(DB, File.join(ROOT, 'db/migrations'), :target => version)
-      File.open('db/schema.txt', 'w') { |file| file.write(schema) }
+      raise 'Migrations for this DB should run via https://github.com/cocoaPods/humus'
     end
 
     desc 'Drop DB for RACK_ENV'
@@ -69,6 +66,7 @@ begin
     desc 'Create DB for RACK_ENV'
     task :create => :rack_env do
       sh "createdb -h localhost trunk_cocoapods_org_#{ENV['RACK_ENV']} -E UTF8"
+      puts 'Note: Migrations for this DB should run via https://github.com/cocoaPods/humus'
     end
 
     desc 'Seed DB'
@@ -90,7 +88,7 @@ begin
 
   desc 'Starts processes for local development'
   task :serve do
-    puts "Starting server at http://localhost:4567"
+    puts 'Starting server at http://localhost:4567'
     exec 'env PORT=4567 RACK_ENV=development foreman start'
   end
 

@@ -4,7 +4,7 @@ before_script: .travis/before.sh
 install: 
   - gem install bundler
   - bundle install --deployment --without development production
-rvm: 2.1.3
+rvm: 2.5.1
 cache: bundler
 branches:
   only:

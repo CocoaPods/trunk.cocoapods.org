@@ -18,10 +18,9 @@ Available under the MIT license.
 
         $ rake bootstrap
 
-4. Create and migrate the databases for the various environments:
+4. Run the travis before script to set up your db
 
-        $ rake db:bootstrap RACK_ENV=test
-        $ rake db:bootstrap RACK_ENV=development
+        $ ./.travis/before.sh
 
 5. Test whether or not a pod sends correctly
 
