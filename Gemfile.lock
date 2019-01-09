@@ -27,7 +27,7 @@ GEM
     dalli (2.7.5)
     dotenv (0.7.0)
     erubis (2.7.0)
-    eventmachine (1.0.3)
+    eventmachine (1.2.7)
     ffi (1.9.3)
     foreman (0.67.0)
       dotenv (~> 0.7.0)
@@ -173,7 +173,7 @@ DEPENDENCIES
   tobias-sinatra-url-for
 
 RUBY VERSION
-   ruby 2.1.3p242
+   ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.0
+   1.16.3
