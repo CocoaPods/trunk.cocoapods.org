@@ -107,17 +107,26 @@ module Pod
         verify_pushes_allowed!
 
         if version = %r{CocoaPods/([0-9a-z\.]+)}i.match(env['User-Agent'])
-          if Version.new(version[1]) < MINIMUM_COCOAPODS_VERSION
+          publishing_version = Version.new(version[1])
+          if publishing_version < MINIMUM_COCOAPODS_VERSION
             message = 'The minimum CocoaPods version allowed to push new ' \
                       "specs is `#{MINIMUM_COCOAPODS_VERSION}`. Please update " \
                       'your version of CocoaPods to push this specification.'
             json_error(422, message)
           end
 
-          if Version.new(version[1]) == Version.new('1.3.0')
+          if publishing_version == Version.new('1.3.0')
             message = 'Due to a bug in CocoaPods 1.3.0, ' \
                       'we have blocked this release from releasing to trunk. ' \
                       'Please upgrade to 1.3.1 or higher, and re-submit.'
+            json_error(422, message)
+          end
+
+          if publishing_version.major == 1 && publishing_version.minor == 7 &&
+              publishing_version <= Version.new('1.7.0.rc.1')
+            message = 'Due to a bug in CocoaPods 1.7.0.rc.1, ' \
+                      'we have blocked this and earlier releases from releasing to trunk. ' \
+                      'Please upgrade to 1.7.0.rc.2 or higher, and re-submit.'
             json_error(422, message)
           end
         end
