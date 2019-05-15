@@ -110,6 +110,24 @@ module Pod::TrunkApp
       json_response['error'].should.match /Please upgrade/
     end
 
+    it 'fails when the client CocoaPods version is <= 1.7.0.rc.1 due to missing "swift_version" singular attribute' do
+      lambda do
+        post '/', spec.to_json, 'User-Agent' => 'CocoaPods/1.7.0.rc.1'
+      end.should.not.change { Pod.count + PodVersion.count }
+
+      last_response.status.should == 422
+      json_response['error'].should.match /Please upgrade/
+    end
+
+    it 'succeeds when the client CocoaPods version is earlier than 1.7 minor version' do
+      lambda do
+        post '/', spec.to_json, 'User-Agent' => 'CocoaPods/1.6.2'
+      end.should.change { Pod.count }
+
+      last_response.status.should == 302
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
+    end
+
     it 'fails with a spec that does not pass a quick lint' do
       spec.name = nil
       spec.version = nil
