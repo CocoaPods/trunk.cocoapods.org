@@ -122,10 +122,10 @@ module Pod
             json_error(422, message)
           end
 
-          if publishing_version.major === 1 && publishing_version.minor === 7 &&
+          if publishing_version.major == 1 && publishing_version.minor == 7 &&
               publishing_version <= Version.new('1.7.0.rc.1')
-            message = 'Due to a bug in CocoaPods 1.7.0.rc1, ' \
-                      'we have blocked this release from releasing to trunk. ' \
+            message = 'Due to a bug in CocoaPods 1.7.0.rc.1, ' \
+                      'we have blocked this and earlier releases from releasing to trunk. ' \
                       'Please upgrade to 1.7.0.rc.2 or higher, and re-submit.'
             json_error(422, message)
           end

@@ -1,8 +1,8 @@
 sudo: false
 language: ruby
 before_script: .travis/before.sh
-install: 
-  - gem install bundler
+install:
+  - gem install bundler -v "~> 1.17"
   - bundle install --deployment --without development production
 rvm: 2.5.1
 cache: bundler

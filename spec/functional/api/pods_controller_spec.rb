@@ -128,6 +128,15 @@ module Pod::TrunkApp
       last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
     end
 
+    it 'succeeds when the client CocoaPods version is later than 1.7.0.rc.1 version' do
+      lambda do
+        post '/', spec.to_json, 'User-Agent' => 'CocoaPods/1.7.0.rc.2'
+      end.should.change { Pod.count }
+
+      last_response.status.should == 302
+      last_response.location.should == 'https://example.org/AFNetworking/versions/1.2.0'
+    end
+
     it 'fails with a spec that does not pass a quick lint' do
       spec.name = nil
       spec.version = nil
