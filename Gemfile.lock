@@ -69,7 +69,7 @@ GEM
     notify (0.5.2)
     parser (2.3.0.2)
       ast (~> 2.2)
-    pg (1.1.4)
+    pg (0.17.1)
     polyglot (0.3.4)
     powerpack (0.1.1)
     prettybacon (0.0.2)
@@ -179,7 +179,7 @@ DEPENDENCIES
   tobias-sinatra-url-for
 
 RUBY VERSION
-   ruby 2.6.5p114
+   ruby 2.5.7p206
 
 BUNDLED WITH
    1.17.3
