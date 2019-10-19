@@ -69,7 +69,7 @@ GEM
     notify (0.5.2)
     parser (2.3.0.2)
       ast (~> 2.2)
-    pg (0.17.1)
+    pg (1.1.4)
     polyglot (0.3.4)
     powerpack (0.1.1)
     prettybacon (0.0.2)
