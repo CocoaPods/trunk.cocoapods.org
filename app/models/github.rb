@@ -66,10 +66,10 @@ module Pod
         JSON.parse(response.body)['sha'] if response.success?
       end
 
-      # @return [String] A full API route for a path
+      # @return [String] Appends prefix to url if relative path
       #
       def url_for(path)
-        File.join(@base_url, path)
+       path.start_with?("http") ? path : File.join(@base_url, path)
       end
 
       # Perform a GET request.
