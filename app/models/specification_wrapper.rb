@@ -78,19 +78,23 @@ module Pod
         # We've had trouble with Heroku's git install, see trunk.cocoapods.org/pull/141
         url = @specification.source[:git]
         return true unless url.include?('github.com/')
-
-        ref = @specification.source[:tag] ||
-          @specification.source[:commit] ||
-          @specification.source[:branch] ||
-          'HEAD'
-
-        gh = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+        
         owner_name = url.split('github.com/')[1].split('/')[0]
         repo_name = url.split('github.com/')[1].split('/')[1]
+        return false unless owner_name && repo_name
 
         # Drop the optional .git reference in a url
         repo_name = repo_name[0...-4] if repo_name.end_with? '.git'
-        req = gh.get("/repos/#{owner_name}/#{repo_name}/git/ref/#{ref}")
+
+        # Use the GH refs API for tags and branches
+        ref = 'refs/head'
+        ref = "refs/tags/#{@specification.source[:tag]}" if @specification.source[:tag]
+        ref = "refs/heads/#{@specification.source[:branch]}" if @specification.source[:branch]
+        ref = "commits/#{@specification.source[:commit]}" if @specification.source[:commit]
+        api_path = "repos/#{owner_name}/#{repo_name}/git/#{ref}"
+
+        gh = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+        req = gh.get(api_path)
         req.success?
       end
 
