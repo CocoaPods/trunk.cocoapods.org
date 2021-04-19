@@ -322,31 +322,24 @@ module Pod::TrunkApp
       json_response.should == { 'error' => error_msg }
     end
 
-    # pending "uses the CocoaPods HTTP validation api" do
-    #   spec.source = { :http => "http://hello.com" }
-    #   # Can't figure out how to do this
-    #   HTTP.expects(:validate_url).with("http://hello.com").returns(true)
-    #   post '/', spec.to_json
-    # end
-
     it 'uses git ls for a GitHub git source' do
-      SpecificationWrapper.any_instance.expects(:system).
-        with('git', 'ls-remote', 'https://github.com/AFNetworking/AFNetworking.git', '1.2.0').
-        returns(true)
+      spec.source = { :git => 'https://github.com/orta/AFNetworking.git', :tag => '1.3.0' }
+
+      GitHub.any_instance.expects(:get).
+        with('/repos/orta/AFNetworking/git/ref/1.3.0').
+        returns(response(201))
       post '/', spec.to_json
     end
 
-    it 'uses git ls for a BitBucket git source' do
-      SpecificationWrapper.any_instance.expects(:system).
-        with('git', 'ls-remote', 'https://bitbucket.org/technologyastronauts/oss_flounder.git', '1.2.0').
-        returns(true)
+    it 'does not use git ls for a BitBucket git source' do
+      GitHub.any_instance.expects(:get).never
       spec.source = { :git => 'https://bitbucket.org/technologyastronauts/oss_flounder.git', :tag => '1.2.0' }
 
       post '/', spec.to_json
     end
 
     it 'does not not run git ls for a non-GitHub git source' do
-      SpecificationWrapper.any_instance.expects(:system).never
+      GitHub.any_instance.expects(:get).never
 
       spec.source = { :git => 'https://orta.io/thingy.git', :tag => '0.1.2' }
       post '/', spec.to_json
