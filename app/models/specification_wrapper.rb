@@ -77,13 +77,21 @@ module Pod
       def validate_git
         # We've had trouble with Heroku's git install, see trunk.cocoapods.org/pull/141
         url = @specification.source[:git]
-        return true unless url.include?('github.com') || url.include?('bitbucket.org')
+        return true unless url.include?('github.com/')
 
         ref = @specification.source[:tag] ||
           @specification.source[:commit] ||
           @specification.source[:branch] ||
           'HEAD'
-        wrap_timeout { system('git', 'ls-remote', @specification.source[:git], ref.to_s) }
+
+        gh = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+        owner_name = url.split('github.com/')[1].split('/')[0]
+        repo_name = url.split('github.com/')[1].split('/')[1]
+
+        # Drop the optional .git reference in a url
+        repo_name = repo_name[0...-4] if repo_name.end_with? '.git'
+        req = gh.get("/repos/#{owner_name}/#{repo_name}/git/ref/#{ref}")
+        req.success?
       end
 
       def linter
