@@ -83,13 +83,14 @@ module Pod
           @specification.source[:commit] ||
           @specification.source[:branch] ||
           'HEAD'
-        
+
         gh = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
-        owner_name = url.split("github.com/")[1].split("/")[0]
-        repo_name = url.split("github.com/")[1].split("/")[1]
+        owner_name = url.split('github.com/')[1].split('/')[0]
+        repo_name = url.split('github.com/')[1].split('/')[1]
+
         # Drop the optional .git reference in a url
-        repo_name = repo_name[0...-4] if repo_name.end_with? ".git"
-        req = gh.get("/repos/#{owner_name}/#{repo_name}/git/ref/#{ref.to_s}")
+        repo_name = repo_name[0...-4] if repo_name.end_with? '.git'
+        req = gh.get("/repos/#{owner_name}/#{repo_name}/git/ref/#{ref}")
         req.success?
       end
 
