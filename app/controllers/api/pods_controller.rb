@@ -184,20 +184,23 @@ module Pod
         end
 
         response = version.push!(@owner, specification.to_pretty_json, 'Add')
+        if verify_github_responses!(response)
+          pod.owners.each do |owner|
+            deployer_email = @owner.email
+            commit_sha = JSON.parse(response.body)['commit']['sha']
+            commit_url = "https://github.com/#{ENV['GH_REPO']}/commit/#{commit_sha}"
 
-        pod.owners.each do |owner|
-          deployer_email = @owner.email
+            mail = Mail.new
+            mail.charset = 'UTF-8'
+            mail.from    = 'no-reply@cocoapods.org'
+            mail.to      = owner.email
+            mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was released.'
+            mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/new_version.erb'))).result(binding)
+            mail.deliver
+          end
 
-          mail = Mail.new
-          mail.charset = 'UTF-8'
-          mail.from    = 'no-reply@cocoapods.org'
-          mail.to      = owner.email
-          mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was released.'
-          mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/new_version.erb'))).result(binding)
-          mail.deliver
+          redirect url(version.resource_path)
         end
-
-        redirect url(version.resource_path) if verify_github_responses!(response)
       end
 
       patch '/:name/deprecated', :requires_owner => true do
@@ -227,19 +230,21 @@ module Pod
           json_error(422, 'There were no published versions to deprecate.')
         end
 
-        pod.owners.each do |owner|
-          deprecator_email = @owner.email
+        if verify_github_responses!(responses)
+          pod.owners.each do |owner|
+            deprecator_email = @owner.email
 
-          mail = Mail.new
-          mail.charset = 'UTF-8'
-          mail.from    = 'no-reply@cocoapods.org'
-          mail.to      = owner.email
-          mail.subject = '[CocoaPods] #{pod.name} was deprecated.'
-          mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deprecated.erb'))).result(binding)
-          mail.deliver
+            mail = Mail.new
+            mail.charset = 'UTF-8'
+            mail.from    = 'no-reply@cocoapods.org'
+            mail.to      = owner.email
+            mail.subject = '[CocoaPods] #{pod.name} was deprecated.'
+            mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deprecated.erb'))).result(binding)
+            mail.deliver
+          end
+
+          redirect pod.versions.last.resource_path
         end
-
-        redirect pod.versions.last.resource_path if verify_github_responses!(responses)
       end
 
       delete '/:name/:version', :requires_owner => true do
@@ -261,20 +266,23 @@ module Pod
         end
 
         response = version.delete!(@owner)
+        if verify_github_responses!(response)
+          pod.owners.each do |owner|
+            deletor_email = @owner.email
+            commit_sha = JSON.parse(response.body)['commit']['sha']
+            commit_url = "https://github.com/#{ENV['GH_REPO']}/commit/#{commit_sha}"
 
-        pod.owners.each do |owner|
-          deletor_email = @owner.email
+            mail = Mail.new
+            mail.charset = 'UTF-8'
+            mail.from    = 'no-reply@cocoapods.org'
+            mail.to      = owner.email
+            mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was deleted.'
+            mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deleted.erb'))).result(binding)
+            mail.deliver
+          end
 
-          mail = Mail.new
-          mail.charset = 'UTF-8'
-          mail.from    = 'no-reply@cocoapods.org'
-          mail.to      = owner.email
-          mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was deleted.'
-          mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deleted.erb'))).result(binding)
-          mail.deliver
+          redirect version.resource_path
         end
-
-        redirect version.resource_path if verify_github_responses!(response)
       end
 
       patch '/:name/owners', :requires_owner => true do
