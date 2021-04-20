@@ -184,6 +184,19 @@ module Pod
         end
 
         response = version.push!(@owner, specification.to_pretty_json, 'Add')
+
+        pod.owners.each { |owner| 
+          deployer_email = @owner.email
+
+          mail = Mail.new
+          mail.charset = 'UTF-8'
+          mail.from    = 'no-reply@cocoapods.org'
+          mail.to      = owner.email
+          mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was released.'
+          mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/new_version.erb'))).result(binding)
+          mail.deliver
+        }
+
         redirect url(version.resource_path) if verify_github_responses!(response)
       end
 
@@ -214,6 +227,18 @@ module Pod
           json_error(422, 'There were no published versions to deprecate.')
         end
 
+        pod.owners.each { |owner|
+          deprecator_email = @owner.email
+
+          mail = Mail.new
+          mail.charset = 'UTF-8'
+          mail.from    = 'no-reply@cocoapods.org'
+          mail.to      = owner.email
+          mail.subject = '[CocoaPods] #{pod.name} was deprecated.'
+          mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deprecated.erb'))).result(binding)
+          mail.deliver
+        }
+
         redirect pod.versions.last.resource_path if verify_github_responses!(responses)
       end
 
@@ -236,6 +261,19 @@ module Pod
         end
 
         response = version.delete!(@owner)
+
+        pod.owners.each { |owner|
+          deletor_email = @owner.email
+
+          mail = Mail.new
+          mail.charset = 'UTF-8'
+          mail.from    = 'no-reply@cocoapods.org'
+          mail.to      = owner.email
+          mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was deleted.'
+          mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deleted.erb'))).result(binding)
+          mail.deliver
+        }
+
         redirect version.resource_path if verify_github_responses!(response)
       end
 
