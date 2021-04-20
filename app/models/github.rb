@@ -69,7 +69,7 @@ module Pod
       # @return [String] Appends prefix to url if relative path
       #
       def url_for(path)
-       path.start_with?("http") ? path : File.join(@base_url, path)
+        path.start_with?('http') ? path : File.join(@base_url, path)
       end
 
       # Perform a GET request.
