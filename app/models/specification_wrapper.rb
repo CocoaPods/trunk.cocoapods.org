@@ -91,11 +91,14 @@ module Pod
         ref = "refs/tags/#{@specification.source[:tag]}" if @specification.source[:tag]
         ref = "refs/heads/#{@specification.source[:branch]}" if @specification.source[:branch]
         ref = "commits/#{@specification.source[:commit]}" if @specification.source[:commit]
+
         api_path = "https://api.github.com/repos/#{owner_name}/#{repo_name}/git/#{ref}"
 
         gh = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
-        req = gh.get(api_path)
-        req.success?
+        wrap_timeout {
+          req = gh.head(api_path)
+          req.success?
+        }
       end
 
       def linter
