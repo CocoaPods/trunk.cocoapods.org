@@ -92,8 +92,8 @@ module Pod
 
       # Performs a HEAD request.
       #
-      def head(path, body)
-        perform_request(:head, path, body)
+      def head(path)
+        perform_request(:head, path, '')
       end
 
       private
