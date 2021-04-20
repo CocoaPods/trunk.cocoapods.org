@@ -326,7 +326,7 @@ module Pod::TrunkApp
       spec.source = { :git => 'https://github.com/orta/AFNetworking.git', :tag => '1.3.0' }
 
       GitHub.any_instance.expects(:head).
-        with('/repos/orta/AFNetworking/git/ref/1.3.0').
+        with('https://api.github.com/repos/orta/AFNetworking/git/refs/tags/1.3.0').
         returns(response(201))
       post '/', spec.to_json
     end
