@@ -194,7 +194,7 @@ module Pod
             mail.charset = 'UTF-8'
             mail.from    = 'no-reply@cocoapods.org'
             mail.to      = owner.email
-            mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was released.'
+            mail.subject = "[CocoaPods] #{pod.name}@#{version.name} was released."
             mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/new_version.erb'))).result(binding)
             mail.deliver
           end
@@ -238,7 +238,7 @@ module Pod
             mail.charset = 'UTF-8'
             mail.from    = 'no-reply@cocoapods.org'
             mail.to      = owner.email
-            mail.subject = '[CocoaPods] #{pod.name} was deprecated.'
+            mail.subject = "[CocoaPods] #{pod.name} was deprecated."
             mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deprecated.erb'))).result(binding)
             mail.deliver
           end
@@ -276,7 +276,7 @@ module Pod
             mail.charset = 'UTF-8'
             mail.from    = 'no-reply@cocoapods.org'
             mail.to      = owner.email
-            mail.subject = '[CocoaPods] #{pod.name}@#{version.name} was deleted.'
+            mail.subject = "[CocoaPods] #{pod.name}@#{version.name} was deleted."
             mail.body    = ERB.new(File.read(File.join(ROOT, 'app/views/mailer/deleted.erb'))).result(binding)
             mail.deliver
           end
