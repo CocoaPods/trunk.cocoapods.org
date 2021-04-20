@@ -322,24 +322,24 @@ module Pod::TrunkApp
       json_response.should == { 'error' => error_msg }
     end
 
-    it 'uses git ls for a GitHub git source' do
+    it 'uses github api for a GitHub git source' do
       spec.source = { :git => 'https://github.com/orta/AFNetworking.git', :tag => '1.3.0' }
 
-      GitHub.any_instance.expects(:get).
-        with('/repos/orta/AFNetworking/git/ref/1.3.0').
+      GitHub.any_instance.expects(:head).
+        with('https://api.github.com/repos/orta/AFNetworking/git/refs/tags/1.3.0').
         returns(response(201))
       post '/', spec.to_json
     end
 
     it 'does not use git ls for a BitBucket git source' do
-      GitHub.any_instance.expects(:get).never
+      GitHub.any_instance.expects(:head).never
       spec.source = { :git => 'https://bitbucket.org/technologyastronauts/oss_flounder.git', :tag => '1.2.0' }
 
       post '/', spec.to_json
     end
 
     it 'does not not run git ls for a non-GitHub git source' do
-      GitHub.any_instance.expects(:get).never
+      GitHub.any_instance.expects(:head).never
 
       spec.source = { :git => 'https://orta.io/thingy.git', :tag => '0.1.2' }
       post '/', spec.to_json

@@ -78,7 +78,7 @@ module Pod
         # We've had trouble with Heroku's git install, see trunk.cocoapods.org/pull/141
         url = @specification.source[:git]
         return true unless url.include?('github.com/')
-        
+
         owner_name = url.split('github.com/')[1].split('/')[0]
         repo_name = url.split('github.com/')[1].split('/')[1]
         return false unless owner_name && repo_name
@@ -91,11 +91,14 @@ module Pod
         ref = "refs/tags/#{@specification.source[:tag]}" if @specification.source[:tag]
         ref = "refs/heads/#{@specification.source[:branch]}" if @specification.source[:branch]
         ref = "commits/#{@specification.source[:commit]}" if @specification.source[:commit]
+
         api_path = "https://api.github.com/repos/#{owner_name}/#{repo_name}/git/#{ref}"
 
         gh = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
-        req = gh.get(api_path)
-        req.success?
+        wrap_timeout do
+          req = gh.head(api_path)
+          req.success?
+        end
       end
 
       def linter
