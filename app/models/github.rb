@@ -90,6 +90,12 @@ module Pod
         perform_request(:delete, path, body)
       end
 
+      # Performs a HEAD request.
+      #
+      def head(path, body)
+        perform_request(:head, path, body)
+      end
+
       private
 
       # Performs an HTTP request with a max timeout of 10 seconds
