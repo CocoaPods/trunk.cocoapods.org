@@ -101,6 +101,7 @@ module Pod
       # Performs an HTTP request with a max timeout of 10 seconds
       # TODO: timeout could probably even be less.
       def perform_request(method, path, body)
+        # Uses https://github.com/Fingertips/nap
         uri = URI.parse(url_for(path))
         response = REST::Request.perform(method, uri, body.to_json, HEADERS, @basic_auth) do |http_request|
           http_request.open_timeout = 3
