@@ -97,7 +97,14 @@ module Pod
         gh = GitHub.new(ENV['GH_REPO'], :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
         wrap_timeout do
           req = gh.head(api_path)
-          req.success?
+          return true if req.success?
+
+          # Did they rename, or send the repo elsewhere?
+          if req.status_code == 301
+            return gh.head(req).success?
+          else
+            false
+          end
         end
       end
 
