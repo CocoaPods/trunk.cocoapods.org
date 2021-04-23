@@ -101,7 +101,7 @@ module Pod
 
           # Did they rename, or send the repo elsewhere?
           if req.status_code == 301
-            return gh.head(req).success?
+            return gh.head(req.headers['location'][0]).success?
           else
             false
           end
