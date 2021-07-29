@@ -3,7 +3,7 @@ ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
 gem 'cocoapods-core', '~> 1.0'
 gem 'tobias-sinatra-url-for'
-gem 'json', '~> 1.8'
+gem 'json', '~> 2.3'
 gem 'mail'
 gem 'newrelic_rpm'
 gem 'peiji-san', :git => 'https://github.com/alloy/peiji-san.git'
