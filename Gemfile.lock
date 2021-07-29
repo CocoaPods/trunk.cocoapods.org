@@ -88,7 +88,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     public_suffix (4.0.6)
-    rack (1.5.2)
+    rack (1.6.13)
     rack-attack (4.3.1)
       rack
     rack-protection (1.5.3)
