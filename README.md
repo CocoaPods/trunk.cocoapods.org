@@ -1,7 +1,7 @@
 # trunk.cocoapods.org
 
 
-[![Build Status](https://img.shields.io/travis/CocoaPods/trunk.cocoapods.org/master.svg?style=flat)](https://travis-ci.org/CocoaPods/trunk.cocoapods.org)
+[![Build Status](https://img.shields.io/github/workflow/status/CocoaPods/trunk.cocoapods.org/Specs)](https://github.com/CocoaPods/trunkg.cocoapods.org/actions)
 
 
 Available under the MIT license.
@@ -18,9 +18,9 @@ Available under the MIT license.
 
         $ rake bootstrap
 
-4. Run the travis before script to set up your db
+4. Run the before script to set up your db
 
-        $ ./.travis/before.sh
+        $ ./.github/scripts/before.sh
 
 5. Test whether or not a pod sends correctly
 
