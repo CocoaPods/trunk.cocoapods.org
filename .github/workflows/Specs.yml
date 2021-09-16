@@ -22,10 +22,7 @@ jobs:
 
       - name: Install packages
         run: |
-          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get install -y postgresql-9.4 postgresql-server-dev-9.4 libpq-dev
+          brew install postgresql@9.4
         shell: bash
 
       - name: Run bundle install
