@@ -77,10 +77,9 @@ module Pod
 
       def validate_hg
         hg = @specification.source[:hg]
-        [hg[:branch], hg[:tag], hg[:revision]].compact.any?  { |value| 
-          return false if value.start_with? "--"
-          return false if value.include? " --"
-        }
+        return false if hg.start_with? "--"
+        return false if hg.include? " --"
+        true
       end
 
       def validate_git
@@ -88,7 +87,6 @@ module Pod
         url = @specification.source[:git]
 
         # Ensure that we don't have folks making git exec commands via their git reference
-        return false if url.include? "upload-pack"
         return false if url.start_with? "--"
         return false if url.include? " --"
 
