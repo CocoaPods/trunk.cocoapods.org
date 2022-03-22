@@ -33,7 +33,8 @@ group :development do
   gem 'saga'
 
   # Only needed for importing existing spec repo data into DB.
-  gem 'rugged'
+  # gem 'rugged'
+
   gem 'pry'
 
   gem 'sinatra-contrib'
