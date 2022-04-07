@@ -57,6 +57,7 @@ module Pod
       def publicly_accessible?
         return validate_http if @specification.source[:http]
         return validate_git if @specification.source[:git]
+        return validate_hg if @specification.source[:hg]
         true
       end
 
@@ -74,9 +75,21 @@ module Pod
         wrap_timeout { HTTP.validate_url(@specification.source[:http]) }
       end
 
+      def validate_hg
+        hg = @specification.source[:hg]
+        return false if hg.start_with? "--"
+        return false if hg.include? " --"
+        true
+      end
+
       def validate_git
         # We've had trouble with Heroku's git install, see trunk.cocoapods.org/pull/141
         url = @specification.source[:git]
+
+        # Ensure that we don't have folks making git exec commands via their git reference
+        return false if url.start_with? "--"
+        return false if url.include? " --"
+
         return true unless url.include?('github.com/')
 
         owner_name = url.split('github.com/')[1].split('/')[0]
