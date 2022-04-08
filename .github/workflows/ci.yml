@@ -27,6 +27,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: sudo apt-get -y install postgresql postgresql-server-dev
+      - run: sudo apt-get -y install postgresql-server-dev-12
       - run: .travis/before.sh
       - run: bin/rake
