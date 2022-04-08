@@ -24,9 +24,21 @@ jobs:
       DATABASE_URL: postgres://postgres:password@localhost:5432/trunk_cocoapods_org_test
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Checkout Humus repo
+        uses: actions/checkout@v3
+        with:
+          repository: CocoaPods/Humus
+          path: Humus
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          working-directory: Humus
+          cache-version: Humus
       - name: Install postgres
         run: |
           set -euxo pipefail
@@ -35,14 +47,6 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-14
       - name: Setup DB
-        run: |
-          set -euxo pipefail
-          git clone https://github.com/CocoaPods/Humus.git
-          cd Humus
-          bundle install
-          RACK_ENV=test bundle exec rake  db:migrate
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          path: /opt/hostedtoolcache/Ruby/3.1.1/x64/lib/ruby/gems/3.1.0/extensions/x86_64-linux/3.1.0/do_postgres-0.10.17/
+        working-directory: Humus
+        run: RACK_ENV=test bundle exec rake  db:migrate
       - run: bundle exec rake
