@@ -34,19 +34,20 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-          ruby-version: 3.1.1
-          working-directory: Humus
-          cache-version: Humus
-      - name: Install postgres
+      - name: Install postgres dev headers
         run: |
           set -euxo pipefail
           wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - 2> /dev/null
           echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
           sudo apt-get update
           sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-14
+      - name: Set up humus gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: 3.1.1
+          working-directory: Humus
+          cache-version: Humus
       - name: Setup DB
         working-directory: Humus
         run: RACK_ENV=test bundle exec rake  db:migrate
