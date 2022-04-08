@@ -52,10 +52,6 @@ module Pod::TrunkApp
     it 'reports all unexpected errors' do
       error = StandardError.new('oops')
       APIController.any_instance.stubs(:raise_test_error).raises(error)
-      # TODO: Twice? Yeah sure, I have no clue. The earlier one appears to be
-      # raised from inside Sequel (by NewRelic's plugin). Let's see what
-      # happens in production.
-      NewRelic::Agent.expects(:notice_error).with(error)
       NewRelic::Agent.expects(:notice_error).with(error, :uri => '/raise_test_error',
                                                          :referer => 'http://example.com',
                                                          :request_params => { 'key' => 'value' })

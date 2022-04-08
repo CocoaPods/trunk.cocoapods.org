@@ -90,6 +90,7 @@ db_loggers << TRUNK_APP_LOGGER unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 DB.timezone = :utc
 Sequel.extension :core_extensions, :migration
+Sequel::Model.plugin :def_dataset_method
 
 module Sequel
   class Model
@@ -107,6 +108,9 @@ class << DB
   # This is overridden in tests to do add a save point.
   alias_method :test_safe_transaction, :transaction
 end
+
+require 'peiji_san'
+Sequel::Dataset.include(PeijiSan)
 
 # -- Email --------------------------------------------------------------------
 

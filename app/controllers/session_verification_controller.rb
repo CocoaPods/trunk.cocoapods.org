@@ -14,6 +14,12 @@ module Pod
 
       register Sinatra::Twitter::Bootstrap::Assets
 
+      def shared_partial(*sources)
+        sources.inject([]) do |combined, source|
+          combined <<  Slim::Template.new("shared/includes/_#{source}.slim", {}).render()
+        end.join
+      end
+
       get '/verify/:token' do
         if session = Session.with_verification_token(params[:token])
           session.verify!

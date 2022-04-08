@@ -1,3 +1,4 @@
+require 'cgi'
 require 'rest'
 require 'json'
 require 'uri'
@@ -33,7 +34,7 @@ module Pod
             :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
           }
           request_body[:sha] = sha_for_file_at_path(destination_path) if update
-          put(File.join('contents', URI.escape(destination_path)), request_body)
+          put(File.join('contents', destination_path.split('/').map(&CGI.method(:escape)).join('/')), request_body)
         end
       end
 
@@ -41,7 +42,7 @@ module Pod
       #
       def delete_file_at_path(destination_path, message, author_name, author_email)
         CommitResponse.new do
-          delete(File.join('contents', URI.escape(destination_path)),
+          delete(File.join('contents', destination_path.split('/').map(&CGI.method(:escape)).join('/')),
                  :message   => message,
                  :sha       => sha_for_file_at_path(destination_path),
                  :author    => { :name => author_name,        :email => author_email },
@@ -54,7 +55,7 @@ module Pod
       #
       def file_for_path(path)
         CommitResponse.new do
-          get(File.join('contents', URI.escape(path)))
+          get(File.join('contents', path.split('/').map(&CGI.method(:escape)).join('/')))
         end
       end
 

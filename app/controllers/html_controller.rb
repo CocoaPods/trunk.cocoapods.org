@@ -13,6 +13,12 @@ module Pod
         redirect to('/claims/new')
       end
 
+      def shared_partial(*sources)
+        sources.inject([]) do |combined, source|
+          combined <<  Slim::Template.new("shared/includes/_#{source}.slim", {}).render()
+        end.join
+      end
+
       # TODO: Handle this correctly.
       # Note: As settings.views is set in child
       # controllers, the not_found is not found here,

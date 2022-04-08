@@ -1,6 +1,7 @@
 require 'app/models/commit'
 require 'app/concerns/git_commit_sha_validator'
 
+require 'cgi'
 require 'peiji_san'
 
 module Pod
@@ -91,7 +92,7 @@ module Pod
       end
 
       def resource_path
-        URI.escape("/#{pod.name}/versions/#{name}")
+        "/#{CGI.escape(pod.name)}/versions/#{CGI.escape(name)}"
       end
 
       def description

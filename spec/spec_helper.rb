@@ -87,7 +87,7 @@ class Bacon::Context
   end
 
   def fixture_response(name)
-    YAML.load(fixture_read("GitHub/#{name}.yaml"))
+    YAML.safe_load(fixture_read("GitHub/#{name}.yaml"), permitted_classes: [REST::Response])
   end
 
   def rest_response(body_or_fixture_name, code = 200, header = nil)
