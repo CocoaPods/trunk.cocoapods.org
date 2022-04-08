@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:12-alpine
+        image: postgres:14-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
@@ -27,7 +27,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-12
+      - run: sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-all
       - run: .travis/before.sh
       - uses: actions/upload-artifact@v3
         if: failure()
