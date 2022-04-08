@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: _trunk_cocoapods_org_test
+          POSTGRES_DB: trunk_cocoapods_org_test
         ports: ["5432:5432"]
     env:
       RACK_ENV: test
@@ -33,7 +33,12 @@ jobs:
           echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
           sudo apt-get update
           sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-14
-      - run: .travis/before.sh
+      - run: |
+          set -euxo pipefail
+          git clone https://github.com/CocoaPods/Humus.git
+          cd Humus
+          bundle install
+          RACK_ENV=test bundle exec rake  db:migrate
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
