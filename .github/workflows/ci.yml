@@ -27,7 +27,9 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-all
+      - run: |
+          sudo apt-get update
+          sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-14
       - run: .travis/before.sh
       - uses: actions/upload-artifact@v3
         if: failure()
