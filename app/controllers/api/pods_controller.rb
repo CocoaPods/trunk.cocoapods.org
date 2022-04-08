@@ -49,20 +49,16 @@ module Pod
           versions = pod.versions.select(&:published?)
           unless versions.empty?
             json_message(200, 'versions' => versions.map(&:public_attributes),
-                              'owners'   => pod.owners.map(&:public_attributes))
+                              'owners' => pod.owners.map(&:public_attributes))
           end
         end
         json_error(404, 'No pod found with the specified name.')
       end
 
       get '/:name/versions/:version', :requires_owner => false do
-        if pod = Pod.find_by_name(params[:name])
-          if version = pod.versions_dataset.where(:name => params[:version]).first
-            if version.published?
-              json_message(200, 'messages' => version.log_messages.map(&:public_attributes),
-                                'data_url' => version.data_url)
-            end
-          end
+        if (pod = Pod.find_by_name(params[:name])) && (version = pod.versions_dataset.where(:name => params[:version]).first) && version.published?
+          json_message(200, 'messages' => version.log_messages.map(&:public_attributes),
+                            'data_url' => version.data_url)
         end
         json_error(404, 'No pod found with the specified version.')
       end
@@ -93,12 +89,8 @@ module Pod
       end
 
       get '/:name/specs/:version', :requires_owner => false do
-        if pod = Pod.find_by_name(params[:name])
-          if version = pod.versions_dataset.where(:name => params[:version]).first
-            if version.published?
-              redirect version.data_url
-            end
-          end
+        if (pod = Pod.find_by_name(params[:name])) && (version = pod.versions_dataset.where(:name => params[:version]).first) && version.published?
+          redirect version.data_url
         end
         json_error(404, 'No pod found with the specified name and version.')
       end
@@ -106,7 +98,7 @@ module Pod
       post '/', :requires_owner => true do
         verify_pushes_allowed!
 
-        if version = %r{CocoaPods/([0-9a-z\.]+)}i.match(env['User-Agent'])
+        if version = %r{CocoaPods/([0-9a-z.]+)}i.match(env['User-Agent'])
           publishing_version = Version.new(version[1])
           if publishing_version < MINIMUM_COCOAPODS_VERSION
             message = 'The minimum CocoaPods version allowed to push new ' \
@@ -139,7 +131,7 @@ module Pod
 
         unless specification.publicly_accessible?
           json_error(403, 'Source code for your Pod was not accessible to' \
-          ' CocoaPods Trunk. Is it a private repo or behind a username/password on http?')
+                          ' CocoaPods Trunk. Is it a private repo or behind a username/password on http?')
         end
 
         allow_warnings = params['allow_warnings'] == 'true'
@@ -219,10 +211,8 @@ module Pod
           json_error(422, message)
         end
 
-        if in_favor_of = deprecated_params['in_favor_of']
-          unless Pod.find_by_name(Specification.root_name in_favor_of)
-            json_error(422, 'You cannot deprecate a pod in favor of a pod that does not exist.')
-          end
+        if (in_favor_of = deprecated_params['in_favor_of']) && !Pod.find_by_name(Specification.root_name(in_favor_of))
+          json_error(422, 'You cannot deprecate a pod in favor of a pod that does not exist.')
         end
 
         responses = DeprecateJob.new(pod, @owner, in_favor_of).deprecate!

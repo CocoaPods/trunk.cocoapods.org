@@ -26,7 +26,7 @@ module Pod
 
       # @return [Array] The time units sorted from biggest to smallest.
       #
-      TIME_UNITS = [:day, :hour, :minute, :second]
+      TIME_UNITS = %i[day hour minute second]
 
       # @return [Hash] The duration in seconds of each time unit.
       #
@@ -51,10 +51,8 @@ module Pod
         current = :second
         TIME_UNITS.each do |unit|
           unit_seconds = unit_seconds(unit)
-          if unit_seconds <= seconds
-            if unit_seconds > unit_seconds(current)
-              current = unit
-            end
+          if unit_seconds <= seconds && (unit_seconds > unit_seconds(current))
+            current = unit
           end
         end
         current

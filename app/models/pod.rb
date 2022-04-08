@@ -15,7 +15,7 @@ module Pod
       one_to_many :versions, :class => 'Pod::TrunkApp::PodVersion'
       many_to_many :owners
 
-      alias_method :deleted?, :deleted
+      alias deleted? deleted
 
       # Finds a pod by name, only including deleted pods if `include_deleted` is
       # true.
@@ -37,8 +37,8 @@ module Pod
         if pod = find_by_name(name, :include_deleted => include_deleted)
           if pod.owners.include?(owner)
             return pod
-          else
-            yield pod if block_given?
+          elsif block_given?
+            yield pod
           end
         end
         nil
@@ -50,7 +50,7 @@ module Pod
       end
 
       attr_reader :was_created
-      alias_method :was_created?, :was_created
+      alias was_created? was_created
 
       def public_attributes
         {

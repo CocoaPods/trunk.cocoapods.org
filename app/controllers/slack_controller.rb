@@ -4,7 +4,7 @@ module Pod
   module TrunkApp
     module SlackController
       SLACK_API_URL = 'https://cocoapods.slack.com/services/hooks/' \
-        "incoming-webhook?token=#{ENV['SLACK_DISPUTE_TOKEN']}"
+                      "incoming-webhook?token=#{ENV['SLACK_DISPUTE_TOKEN']}"
 
       def self.notify_slack_of_new_dispute(dispute)
         link = "https://trunk.cocoapods.org/manage/disputes/#{dispute.id}"
@@ -14,7 +14,7 @@ module Pod
                         :color => :warning,
                         :fields => [{
                           :title => 'Dispute by ' \
-                            "#{dispute.claimer.name} (#{dispute.claimer.email})",
+                                    "#{dispute.claimer.name} (#{dispute.claimer.email})",
                           :value => dispute.message,
                           :short => false,
                         }],
@@ -29,7 +29,7 @@ module Pod
                         :color => :warning,
                         :fields => [{
                           :title => 'Dispute by ' \
-                            "#{dispute.claimer.name} (#{dispute.claimer.email})",
+                                    "#{dispute.claimer.name} (#{dispute.claimer.email})",
                           :value => 'Settled',
                           :short => false,
                         }],

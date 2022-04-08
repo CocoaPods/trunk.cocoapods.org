@@ -30,9 +30,9 @@ module Pod
 
         log_response(response, committer, duration)
         response
-      rescue Object => error
-        message = "failed with error: #{error.message}."
-        log(:error, message, committer, error.backtrace.join("\n\t\t"))
+      rescue Object => e
+        message = "failed with error: #{e.message}."
+        log(:error, message, committer, e.backtrace.join("\n\t\t"))
         raise
       end
 
@@ -76,11 +76,11 @@ module Pod
           log(:info, "has been pushed (#{duration} s)")
         elsif response.failed_on_our_side?
           message = "failed with HTTP error `#{response.status_code}' on " \
-            "our side (#{duration} s)\n#{response.body}"
+                    "our side (#{duration} s)\n#{response.body}"
           log(:error, message, committer, response.body)
         elsif response.failed_on_their_side?
           message = "failed with HTTP error `#{response.status_code}' on " \
-            "GitHub’s side (#{duration} s)"
+                    "GitHub’s side (#{duration} s)"
           log(:warning, message, committer, response.body)
         elsif response.failed_due_to_timeout?
           message = "failed due to timeout (#{duration} s)"

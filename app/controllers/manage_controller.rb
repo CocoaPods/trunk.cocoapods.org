@@ -104,7 +104,7 @@ module Pod
       get '/log_messages' do
         reference_filter = params[:reference]
         messages = LogMessage
-        messages = messages.where(reference: reference_filter) if reference_filter
+        messages = messages.where(:reference => reference_filter) if reference_filter
         @collection = messages.order(Sequel.desc(:id)).page(params[:page])
         erb :'log_messages/index'
       end

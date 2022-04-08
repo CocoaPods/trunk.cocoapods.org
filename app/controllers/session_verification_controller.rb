@@ -16,7 +16,7 @@ module Pod
 
       def shared_partial(*sources)
         sources.inject([]) do |combined, source|
-          combined <<  Slim::Template.new("shared/includes/_#{source}.slim", {}).render()
+          combined << Slim::Template.new("shared/includes/_#{source}.slim", {}).render
         end.join
       end
 

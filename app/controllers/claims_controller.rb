@@ -20,7 +20,7 @@ module Pod
 
       def shared_partial(*sources)
         sources.inject([]) do |combined, source|
-          combined <<  Slim::Template.new("shared/includes/_#{source}.slim", {}).render()
+          combined << Slim::Template.new("shared/includes/_#{source}.slim", {}).render
         end.join
       end
 
@@ -97,6 +97,7 @@ module Pod
         unless params[:pods].blank?
           params[:pods].map(&:strip).uniq.each do |pod_name|
             next if pod_name.blank?
+
             if pod = Pod.find_by_name(pod_name)
               @pods << pod
             else

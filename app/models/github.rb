@@ -27,10 +27,10 @@ module Pod
       def create_new_commit(destination_path, data, message, author_name, author_email, update: false)
         CommitResponse.new do
           request_body = {
-            :message   => message,
-            :branch    => BRANCH,
-            :content   => Base64.encode64(data).delete("\r\n"),
-            :author    => { :name => author_name,        :email => author_email },
+            :message => message,
+            :branch => BRANCH,
+            :content => Base64.encode64(data).delete("\r\n"),
+            :author => { :name => author_name, :email => author_email },
             :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
           }
           request_body[:sha] = sha_for_file_at_path(destination_path) if update
@@ -43,11 +43,10 @@ module Pod
       def delete_file_at_path(destination_path, message, author_name, author_email)
         CommitResponse.new do
           delete(File.join('contents', destination_path.split('/').map(&CGI.method(:escape)).join('/')),
-                 :message   => message,
-                 :sha       => sha_for_file_at_path(destination_path),
-                 :author    => { :name => author_name,        :email => author_email },
-                 :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] },
-                )
+                 :message => message,
+                 :sha => sha_for_file_at_path(destination_path),
+                 :author => { :name => author_name, :email => author_email },
+                 :committer => { :name => ENV['GH_USERNAME'], :email => ENV['GH_EMAIL'] })
         end
       end
 
@@ -113,7 +112,7 @@ module Pod
       end
 
       class CommitResponse
-        attr_reader :timeout_error
+        attr_reader :timeout_error, :failed_on_our_side, :failed_on_their_side
 
         def initialize
           @response = yield
@@ -145,12 +144,8 @@ module Pod
         def header(name)
           @response[name]
         end
-
-        attr_reader :failed_on_our_side
-        alias_method :failed_on_our_side?, :failed_on_our_side
-
-        attr_reader :failed_on_their_side
-        alias_method :failed_on_their_side?, :failed_on_their_side
+        alias failed_on_our_side? failed_on_our_side
+        alias failed_on_their_side? failed_on_their_side
 
         def failed_due_to_timeout?
           !@timeout_error.nil?

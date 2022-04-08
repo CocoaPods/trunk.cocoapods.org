@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 require 'app/models/pod'
 
 module Pod::TrunkApp
@@ -62,7 +62,7 @@ module Pod::TrunkApp
 
       it 'returns public attributes' do
         pod = @owner.add_pod(:name => 'AFNetworking')
-        pod.public_attributes.keys.should == %w(name created_at updated_at)
+        pod.public_attributes.keys.should == %w[name created_at updated_at]
       end
 
       it 'adds an owner' do

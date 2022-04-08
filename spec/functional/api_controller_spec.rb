@@ -1,10 +1,9 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 require 'app/controllers/api_controller'
 
 module Pod::TrunkApp
   class APIController
-    def raise_test_error
-    end
+    def raise_test_error; end
 
     get '/raise_test_error', :requires_owner => false do
       raise_test_error

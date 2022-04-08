@@ -1,4 +1,4 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../spec_helper', __dir__)
 require 'app/controllers/api/sessions_controller'
 
 module Pod::TrunkApp
@@ -48,7 +48,7 @@ module Pod::TrunkApp
         post '/', { 'email' => nil, 'name' => nil }.to_json
       end.should.not.change { Owner.count + Session.count }
       last_response.status.should == 422
-      json_response['error'].keys.sort.should == %w(email name)
+      json_response['error'].keys.sort.should == %w[email name]
     end
 
     it 'does not create a new owner or session in case emailing raises an error' do

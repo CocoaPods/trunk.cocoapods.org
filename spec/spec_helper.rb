@@ -19,12 +19,12 @@ ENV['GH_TOKEN']    = 'secret'
 ENV['TRUNK_APP_PUSH_ALLOWED']   = 'true'
 ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
-$LOAD_PATH.unshift File.expand_path('../../', __FILE__)
+$LOAD_PATH.unshift File.expand_path('..', __dir__)
 require 'config/init'
 require 'app/controllers/app_controller'
 
-def DB.test_safe_transaction(&block)
-  DB.transaction(:savepoint => true, &block)
+def DB.test_safe_transaction(&)
+  DB.transaction(:savepoint => true, &)
 end
 
 $LOAD_PATH.unshift(ROOT, 'spec')
@@ -87,15 +87,15 @@ class Bacon::Context
   end
 
   def fixture_response(name)
-    YAML.safe_load(fixture_read("GitHub/#{name}.yaml"), permitted_classes: [REST::Response])
+    YAML.safe_load(fixture_read("GitHub/#{name}.yaml"), :permitted_classes => [REST::Response])
   end
 
   def rest_response(body_or_fixture_name, code = 200, header = nil)
-    if File.exist?(fixture(body_or_fixture_name))
-      body = fixture_read(body_or_fixture_name)
-    else
-      body = body_or_fixture_name
-    end
+    body = if File.exist?(fixture(body_or_fixture_name))
+             fixture_read(body_or_fixture_name)
+           else
+             body_or_fixture_name
+           end
     REST::Response.new(code, header, body)
   end
 
@@ -103,7 +103,7 @@ class Bacon::Context
     @@fixture_new_commit_sha ||= JSON.parse(fixture_response('create_new_commit').body)['commit']['sha']
   end
 
-  alias_method :run_requirement_before_sequel, :run_requirement
+  alias run_requirement_before_sequel run_requirement
   def run_requirement(description, spec)
     TRUNK_APP_LOGGER.info('-' * description.size)
     TRUNK_APP_LOGGER.info(description)
@@ -115,19 +115,19 @@ class Bacon::Context
 end
 
 module Kernel
-  alias_method :describe_before_controller_tests, :describe
+  alias describe_before_controller_tests describe
 
-  def describe(*description, &block)
+  def describe(*description, &)
     if description.first.is_a?(Class) && description.first.superclass.ancestors.include?(Pod::TrunkApp::AppController)
       klass = description.first
       # Configure controller test and always use HTTPS
       describe_before_controller_tests(*description) do
         test_controller!(klass)
         before { header 'X-Forwarded-Proto', 'https' }
-        instance_eval(&block)
+        instance_eval(&)
       end
     else
-      describe_before_controller_tests(*description, &block)
+      describe_before_controller_tests(*description, &)
     end
   end
 end
@@ -149,6 +149,7 @@ module Net
     end
 
     class TryingToMakeHTTPConnectionException < StandardError; end
+
     def connect
       raise TryingToMakeHTTPConnectionException, "Please mock your HTTP calls so you don't do any HTTP requests."
     end

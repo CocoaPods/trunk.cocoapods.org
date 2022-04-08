@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 
 ENV['ACME_KEY_1']   = '123sadaf2342rfsdf'
 ENV['ACME_TOKEN_1'] = 'fkjsdbfnkjnk354nrfwegsdfg'

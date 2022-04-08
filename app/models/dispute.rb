@@ -13,7 +13,7 @@ module Pod
 
       many_to_one :claimer, :class => 'Pod::TrunkApp::Owner'
 
-      alias_method :settled?, :settled
+      alias settled? settled
 
       protected
 

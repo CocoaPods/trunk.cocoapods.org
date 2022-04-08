@@ -68,18 +68,18 @@ require 'app/controllers/claims_controller'
 module Pod
   module TrunkApp
     App = Rack::URLMap.new(
-      '/api/v1/pods'     => PodsController,
+      '/api/v1/pods' => PodsController,
       '/api/v1/sessions' => SessionsController,
-      '/api/v1/owners'   => OwnersController,
-      '/sessions'        => SessionVerificationController,
-      '/hooks'           => HooksController,
-      '/manage'          => ManageController,
-      '/assets'          => AssetsController,
-      '/.well-known'     => LetsEncryptController,
+      '/api/v1/owners' => OwnersController,
+      '/sessions' => SessionVerificationController,
+      '/hooks' => HooksController,
+      '/manage' => ManageController,
+      '/assets' => AssetsController,
+      '/.well-known' => LetsEncryptController,
 
       # TODO: Temporary routes while we transition to the trunk app.
-      '/claims'          => ClaimsController,
-      '/'                => HTMLController,
+      '/claims' => ClaimsController,
+      '/' => HTMLController,
     )
   end
 end

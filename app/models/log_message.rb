@@ -5,7 +5,7 @@ require 'peiji_san'
 module Pod
   module TrunkApp
     class LogMessage < Sequel::Model
-      LEVELS = [:info, :warning, :error].freeze
+      LEVELS = %i[info warning error].freeze
 
       self.dataset = :log_messages
 

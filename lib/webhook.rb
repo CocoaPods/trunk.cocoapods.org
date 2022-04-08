@@ -27,7 +27,6 @@ class Webhook
     call_convenience('pod', 'create', created_at, pod_name, version_name, commit_sha, data_url)
   end
 
-  #
   def self.version_created=(targets)
     urls[:version][:create] = targets
   end
@@ -36,7 +35,6 @@ class Webhook
     call_convenience('version', 'create', created_at, pod_name, version_name, commit_sha, data_url)
   end
 
-  #
   def self.spec_updated=(targets)
     urls[:spec][:update] = targets
   end
@@ -102,8 +100,10 @@ class Webhook
   #
   def self.call(type, action, message)
     return unless enabled?
+
     targets = urls[type.to_sym][action.to_sym]
     return if targets.empty?
+
     targets = targets.join(',').delete("\n")
     write_child "#{type};#{action};#{message.tr("\n", ' ')};#{targets}\n"
   end
