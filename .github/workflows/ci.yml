@@ -29,4 +29,8 @@ jobs:
           bundler-cache: true
       - run: sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-12
       - run: .travis/before.sh
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          path: /opt/hostedtoolcache/Ruby/3.1.1/x64/lib/ruby/gems/3.1.0/extensions/x86_64-linux/3.1.0/do_postgres-0.10.17/
       - run: bin/rake
