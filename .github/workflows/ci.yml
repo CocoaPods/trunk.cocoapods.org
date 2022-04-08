@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: trunk_cocoapods_org_test
+        ports: ["5432:5432"]
+    env:
+      RACK_ENV: test
+      DATABASE_URL: postgres://postgres:password@localhost:5432/trunk_cocoapods_org_test
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: .travis/before.sh
+      - run: bin/rake
