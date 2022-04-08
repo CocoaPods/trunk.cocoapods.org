@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: trunk_cocoapods_org_test
+          POSTGRES_DB: _trunk_cocoapods_org_test
         ports: ["5432:5432"]
     env:
       RACK_ENV: test
