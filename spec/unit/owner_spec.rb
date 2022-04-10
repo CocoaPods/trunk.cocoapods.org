@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 
 module Pod::TrunkApp
   describe Owner do
@@ -72,7 +72,7 @@ module Pod::TrunkApp
     describe 'in general' do
       it 'coerces to JSON' do
         json = JSON.parse(@owner.to_json)
-        json.keys.sort.should == %w(created_at email name)
+        json.keys.sort.should == %w[created_at email name]
       end
 
       it 'finds itself with an email address' do

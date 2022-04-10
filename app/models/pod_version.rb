@@ -1,6 +1,7 @@
 require 'app/models/commit'
 require 'app/concerns/git_commit_sha_validator'
 
+require 'cgi'
 require 'peiji_san'
 
 module Pod
@@ -35,7 +36,7 @@ module Pod
                   :order => Sequel.asc(:created_at),
                   :after_add => trigger_webhooks
 
-      alias_method :deleted?, :deleted
+      alias deleted? deleted
 
       def after_initialize
         super
@@ -43,7 +44,7 @@ module Pod
       end
 
       attr_reader :was_created
-      alias_method :was_created?, :was_created
+      alias was_created? was_created
 
       def published?
         !deleted? && commits.any?
@@ -91,7 +92,7 @@ module Pod
       end
 
       def resource_path
-        URI.escape("/#{pod.name}/versions/#{name}")
+        "/#{CGI.escape(pod.name)}/versions/#{CGI.escape(name)}"
       end
 
       def description
@@ -111,9 +112,11 @@ module Pod
 
       def deprecate!(committer, in_favor_of = nil)
         raise "Can't deprecate a deleted spec: #{self}" if deleted?
+
         spec = Specification.from_json(last_published_by.specification_data)
         raise "Unable to find a podspec to deprecate: #{self}" unless spec
         return if spec.deprecated?
+
         if in_favor_of
           spec.deprecated_in_favor_of = in_favor_of
         else
@@ -124,12 +127,13 @@ module Pod
 
       def delete!(committer)
         return if deleted?
+
         push!(committer, '{}', 'Delete')
       end
 
       protected
 
-      UNIQUE_VERSION = [:pod_id, :name]
+      UNIQUE_VERSION = %i[pod_id name]
 
       def validate
         super

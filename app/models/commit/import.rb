@@ -12,8 +12,7 @@ module Pod
         DATA_URL_TEMPLATE = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/%s/%s"
         PODSPEC_FILE_EXT_REGEX = /\.podspec(.json)?\z/
 
-        attr_reader :committer_email
-        attr_reader :committer_name
+        attr_reader :committer_email, :committer_name
 
         def initialize(committer_email, committer_name)
           @committer_email = committer_email
@@ -50,7 +49,7 @@ module Pod
         #
         def extract_name_and_version(file_name)
           _, name, version_name, = *file_name.
-            match(%r{([^\/]+)\/([^\/]+)\/[^\.]+#{PODSPEC_FILE_EXT_REGEX}})
+            match(%r{([^/]+)/([^/]+)/[^.]+#{PODSPEC_FILE_EXT_REGEX}})
 
           [name, version_name]
         end
@@ -74,11 +73,11 @@ module Pod
         def handle_modified(spec, pod, committer, commit_sha)
           version = PodVersion.find_or_create(:pod => pod, :name => spec.version.to_s)
           if version.was_created?
-            if pod.was_created?
-              message = "Pod `#{pod.name}' and version `#{version.name}' created via Github hook."
-            else
-              message = "Version `#{version.description}' created via Github hook."
-            end
+            message = if pod.was_created?
+                        "Pod `#{pod.name}' and version `#{version.name}' created via Github hook."
+                      else
+                        "Version `#{version.description}' created via Github hook."
+                      end
             log_github_hook_call(version, message, committer)
           end
 
@@ -138,7 +137,7 @@ module Pod
         # TODO: handle network/request failures
         #
         def fetch_spec(commit_sha, file)
-          url = DATA_URL_TEMPLATE % [commit_sha, file]
+          url = format(DATA_URL_TEMPLATE, commit_sha, file)
           response = REST.get(url)
           data = response.body
           if response.ok?

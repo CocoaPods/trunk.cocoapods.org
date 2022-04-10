@@ -6,6 +6,7 @@ AllCops:
   Exclude:
     - ./spec/fixtures/**/*
     - ./vendor/bundle/**/*
+    - ./tmp/**/*
 
 # At the moment not ready to be used
 # https://github.com/bbatsov/rubocop/issues/947
@@ -13,6 +14,9 @@ Documentation:
   Enabled: false
 
 #- CocoaPods -----------------------------------------------------------------#
+
+ParameterLists:
+  CountKeywordArgs: false
 
 # We adopted raise instead of fail.
 SignalException:
@@ -40,7 +44,13 @@ Encoding:
 
 # Having these make it easier to *not* forget to add one when adding a new
 # value and you can simply copy the previous line.
-TrailingComma:
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
 Style/MultilineOperationIndentation:
@@ -52,6 +62,15 @@ GuardClause:
 
 # Not always desirable: lib/claide/command/plugins_helper.rb:12:15
 Next:
+  Enabled: false
+
+# Autocorrect makes this cop much more useful, taking away needless guessing
+Lint/EndAlignment:
+  AutoCorrect: true
+
+# Arbitrary max lengths for classes simply do not work and enabling this will
+# lead to a never ending stream of annoyance and changes.
+Metrics/BlockLength:
   Enabled: false
 
 # Arbitrary max lengths for classes simply do not work and enabling this will
@@ -121,6 +140,6 @@ ClassAndModuleChildren:
   Exclude:
     - spec/**/*
 
-UselessComparison:
+Lint/BinaryOperatorWithIdenticalOperands:
   Exclude:
     - spec/**/*

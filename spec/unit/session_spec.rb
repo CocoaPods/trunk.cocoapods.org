@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 require 'app/models/session'
 
 module Pod::TrunkApp
@@ -75,7 +75,7 @@ module Pod::TrunkApp
           end
         end
 
-        %w(token verification_token).each do |attr|
+        %w[token verification_token].each do |attr|
           it "raises if a duplicate #{attr} gets inserted" do
             Session.create(attr => 'secret', :owner => @owner, :created_from_ip => '1.2.3.4')
             should.raise Sequel::UniqueConstraintViolation do
@@ -127,7 +127,7 @@ module Pod::TrunkApp
 
     it 'coerces to JSON' do
       json = JSON.parse(Session.new.to_json)
-      json.keys.sort.should == %w(created_at created_from_ip description valid_until verified)
+      json.keys.sort.should == %w[created_at created_from_ip description valid_until verified]
     end
 
     it 'verifies a session' do

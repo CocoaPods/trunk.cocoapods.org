@@ -1,4 +1,4 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../spec_helper', __dir__)
 require 'app/controllers/api/pods_controller'
 require 'cocoapods-core'
 
@@ -54,18 +54,16 @@ module Pod::TrunkApp
     end
 
     it 'does not accept a push unless explicitely enabled' do
-      begin
-        [nil, '', 'false'].each do |value|
-          ENV['TRUNK_APP_PUSH_ALLOWED'] = value
-          lambda do
-            post '/', spec.to_json
-          end.should.not.change { Pod.count + PodVersion.count }
-          last_response.status.should == 503
-          json_response['error'].should.match /We have closed pushing to CocoaPods trunk/
-        end
-      ensure
-        ENV['TRUNK_APP_PUSH_ALLOWED'] = 'true'
+      [nil, '', 'false'].each do |value|
+        ENV['TRUNK_APP_PUSH_ALLOWED'] = value
+        lambda do
+          post '/', spec.to_json
+        end.should.not.change { Pod.count + PodVersion.count }
+        last_response.status.should == 503
+        json_response['error'].should.match /We have closed pushing to CocoaPods trunk/
       end
+    ensure
+      ENV['TRUNK_APP_PUSH_ALLOWED'] = 'true'
     end
 
     it 'allows a specific user through when explicitely disabled' do
@@ -150,7 +148,7 @@ module Pod::TrunkApp
       json_response.should == {
         'error' => 'The Pod Specification did not pass validation.',
         'data' => {
-          'errors'   => ['Missing required attribute `name`.', 'A version is required.'],
+          'errors' => ['Missing required attribute `name`.', 'A version is required.'],
           'warnings' => ['Missing required attribute `license`.', 'Missing license type.'],
         },
       }
@@ -307,7 +305,7 @@ module Pod::TrunkApp
       end.should.not.change { Commit.count }
       last_response.status.should == 403
       error_msg = 'Source code for your Pod was not accessible to CocoaPods Trunk. '\
-        'Is it a private repo or behind a username/password on http?'
+                  'Is it a private repo or behind a username/password on http?'
       json_response.should == { 'error' => error_msg }
     end
 
@@ -318,7 +316,7 @@ module Pod::TrunkApp
       end.should.not.change { Commit.count }
       last_response.status.should == 403
       error_msg = 'Source code for your Pod was not accessible to CocoaPods Trunk. '\
-        'Is it a private repo or behind a username/password on http?'
+                  'Is it a private repo or behind a username/password on http?'
       json_response.should == { 'error' => error_msg }
     end
 
@@ -409,7 +407,9 @@ module Pod::TrunkApp
       end.should.change { Commit.count }
       commit = Commit.last
       commit.committer.should == @owner
-      commit.specification_data.should == JSON.pretty_generate(spec.dup.tap { |s| s.deprecated_in_favor_of = 'Alamofire' })
+      commit.specification_data.should == JSON.pretty_generate(spec.dup.tap do |s|
+                                                                 s.deprecated_in_favor_of = 'Alamofire'
+                                                               end)
     end
 
     it 'creates a commit once a push succeeds' do
@@ -715,12 +715,12 @@ module Pod::TrunkApp
       get '/AFNetworking/specs/latest'
       last_response.should.be.redirect?
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
-        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+                                                  'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
 
       get '/AFNetworking/specs/1.2.0'
       last_response.should.be.redirect?
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
-        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+                                                  'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
     end
 
     it 'redirects to GitHub when a post-shard version is found' do
@@ -729,12 +729,12 @@ module Pod::TrunkApp
       get '/AFNetworking/specs/latest'
       last_response.should.be.redirect?
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
-        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/a/7/5/AFNetworking/1.2.0/AFNetworking.podspec.json'
+                                                  'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/a/7/5/AFNetworking/1.2.0/AFNetworking.podspec.json'
 
       get '/AFNetworking/specs/1.2.0'
       last_response.should.be.redirect?
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
-        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/a/7/5/AFNetworking/1.2.0/AFNetworking.podspec.json'
+                                                  'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/a/7/5/AFNetworking/1.2.0/AFNetworking.podspec.json'
     end
 
     it 'redirects to GitHub when a pre-shard version is found' do
@@ -743,12 +743,12 @@ module Pod::TrunkApp
       get '/AFNetworking/specs/latest'
       last_response.should.be.redirect?
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
-        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+                                                  'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
 
       get '/AFNetworking/specs/1.2.0'
       last_response.should.be.redirect?
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
-        'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+                                                  'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
     end
   end
 end

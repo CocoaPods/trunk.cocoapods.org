@@ -1,11 +1,11 @@
-$LOAD_PATH.unshift(File.expand_path('../../', __FILE__))
+$LOAD_PATH.unshift(File.expand_path('..', __dir__))
 ENV['RACK_ENV'] ||= 'development'
 require 'config/init'
 
 # No need to ever verify email addresses with seeds.
 require 'rfc822'
 module RFC822
-  def self.mx_records(address)
+  def self.mx_records(_address)
     [MXRecord.new(20, 'mail.example.com')]
   end
 end

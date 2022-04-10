@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 require 'app/models/pod_version'
 
 module Pod::TrunkApp
@@ -90,7 +90,7 @@ module Pod::TrunkApp
         it 'returns a URL from where the spec data can be retrieved' do
           @version.add_commit(@valid_commit_attrs)
           expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
-            "3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
+                     "3ca23060197547eef92983f15590b5a87270615f/#{@version.destination_path}"
           @version.data_url.should == expected
         end
       end
@@ -120,8 +120,8 @@ module Pod::TrunkApp
       it 'returns a URL from where the spec data can be retrieved' do
         @version.add_commit(@valid_commit_attrs)
         expected = 'https://raw.githubusercontent.com/CocoaPods/Specs/' \
-          '3ca23060197547eef92983f15590b5a87270615f/Specs/' \
-          'NSAttributedString-@+CCLFormat/1.2.0/NSAttributedString-@+CCLFormat.podspec.json'
+                   '3ca23060197547eef92983f15590b5a87270615f/Specs/' \
+                   'NSAttributedString-@+CCLFormat/1.2.0/NSAttributedString-@+CCLFormat.podspec.json'
         @version.data_url.should == expected
       end
     end

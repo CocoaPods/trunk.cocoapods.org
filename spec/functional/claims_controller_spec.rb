@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 
 module Pod::TrunkApp
   describe ClaimsController, 'when claiming pods' do
@@ -53,12 +53,14 @@ module Pod::TrunkApp
       other_pod = Pod.create(:name => 'ObjectiveSugar')
       other_owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       other_owner.add_pod(other_pod)
-      post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' }, :pods => %w(AFNetworking ObjectiveSugar)
+      post '/', :owner => { :email => 'appie@example.com', :name => 'Appie Duran' },
+                :pods => %w[AFNetworking ObjectiveSugar]
       owner = Owner.find_by_email('appie@example.com')
       @pod.reload.owners.should == [owner]
       other_pod.reload.owners.should == [other_owner]
       last_response.status.should == 302
-      query = { :claimer_email => owner.email, :successfully_claimed => ['AFNetworking'], :already_claimed => ['ObjectiveSugar'] }
+      query = { :claimer_email => owner.email, :successfully_claimed => ['AFNetworking'],
+                :already_claimed => ['ObjectiveSugar'] }
       last_response.location.should == "https://example.org/thanks?#{query.to_query}"
     end
 
@@ -84,9 +86,9 @@ module Pod::TrunkApp
           post('/',
                :owner => {
                  :email => 'appie@example.com',
-                 :name => 'Appie Duran' },
-               :pods => ['AFNetworking'],
-              )
+                 :name => 'Appie Duran',
+               },
+               :pods => ['AFNetworking'])
         end
       end.should.not.change { Owner.count }
       @pod.reload.owners.should == [Owner.unclaimed]
@@ -95,8 +97,7 @@ module Pod::TrunkApp
     it 'shows validation errors' do
       post('/',
            :owner => { :email => 'appie@example.com', :name => '' },
-           :pods => %w(AFNetworking EYFNetworking JAYSONKit),
-          )
+           :pods => %w[AFNetworking EYFNetworking JAYSONKit])
       last_response.status.should == 200
       @pod.reload.owners.should == [Owner.unclaimed]
       errors = response_doc.css('.errors li')
@@ -108,8 +109,7 @@ module Pod::TrunkApp
       get('/thanks',
           :claimer_email => 'appie@example.com',
           :successfully_claimed => ['AFNetworking'],
-          :already_claimed => ['JSONKit'],
-         )
+          :already_claimed => ['JSONKit'])
       last_response.status.should == 200
       last_response.body.should.include 'AFNetworking'
       last_response.body.should.include 'JSONKit'

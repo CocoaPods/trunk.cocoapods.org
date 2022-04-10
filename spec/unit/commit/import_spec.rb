@@ -1,4 +1,4 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../spec_helper', __dir__)
 
 module Pod::TrunkApp
   describe Commit::Import, 'when importing' do
@@ -17,14 +17,14 @@ module Pod::TrunkApp
     describe '#extract_name_and_version' do
       it 'handles a normal example' do
         name, version_name = instance.
-          extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
+                             extract_name_and_version('Specs/KFData/1.0.1/KFData.podspec.json')
 
         name.should == 'KFData'
         version_name.should == '1.0.1'
       end
       it 'handles an example without Specs' do
         name, version_name = instance.
-          extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
+                             extract_name_and_version('KFData/1.0.1/KFData.podspec.json')
 
         name.should == 'KFData'
         version_name.should == '1.0.1'
@@ -33,7 +33,7 @@ module Pod::TrunkApp
 
     it 'gets the podspec data from the right URL' do
       expected_url = "https://raw.githubusercontent.com/#{ENV['GH_REPO']}/" \
-        '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
+                     '3cc2186863fb4d8a0fd4ffd82bc0ffe88499bd5f/Specs/KFData/1.0.1/KFData.podspec.json'
       REST.expects(:get).with(expected_url).once.
         returns(rest_response('GitHub/ABContactHelper.podspec.json'))
 
@@ -46,7 +46,8 @@ module Pod::TrunkApp
       lambda do
         trigger_commit_with_fake_data(
           :added,
-          ['ABContactHelper/0.1/ABContactHelper.podspec.json'])
+          ['ABContactHelper/0.1/ABContactHelper.podspec.json'],
+        )
       end.should.change { Pod.count }
 
       pod = Pod.find(:name => 'ABContactHelper')
@@ -271,11 +272,11 @@ module Pod::TrunkApp
       instance.import(
         'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
         :removed,
-        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json),
+        %w[Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json],
       )
 
       pod.versions_dataset.all.reject(&:deleted?).should == [undeleted]
-      pod.versions_dataset.all.select(&:deleted?).map(&:name).should == %w(1.1.6 1.1.8)
+      pod.versions_dataset.all.select(&:deleted?).map(&:name).should == %w[1.1.6 1.1.8]
     end
 
     it 'marks pods as deleted when all versions are deleted' do
@@ -291,7 +292,7 @@ module Pod::TrunkApp
       instance.import(
         'c1947f722b29c919cb8bcd16f5db27866ae2ce09',
         :removed,
-        %w(Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json),
+        %w[Specs/Intercom/1.1.6/Intercom.podspec.json Specs/Intercom/1.1.8/Intercom.podspec.json],
       )
 
       # Assert all versions are deleted.

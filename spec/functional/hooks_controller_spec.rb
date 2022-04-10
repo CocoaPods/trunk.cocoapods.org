@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 
 module Pod::TrunkApp
   describe HooksController, 'when receiving push updates from the repository' do

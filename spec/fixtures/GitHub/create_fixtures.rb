@@ -1,10 +1,10 @@
-require File.expand_path('../../../../app/models/github', __FILE__)
+require File.expand_path('../../../app/models/github', __dir__)
 require 'yaml'
 
 module Pod
   module TrunkApp
     class GitHub
-      alias_method :_perform_request, :perform_request
+      alias _perform_request perform_request
       def perform_request(method, path, body = nil)
         @last_response = _perform_request(method, path, body)
       end
@@ -13,7 +13,7 @@ module Pod
   end
 end
 
-FIXTURE_DIR = File.expand_path('..', __FILE__)
+FIXTURE_DIR = File.expand_path(__dir__)
 
 $stdout.sync = true
 
@@ -25,10 +25,11 @@ def perform_action(name, *args)
   result
 end
 
-@github = Pod::TrunkApp::GitHub.new(ENV['GH_REPO'], 'master', :username => ENV['GH_TOKEN'], :password => 'x-oauth-basic')
+@github = Pod::TrunkApp::GitHub.new(ENV['GH_REPO'], 'master', :username => ENV['GH_TOKEN'],
+                                                              :password => 'x-oauth-basic')
 
 destination_path = 'Specs/AFNetworking/1.2.0/AFNetworking.podspec.yaml'
-data = File.read(File.expand_path('../../AFNetworking.podspec', __FILE__))
+data = File.read(File.expand_path('../AFNetworking.podspec', __dir__))
 
 name = `git config --global user.name`.strip
 email = `git config --global user.email`.strip

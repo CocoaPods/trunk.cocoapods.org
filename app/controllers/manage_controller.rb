@@ -37,7 +37,7 @@ module Pod
       end
 
       get '/commits' do
-        @collection = Commit.page(params[:page]).order(Sequel.desc(:created_at))
+        @collection = Commit.order(Sequel.desc(:created_at)).page(params[:page])
 
         erb :'commits/index'
       end
@@ -49,9 +49,9 @@ module Pod
       end
 
       get '/pods' do
-        pods = Pod.page(params[:page])
+        pods = Pod
         pods = pods.where(Sequel.like(:name, /#{params[:name]}/i)) if params[:name]
-        @collection = pods.order(Sequel.asc(:name))
+        @collection = pods.order(Sequel.asc(:name)).page(params[:page])
 
         erb :'pods/index'
       end
@@ -97,25 +97,26 @@ module Pod
       end
 
       get '/versions' do
-        @collection = PodVersion.page(params[:page]).order(Sequel.desc(:id))
+        @collection = PodVersion.order(Sequel.desc(:id)).page(params[:page])
         erb :'pod_versions/index'
       end
 
       get '/log_messages' do
         reference_filter = params[:reference]
-        messages = LogMessage.page(params[:page])
-        messages = messages.where('reference = ?', reference_filter) if reference_filter
-        @collection = messages.order(Sequel.desc(:id))
+        messages = LogMessage
+        messages = messages.where(:reference => reference_filter) if reference_filter
+        @collection = messages.order(Sequel.desc(:id)).page(params[:page])
         erb :'log_messages/index'
       end
 
       get '/disputes' do
-        disputes = Dispute.page(params[:page])
-        if params[:scope] == 'unsettled'
-          @collection = disputes.where(:settled => false).order(Sequel.asc(:id))
-        else
-          @collection = disputes.order(Sequel.desc(:id))
-        end
+        disputes = Dispute.scoped
+        @collection =
+          if params[:scope] == 'unsettled'
+            disputes.where(:settled => false).order(Sequel.asc(:id))
+          else
+            disputes.order(Sequel.desc(:id))
+          end.page(params[:page])
         erb :'disputes/index'
       end
 

@@ -95,7 +95,7 @@ module Pod
       class << self
         # Override all the route methods to ensure an ACL rule is specified.
         #
-        [:get, :post, :put, :patch, :delete].each do |verb|
+        %i[get post put patch delete].each do |verb|
           class_eval <<-EOS, __FILE__, __LINE__ + 1
             def #{verb}(route, options, &block)
               unless options.has_key?(:requires_owner)
@@ -111,10 +111,8 @@ module Pod
       #
       def authorization_header
         authorization = env['HTTP_AUTHORIZATION'].to_s.strip
-        unless authorization == ''
-          if authorization.start_with?('Token')
-            authorization
-          end
+        if !(authorization == '') && authorization.start_with?('Token')
+          authorization
         end
       end
 

@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 
 require 'app/models/pod'
 require 'app/models/pod_version'
@@ -8,9 +8,9 @@ require 'webhook'
 module Pod::TrunkApp
   describe 'Webhook' do
     before do
-      Webhook.pod_created = %w(pod_created_url1 pod_created_url2)
-      Webhook.version_created = %w(version_created_url1 version_created_url2)
-      Webhook.spec_updated = %w(spec_updated_url1 spec_updated_url2)
+      Webhook.pod_created = %w[pod_created_url1 pod_created_url2]
+      Webhook.version_created = %w[version_created_url1 version_created_url2]
+      Webhook.spec_updated = %w[spec_updated_url1 spec_updated_url2]
     end
     after do
       Webhook.pod_created = []

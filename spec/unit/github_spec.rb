@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require File.expand_path('../spec_helper', __dir__)
 require 'app/models/github'
 
 module Pod::TrunkApp
@@ -51,10 +51,10 @@ module Pod::TrunkApp
       Base64.decode64(body['content']).should == fixture_read('AFNetworking.podspec')
       body.delete('content')
       body.should == {
-        'message'   => MESSAGE,
-        'branch'    => 'master',
-        'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
-        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
+        'message' => MESSAGE,
+        'branch' => 'master',
+        'author' => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
+        'committer' => { 'name' => 'alloy', 'email' => 'bot@example.com' },
       }
     end
 
@@ -96,10 +96,10 @@ module Pod::TrunkApp
 
       body = JSON.parse(body)
       body.should == {
-        'message'   => MESSAGE,
-        'sha'       => '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b',
-        'author'    => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
-        'committer' => { 'name' => 'alloy',      'email' => 'bot@example.com' },
+        'message' => MESSAGE,
+        'sha' => '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b',
+        'author' => { 'name' => 'Eloy Durán', 'email' => 'eloy@example.com' },
+        'committer' => { 'name' => 'alloy', 'email' => 'bot@example.com' },
       }
     end
 
@@ -138,7 +138,7 @@ module Pod::TrunkApp
           Errno::ETIMEDOUT => 'Connection timed out - connect(2)',
           Net::OpenTimeout => 'execution expired',
           Net::ReadTimeout => 'Does not have a message',
-          Timeout::Error   => 'execution expired',
+          Timeout::Error => 'execution expired',
         }.each do |error_class, message|
           res = response do
             error = error_class.new

@@ -21,7 +21,7 @@ module Pod
       many_to_one :committer, :class => 'Pod::TrunkApp::Owner'
       many_to_one :pod_version
 
-      alias_method :imported?, :imported
+      alias imported? imported
 
       protected
 

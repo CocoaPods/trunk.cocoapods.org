@@ -1,6 +1,6 @@
 # -- General ------------------------------------------------------------------
 
-ROOT = File.expand_path('../../', __FILE__)
+ROOT = File.expand_path('..', __dir__)
 $LOAD_PATH.unshift File.join(ROOT, 'lib')
 
 ENV['RACK_ENV'] ||= 'production'
@@ -46,8 +46,7 @@ if ENV['WEBHOOKS_ENABLED'] == 'true'
   Webhook.pod_created = [
     "https://feeds-cocoapods-org.herokuapp.com#{hook_path}",
   ]
-  Webhook.version_created = [
-  ]
+  Webhook.version_created = []
   Webhook.spec_updated = [
     # This is the Mac mini that used to be be CocoaDocs
     # but now just runs README/Stats
@@ -90,11 +89,12 @@ db_loggers << TRUNK_APP_LOGGER unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 DB.timezone = :utc
 Sequel.extension :core_extensions, :migration
+Sequel::Model.plugin :def_dataset_method
 
 module Sequel
   class Model
     class << self
-      alias_method :scoped, :dataset
+      alias scoped dataset
     end
   end
 end
@@ -105,8 +105,11 @@ class << DB
   # whether or the transaction has been rolled back.
   #
   # This is overridden in tests to do add a save point.
-  alias_method :test_safe_transaction, :transaction
+  alias test_safe_transaction transaction
 end
+
+require 'peiji_san'
+Sequel::Dataset.include(PeijiSan)
 
 # -- Email --------------------------------------------------------------------
 

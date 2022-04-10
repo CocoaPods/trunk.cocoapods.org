@@ -13,6 +13,12 @@ module Pod
         redirect to('/claims/new')
       end
 
+      def shared_partial(*sources)
+        sources.inject([]) do |combined, source|
+          combined << Slim::Template.new("shared/includes/_#{source}.slim", {}).render
+        end.join
+      end
+
       # TODO: Handle this correctly.
       # Note: As settings.views is set in child
       # controllers, the not_found is not found here,
@@ -21,11 +27,9 @@ module Pod
       # (-> setting settings.views here does not help)
       #
       not_found do
-        begin
-          slim :'../html/not_found', :status => 404, :layout => :'../html/layout'
-        rescue Errno::ENOENT
-          slim :'html/not_found', :status => 404, :layout => :'html/layout'
-        end
+        slim :'../html/not_found', :status => 404, :layout => :'../html/layout'
+      rescue Errno::ENOENT
+        slim :'html/not_found', :status => 404, :layout => :'html/layout'
       end
     end
   end

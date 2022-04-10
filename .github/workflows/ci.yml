@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: trunk_cocoapods_org_test
+        ports: ["5432:5432"]
+    env:
+      RACK_ENV: test
+      DATABASE_URL: postgres://postgres:password@localhost:5432/trunk_cocoapods_org_test
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Checkout Humus repo
+        uses: actions/checkout@v3
+        with:
+          repository: CocoaPods/Humus
+          path: Humus
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Install postgres dev headers
+        run: |
+          set -euxo pipefail
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - 2> /dev/null
+          echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get -y install postgresql libpq-dev postgresql-server-dev-14
+      - name: Set up humus gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: 3.1.1
+          working-directory: Humus
+          cache-version: Humus
+      - name: Setup DB
+        working-directory: Humus
+        run: RACK_ENV=test bundle exec rake  db:migrate
+      - run: bundle exec rake

@@ -12,7 +12,7 @@ module REST
     @mock_response = Response.new(status, headers, body)
   end
 
-  def self.put(url, body, headers, auth)
+  def self.put(_url, _body, _headers, _auth)
     @mock_response
   ensure
     @mock_response = nil
@@ -101,6 +101,7 @@ module Pod
           if commit_sha.blank?
             raise 'Unable to determine commit sha!'
           end
+
           # Every 4th push fails
           if @push_count && (@push_count % 4) == 3
             REST.mock_response([422, 500][rand(2)], {}, { :error => 'Oh noes!' }.to_json)
