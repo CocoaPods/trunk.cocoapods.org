@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
-gem 'cocoapods-core', '~> 1.0'
+gem 'cocoapods-core', '~> 1.11'
 gem 'json'
 gem 'mail', :git => 'https://github.com/deivid-rodriguez/mail.git', :branch => 'ruby-31-support'
 gem 'newrelic_rpm'
