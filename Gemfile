@@ -9,7 +9,7 @@ gem 'peiji-san', :git => 'https://github.com/segiddins/peiji-san.git', :branch =
 gem 'pg', '~> 1.3'
 gem 'rack-ssl'
 gem 'rack-attack', '~> 6.6.0'
-gem 'dalli', '~> 2.7.5'
+gem 'dalli', '~> 3.2.1'
 gem 'rfc-822'
 gem 'sequel', '~> 5.55'
 gem 'sinatra'
