@@ -3,7 +3,7 @@ ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
 gem 'cocoapods-core', '~> 1.11'
 gem 'json'
-gem 'mail', :git => 'https://github.com/deivid-rodriguez/mail.git', :branch => 'ruby-31-support'
+gem 'mail', '~> 2.8.a', '>= 2.8.0.rc1'
 gem 'newrelic_rpm'
 gem 'peiji-san', :git => 'https://github.com/segiddins/peiji-san.git', :branch => 'segiddins/support-frozen-entries'
 gem 'pg', '~> 1.3'

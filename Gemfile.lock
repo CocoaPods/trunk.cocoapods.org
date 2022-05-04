@@ -1,15 +1,4 @@
 GIT
-  remote: https://github.com/deivid-rodriguez/mail.git
-  revision: d9d8dcc6bae1774a033ad488cea6217db3a3ebf3
-  branch: ruby-31-support
-  specs:
-    mail (2.8.0.edge)
-      mini_mime (>= 0.1.1)
-      net-imap
-      net-pop
-      net-smtp
-
-GIT
   remote: https://github.com/segiddins/peiji-san.git
   revision: a31233255df37a589bcdeb31213a36337c540c7a
   branch: segiddins/support-frozen-entries
@@ -70,6 +59,11 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
+    mail (2.8.0.rc1)
+      mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
     metaclass (0.0.4)
     method_source (1.0.0)
     mini_mime (1.1.2)
@@ -203,7 +197,7 @@ DEPENDENCIES
   foreman
   json
   kicker
-  mail!
+  mail (~> 2.8.a, >= 2.8.0.rc1)
   mocha-on-bacon
   newrelic_rpm
   nokogiri (~> 1.13)
