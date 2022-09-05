@@ -154,7 +154,7 @@ GEM
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
-    sequel (5.60.0)
+    sequel (5.60.1)
     sinatra (2.2.2)
       mustermann (~> 2.0)
       rack (~> 2.2)
