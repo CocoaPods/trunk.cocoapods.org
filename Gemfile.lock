@@ -64,14 +64,12 @@ GEM
       net-imap
       net-pop
       net-smtp
-    metaclass (0.0.4)
     method_source (1.0.0)
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
     minitest (5.15.0)
-    mocha (1.1.0)
-      metaclass (~> 0.0.1)
-    mocha-on-bacon (0.2.2)
+    mocha (1.15.0)
+    mocha-on-bacon (0.2.3)
       mocha (>= 0.13.0)
     multi_json (1.15.0)
     mustermann (3.0.0)
