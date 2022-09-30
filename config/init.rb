@@ -43,18 +43,10 @@ require 'lib/webhook'
 if ENV['WEBHOOKS_ENABLED'] == 'true'
   hook_path = "/hooks/trunk/#{ENV['OUTGOING_HOOK_PATH']}"
 
-  Webhook.pod_created = [
-    "https://feeds-cocoapods-org.herokuapp.com#{hook_path}",
-  ]
+  Webhook.pod_created = []
   Webhook.version_created = []
   Webhook.spec_updated = [
-    # This is the Mac mini that used to be be CocoaDocs
-    # but now just runs README/Stats
-    "http://199.19.84.242:4567#{hook_path}",
-    "http://search.cocoapods.org#{hook_path}",
-    "http://aws-search.cocoapods.org#{hook_path}",
     "http://metrics.cocoapods.org#{hook_path}",
-    "https://cocoadocs.buddybuild.com#{hook_path}",
     "https://cocoapods-metadata-service.herokuapp.com/webhook#{hook_path}",
   ]
 
