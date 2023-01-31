@@ -67,7 +67,7 @@ GEM
     metaclass (0.0.4)
     method_source (1.0.0)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.0)
+    mini_portile2 (2.8.1)
     minitest (5.15.0)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
@@ -93,7 +93,7 @@ GEM
       timeout
     netrc (0.11.0)
     newrelic_rpm (3.8.1.221)
-    nokogiri (1.13.8)
+    nokogiri (1.14.1)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     notify (0.5.2)
@@ -107,7 +107,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.6)
-    racc (1.6.0)
+    racc (1.6.2)
     rack (2.2.4)
     rack-attack (6.6.1)
       rack (>= 1.0, < 3)
@@ -200,7 +200,7 @@ DEPENDENCIES
   mail (~> 2.8.a, >= 2.8.0.rc1)
   mocha-on-bacon
   newrelic_rpm
-  nokogiri (~> 1.13)
+  nokogiri (~> 1.14)
   peiji-san!
   pg (~> 1.4)
   prettybacon
