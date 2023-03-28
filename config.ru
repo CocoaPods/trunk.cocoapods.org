@@ -19,4 +19,8 @@ unless ENV['TRUNK_APP_LOG_TO_STDOUT']
   STDERR.reopen(TRUNK_APP_LOG_FILE)
 end
 
+warn :run
+
 run Pod::TrunkApp::App
+
+warn :ran
