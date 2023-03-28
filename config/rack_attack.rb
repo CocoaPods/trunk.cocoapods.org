@@ -41,7 +41,7 @@ Rack::Attack.safelist('allow from localhost') do |req|
 end
 
 Rack::Attack.throttle('req/ip', :limit => hourly_limit, :period => 1.hour) do |req|
-  req.if if req.path.match(%r{/api/pods/.*})
+  req.ip if req.path.match(%r{/api/pods/.*})
 end
 
 Rack::Attack.throttled_response = lambda do |_|
