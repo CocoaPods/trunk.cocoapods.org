@@ -25,7 +25,7 @@ end
 
 group :development, :production do
   gem 'foreman'
-  gem 'thin'
+  gem 'puma'
 end
 
 group :development do

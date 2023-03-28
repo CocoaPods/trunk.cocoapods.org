@@ -1,5 +1,3 @@
-require 'app/controllers/slack_controller'
-
 module Pod
   module TrunkApp
     module SlackController
