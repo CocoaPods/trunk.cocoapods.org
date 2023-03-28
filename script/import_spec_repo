@@ -25,7 +25,7 @@ require 'app/models/commit/import'
 
 require 'rfc822'
 module RFC822
-  def self.mx_records(address)
+  def self.mx_records(_address)
     [MXRecord.new(20, 'mail.example.com')]
   end
 end
@@ -34,7 +34,7 @@ repo = File.expand_path(ENV['REPO'] || '~/.cocoapods/repos/master')
 REPO = Rugged::Repository.new(repo)
 HEAD_SHA = REPO.head.target
 
-LOG_MESSAGE_REFERENCE = 'spec-repo-import'
+LOG_MESSAGE_REFERENCE = 'spec-repo-import'.freeze
 
 module Pod
   module TrunkApp
@@ -90,7 +90,6 @@ module Pod
             )
           end
           spec
-
         rescue Rugged::TreeError
           mock_spec(commit_sha, file)
         rescue ::Pod::DSLError, ::Pod::Informative
@@ -104,8 +103,6 @@ module Pod
 
         # TODO: These should be moved into the real Import module at some point
         # when we've decided how to properly handle it.
-
-        private
 
         def self.handle_renamed(spec, pod, committer, commit_sha)
           if commit = handle_added(spec, pod, committer, commit_sha)
@@ -197,6 +194,7 @@ Dir.chdir(REPO.workdir) do
     stats.each do |status, file|
       next unless file =~ /\.podspec(.json)?\z/
       next if sha == HEAD_SHA && status == :deleted
+
       p [status, file]
 
       # Create the Pod *before* sending it off to Import, otherwise the
