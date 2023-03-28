@@ -35,7 +35,7 @@ options = {
 Rack::Attack.cache.store = Dalli::Client.new(memcache_hosts, options)
 # Always allow requests from localhost
 # (blacklist & throttles are skipped)
-Rack::Attack.whitelist('allow from localhost') do |req|
+Rack::Attack.safelist('allow from localhost') do |req|
   # Requests are allowed if the return value is truthy
   '127.0.0.1' == req.ip || '::1' == req.ip
 end
