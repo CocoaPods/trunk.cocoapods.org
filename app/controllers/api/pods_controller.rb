@@ -83,6 +83,10 @@ module Pod
         SQL
         if commit = commits.max_by { |c| Version.new(c[:version]) }
           path = PodVersion.destination_path(commit[:name], commit[:version], commit[:created_at])
+          cache_control :public, :must_revalidate, :max_age => 60
+          last_modified commit[:created_at]
+          etag commit[:sha]
+
           redirect format(PodVersion::DATA_URL, commit[:sha], path)
         end
         json_error(404, 'No pod found with the specified name.')
