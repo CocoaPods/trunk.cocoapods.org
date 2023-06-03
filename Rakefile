@@ -39,8 +39,8 @@ begin
         result << "#{table}\n"
         schema = DB.schema(table)
         terminal_table = Terminal::Table.new(
-          headings: [:name, *schema[0][1].keys],
-          rows: schema.map { |c| [c[0], *c[1].values.map(&:inspect)] }
+          :headings => [:name, *schema[0][1].keys],
+          :rows => schema.map { |c| [c[0], *c[1].values.map(&:inspect)] },
         )
         result << "#{terminal_table}\n\n"
       end
@@ -60,12 +60,12 @@ begin
 
     desc 'Drop DB for RACK_ENV'
     task :drop => :rack_env do
-      sh "dropdb trunk_cocoapods_org_#{ENV['RACK_ENV']}"
+      sh "dropdb trunk_cocoapods_org_#{ENV.fetch('RACK_ENV', nil)}"
     end
 
     desc 'Create DB for RACK_ENV'
     task :create => :rack_env do
-      sh "createdb -h localhost trunk_cocoapods_org_#{ENV['RACK_ENV']} -E UTF8"
+      sh "createdb -h localhost trunk_cocoapods_org_#{ENV.fetch('RACK_ENV', nil)} -E UTF8"
       puts 'Note: Migrations for this DB should run via https://github.com/cocoaPods/humus'
     end
 
@@ -75,10 +75,10 @@ begin
     end
 
     desc 'Create, migrate, and seed the DB for RACK_ENV'
-    task :bootstrap => [:create, :migrate, :seed]
+    task :bootstrap => %i[create migrate seed]
 
     desc 'Drop and then bootstrap the DB for RACK_ENV'
-    task :reset => [:drop, :bootstrap]
+    task :reset => %i[drop bootstrap]
   end
 
   desc 'Starts a interactive console with the model env loaded'
@@ -108,7 +108,7 @@ begin
 
   task :default => :spec
 
-#-- Rubocop -------------------------------------------------------------------
+  #-- Rubocop -------------------------------------------------------------------
 
   begin
     require 'rubocop/rake_task'
@@ -117,9 +117,8 @@ begin
       task.fail_on_error = true
     end
   rescue LoadError
-    puts "[!] The Rubocop tasks have been disabled"
+    puts '[!] The Rubocop tasks have been disabled'
   end
-
 rescue SystemExit, LoadError => e
   puts "[!] The normal tasks have been disabled: #{e.message}"
 end

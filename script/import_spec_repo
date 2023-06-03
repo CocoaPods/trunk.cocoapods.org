@@ -30,7 +30,7 @@ module RFC822
   end
 end
 
-repo = File.expand_path(ENV['REPO'] || '~/.cocoapods/repos/master')
+repo = File.expand_path(ENV.fetch('REPO', '~/.cocoapods/repos/master'))
 REPO = Rugged::Repository.new(repo)
 HEAD_SHA = REPO.head.target
 

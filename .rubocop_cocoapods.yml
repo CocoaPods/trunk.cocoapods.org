@@ -1,12 +1,9 @@
 AllCops:
-  Include:
-    - ./Rakefile
-    - ./Gemfile
-    - ./*.gemspec
   Exclude:
-    - ./spec/fixtures/**/*
-    - ./vendor/bundle/**/*
-    - ./tmp/**/*
+    - spec/fixtures/**/*
+    - vendor/bundle/**/*
+    - tmp/**/*
+    - design/**/*
 
 # At the moment not ready to be used
 # https://github.com/bbatsov/rubocop/issues/947
@@ -53,8 +50,9 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
-Style/MultilineOperationIndentation:
-  EnforcedStyle: indented
+# Allow `STDOUT`
+Style/GlobalStdStream:
+  Enabled: false
 
 # Clashes with CLAide Command#validate!
 GuardClause:
@@ -65,8 +63,11 @@ Next:
   Enabled: false
 
 # Autocorrect makes this cop much more useful, taking away needless guessing
-Lint/EndAlignment:
+Layout/EndAlignment:
   AutoCorrect: true
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
 
 # Arbitrary max lengths for classes simply do not work and enabling this will
 # lead to a never ending stream of annoyance and changes.
