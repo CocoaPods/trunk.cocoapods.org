@@ -49,9 +49,7 @@ module Pod
         # Unless a specific HTTP 500 response was thrown, this is a bubbled-up exception.
         if error = args.first
           if catch_unexpected_errors?
-            NewRelic::Agent.notice_error(error, :uri => request.path,
-                                                :referer => request.referrer.to_s,
-                                                :request_params => request.params)
+            NewRelic::Agent.notice_error(error, { :uri => request.path })
             throw_internal_server_error!
           else
             raise error

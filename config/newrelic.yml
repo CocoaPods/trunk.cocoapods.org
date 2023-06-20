@@ -50,30 +50,31 @@ common: &default_settings
   # environment below. (formerly called 'enabled')
   monitor_mode: true
 
-  # Developer mode should be off in every environment but
-  # development as it has very high overhead in memory.
-  developer_mode: false
+  distributed_tracing:
+    enabled: true
+
+  application_logging:
+    # If `true`, all logging-related features for the agent can be enabled or disabled
+    # independently. If `false`, all logging-related features are disabled.
+    enabled: true
+    forwarding:
+      # If `true`, the agent captures log records emitted by this application.
+      enabled: true
+      # Defines the maximum number of log records to buffer in memory at a time.
+      max_samples_stored: 10000
+    metrics:
+      # If `true`, the agent captures metrics related to logging for this application.
+      enabled: true
+    local_decorating:
+      # If `true`, the agent decorates logs with metadata to link to entities, hosts, traces, and spans.
+      # This requires a log forwarder to send your log files to New Relic.
+      # This should not be used when forwarding is enabled.
+      enabled: false
 
   # The newrelic agent generates its own log file to keep its logging
   # information separate from that of your application. Specify its
   # log level here.
   log_level: info
-
-  # Optionally set the path to the log file This is expanded from the
-  # root directory (may be relative or absolute, e.g. 'log/' or
-  # '/var/log/') The agent will attempt to create this directory if it
-  # does not exist.
-  # log_file_path: 'log'
-
-  # Optionally set the name of the log file, defaults to 'newrelic_agent.log'
-  # log_file_name: 'newrelic_agent.log'
-
-  # The newrelic agent communicates with the service via https by default.  This
-  # prevents eavesdropping on the performance metrics transmitted by the agent.
-  # The encryption required by SSL introduces a nominal amount of CPU overhead,
-  # which is performed asynchronously in a background thread.  If you'd prefer
-  # to send your metrics over http uncomment the following line.
-  # ssl: false
 
   #============================== Browser Monitoring ===============================
   # New Relic Real User Monitoring gives you insight into the performance real users are
