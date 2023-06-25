@@ -47,6 +47,8 @@ module Pod
       end
 
       use Rack::SSL unless ENV['RACK_ENV'] == 'development'
+
+      register WillPaginate::Sinatra
     end
   end
 end

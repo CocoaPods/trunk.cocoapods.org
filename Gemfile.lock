@@ -1,17 +1,3 @@
-GIT
-  remote: https://github.com/segiddins/peiji-san.git
-  revision: a31233255df37a589bcdeb31213a36337c540c7a
-  branch: segiddins/support-frozen-entries
-  specs:
-    peiji-san (1.2.0)
-
-GIT
-  remote: https://github.com/segiddins/sinatra-url-for.git
-  revision: 7e3e1eddb32a67da8f8c8b9b6b8f9de5f3f700b0
-  specs:
-    sinatra-url-for (0.2.1)
-      sinatra
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -183,6 +169,7 @@ GEM
     tzinfo (1.2.10)
       thread_safe (~> 0.1)
     unicode-display_width (2.2.0)
+    will_paginate (4.0.0)
 
 PLATFORMS
   ruby
@@ -198,7 +185,6 @@ DEPENDENCIES
   mocha-on-bacon
   newrelic_rpm
   nokogiri (~> 1.13)
-  peiji-san!
   pg (~> 1.4)
   prettybacon
   pry
@@ -218,9 +204,9 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   sinatra-twitter-bootstrap
-  sinatra-url-for!
   slim
   terminal-table
+  will_paginate
 
 RUBY VERSION
    ruby 3.1.1p18
