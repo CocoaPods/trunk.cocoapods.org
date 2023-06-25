@@ -7,6 +7,7 @@ ENV['RACK_ENV'] ||= 'production'
 ENV['DATABASE_URL'] ||= "postgres://localhost/trunk_cocoapods_org_#{ENV['RACK_ENV']}"
 ENV['GH_REPO'] ||= 'CocoaPods/Specs'
 
+require 'sinatra'
 if ENV['RACK_ENV'] == 'development'
   require 'sinatra/reloader'
 end
@@ -76,11 +77,27 @@ end
 require 'sequel'
 require 'pg'
 
+require 'will_paginate'
+require 'will_paginate/sequel'
+require 'will_paginate/view_helpers/sinatra'
+
+module PaginationHelper
+  def page(page_number = 1, page_size = nil)
+    paginate(page_number&.to_i || 1, page_size || WillPaginate.per_page)
+  end
+end
+
+module Sequel
+  module DatasetPagination
+    prepend PaginationHelper
+  end
+end
+
 db_loggers = []
 db_loggers << TRUNK_APP_LOGGER unless ENV['RACK_ENV'] == 'production'
 DB = Sequel.connect(ENV['DATABASE_URL'], :loggers => db_loggers)
 DB.timezone = :utc
-Sequel.extension :core_extensions, :migration
+Sequel.extension :core_extensions, :migration, :pagination
 Sequel::Model.plugin :def_dataset_method
 
 module Sequel
@@ -99,9 +116,6 @@ class << DB
   # This is overridden in tests to do add a save point.
   alias test_safe_transaction transaction
 end
-
-require 'peiji_san'
-Sequel::Dataset.include(PeijiSan)
 
 # -- Email --------------------------------------------------------------------
 
