@@ -1,15 +1,13 @@
 require 'app/models/push_job'
 
-require 'peiji_san'
-
 module Pod
   module TrunkApp
     class LogMessage < Sequel::Model
       LEVELS = %i[info warning error].freeze
 
       self.dataset = :log_messages
+      self.dataset = dataset.extension(:pagination)
 
-      extend PeijiSan
       plugin :timestamps
       plugin :validation_helpers
 

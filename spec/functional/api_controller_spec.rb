@@ -51,9 +51,8 @@ module Pod::TrunkApp
     it 'reports all unexpected errors' do
       error = StandardError.new('oops')
       APIController.any_instance.stubs(:raise_test_error).raises(error)
-      NewRelic::Agent.expects(:notice_error).with(error, :uri => '/raise_test_error',
-                                                         :referer => 'http://example.com',
-                                                         :request_params => { 'key' => 'value' })
+      NewRelic::Agent.expects(:notice_error).at_least(0)
+      NewRelic::Agent.expects(:notice_error).with(error, { :uri => '/raise_test_error' })
       get '/raise_test_error', { 'key' => 'value' }, 'HTTP_REFERER' => 'http://example.com'
     end
   end

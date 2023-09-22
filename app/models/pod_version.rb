@@ -2,7 +2,6 @@ require 'app/models/commit'
 require 'app/concerns/git_commit_sha_validator'
 
 require 'cgi'
-require 'peiji_san'
 
 module Pod
   module TrunkApp
@@ -16,8 +15,8 @@ module Pod
       SHARD_TIME = DateTime.new(2016, 11, 11, 3, 8, 0, '-6')
 
       self.dataset = :pod_versions
+      self.dataset = dataset.extension(:pagination)
 
-      extend PeijiSan
       plugin :timestamps
       plugin :validation_helpers
       plugin :after_initialize

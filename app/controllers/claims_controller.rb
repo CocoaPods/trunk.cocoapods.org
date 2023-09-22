@@ -48,7 +48,8 @@ module Pod
       # --- Assets ------------------------------------------------------------------------------
 
       get '/claims.css' do
-        scss :claims, :style => :expanded
+        options = { :style => :expanded, :default_content_type => :css, :layout => false }
+        render :scss, :claims, options
       end
 
       private

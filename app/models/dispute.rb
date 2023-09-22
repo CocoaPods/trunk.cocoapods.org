@@ -1,13 +1,11 @@
 require 'app/models/owner'
 
-require 'peiji_san'
-
 module Pod
   module TrunkApp
     class Dispute < Sequel::Model
       self.dataset = :disputes
+      self.dataset = dataset.extension(:pagination)
 
-      extend PeijiSan
       plugin :timestamps
       plugin :validation_helpers
 

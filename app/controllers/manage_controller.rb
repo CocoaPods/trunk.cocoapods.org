@@ -4,9 +4,7 @@ require 'app/models/pod'
 require 'app/controllers/slack_controller'
 
 require 'active_support/core_ext/hash/except'
-require 'peiji_san/view_helper'
 require 'sinatra/twitter-bootstrap'
-require 'sinatra/url_for'
 
 module Pod
   module TrunkApp
@@ -28,7 +26,7 @@ module Pod
         register Sinatra::Reloader
       end
 
-      helpers ManageHelper, Sinatra::UrlForHelper, PeijiSan::ViewHelper
+      helpers ManageHelper
 
       register Sinatra::Twitter::Bootstrap::Assets
 
