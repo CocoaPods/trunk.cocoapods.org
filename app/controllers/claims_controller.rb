@@ -25,40 +25,7 @@ module Pod
       end
 
       # --- Claims --------------------------------------------------------------------------------
-
-      get '/new' do
-        @owner = Owner.new
-        @pods = []
-        slim :new
-      end
-
-      post '/' do
-        find_owner
-        find_pods
-        if @owner.valid? && valid_pods?
-          change_ownership
-          if all_pods_already_claimed?
-            query = {
-              :claimer_email => @owner.email,
-              :pods => @already_claimed_pods,
-            }
-            redirect to("/disputes/new?#{query.to_query}")
-          else
-            query = {
-              :claimer_email => @owner.email,
-              :successfully_claimed => @successfully_claimed_pods,
-              :already_claimed => @already_claimed_pods,
-            }
-            redirect to("/thanks?#{query.to_query}")
-          end
-        end
-        prepare_errors
-        slim :new
-      end
-
-      get '/thanks' do
-        slim :thanks
-      end
+      #  Deprecated
 
       # --- Disputes ------------------------------------------------------------------------------
 
@@ -111,34 +78,12 @@ module Pod
         !@pods.empty? && @invalid_pods.empty?
       end
 
-      def all_pods_already_claimed?
-        @successfully_claimed_pods.empty? && !@already_claimed_pods.empty?
-      end
-
       def prepare_errors
         @errors = @owner.errors.full_messages.map { |message| "Owner #{message}." }
         if !@invalid_pods.empty?
           @errors << "Unknown #{'Pod'.pluralize(@invalid_pods.size)} #{@invalid_pods.to_sentence}."
         elsif @pods.empty?
           @errors << 'No Pods specified.'
-        end
-      end
-
-      def change_ownership
-        @successfully_claimed_pods = []
-        @already_claimed_pods = []
-        DB.test_safe_transaction do
-          @owner.save_changes(:raise_on_save_failure => true)
-          unclaimed_owner = Owner.unclaimed
-          @pods.each do |pod|
-            if pod.owners == [unclaimed_owner]
-              @owner.add_pod(pod)
-              pod.remove_owner(unclaimed_owner)
-              @successfully_claimed_pods << pod.name
-            else
-              @already_claimed_pods << pod.name
-            end
-          end
         end
       end
     end

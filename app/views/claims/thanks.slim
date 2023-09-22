@@ -9,7 +9,7 @@ ruby:
 
   p Once we have finished the transition period, you will be able to push new versions of #{params[:successfully_claimed].size == 1 ? 'these pods' : 'this pod'} directly from the command-line. For more details see the <a href = "http://guides.cocoapods.org/making/getting-setup-with-trunk">getting started with Trunk</a> guide.
 - else
-  p All of your choosen Pods are already claimed.
+  p All of your chosen Pods are already claimed.
 
 - unless params[:already_claimed] == [''] || params[:already_claimed] == nil
   p The following #{params[:already_claimed].size == 1 ? 'pod has' : 'pods have'} already been claimed: #{params[:already_claimed].to_sentence}. If you disagree with this please <a href="#{url("/disputes/new?#{{ :claimer_email => params[:claimer_email], :pods => params[:already_claimed] }.to_query}")}">file a dispute</a>.
