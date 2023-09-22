@@ -85,7 +85,7 @@ module Pod
       end
 
       def validates_mx_records(attr)
-        if RFC822.mx_records(send(attr)).empty?
+        unless ValidMXRecords.valid_mx_records?(send(attr))
           errors.add(:email, 'has unverifiable domain')
         end
       end
