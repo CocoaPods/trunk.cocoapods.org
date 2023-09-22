@@ -1,5 +1,6 @@
 require 'app/models/pod'
 require 'app/models/session'
+require 'valid_mx_records'
 
 require 'erb'
 require 'rfc822'
