@@ -156,13 +156,13 @@ module Net
   end
 end
 
-require 'rfc822'
-module RFC822
-  def self.mx_records(address)
+require 'valid_mx_records'
+module ValidMXRecords
+  def valid_mx_records?(address)
     if address == Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL || address.split('@').last == 'example.com'
-      [MXRecord.new(20, 'mail.example.com')]
+      true
     else
-      []
+      false
     end
   end
 end
