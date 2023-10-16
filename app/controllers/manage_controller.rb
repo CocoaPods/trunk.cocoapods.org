@@ -27,6 +27,43 @@ module Pod
       end
 
       helpers ManageHelper
+      helpers do
+        # @return [String]
+        #
+        def pod_url(pod_id)
+          "/manage/pods/#{pod_id}"
+        end
+
+        # @return [String]
+        #
+        def pod_link(pod)
+          "<a href=\"#{pod_url(pod.id)}\">#{pod.name}</a>"
+        end
+
+        # @return [String]
+        #
+        def commit_url(commit_id)
+          "/manage/commits/#{commit_id}"
+        end
+
+        # @return [String]
+        #
+        def commit_link(commit)
+          "<a href=\"#{commit_url(commit.id)}\">#{commit.id}</a>"
+        end
+
+        # @return [String]
+        #
+        def owner_url(owner_id)
+          "/manage/owners/#{owner_id}"
+        end
+
+        # @return [String]
+        #
+        def owner_link(owner)
+          "<a href=\"#{owner_url(owner.id)}\">#{owner.id}</a>"
+        end
+      end
 
       register Sinatra::Twitter::Bootstrap::Assets
 
