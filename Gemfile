@@ -25,11 +25,11 @@ group :rake do
 end
 
 group :development, :production do
-  gem 'foreman'
   gem 'puma'
 end
 
 group :development do
+  gem 'foreman'
   gem 'kicker'
   gem 'saga'
 
