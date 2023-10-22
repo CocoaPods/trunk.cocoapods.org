@@ -9,18 +9,31 @@
     <tr>
       <th>Version</th>
       <th>Commit</th>
+      <th>SHA</th>
+      <th>Published At</th>
     </tr>
   </thead>
   <tbody>
     <% @pod.versions.each do |version| %>
       <tr>
-        <td><%= version.name %></td>
         <td>
-          <% if version.published? %>
+          <%= version.name %>
+        </td>
+        <% if version.published? %>
+          <td>
+            <%= commit_link(version.last_published_by) %>
+          </td>
+          <td>
             <a href="<%= version.data_url %>"><%= version.commit_sha %></a>
-          <% else %>
-            Unpublished
-          <% end %>
+          </td>
+          <td>
+            <%= version.last_published_by.created_at.to_formatted_s(:rfc822) %>
+          </td>
+        <% else %>
+          <td>Unpublished</td>
+          <td></td>
+          <td></td>
+        <% end %>
         </td>
       </tr>
     <% end %>
@@ -41,7 +54,9 @@
   <tbody>
     <% @pod.owners.each do |owner| %>
       <tr>
-        <td><%= owner.id %></td>
+        <td>
+          <%= owner_link(owner) %>
+        </td>
         <td><%= owner.name %></td>
         <td><a href="mailto:<%= owner.email %>"><%= owner.email %></a></td>
       </tr>

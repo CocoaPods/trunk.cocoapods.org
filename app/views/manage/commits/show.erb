@@ -1,14 +1,14 @@
 <% @title = @commit.pod_version.pod.name %>
 
 <div class="page-header">
-  <h1><%= @commit.pod_version.pod.name %> <small><%= @commit.pod_version.name %></small></h1>
+  <h1><%= pod_link(@commit.pod_version.pod) %> <small><%= @commit.pod_version.name %></small></h1>
 </div>
 
 <dl class="dl-horizontal">
   <dt>ID</dt>
   <dd><%= @commit.id %></dd>
   <dt>SHA</dt>
-  <dd><%= @commit.sha %><dd>
+  <dd><a href="<%= @commit.pod_version.data_url %>"><%= @commit.sha %></a><dd>
   <dt>Committer</dt>
   <dd><%= @commit.committer.public_attributes %></dd>
 </dl>
