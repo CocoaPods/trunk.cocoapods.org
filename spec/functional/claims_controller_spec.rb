@@ -1,7 +1,7 @@
 require File.expand_path('../spec_helper', __dir__)
 
 module Pod::TrunkApp
-    describe ClaimsController, 'concerning disputes' do
+  describe ClaimsController, 'concerning disputes' do
     before do
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       @pod = @owner.add_pod(:name => 'AFNetworking')

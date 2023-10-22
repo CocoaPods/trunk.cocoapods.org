@@ -158,12 +158,8 @@ end
 
 require 'valid_mx_records'
 module ValidMXRecords
-  def valid_mx_records?(address)
-    if address == Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL || address.split('@').last == 'example.com'
-      true
-    else
-      false
-    end
+  def self.valid_mx_records?(address)
+    address == Pod::TrunkApp::Owner::UNCLAIMED_OWNER_EMAIL || address.split('@').last == 'example.com'
   end
 end
 
