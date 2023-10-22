@@ -95,11 +95,11 @@ GEM
     puma (6.4.0)
       nio4r (~> 2.0)
     racc (1.6.0)
-    rack (2.2.7)
+    rack (2.2.8)
     rack-attack (6.6.1)
       rack (>= 1.0, < 3)
-    rack-protection (3.0.2)
-      rack
+    rack-protection (3.1.0)
+      rack (~> 2.2, >= 2.2.4)
     rack-ssl (1.4.1)
       rack
     rack-test (2.0.2)
@@ -142,16 +142,16 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
     sequel (5.69.0)
-    sinatra (3.0.2)
+    sinatra (3.1.0)
       mustermann (~> 3.0)
       rack (~> 2.2, >= 2.2.4)
-      rack-protection (= 3.0.2)
+      rack-protection (= 3.1.0)
       tilt (~> 2.0)
-    sinatra-contrib (3.0.2)
+    sinatra-contrib (3.1.0)
       multi_json
       mustermann (~> 3.0)
-      rack-protection (= 3.0.2)
-      sinatra (= 3.0.2)
+      rack-protection (= 3.1.0)
+      sinatra (= 3.1.0)
       tilt (~> 2.0)
     sinatra-twitter-bootstrap (2.3.4)
     slim (4.1.0)
@@ -201,7 +201,7 @@ DEPENDENCIES
   saga
   sass
   sequel (~> 5.69)
-  sinatra
+  sinatra (~> 3.1)
   sinatra-contrib
   sinatra-twitter-bootstrap
   slim

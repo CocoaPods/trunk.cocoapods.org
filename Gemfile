@@ -15,7 +15,7 @@ gem 'rfc-822'
 gem 'sass'
 gem 'sequel', '~> 5.69'
 
-gem 'sinatra'
+gem 'sinatra', '~> 3.1'
 gem 'sinatra-twitter-bootstrap'
 gem 'slim'
 
