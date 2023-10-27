@@ -18,7 +18,7 @@ module Pod
             o.save
           end
 
-          url_template = "#{request.scheme}://#{request.host_with_port}/sessions/verify/%s"
+          url_template = ENV['RACK_ENV'] == 'test' ? "#{request.scheme}://#{request.host_with_port}/sessions/verify/%s" : 'https://trunk.cocoapods.org/sessions/verify/%s'
           session = owner.create_session!(request.ip, url_template, session_description)
           session_attributes = session.public_attributes
           session_attributes['token'] = session.token
