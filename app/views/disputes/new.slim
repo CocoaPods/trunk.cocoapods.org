@@ -49,17 +49,17 @@ p If you believe your Pod has been claimed by someone who has not been maintaini
 
 p If you do not have a dispute, we will not respond - this is not a place to submit issues. Due to the number of non-disputes we also require that you write out a reasonable explaination of <span id="chars">over 100</span> characters.
 
-form.form-horizontal role="form" action="/claims/disputes" method="POST"
+form.form-horizontal role="form" action="/" method="POST"
 
   .form-group
-    label.col-sm-3.control-label for="dispute[claimer_email]" Disputer:
+    label.col-sm-3.control-label for="claimer_email" Disputer:
     .col-sm-6
-      input.email type="textfield" name="dispute[claimer_email]" readonly="readonly" value="#{params[:claimer_email]}"
+      input.email type="textfield" name="claimer_email" readonly="readonly" value="#{params[:claimer_email]}"
 
   .form-group
-    label.col-sm-3.control-label for="dispute[message]" Message:
+    label.col-sm-3.control-label for="message" Message:
     .col-sm-9
-        textarea#validate_length name="dispute[message]" rows="10"
+        textarea#validate_length name="message" rows="10"
           | The following #{@pods.size == 1 ? 'pod has' : 'pods have'} been claimed by others but #{@pods.size == 1 ? 'is' : 'are'} in fact mine: #{@pods.map(&:name).to_sentence}.
 
             Here is a summary of how you can verify that I’m the rightful owner:

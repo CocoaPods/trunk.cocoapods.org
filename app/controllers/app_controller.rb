@@ -62,9 +62,7 @@ require 'app/controllers/hooks_controller'
 require 'app/controllers/manage_controller'
 require 'app/controllers/assets_controller'
 require 'app/controllers/letsencrypt_controller'
-
-# TODO: Temporary controller while we transition to the trunk app.
-require 'app/controllers/claims_controller'
+require 'app/controllers/disputes_controller'
 
 # And assemble base routes to controllers map.
 module Pod
@@ -77,10 +75,8 @@ module Pod
       '/hooks' => HooksController,
       '/manage' => ManageController,
       '/assets' => AssetsController,
+      '/disputes' => DisputesController,
       '/.well-known' => LetsEncryptController,
-
-      # TODO: Temporary routes while we transition to the trunk app.
-      '/claims' => ClaimsController,
       '/' => HTMLController,
     )
   end

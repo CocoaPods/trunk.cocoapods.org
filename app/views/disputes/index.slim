@@ -3,7 +3,7 @@ script src="/claims/javascript/typeahead.bundle.min.js"
 
 h1 Claim your Pod
 
-p You can use the form below to claim all the Pods you have already published to be registered as being ‘owned’ by you.
+p You can use the form below to claim existing Pods as being ‘owned’ by you.
 
 - unless @errors.blank?
   .errors
@@ -11,7 +11,7 @@ p You can use the form below to claim all the Pods you have already published to
       - for message in @errors
         li = message
 
-form.form-horizontal role="form" action="/claims" method="POST"
+form.form-horizontal role="form" action="new" method="POST"
   .form-group
     label.col-sm-3.control-label for="name" Owner name:
     .col-sm-6
@@ -40,27 +40,26 @@ form.form-horizontal role="form" action="/claims" method="POST"
 p Note you can use <code>pod trunk info [pod]</code> to get information on a pod and <code>pod trunk me</code> can be used to verify your local account.
 
 javascript:
-  var cocoapods = function(query, cb) {
-    if(query){
-      $.getJSON("http://aws-search.cocoapods.org/api/v1/pods.flat.hash.json?query=name:" + query, cb);
-    }
-  };
+    var cocoapods = function(query, cb) {
+        if(query){
+            $.getJSON("http://aws-search.cocoapods.org/api/v1/pods.flat.hash.json?query=name:" + query, cb);
+        }
+    };
 
-  $('#pod').typeahead(null, {
-    displayKey: 'id',
-    minLength: 2,
-    source: cocoapods
-  });
+    $('#pod').typeahead(null, {
+        displayKey: 'id',
+        minLength: 2,
+        source: cocoapods
+    });
 
-  $("#pod").on("typeahead:selected", function(obj, suggestion, name) {
-      $("#selected-pods .col-sm-6").append("<input class='col-md-4' type='text' readonly='readonly' name='pods[]' value='" + suggestion["id"] + "'>")
-      $("#pod").val("")
-  });
+    $("#pod").on("typeahead:selected", function(obj, suggestion, name) {
+        $("#selected-pods .col-sm-6").append("<input class='col-md-4' type='text' readonly='readonly' name='pods[]' value='" + suggestion["id"] + "'>")
+        $("#pod").val("")
+    });
 
-  $('#pod').keypress(function (e) {
-    if (e.which == 13) {
-        $("")
-        e.preventDefault();
-    }
-  });
-
+    $('#pod').keypress(function (e) {
+        if (e.which == 13) {
+            $("")
+            e.preventDefault();
+        }
+    });
