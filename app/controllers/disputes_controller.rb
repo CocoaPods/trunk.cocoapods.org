@@ -54,7 +54,7 @@ module Pod
         claimer = Owner.find_by_email(params[:claimer_email])
         dispute = Dispute.create(:claimer => claimer, :message => params[:message])
         SlackController.notify_slack_of_new_dispute(dispute)
-        redirect to('/disputes/thanks')
+        redirect to('/thanks')
       end
 
       get '/thanks' do
