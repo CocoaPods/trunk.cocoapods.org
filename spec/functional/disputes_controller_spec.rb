@@ -1,26 +1,26 @@
 require File.expand_path('../spec_helper', __dir__)
 
 module Pod::TrunkApp
-  describe ClaimsController, 'concerning disputes' do
+  describe DisputesController, 'concerning disputes' do
     before do
       @owner = Owner.create(:email => 'jenny@example.com', :name => 'Jenny Penny')
       @pod = @owner.add_pod(:name => 'AFNetworking')
     end
 
     it 'lists already claimed pods' do
-      get '/disputes/new', :claimer_email => 'appie@example.com', :pods => ['AFNetworking']
+      get '/new', :claimer_email => 'appie@example.com', :pods => ['AFNetworking']
       last_response.status.should == 200
       container = response_doc.css('article').first
       container.css('li').first.text.should == 'AFNetworking <jenny@example.com>'
       form = container.css('form').first
-      form.css('input[name="dispute[claimer_email]"]').first['value'].should == 'appie@example.com'
+      form.css('input[name="claimer_email"]').first['value'].should == 'appie@example.com'
       form.css('textarea').first.text.should.include 'AFNetworking'
     end
 
     it 'creates a new dispute' do
       lambda do
-        post '/disputes', :dispute => { :claimer_email => @owner.email, :message => 'GIMME!' }
-      end.should.change { Dispute.count }
+        post '/', :claimer_email => @owner.email, :message => 'GIMME!'
+      end.should.change { Dispute.count } # rubocop:disable Style/MultilineBlockChain
       last_response.location.should == 'https://example.org/disputes/thanks'
       dispute = Dispute.last
       dispute.claimer.should == @owner
@@ -29,7 +29,7 @@ module Pod::TrunkApp
     end
 
     it 'shows a thanks page' do
-      get '/disputes/thanks'
+      get '/thanks'
       last_response.status.should == 200
     end
   end

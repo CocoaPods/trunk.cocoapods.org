@@ -9,9 +9,9 @@ require 'rest'
 
 module Pod
   module TrunkApp
-    class ClaimsController < HTMLController
+    class DisputesController < HTMLController
       configure do
-        set :views, settings.root + '/app/views/claims'
+        set :views, File.join(settings.root, 'app/views/disputes')
       end
 
       configure :development do
@@ -20,36 +20,45 @@ module Pod
 
       def shared_partial(*sources)
         sources.inject([]) do |combined, source|
-          combined << Slim::Template.new("shared/includes/_#{source}.slim", {}).render
+          combined << Slim::Template.new(File.join(settings.root, "shared/includes/_#{source}.slim"), {}).render
         end.join
       end
 
-      # --- Claims --------------------------------------------------------------------------------
-      #  Deprecated
-
-      # --- Disputes ------------------------------------------------------------------------------
-
-      get '/disputes/new' do
-        @pods = params[:pods].map { |name| Pod.find_by_name(name) }
-        slim :'disputes/new'
+      get '/' do
+        @pods = []
+        @owner = Owner.new
+        slim :index
       end
 
-      post '/disputes' do
-        claimer = Owner.find_by_email(params[:dispute][:claimer_email])
-        dispute = Dispute.create(:claimer => claimer, :message => params[:dispute][:message])
+      get '/new' do
+        @pods = params[:pods].map { |name| Pod.find_by_name(name) }
+        @claimer_email = params[:claimer_email]
+        slim :new
+      end
+
+      post '/new' do
+        find_owner
+        find_pods
+        if @owner.valid? && valid_pods?
+          query = {
+            :claimer_email => @owner.email,
+            :pods => @pods.map(&:name),
+          }
+          redirect to("new?#{query.to_query}")
+        end
+        prepare_errors
+        slim :new
+      end
+
+      post '/' do
+        claimer = Owner.find_by_email(params[:claimer_email])
+        dispute = Dispute.create(:claimer => claimer, :message => params[:message])
         SlackController.notify_slack_of_new_dispute(dispute)
         redirect to('/disputes/thanks')
       end
 
-      get '/disputes/thanks' do
-        slim :'disputes/thanks'
-      end
-
-      # --- Assets ------------------------------------------------------------------------------
-
-      get '/claims.css' do
-        options = { :style => :expanded, :default_content_type => :css, :layout => false }
-        render :scss, :claims, options
+      get '/thanks' do
+        slim :thanks
       end
 
       private

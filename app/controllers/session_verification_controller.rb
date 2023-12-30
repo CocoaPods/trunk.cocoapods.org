@@ -23,7 +23,7 @@ module Pod
       get '/verify/:token' do
         if session = Session.with_verification_token(params[:token])
           session.verify!
-          "Verified! You can close this window."
+          'Verified! You can close this window.'
         else
           error 404
         end

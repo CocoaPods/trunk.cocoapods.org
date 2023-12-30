@@ -10,7 +10,7 @@ module Pod
       end
 
       get '/' do
-        redirect to('/claims/new')
+        redirect to('/disputes/')
       end
 
       def shared_partial(*sources)

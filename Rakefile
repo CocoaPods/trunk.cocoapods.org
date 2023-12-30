@@ -55,7 +55,7 @@ begin
     desc 'Run migrations'
     task :migrate => :rack_env do
       ENV['TRUNK_APP_LOG_TO_STDOUT'] = 'true'
-      raise 'Migrations for this DB should run via https://github.com/cocoaPods/humus'
+      raise 'Migrations for this DB should run via https://github.com/CocoaPods/humus'
     end
 
     desc 'Drop DB for RACK_ENV'
