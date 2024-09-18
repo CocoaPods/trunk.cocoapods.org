@@ -23,11 +23,11 @@ jobs:
       RACK_ENV: test
       DATABASE_URL: postgres://postgres:password@localhost:5432/trunk_cocoapods_org_test
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Checkout Humus repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: CocoaPods/Humus
           path: Humus
