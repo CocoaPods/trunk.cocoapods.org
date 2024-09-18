@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
 gem 'cocoapods-core', '~> 1.11'
-gem 'dalli', '~> 3.2.2'
+gem 'dalli', '~> 3.2.8'
 gem 'json'
 gem 'mail', '~> 2.8.a', '>= 2.8.0.rc1'
 gem 'newrelic_rpm'
