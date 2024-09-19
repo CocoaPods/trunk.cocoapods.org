@@ -95,9 +95,9 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.8.1)
-    rack-attack (6.6.1)
-      rack (>= 1.0, < 3)
+    rack (2.2.9)
+    rack-attack (6.7.0)
+      rack (>= 1.0, < 4)
     rack-protection (3.1.0)
       rack (~> 2.2, >= 2.2.4)
     rack-ssl (1.4.1)
@@ -190,7 +190,7 @@ DEPENDENCIES
   prettybacon
   pry
   puma
-  rack-attack (~> 6.6.1)
+  rack-attack (~> 6.7.0)
   rack-ssl
   rack-test
   rake

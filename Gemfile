@@ -8,7 +8,7 @@ gem 'mail', '~> 2.8.a', '>= 2.8.0.rc1'
 gem 'newrelic_rpm'
 gem 'will_paginate'
 gem 'pg', '~> 1.4'
-gem 'rack-attack', '~> 6.6.1'
+gem 'rack-attack', '~> 6.7.0'
 
 gem 'rack-ssl'
 gem 'rfc-822'
