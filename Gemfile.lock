@@ -87,7 +87,7 @@ GEM
     parallel (1.22.1)
     parser (3.1.2.1)
       ast (~> 2.4.1)
-    pg (1.4.4)
+    pg (1.5.8)
     prettybacon (0.0.2)
       bacon (~> 1.2)
     pry (0.14.2)
@@ -193,7 +193,7 @@ DEPENDENCIES
   mocha-on-bacon
   newrelic_rpm
   nokogiri (~> 1.16)
-  pg (~> 1.4)
+  pg (~> 1.5)
   prettybacon
   pry
   puma
