@@ -177,7 +177,7 @@ GEM
     tzinfo (1.2.10)
       thread_safe (~> 0.1)
     unicode-display_width (2.2.0)
-    will_paginate (4.0.0)
+    will_paginate (4.0.1)
 
 PLATFORMS
   ruby
