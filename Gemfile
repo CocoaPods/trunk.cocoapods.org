@@ -13,7 +13,7 @@ gem 'rack-attack', '~> 6.7.0'
 gem 'rack-ssl'
 gem 'rfc-822'
 gem 'sass'
-gem 'sequel', '~> 5.84'
+gem 'sequel', '~> 5.85'
 
 gem 'sinatra', '~> 4.0'
 gem 'sinatra-twitter-bootstrap'
