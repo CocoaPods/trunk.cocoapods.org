@@ -51,6 +51,6 @@ group :test do
   gem 'rubocop-performance'
 end
 
-gem 'rubocop-sequel', '~> 0.3.4'
+gem 'rubocop-sequel', '~> 0.3.5'
 
 gem 'rubocop-rake', '~> 0.6.0'
