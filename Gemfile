@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).chomp
 
-gem 'cocoapods-core', '~> 1.11'
+gem 'cocoapods-core', '~> 1.16'
 gem 'dalli', '~> 3.2.8'
 gem 'json'
 gem 'mail', '~> 2.8'
