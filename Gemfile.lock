@@ -142,7 +142,7 @@ GEM
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
-    sequel (5.85.0)
+    sequel (5.86.0)
       bigdecimal
     sinatra (4.0.0)
       mustermann (~> 3.0)
@@ -202,7 +202,7 @@ DEPENDENCIES
   rubocop-sequel (~> 0.3.6)
   saga
   sass
-  sequel (~> 5.85)
+  sequel (~> 5.86)
   sinatra (~> 4.0)
   sinatra-contrib
   sinatra-twitter-bootstrap
