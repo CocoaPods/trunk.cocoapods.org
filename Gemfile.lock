@@ -45,6 +45,7 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
+    logger (1.6.1)
     mail (2.8.1)
       mini_mime (>= 0.1.1)
       net-imap
@@ -93,11 +94,12 @@ GEM
     puma (6.4.3)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.1.7)
+    rack (3.1.8)
     rack-attack (6.7.0)
       rack (>= 1.0, < 4)
-    rack-protection (4.0.0)
+    rack-protection (4.1.0)
       base64 (>= 0.1.0)
+      logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
     rack-session (2.0.0)
       rack (>= 3.0.0)
@@ -144,17 +146,18 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
     sequel (5.86.0)
       bigdecimal
-    sinatra (4.0.0)
+    sinatra (4.1.0)
+      logger (>= 1.6.0)
       mustermann (~> 3.0)
       rack (>= 3.0.0, < 4)
-      rack-protection (= 4.0.0)
+      rack-protection (= 4.1.0)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
-    sinatra-contrib (4.0.0)
+    sinatra-contrib (4.1.0)
       multi_json (>= 0.0.2)
       mustermann (~> 3.0)
-      rack-protection (= 4.0.0)
-      sinatra (= 4.0.0)
+      rack-protection (= 4.1.0)
+      sinatra (= 4.1.0)
       tilt (~> 2.0)
     sinatra-twitter-bootstrap (2.3.4)
     slim (5.2.1)
@@ -203,7 +206,7 @@ DEPENDENCIES
   saga
   sass
   sequel (~> 5.86)
-  sinatra (~> 4.0)
+  sinatra (~> 4.1)
   sinatra-contrib
   sinatra-twitter-bootstrap
   slim
