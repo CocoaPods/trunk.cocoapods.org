@@ -44,7 +44,7 @@ end
 group :test do
   gem 'bacon'
   gem 'mocha-on-bacon'
-  gem 'nokogiri', '~> 1.16'
+  gem 'nokogiri', '~> 1.18'
   gem 'prettybacon'
   gem 'rack-test'
   gem 'rubocop'
