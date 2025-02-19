@@ -54,7 +54,7 @@ GEM
     metaclass (0.0.4)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.7)
+    mini_portile2 (2.8.8)
     minitest (5.15.0)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
@@ -76,7 +76,7 @@ GEM
     netrc (0.11.0)
     newrelic_rpm (9.15.0)
     nio4r (2.7.3)
-    nokogiri (1.16.7)
+    nokogiri (1.18.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     notify (0.5.2)
@@ -189,7 +189,7 @@ DEPENDENCIES
   mail (~> 2.8)
   mocha-on-bacon
   newrelic_rpm
-  nokogiri (~> 1.16)
+  nokogiri (~> 1.18)
   pg (~> 1.5)
   prettybacon
   pry
