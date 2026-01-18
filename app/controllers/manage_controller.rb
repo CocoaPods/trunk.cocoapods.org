@@ -28,6 +28,14 @@ module Pod
 
       helpers ManageHelper
       helpers do
+        # HTML escape helper to prevent XSS
+        #
+        # @return [String]
+        #
+        def h(text)
+          Rack::Utils.escape_html(text.to_s)
+        end
+
         # @return [String]
         #
         def pod_url(pod_id)
@@ -37,7 +45,7 @@ module Pod
         # @return [String]
         #
         def pod_link(pod)
-          "<a href=\"#{pod_url(pod.id)}\">#{pod.name}</a>"
+          "<a href=\"#{pod_url(pod.id)}\">#{h(pod.name)}</a>"
         end
 
         # @return [String]
@@ -49,7 +57,7 @@ module Pod
         # @return [String]
         #
         def commit_link(commit)
-          "<a href=\"#{commit_url(commit.id)}\">#{commit.id}</a>"
+          "<a href=\"#{commit_url(commit.id)}\">#{h(commit.id)}</a>"
         end
 
         # @return [String]
@@ -61,7 +69,7 @@ module Pod
         # @return [String]
         #
         def owner_link(owner)
-          "<a href=\"#{owner_url(owner.id)}\">#{owner.id}</a>"
+          "<a href=\"#{owner_url(owner.id)}\">#{h(owner.id)}</a>"
         end
       end
 

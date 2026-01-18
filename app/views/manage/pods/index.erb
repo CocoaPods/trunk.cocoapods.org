@@ -3,7 +3,7 @@
 <h2>Pods</h2>
 
 <form>
-  <input type="text" name="name" placeholder="Regexp search" value="<%= params[:name] %>"></input>
+  <input type="text" name="name" placeholder="Regexp search" value="<%= h(params[:name]) %>"></input>
 </form>
 
 <table class="table table-bordered table-hover">
@@ -16,12 +16,12 @@
   <tbody>
     <% @collection.each do |pod| %>
       <tr>
-        <td><a href="pods/<%= pod.name %>"><%= pod.name %></a></td>
+        <td><a href="pods/<%= h(pod.name) %>"><%= h(pod.name) %></a></td>
         <td>
           <% pod.owners.each do |owner| %>
             <input type="hidden" name="pod" value="<%= pod.id %>" />
             <input type="hidden" name="owner" value="<%= owner.id %>" />
-            <input class="btn btn-small" type="submit" value="Remove <%= "#{owner.name} &lt;#{owner.email}&gt;" %>" />
+            <input class="btn btn-small" type="submit" value="Remove <%= h("#{owner.name} <#{owner.email}>") %>" />
           <% end %>
         </td>
       </tr>

@@ -6,3 +6,4 @@ trunk.cocoapods.org-test
 !tmp/README
 Humus
 .bundle
+.env

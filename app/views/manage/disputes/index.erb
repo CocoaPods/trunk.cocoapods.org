@@ -22,7 +22,7 @@
     <% @collection.each do |dispute| %>
       <tr>
         <% [dispute.id, dispute.claimer.email, dispute.created_at.to_formatted_s(:rfc822)].each do |value| %>
-          <td><a href="<%= url("/disputes/#{dispute.id}") %>"><%= value %></a></td>
+          <td><a href="<%= url("/disputes/#{dispute.id}") %>"><%= h(value) %></a></td>
         <% end %>
       </tr>
     <% end %>

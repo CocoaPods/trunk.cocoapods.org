@@ -1,6 +1,6 @@
 <% @title = @pod.name %>
 
-<h2><%= @pod.name %></h2>
+<h2><%= h(@pod.name) %></h2>
 
 <h3>Versions</h3>
 
@@ -17,14 +17,14 @@
     <% @pod.versions.each do |version| %>
       <tr>
         <td>
-          <%= version.name %>
+          <%= h(version.name) %>
         </td>
         <% if version.published? %>
           <td>
             <%= commit_link(version.last_published_by) %>
           </td>
           <td>
-            <a href="<%= version.data_url %>"><%= version.commit_sha %></a>
+            <a href="<%= h(version.data_url) %>"><%= h(version.commit_sha) %></a>
           </td>
           <td>
             <%= version.last_published_by.created_at.to_formatted_s(:rfc822) %>
@@ -57,8 +57,8 @@
         <td>
           <%= owner_link(owner) %>
         </td>
-        <td><%= owner.name %></td>
-        <td><a href="mailto:<%= owner.email %>"><%= owner.email %></a></td>
+        <td><%= h(owner.name) %></td>
+        <td><a href="mailto:<%= h(owner.email) %>"><%= h(owner.email) %></a></td>
       </tr>
     <% end %>
   </tbody>
@@ -66,7 +66,7 @@
 
 <h4>Add Owner</h4>
 
-<form action="/manage/pods/<%= @pod.name %>/owners" method="post">
+<form action="/manage/pods/<%= h(@pod.name) %>/owners" method="post">
   <input type="email" name="email" placeholder="Owner's Email"></input>
   <input type="submit" value="Add">
 </form>
