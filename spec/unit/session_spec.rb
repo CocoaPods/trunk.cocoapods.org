@@ -15,11 +15,11 @@ module Pod::TrunkApp
       it 'automatically creates a token and a verification token for itself' do
         session = Session.new
         session.token.length.should == 32
-        session.verification_token.length.should == 8
+        session.verification_token.length.should == 20
       end
 
       it 'sets a default expiration date' do
-        expected = Time.current + 128.days
+        expected = Time.current + 3.days
         Session.new.valid_until.to_s.should == expected.to_s
       end
     end

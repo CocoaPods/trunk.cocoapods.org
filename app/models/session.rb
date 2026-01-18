@@ -4,9 +4,9 @@ require 'app/models/owner'
 module Pod
   module TrunkApp
     class Session < Sequel::Model
-      TOKEN_LENGTH = 32             # characters
-      VERIFICATION_TOKEN_LENGTH = 8 # characters
-      VALIDITY_LENGTH = 128         # days
+      TOKEN_LENGTH = 32              # characters
+      VERIFICATION_TOKEN_LENGTH = 20 # characters
+      VALIDITY_LENGTH = 3            # days
 
       self.dataset = :sessions
       plugin :timestamps

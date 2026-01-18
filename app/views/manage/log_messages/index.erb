@@ -18,13 +18,13 @@
     <% @collection.each do |message| %>
       <tr class="<%= message.level %>">
         <!-- TODO Rename message.message to message.text. -->
-        <% reference_link = "<a href=\"?reference=#{message.reference}\">#{message.reference}</a>" %>
+        <% reference_link = "<a href=\"?reference=#{h(message.reference)}\">#{h(message.reference)}</a>" %>
         <% if message.pod_version %>
           <% pod_name = message.pod_version.pod.name %>
           <% pod_version = message.pod_version.name %>
         <% end %>
         <% [message.id, reference_link, message.created_at.to_formatted_s(:rfc822), message.level, message.message, pod_name, pod_version].each do |value| %>
-          <td><%= value || 'n/a' %></a></td>
+          <td><%= value.is_a?(String) && value.start_with?('<a ') ? value : h(value || 'n/a') %></a></td>
         <% end %>
       </tr>
     <% end %>

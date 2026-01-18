@@ -18,7 +18,7 @@
     <% @collection.each do |version| %>
       <tr class="<%= version.published? ? 'info' : 'warning' %>">
         <% [version.id, version.pod.name, version.name, version.commits_dataset.count, version.published?, version.created_at.to_formatted_s(:rfc822), version.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
-          <td><%= value.nil? && 'n/a' || value %></td>
+          <td><%= h(value.nil? ? 'n/a' : value) %></td>
         <% end %>
       </tr>
     <% end %>

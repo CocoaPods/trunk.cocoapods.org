@@ -18,7 +18,7 @@
       <tr>
         <% href = url("/commits/#{commit.id}") %>
         <% [commit.id, commit.pod_version.pod.name, commit.pod_version.name, commit.created_at.to_formatted_s(:rfc822), commit.updated_at.try(:to_formatted_s, :rfc822)].each do |value| %>
-          <td><a href="<%= href %>"><%= value || 'n/a' %></a></td>
+          <td><a href="<%= href %>"><%= h(value || 'n/a') %></a></td>
         <% end %>
       </tr>
     <% end %>
