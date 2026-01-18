@@ -21,7 +21,7 @@ module Pod::TrunkApp
       lambda do
         post '/', :claimer_email => @owner.email, :message => 'GIMME!'
       end.should.change { Dispute.count } # rubocop:disable Style/MultilineBlockChain
-      last_response.location.should == 'https://example.org/disputes/thanks'
+      last_response.location.should == 'https://example.org/thanks'
       dispute = Dispute.last
       dispute.claimer.should == @owner
       dispute.message.should == 'GIMME!'
