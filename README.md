@@ -1,28 +1,26 @@
 # trunk.cocoapods.org
 
-
 [![Build Status](https://img.shields.io/travis/CocoaPods/trunk.cocoapods.org/master.svg?style=flat)](https://travis-ci.org/CocoaPods/trunk.cocoapods.org)
-
 
 Available under the MIT license.
 
 ## Installation
 
-1. Create a testing sandbox repository on GitHub and, from the CocoaPods specification repository,
-   add the [`Gemfile`](https://raw.github.com/CocoaPods/Specs/master/Gemfile) and
-   [`Rakefile`](https://raw.github.com/CocoaPods/Specs/master/Rakefile) files.
+1.  Create a testing sandbox repository on GitHub and, from the CocoaPods specification repository,
+    add the [`Gemfile`](https://raw.github.com/CocoaPods/Specs/master/Gemfile) and
+    [`Rakefile`](https://raw.github.com/CocoaPods/Specs/master/Rakefile) files.
 
-2. Install PostgreSQL. (On OS X you can use the [Postgres App](http://postgresapp.com).)
+2.  Install PostgreSQL. (On OS X you can use the [Postgres App](http://postgresapp.com).)
 
-3. Install the dependencies:
+3.  Install the dependencies:
 
         $ rake bootstrap
 
-4. Run the travis before script to set up your db
+4.  Run the travis before script to set up your db
 
         $ ./.travis/before.sh
 
-5. Test whether or not a pod sends correctly
+5.  Test whether or not a pod sends correctly
 
         $ ./bin/test-push localhost:4567 spec/fixtures/AFNetworking.podspec
 
@@ -40,8 +38,8 @@ this example the password is ‘secret’):
 
 Optional environment variables are:
 
-* `RACK_ENV`: Can be test, development, or production.
-* `DATABASE_URL`: The URL to the PostgreSQL database.
+- `RACK_ENV`: Can be test, development, or production.
+- `DATABASE_URL`: The URL to the PostgreSQL database.
 
 ## Webhook
 
@@ -49,14 +47,14 @@ The webhook sends messages to other services when events in trunk happen.
 
 These events trigger the webhook and send a message.
 
-* Successful create of a pod: `{'type':'pod','action':'create','timestamp':'<date>','data_url':'<URL>'}`
-* Successful create of a version: `{'type':'version','action':'create','timestamp':'<date>','data_url':'<URL>'}`
-* Successful update of a spec: `{'type':'spec','action':'update','timestamp':'<date>','data_url':'<URL>'}`
+- Successful create of a pod: `{'type':'pod','action':'create','timestamp':'<date>','data_url':'<URL>'}`
+- Successful create of a version: `{'type':'version','action':'create','timestamp':'<date>','data_url':'<URL>'}`
+- Successful update of a spec: `{'type':'spec','action':'update','timestamp':'<date>','data_url':'<URL>'}`
 
 Environment variables are:
 
-* `OUTGOING_HOOK_PATH`: The garbled path used at the end of `<schema>://<domain>/hooks/trunk/<OUTGOING_HOOK_PATH>`.
-* `WEBHOOKS_ENABLED`: If set to `true`, the webhook is enabled.
+- `OUTGOING_HOOK_PATH`: The garbled path used at the end of `<schema>://<domain>/hooks/trunk/<OUTGOING_HOOK_PATH>`.
+- `WEBHOOKS_ENABLED`: If set to `true`, the webhook is enabled.
 
 ### Usage in Trunk
 
@@ -93,3 +91,7 @@ Note: The webhooks are currently only available to CP internal services. We are 
 3. Install a POST route in your service that corresponds to the URL. Note: You MUST NOT use the value in `OUTGOING_HOOK_PATH` inside your public code. Instead, use an ENV variable as well, and set it to correspond to `OUTGOING_HOOK_PATH`.
 
 You'll then receive POSTs to the URL with content `message=<JSON data>`.
+
+### Security Issues
+
+Email: `info` `@` `cocoapods.org`
