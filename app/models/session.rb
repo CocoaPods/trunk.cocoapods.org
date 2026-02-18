@@ -6,7 +6,8 @@ module Pod
     class Session < Sequel::Model
       TOKEN_LENGTH = 32              # characters
       VERIFICATION_TOKEN_LENGTH = 20 # characters
-      VALIDITY_LENGTH = 3            # days
+      VALIDITY_LENGTH = 1              # days
+      VERIFIED_VALIDITY_LENGTH = 128   # days
 
       self.dataset = :sessions
       plugin :timestamps
@@ -53,13 +54,13 @@ module Pod
       def verify!
         raise 'Unable to verify an already verified token.' if verified
 
-        update(:verified => true, :verification_token => nil)
+        update(:verified => true, :verification_token => nil, :valid_until => VERIFIED_VALIDITY_LENGTH.days.from_now)
       end
 
       def prolong!
         raise 'Unable to prolong an invalid/unverified session.' unless active?
 
-        update(:valid_for => VALIDITY_LENGTH)
+        update(:valid_for => VERIFIED_VALIDITY_LENGTH)
       end
 
       def active?
