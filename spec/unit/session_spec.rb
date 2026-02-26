@@ -19,7 +19,7 @@ module Pod::TrunkApp
       end
 
       it 'sets a default expiration date' do
-        expected = Time.current + 3.days
+        expected = Time.current + 1.day
         Session.new.valid_until.to_s.should == expected.to_s
       end
     end
@@ -135,6 +135,7 @@ module Pod::TrunkApp
       session.verify!
       session.reload.verified.should == true
       session.verification_token.should.be.nil
+      session.valid_until.should > 127.days.from_now
     end
 
     it 'extends the validity' do
