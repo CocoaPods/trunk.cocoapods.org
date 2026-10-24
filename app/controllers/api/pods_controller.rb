@@ -4,11 +4,19 @@ require 'app/models/owner'
 require 'app/models/pod'
 require 'app/models/specification_wrapper'
 require 'cocoapods-core/version'
+require 'time'
 
 module Pod
   module TrunkApp
     class PodsController < APIController
       MINIMUM_COCOAPODS_VERSION = Version.new(ENV.fetch('TRUNK_MINIMUM_COCOAPODS_VERSION') { '1.0.0' }.dup)
+
+      # The read-only test week ahead of Trunk going read-only on Dec 2nd 2026,
+      # see https://blog.cocoapods.org/CocoaPods-Specs-Repo/. Defaults are noon
+      # Mon Nov 2nd ET until noon Fri Nov 6th ET, both can be moved with an
+      # ISO 8601 time in TRUNK_BROWNOUT_START / TRUNK_BROWNOUT_END.
+      BROWNOUT_START = '2026-11-02T12:00:00-05:00'.freeze
+      BROWNOUT_END = '2026-11-06T12:00:00-05:00'.freeze
 
       def verify_github_responses!(responses)
         responses = Array(responses)
@@ -42,6 +50,46 @@ module Pod
           json_error(503, 'We have closed pushing to CocoaPods trunk' \
                           ', please see https://twitter.com/CocoaPods for details')
         end
+      end
+
+      def brownout_window
+        starts = Time.iso8601(ENV.fetch('TRUNK_BROWNOUT_START', BROWNOUT_START))
+        ends = Time.iso8601(ENV.fetch('TRUNK_BROWNOUT_END', BROWNOUT_END))
+        starts...ends
+      end
+
+      # Bypasses, all comma separated where it makes sense:
+      #
+      # - TRUNK_BROWNOUT_DISABLED=true          turns the brown-out off entirely
+      # - TRUNK_BROWNOUT_ALLOW_OWNER_IDS=1,2    lets these owners push anything
+      # - TRUNK_BROWNOUT_ALLOW_PODS=Foo,Bar     lets anyone push these pods
+      #
+      def brownout_bypassed?(pod_name)
+        return true if ENV['TRUNK_BROWNOUT_DISABLED'] == 'true'
+
+        owner_ids = ENV.fetch('TRUNK_BROWNOUT_ALLOW_OWNER_IDS', '').split(',').map(&:strip).map(&:to_i)
+        return true if owner_ids.include?(@owner.id)
+
+        pod_names = ENV.fetch('TRUNK_BROWNOUT_ALLOW_PODS', '').split(',').map { |name| name.strip.downcase }
+        pod_names.include?(pod_name.to_s.downcase)
+      end
+
+      def verify_not_in_brownout!(pod_name)
+        window = brownout_window
+        return unless window.cover?(Time.now)
+        return if brownout_bypassed?(pod_name)
+
+        ends = window.end.getlocal('-05:00').strftime('%A %B %-d at %-l:%M%P ET')
+        headers 'Retry-After' => (window.end - Time.now).ceil.to_s
+        json_error(503, 'CocoaPods Trunk is in its read-only test week, so new Podspecs are not ' \
+                        "being accepted until #{ends}.\n\n" \
+                        'This is a trial run ahead of Trunk permanently becoming read-only on ' \
+                        'December 2nd 2026, giving your release automation a chance to break early. ' \
+                        "Existing pods and builds are not affected.\n\n" \
+                        "- Read-only plan: https://blog.cocoapods.org/CocoaPods-Specs-Repo/\n" \
+                        "- Support plans: https://blog.cocoapods.org/CocoaPods-Support-Plans/\n\n" \
+                        'If this is blocking a critical release (e.g. a security fix), email ' \
+                        'info@cocoapods.org with the pod name.')
       end
 
       get '/:name', :requires_owner => false do
@@ -132,6 +180,8 @@ module Pod
           message = 'Unable to load a Pod Specification from the provided input.'
           json_error(400, message)
         end
+
+        verify_not_in_brownout!(specification.name)
 
         unless specification.publicly_accessible?
           json_error(403, 'Source code for your Pod was not accessible to' \
