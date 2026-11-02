@@ -26,6 +26,10 @@ module SpecHelpers::PodsController
     }
   end
 
+  def spec_named(name)
+    fixture_specification('AFNetworking.podspec').tap { |s| s.name = name }
+  end
+
   def create_pod_version!
     @pod = Pod::TrunkApp::Pod.create(:name => spec.name)
     @pod.add_owner(@owner) if @owner
@@ -749,6 +753,83 @@ module Pod::TrunkApp
       last_response.should.be.redirect?
       last_response.headers['Location'].should == 'https://raw.githubusercontent.com/' \
                                                   'CocoaPods/Specs/3ca23060197547eef92983f15590b5a87270615f/Specs/AFNetworking/1.2.0/AFNetworking.podspec.json'
+    end
+  end
+
+  describe PodsController, 'when POSTing pod versions during the read-only brown-out' do
+    extend SpecHelpers::PodsController
+
+    before do
+      response = response(201, { :commit => { :sha => '3ca23060197547eef92983f15590b5a87270615f' } }.to_json)
+      PushJob.any_instance.stubs(:push!).returns(response)
+      SpecificationWrapper.any_instance.stubs(:publicly_accessible?).returns(true)
+
+      sign_in!
+
+      ENV['TRUNK_BROWNOUT_START'] = (Time.now - 3600).iso8601
+      ENV['TRUNK_BROWNOUT_END'] = (Time.now + 3600).iso8601
+    end
+
+    seed_unclaimed
+
+    after do
+      ENV['TRUNK_BROWNOUT_START'] = ENV['TRUNK_BROWNOUT_END'] = '2000-01-01T00:00:00Z'
+      %w[TRUNK_BROWNOUT_DISABLED TRUNK_BROWNOUT_ALLOW_OWNER_IDS TRUNK_BROWNOUT_ALLOW_PODS].each { |key| ENV.delete(key) }
+    end
+
+    it 'does not accept a push' do
+      lambda do
+        post '/', spec.to_json
+      end.should.not.change { Pod.count + PodVersion.count }
+      last_response.status.should == 503
+      last_response.headers['Retry-After'].to_i.should.be.close 3600, 5
+      json_response['error'].should.match /read-only test week/
+      json_response['error'].should.match %r{https://blog.cocoapods.org/CocoaPods-Specs-Repo/}
+    end
+
+    it 'defaults to noon ET on Nov 2nd until noon ET on Nov 6th' do
+      ENV.delete('TRUNK_BROWNOUT_START')
+      ENV.delete('TRUNK_BROWNOUT_END')
+      # Keep the session alive across the stubbed dates.
+      Session.where(:owner_id => @owner.id).update(:valid_until => Time.utc(2027, 1, 1))
+
+      Time.stubs(:now).returns(Time.utc(2026, 11, 2, 16, 59))
+      post '/', spec.to_json
+      last_response.status.should == 302
+
+      Time.stubs(:now).returns(Time.utc(2026, 11, 2, 17, 0))
+      post '/', spec_named('KFData').to_json
+      last_response.status.should == 503
+      json_response['error'].should.match /until Friday November 6 at 12:00pm ET/
+
+      Time.stubs(:now).returns(Time.utc(2026, 11, 6, 16, 59))
+      post '/', spec_named('KFData').to_json
+      last_response.status.should == 503
+
+      Time.stubs(:now).returns(Time.utc(2026, 11, 6, 17, 0))
+      post '/', spec_named('KFData').to_json
+      last_response.status.should == 302
+    end
+
+    it 'can be turned off' do
+      ENV['TRUNK_BROWNOUT_DISABLED'] = 'true'
+      post '/', spec.to_json
+      last_response.status.should == 302
+    end
+
+    it 'allows specific owners through' do
+      ENV['TRUNK_BROWNOUT_ALLOW_OWNER_IDS'] = "999, #{@owner.id}"
+      post '/', spec.to_json
+      last_response.status.should == 302
+    end
+
+    it 'allows specific pods through' do
+      ENV['TRUNK_BROWNOUT_ALLOW_PODS'] = 'Other, afnetworking'
+      post '/', spec.to_json
+      last_response.status.should == 302
+
+      post '/', spec_named('KFData').to_json
+      last_response.status.should == 503
     end
   end
 end
