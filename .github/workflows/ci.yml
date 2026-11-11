@@ -10,7 +10,8 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Pinned, ruby/setup-ruby has no Ruby 3.1.1 build for ubuntu-26.04.
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:14-alpine
