@@ -756,7 +756,7 @@ module Pod::TrunkApp
     end
   end
 
-  describe PodsController, 'when POSTing pod versions during the read-only brown-out' do
+  describe PodsController, 'when POSTing pod versions once Trunk is read-only' do
     extend SpecHelpers::PodsController
 
     before do
@@ -766,70 +766,62 @@ module Pod::TrunkApp
 
       sign_in!
 
-      ENV['TRUNK_BROWNOUT_START'] = (Time.now - 3600).iso8601
-      ENV['TRUNK_BROWNOUT_END'] = (Time.now + 3600).iso8601
+      ENV['TRUNK_READ_ONLY_FROM'] = (Time.now - 3600).iso8601
     end
 
     seed_unclaimed
 
     after do
-      ENV['TRUNK_BROWNOUT_START'] = ENV['TRUNK_BROWNOUT_END'] = '2000-01-01T00:00:00Z'
-      %w[TRUNK_BROWNOUT_DISABLED TRUNK_BROWNOUT_ALLOW_OWNER_IDS TRUNK_BROWNOUT_ALLOW_PODS].each { |key| ENV.delete(key) }
+      ENV['TRUNK_READ_ONLY_FROM'] = '2100-01-01T00:00:00Z'
+      %w[TRUNK_READ_ONLY_DISABLED TRUNK_READ_ONLY_ALLOW_OWNER_IDS TRUNK_READ_ONLY_ALLOW_PODS].each { |key| ENV.delete(key) }
     end
 
     it 'does not accept a push' do
       lambda do
         post '/', spec.to_json
       end.should.not.change { Pod.count + PodVersion.count }
-      last_response.status.should == 503
-      last_response.headers['Retry-After'].to_i.should.be.close 3600, 5
-      json_response['error'].should.match /read-only test week/
+      last_response.status.should == 403
+      json_response['error'].should.match /became read-only on December 2nd 2026/
       json_response['error'].should.match %r{https://blog.cocoapods.org/CocoaPods-Specs-Repo/}
     end
 
-    it 'defaults to noon ET on Nov 2nd until noon ET on Nov 6th' do
-      ENV.delete('TRUNK_BROWNOUT_START')
-      ENV.delete('TRUNK_BROWNOUT_END')
+    it 'defaults to noon ET on Dec 2nd 2026' do
+      ENV.delete('TRUNK_READ_ONLY_FROM')
       # Keep the session alive across the stubbed dates.
-      Session.where(:owner_id => @owner.id).update(:valid_until => Time.utc(2027, 1, 1))
+      Session.where(:owner_id => @owner.id).update(:valid_until => Time.utc(2028, 1, 1))
 
-      Time.stubs(:now).returns(Time.utc(2026, 11, 2, 16, 59))
+      Time.stubs(:now).returns(Time.utc(2026, 12, 2, 16, 59))
       post '/', spec.to_json
       last_response.status.should == 302
 
-      Time.stubs(:now).returns(Time.utc(2026, 11, 2, 17, 0))
+      Time.stubs(:now).returns(Time.utc(2026, 12, 2, 17, 0))
       post '/', spec_named('KFData').to_json
-      last_response.status.should == 503
-      json_response['error'].should.match /until Friday November 6 at 12:00pm ET/
+      last_response.status.should == 403
 
-      Time.stubs(:now).returns(Time.utc(2026, 11, 6, 16, 59))
+      Time.stubs(:now).returns(Time.utc(2026, 12, 25))
       post '/', spec_named('KFData').to_json
-      last_response.status.should == 503
-
-      Time.stubs(:now).returns(Time.utc(2026, 11, 6, 17, 0))
-      post '/', spec_named('KFData').to_json
-      last_response.status.should == 302
+      last_response.status.should == 403
     end
 
     it 'can be turned off' do
-      ENV['TRUNK_BROWNOUT_DISABLED'] = 'true'
+      ENV['TRUNK_READ_ONLY_DISABLED'] = 'true'
       post '/', spec.to_json
       last_response.status.should == 302
     end
 
     it 'allows specific owners through' do
-      ENV['TRUNK_BROWNOUT_ALLOW_OWNER_IDS'] = "999, #{@owner.id}"
+      ENV['TRUNK_READ_ONLY_ALLOW_OWNER_IDS'] = "999, #{@owner.id}"
       post '/', spec.to_json
       last_response.status.should == 302
     end
 
     it 'allows specific pods through' do
-      ENV['TRUNK_BROWNOUT_ALLOW_PODS'] = 'Other, afnetworking'
+      ENV['TRUNK_READ_ONLY_ALLOW_PODS'] = 'Other, afnetworking'
       post '/', spec.to_json
       last_response.status.should == 302
 
       post '/', spec_named('KFData').to_json
-      last_response.status.should == 503
+      last_response.status.should == 403
     end
   end
 end
