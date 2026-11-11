@@ -19,8 +19,8 @@ ENV['GH_TOKEN']    = 'secret'
 ENV['TRUNK_APP_PUSH_ALLOWED']   = 'true'
 ENV['TRUNK_APP_ADMIN_PASSWORD'] = Digest::SHA2.hexdigest('secret')
 
-# An empty window, so the suite doesn't depend on when it runs.
-ENV['TRUNK_BROWNOUT_START'] = ENV['TRUNK_BROWNOUT_END'] = '2000-01-01T00:00:00Z'
+# Far off, so the suite doesn't depend on when it runs.
+ENV['TRUNK_READ_ONLY_FROM'] = '2100-01-01T00:00:00Z'
 
 $LOAD_PATH.unshift File.expand_path('..', __dir__)
 require 'config/init'
